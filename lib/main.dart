@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/email_signin_screen.dart';
 import 'package:peeroreum_client/screens/signin_screen.dart';
 
 void main() => runApp(PeeroreumApp());
@@ -11,9 +12,10 @@ class PeeroreumApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Peeroreum',
-      initialRoute: '/',
+      initialRoute: '/signIn',
       routes: {
-        '/': (context) => SignIn()
+        '/signIn': (context) => SignIn(),
+        '/signIn/email': (context) => EmailSignIn()
       },
       // debugShowCheckedModeBanner: false,
     );
