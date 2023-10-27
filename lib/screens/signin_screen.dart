@@ -11,6 +11,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
         alignment: Alignment(0.0, 0.0),
         child: Column(
