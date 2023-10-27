@@ -70,7 +70,6 @@ class _SignInState extends State<SignIn> {
                       ),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
-
                       ),
                     ),
                   ),
@@ -79,7 +78,9 @@ class _SignInState extends State<SignIn> {
                     width: 350.0,
                     height: 48.0,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/signIn/email');
+                      },
                       child: Text(
                         '이메일 로그인',
                         style: TextStyle(
