@@ -9,9 +9,29 @@ class EmailSignUp extends StatefulWidget {
 class _EmailSignUpState extends State<EmailSignUp> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
-
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: Text(
+          '회원가입',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: Colors.black
+          ),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {  },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.grey[800],
+          ),
+        ),
+      ),
     );
   }
 }
