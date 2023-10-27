@@ -25,7 +25,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
         ),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {  },
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: Icon(
             Icons.arrow_back,
             color: Colors.grey[800],
