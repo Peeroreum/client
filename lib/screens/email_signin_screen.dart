@@ -152,7 +152,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                   ),
                 ),
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/signUp/email');
+                    },
                     child: Text(
                       '회원가입',
                       style: TextStyle(
