@@ -123,6 +123,7 @@ class _HomeWeduState extends State<HomeWedu> {
               width: 12,
             ),
             Icon(
+              //action으로변경
               Icons.notifications_none,
               size: 24,
               color: Colors.grey[800],
