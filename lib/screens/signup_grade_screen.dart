@@ -154,7 +154,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
               height: 48.0,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/signUp/profile/grade');
+                  Navigator.pushNamed(context, '/signUp/profile/school');
                 },
                 child: Text(
                   '다음',
