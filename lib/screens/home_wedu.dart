@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/in_wedu.dart';
+import 'package:peeroreum_client/screens/search_wedu.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -12,6 +14,7 @@ class HomeWedu extends StatefulWidget {
 class _HomeWeduState extends State<HomeWedu> {
   int selectedIndex = 1;
   List<Map<String, String>> datas = [];
+  List<Map<String, String>> inroom_datas = [];
   List<String> dropdownGradeList = ['전체', '중1', '중2'];
   List<String> dropdownClassList = ['전체', '국어', '수학'];
   List<String> dropdownTypeList = ['추천순', '인기순'];
@@ -69,6 +72,35 @@ class _HomeWeduState extends State<HomeWedu> {
         "day": "NNN",
       },
     ];
+    inroom_datas = [
+      {
+        "cid": "1",
+        "group_profile": "assets/images/splash_logo.png",
+        "subject": "국어",
+        "name": "Group Name",
+        "grade": "학년",
+        "number": "NN",
+        "day": "NNN",
+      },
+      {
+        "cid": "2",
+        "group_profile": "assets/images/splash_logo.png",
+        "subject": "수학",
+        "name": "Group Name",
+        "grade": "학년",
+        "number": "NN",
+        "day": "NNN",
+      },
+      {
+        "cid": "3",
+        "group_profile": "assets/images/splash_logo.png",
+        "subject": "영어",
+        "name": "Group Name",
+        "grade": "학년",
+        "number": "NN",
+        "day": "NNN",
+      }
+    ];
   }
 
   PreferredSizeWidget appbarWidget() {
@@ -77,7 +109,7 @@ class _HomeWeduState extends State<HomeWedu> {
       elevation: 0,
       titleSpacing: 0,
       title: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: EdgeInsets.fromLTRB(20, 12, 0, 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -86,7 +118,8 @@ class _HomeWeduState extends State<HomeWedu> {
               fit: FlexFit.loose,
               child: TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => searchWedu()));
                   },
                   style: TextButton.styleFrom(
                       backgroundColor: Colors.grey[100],
@@ -104,8 +137,6 @@ class _HomeWeduState extends State<HomeWedu> {
                         ),
                         SizedBox(width: 8.0),
                         SizedBox(
-                          // width: 282,
-                          // height: 24,
                           child: Text(
                             '같이방에서 함께 공부해요!',
                             style: TextStyle(
@@ -122,63 +153,42 @@ class _HomeWeduState extends State<HomeWedu> {
             SizedBox(
               width: 12,
             ),
-            Icon(
-              //action으로변경
-              Icons.notifications_none,
-              size: 24,
-              color: Colors.grey[800],
-            )
           ],
         ),
       ),
+      actions: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(12, 0, 20, 0),
+          child: Row(
+            children: [
+              Icon(
+                Icons.add_box,
+                size: 24,
+                color: Colors.grey[800],
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              Icon(
+                Icons.notifications_none,
+                size: 24,
+                color: Colors.grey[800],
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget bodyWidget() {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Row(
-                    children: [
-                      Text(
-                        "참여 중인 같이방",
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      Text(
-                        "0",
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                ),
-                TextButton(
-                    onPressed: () {},
-                    child: Text('전체 보기',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: Colors.grey[500])))
-              ],
-            ),
-          ),
+          room_body(),
+          Expanded(child: in_room_body()),
           Container(
             height: 8,
             color: Color(0xFFF1F2F3),
@@ -187,13 +197,28 @@ class _HomeWeduState extends State<HomeWedu> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Text('같이방',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Pretendard')),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('같이방',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Pretendard')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => InWedu()));
+                        },
+                        child: Text('전체 보기',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: Colors.grey[500])))
+                  ],
+                ),
               ),
             ],
           ),
@@ -201,6 +226,188 @@ class _HomeWeduState extends State<HomeWedu> {
           Expanded(child: listview_body())
         ],
       )),
+    );
+  }
+
+  Widget room_body() {
+    return Container(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "참여 중인 같이방",
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  '${inroom_datas.length}',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => InWedu()));
+                },
+                child: Text('전체 보기',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Colors.grey[500])))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget in_room_body() {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+      itemCount: inroom_datas.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return Container(
+          width: 8,
+        );
+      },
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          height: 180,
+          padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
+          decoration: BoxDecoration(
+              border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
+              borderRadius: BorderRadius.all(Radius.circular(8.0))),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                child: Image.asset(inroom_datas[index]["group_profile"]!,
+                    width: 48, height: 48),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                height: 76,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(color: Color(0xFFFFE9E9)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              child: Text(
+                                inroom_datas[index]["subject"]!,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    color: Color(0xFFF86060),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            inroom_datas[index]["name"]!,
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Flexible(
+                        child: Row(
+                          children: [
+                            Text(inroom_datas[index]["grade"]!,
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey[600])),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Text('⋅'),
+                            ),
+                            Text('${inroom_datas[index]["number"]!}명 참여중',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey[600])),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Text('⋅'),
+                            ),
+                            Text('D-${inroom_datas[index]["day"]!}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey[600])),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '${inroom_datas[index]["number"]}%', //이후 퍼센티지 수정
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF7260F8)),
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            "달성",
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF7260F8),
+                            ),
+                          ),
+                        ],
+                      )
+                    ]),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
