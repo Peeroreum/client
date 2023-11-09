@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EmailSignUp extends StatefulWidget {
@@ -10,6 +9,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -129,7 +129,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
               width: 350.0,
               height: 48.0,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/signUp/profile/nickname');
+                },
                 child: Text(
                   '다음',
                   style: TextStyle(
