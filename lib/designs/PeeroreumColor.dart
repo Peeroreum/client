@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 final class PeeroreumColor extends Color {
   PeeroreumColor(super.value);
 
-  static const Color black = Colors.black;
-  static const Color white = Colors.white;
+  static const Color black = Color.fromARGB(255, 0, 0, 0);
+  static const Color white = Color.fromARGB(255, 255, 255, 255);
   static const Color error = Color.fromARGB(255, 240, 58, 46);
   static const Map<int, Color> gray = <int, Color> {
     50: Color.fromARGB(255, 251, 251, 251),
@@ -22,12 +22,12 @@ final class PeeroreumColor extends Color {
     50: Color.fromARGB(255, 236, 233, 255),
     100: Color.fromARGB(255, 206, 200, 253),
     200: Color.fromARGB(255, 173, 165, 252),
-    300: Color.fromARGB(255, 183, 115, 251),
-    400: Color.fromARGB(255, 171, 94, 249),
-    500: Color.fromARGB(255, 164, 81, 247),
-    600: Color.fromARGB(255, 150, 83, 217),
-    700: Color.fromARGB(255, 130, 86, 174),
-    800: Color.fromARGB(255, 110, 87, 132),
-    900: Color.fromARGB(255, 101, 76, 126)
+    300: Color.fromARGB(255, 139, 128, 251),
+    400: Color.fromARGB(255, 114, 96, 248),
+    500: Color.fromARGB(255, 97, 64, 233),
+    600: Color.fromARGB(255, 92, 54, 221),
+    700: Color.fromARGB(255, 84, 41, 207),
+    800: Color.fromARGB(255, 78, 25, 193),
+    900: Color.fromARGB(255, 68, 0, 169)
   };
 }
