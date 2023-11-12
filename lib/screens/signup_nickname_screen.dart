@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/signup_subject_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class SignUpNickname extends StatefulWidget {
@@ -142,7 +143,14 @@ class _SignUpNicknameState extends State<SignUpNickname> {
               height: 48.0,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/signUp/profile/subject');
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => SignUpSubject(),
+                        transitionDuration: const Duration(seconds: 0),
+                        reverseTransitionDuration: const Duration(seconds: 0)
+                    ),
+                  );
                 },
                 child: Text(
                   '다음',

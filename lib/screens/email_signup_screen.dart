@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
 
 class EmailSignUp extends StatefulWidget {
   @override
@@ -130,7 +131,14 @@ class _EmailSignUpState extends State<EmailSignUp> {
               height: 48.0,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/signUp/profile/nickname');
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => SignUpNickname(),
+                        transitionDuration: const Duration(seconds: 0),
+                        reverseTransitionDuration: const Duration(seconds: 0)
+                    ),
+                  );
                 },
                 child: Text(
                   '다음',

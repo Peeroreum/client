@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/email_signup_screen.dart';
 
 class EmailSignIn extends StatefulWidget {
   const EmailSignIn({super.key});
@@ -153,7 +154,14 @@ class _EmailSignInState extends State<EmailSignIn> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/signUp/email');
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => EmailSignUp(),
+                            transitionDuration: const Duration(seconds: 0),
+                            reverseTransitionDuration: const Duration(seconds: 0)
+                        ),
+                      );
                     },
                     child: Text(
                       '회원가입',
