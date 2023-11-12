@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/detail_wedu.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SignUpSchool extends StatefulWidget {
@@ -211,6 +212,14 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     height: 48.0,
                     child: TextButton(
                       onPressed: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => DetailWedu(),
+                            transitionDuration: const Duration(seconds: 0),
+                            reverseTransitionDuration: const Duration(seconds: 0)
+                          ),
+                        );
                       },
                       child: Text(
                         '다음',
