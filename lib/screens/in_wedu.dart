@@ -67,7 +67,7 @@ class _InWeduState extends State<InWedu> {
       {
         "cid": "1",
         "group_profile": "assets/images/splash_logo.png",
-        "subject": "국어",
+        "subject": "코딩",
         "name": "Group Name",
         "grade": "학년",
         "number": "NN",
@@ -76,7 +76,7 @@ class _InWeduState extends State<InWedu> {
       {
         "cid": "2",
         "group_profile": "assets/images/splash_logo.png",
-        "subject": "수학",
+        "subject": "코딩",
         "name": "Group Name",
         "grade": "학년",
         "number": "NN",
@@ -85,7 +85,7 @@ class _InWeduState extends State<InWedu> {
       {
         "cid": "3",
         "group_profile": "assets/images/splash_logo.png",
-        "subject": "영어",
+        "subject": "코딩",
         "name": "Group Name",
         "grade": "학년",
         "number": "NN",
@@ -94,7 +94,7 @@ class _InWeduState extends State<InWedu> {
       {
         "cid": "4",
         "group_profile": "assets/images/splash_logo.png",
-        "subject": "과학",
+        "subject": "코딩",
         "name": "Group Name",
         "grade": "학년",
         "number": "NN",
@@ -127,52 +127,31 @@ class _InWeduState extends State<InWedu> {
   }
 
   Widget bodyWidget() {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
+    return DefaultTabController(
+      length: 2,
+      child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    TextStyle(color: Color(0xFF7260F8));
-                    ing_room();
-                  },
-                  style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey[800],
-                      backgroundColor: Colors.white),
-                  child: Text("참여 중인 같이방",
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      )),
-                ),
+          TabBar(
+              indicatorColor: Color(0xFF7260F8),
+              indicatorSize: TabBarIndicatorSize.label,
+              labelColor: Color(0xFF7260F8),
+              unselectedLabelColor: Colors.grey[800],
+              labelStyle: TextStyle(
+                color: Color(0xFF7260F8),
+                fontFamily: 'Pretendard',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                // decorationColor: Colors.grey[800]
               ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    TextStyle(color: Color(0xFF7260F8));
-                    complete_room();
-                  },
-                  style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey[800],
-                      backgroundColor: Colors.white),
-                  child: Text(
-                    "완료된 같이방",
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        decorationColor: Colors.grey[800]),
-                  ),
+              tabs: [
+                Tab(
+                  text: '참여 중인 같이방',
                 ),
-              ),
-            ],
-          ),
-          Expanded(child: ing_room())
+                Tab(
+                  text: '완료된 같이방',
+                )
+              ]),
+          Expanded(child: TabBarView(children: [ing_room(), complete_room()])),
         ],
       ),
     );
@@ -186,9 +165,11 @@ class _InWeduState extends State<InWedu> {
           height: 8,
         );
       },
-      itemCount: ing_group.length,
+      itemCount: complete_group.length,
       itemBuilder: (BuildContext context, int index) {
         return Container(
+          width: MediaQuery.of(context).size.width,
+          height: 94,
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           decoration: BoxDecoration(
               border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
@@ -199,21 +180,21 @@ class _InWeduState extends State<InWedu> {
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Image.asset(ing_group[index]["group_profile"]!,
+                child: Image.asset(complete_group[index]["group_profile"]!,
                     width: 48, height: 48),
               ),
-              Column(
-                children: [
-                  Row(
+              Container(
+                width: MediaQuery.of(context).size.width * 0.65,
+                padding: EdgeInsets.only(left: 16),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 44,
-                        padding: EdgeInsets.only(left: 16),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
                             children: [
                               Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   DecoratedBox(
                                     decoration:
@@ -222,7 +203,7 @@ class _InWeduState extends State<InWedu> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 2, horizontal: 8),
                                       child: Text(
-                                        ing_group[index]["subject"]!,
+                                        complete_group[index]["subject"]!,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontFamily: 'Pretendard',
@@ -236,22 +217,26 @@ class _InWeduState extends State<InWedu> {
                                     width: 4,
                                   ),
                                   Text(
-                                    ing_group[index]["name"]!,
+                                    complete_group[index]["name"]!,
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black),
                                   ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  Icon(Icons.lock_outline,
+                                      size: 18, color: Colors.grey[400])
                                 ],
                               ),
                               SizedBox(
                                 height: 4,
                               ),
                               Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(ing_group[index]["grade"]!,
+                                  Text(complete_group[index]["grade"]!,
                                       style: TextStyle(
                                           fontFamily: 'Pretendard',
                                           fontSize: 12,
@@ -262,7 +247,8 @@ class _InWeduState extends State<InWedu> {
                                         EdgeInsets.symmetric(horizontal: 2),
                                     child: Text('⋅'),
                                   ),
-                                  Text('${ing_group[index]["number"]!}명 참여중',
+                                  Text(
+                                      '${complete_group[index]["number"]!}명 참여중',
                                       style: TextStyle(
                                           fontFamily: 'Pretendard',
                                           fontSize: 12,
@@ -273,31 +259,47 @@ class _InWeduState extends State<InWedu> {
                                         EdgeInsets.symmetric(horizontal: 2),
                                     child: Text('⋅'),
                                   ),
-                                  Text('D-${ing_group[index]["day"]!}',
+                                  Text('D-${complete_group[index]["day"]!}',
                                       style: TextStyle(
                                           fontFamily: 'Pretendard',
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           color: Colors.grey[600])),
                                 ],
-                              )
-                            ]),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 28,
+                              ),
+                              Text(
+                                "NN% 달성",
+                                style: TextStyle(
+                                    color: Color(0xFF7260F8),
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
-                      SizedBox(width: 4),
-                      Text(
-                        "NN% 달성",
-                        style: TextStyle(
-                            color: Color(0xFF7260F8),
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      LinearPercentIndicator(
+                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        lineHeight: 8,
+                        percent: 0.5,
+                        backgroundColor: Color(0xffeaebec),
+                        linearGradient: LinearGradient(
+                            colors: [Color(0xff7260F8), Color(0xffADA5FC)]),
+                        barRadius: Radius.circular(8),
                       )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                ],
+                    ]),
               )
             ],
           ),
@@ -317,13 +319,13 @@ class _InWeduState extends State<InWedu> {
       itemCount: ing_group.length,
       itemBuilder: (BuildContext context, int index) {
         return Container(
-          height: 92,
+          width: MediaQuery.of(context).size.width,
+          height: 94,
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           decoration: BoxDecoration(
               border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
               borderRadius: BorderRadius.all(Radius.circular(8.0))),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 decoration: BoxDecoration(
@@ -332,16 +334,16 @@ class _InWeduState extends State<InWedu> {
                 child: Image.asset(ing_group[index]["group_profile"]!,
                     width: 48, height: 48),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+              Container(
+                width: MediaQuery.of(context).size.width * 0.65,
+                padding: EdgeInsets.only(left: 16),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 44,
-                        padding: EdgeInsets.only(left: 16),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
                             children: [
                               Row(
                                 children: [
@@ -384,74 +386,70 @@ class _InWeduState extends State<InWedu> {
                                 height: 4,
                               ),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    // crossAxisAlignment:
-                                    // CrossAxisAlignment.start,
-                                    children: [
-                                      Text(ing_group[index]["grade"]!,
-                                          style: TextStyle(
-                                              fontFamily: 'Pretendard',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[600])),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 2),
-                                        child: Text('⋅'),
-                                      ),
-                                      Text(
-                                          '${ing_group[index]["number"]!}명 참여중',
-                                          style: TextStyle(
-                                              fontFamily: 'Pretendard',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[600])),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 2),
-                                        child: Text('⋅'),
-                                      ),
-                                      Text('D-${ing_group[index]["day"]!}',
-                                          style: TextStyle(
-                                              fontFamily: 'Pretendard',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[600])),
-                                    ],
+                                  Text(ing_group[index]["grade"]!,
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey[600])),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 2),
+                                    child: Text('⋅'),
                                   ),
-                                  Text(
-                                    "NN% 달성",
-                                    style: TextStyle(
-                                        color: Color(0xFF7260F8),
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600),
-                                  )
+                                  Text('${ing_group[index]["number"]!}명 참여중',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey[600])),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 2),
+                                    child: Text('⋅'),
+                                  ),
+                                  Text('D-${ing_group[index]["day"]!}',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey[600])),
                                 ],
                               ),
+                            ],
+                          ),
+                          Column(
+                            children: [
                               SizedBox(
-                                height: 8,
+                                height: 28,
                               ),
-                              LinearPercentIndicator(
-                                padding: EdgeInsets.all(0),
-                                width: 246,
-                                lineHeight: 8,
-                                percent: 0.5,
-                                backgroundColor: Color(0xffeaebec),
-                                linearGradient: LinearGradient(colors: [
-                                  Color(0xff7260F8),
-                                  Color(0xffADA5FC)
-                                ]),
-                                barRadius: Radius.circular(8),
-                              )
-                            ]),
+                              Text(
+                                "NN% 달성",
+                                style: TextStyle(
+                                    color: Color(0xFF7260F8),
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                      SizedBox(
+                        height: 8,
+                      ),
+                      LinearPercentIndicator(
+                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        lineHeight: 8,
+                        percent: 0.5,
+                        backgroundColor: Color(0xffeaebec),
+                        linearGradient: LinearGradient(
+                            colors: [Color(0xff7260F8), Color(0xffADA5FC)]),
+                        barRadius: Radius.circular(8),
+                      )
+                    ]),
               )
             ],
           ),

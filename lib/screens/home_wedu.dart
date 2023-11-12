@@ -188,7 +188,7 @@ class _HomeWeduState extends State<HomeWedu> {
           child: Column(
         children: [
           room_body(),
-          Expanded(child: in_room_body()),
+          SizedBox(height: 180, child: in_room_body()),
           Container(
             height: 8,
             color: Color(0xFFF1F2F3),
@@ -287,13 +287,12 @@ class _HomeWeduState extends State<HomeWedu> {
       },
       itemBuilder: (BuildContext context, int index) {
         return Container(
-          height: 180,
           padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
           decoration: BoxDecoration(
               border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
               borderRadius: BorderRadius.all(Radius.circular(8.0))),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 decoration: BoxDecoration(
@@ -305,104 +304,80 @@ class _HomeWeduState extends State<HomeWedu> {
               SizedBox(
                 height: 16,
               ),
-              Container(
-                height: 76,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DecoratedBox(
-                            decoration: BoxDecoration(color: Color(0xFFFFE9E9)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 8),
-                              child: Text(
-                                inroom_datas[index]["subject"]!,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    color: Color(0xFFF86060),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            inroom_datas[index]["name"]!,
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black),
-                          ),
-                        ],
+              Row(
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(color: Color(0xFFFFE9E9)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 8),
+                      child: Text(
+                        inroom_datas[index]["subject"]!,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            color: Color(0xFFF86060),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10),
                       ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Flexible(
-                        child: Row(
-                          children: [
-                            Text(inroom_datas[index]["grade"]!,
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey[600])),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2),
-                              child: Text('⋅'),
-                            ),
-                            Text('${inroom_datas[index]["number"]!}명 참여중',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey[600])),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2),
-                              child: Text('⋅'),
-                            ),
-                            Text('D-${inroom_datas[index]["day"]!}',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey[600])),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '${inroom_datas[index]["number"]}%', //이후 퍼센티지 수정
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF7260F8)),
-                          ),
-                          SizedBox(width: 2),
-                          Text(
-                            "달성",
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF7260F8),
-                            ),
-                          ),
-                        ],
-                      )
-                    ]),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    inroom_datas[index]["name"]!,
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Row(
+                children: [
+                  Text(inroom_datas[index]["grade"]!,
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600])),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2),
+                    child: Text('⋅'),
+                  ),
+                  Text('${inroom_datas[index]["number"]!}명 참여중',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600])),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2),
+                    child: Text('⋅'),
+                  ),
+                  Text('D-${inroom_datas[index]["day"]!}',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600])),
+                ],
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Text(
+                '${inroom_datas[index]["number"]}% 달성', //이후 퍼센티지 수정
+                style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF7260F8)),
               )
             ],
           ),
@@ -577,7 +552,6 @@ class _HomeWeduState extends State<HomeWedu> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DecoratedBox(
                             decoration: BoxDecoration(color: Color(0xFFFFE9E9)),
@@ -612,7 +586,6 @@ class _HomeWeduState extends State<HomeWedu> {
                         height: 4,
                       ),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(datas[index]["grade"]!,
                               style: TextStyle(
