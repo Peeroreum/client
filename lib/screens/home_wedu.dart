@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/create_wedu_screen.dart';
+import 'package:peeroreum_client/screens/detail_wedu.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
 import 'package:peeroreum_client/screens/search_wedu.dart';
 
@@ -161,10 +163,21 @@ class _HomeWeduState extends State<HomeWedu> {
           padding: EdgeInsets.fromLTRB(12, 0, 20, 0),
           child: Row(
             children: [
-              Icon(
-                Icons.add_box,
-                size: 24,
-                color: Colors.grey[800],
+              IconButton(
+                icon: Icon(
+                  Icons.add_box,
+                  size: 24,
+                  color: Colors.grey[800],
+                ), onPressed: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => CreateWedu(),
+                      transitionDuration: const Duration(seconds: 0),
+                      reverseTransitionDuration: const Duration(seconds: 0)
+                  ),
+                );
+              },
               ),
               SizedBox(
                 width: 4,
