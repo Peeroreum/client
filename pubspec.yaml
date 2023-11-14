@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_native_splash: ^2.3.4
   percent_indicator: ^4.2.3
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -97,4 +98,7 @@ flutter:
           weight: 800
         - asset: assets/fonts/Pretendard-Black.ttf
           weight: 900
+    - family: UhBeeRami
+      fonts:
+        - asset: assets\fonts\UhBeeRami-BOLD.ttf
   # see https://flutter.dev/custom-fonts/#from-packages

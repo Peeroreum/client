@@ -68,7 +68,9 @@ class _CreateWeduState extends State<CreateWedu> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: null,
+            onPressed: () {
+              Navigator.pushNamed(context, '/next');
+            },
             child: Text(
               '다음',
               style: TextStyle(
@@ -132,6 +134,7 @@ class _CreateWeduState extends State<CreateWedu> {
                     ),
                     child: Icon(
                       Icons.camera_alt_outlined,
+                      color: PeeroreumColor.gray[800],
                     ),
                   ),
                 ),
