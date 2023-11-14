@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/create_wedu_screen.dart';
 import 'package:peeroreum_client/screens/detail_wedu.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
@@ -17,8 +18,8 @@ class _HomeWeduState extends State<HomeWedu> {
   int selectedIndex = 1;
   List<Map<String, String>> datas = [];
   List<Map<String, String>> inroom_datas = [];
-  List<String> dropdownGradeList = ['전체', '중1', '중2'];
-  List<String> dropdownClassList = ['전체', '국어', '수학'];
+  List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+  List<String> dropdownClassList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
   List<String> dropdownTypeList = ['추천순', '인기순'];
   String selectedDropdownGrade = '전체';
   String selectedDropdownClass = '국어';
@@ -107,9 +108,10 @@ class _HomeWeduState extends State<HomeWedu> {
 
   PreferredSizeWidget appbarWidget() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: PeeroreumColor.white,
       elevation: 0,
       titleSpacing: 0,
+      automaticallyImplyLeading: false,
       title: Padding(
         padding: EdgeInsets.fromLTRB(20, 12, 0, 12),
         child: Row(
@@ -124,7 +126,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         MaterialPageRoute(builder: (context) => searchWedu()));
                   },
                   style: TextButton.styleFrom(
-                      backgroundColor: Colors.grey[100],
+                      backgroundColor: PeeroreumColor.gray[100],
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(37.0))),
                   child: Padding(
@@ -134,7 +136,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       children: [
                         Icon(
                           Icons.search,
-                          color: Colors.grey[600],
+                          color: PeeroreumColor.gray[600],
                           size: 18,
                         ),
                         SizedBox(width: 8.0),
@@ -145,7 +147,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
-                                color: Colors.grey[600]),
+                                color: PeeroreumColor.gray[600]),
                           ),
                         ),
                       ],
@@ -160,32 +162,43 @@ class _HomeWeduState extends State<HomeWedu> {
       ),
       actions: [
         Padding(
-          padding: EdgeInsets.fromLTRB(12, 0, 20, 0),
+          // padding: EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.only(right: 12),
           child: Row(
             children: [
               IconButton(
+                constraints: BoxConstraints(maxWidth: 24),
+                splashRadius: 24.0,
                 icon: Icon(
                   Icons.add_box,
                   size: 24,
-                  color: Colors.grey[800],
-                ), onPressed: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => CreateWedu(),
-                      transitionDuration: const Duration(seconds: 0),
-                      reverseTransitionDuration: const Duration(seconds: 0)
-                  ),
-                );
-              },
+                  color: PeeroreumColor.gray[800],
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => CreateWedu(),
+                        transitionDuration: const Duration(seconds: 0),
+                        reverseTransitionDuration: const Duration(seconds: 0)),
+                  );
+                },
               ),
               SizedBox(
                 width: 4,
               ),
-              Icon(
-                Icons.notifications_none,
-                size: 24,
-                color: Colors.grey[800],
+              IconButton(
+                constraints: BoxConstraints(maxWidth: 24),
+                splashRadius: 24.0,
+                icon: Icon(
+                  Icons.notifications_none,
+                  size: 24,
+                  color: PeeroreumColor.gray[800],
+                ),
+                onPressed: () {},
+              ),
+              SizedBox(
+                width: 12,
               )
             ],
           ),
@@ -196,44 +209,30 @@ class _HomeWeduState extends State<HomeWedu> {
 
   Widget bodyWidget() {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: PeeroreumColor.white,
       body: Container(
           child: Column(
         children: [
           room_body(),
-          SizedBox(height: 180, child: in_room_body()),
+          SizedBox(
+              height: 193, //180으로 나중에 수정
+              child: in_room_body()),
           Container(
             height: 8,
-            color: Color(0xFFF1F2F3),
+            color: PeeroreumColor.gray[200],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('같이방',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Pretendard')),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => InWedu()));
-                        },
-                        child: Text('전체 보기',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: Colors.grey[500])))
-                  ],
-                ),
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('같이방',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Pretendard')),
+              ],
+            ),
           ),
           dropdown_body(),
           Expanded(child: listview_body())
@@ -280,7 +279,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: Colors.grey[500])))
+                        color: PeeroreumColor.gray[500])))
           ],
         ),
       ),
@@ -299,101 +298,111 @@ class _HomeWeduState extends State<HomeWedu> {
         );
       },
       itemBuilder: (BuildContext context, int index) {
-        return Container(
-          padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
-          decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
-              borderRadius: BorderRadius.all(Radius.circular(8.0))),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Image.asset(inroom_datas[index]["group_profile"]!,
-                    width: 48, height: 48),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Row(
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(color: Color(0xFFFFE9E9)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2, horizontal: 8),
-                      child: Text(
-                        inroom_datas[index]["subject"]!,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            color: Color(0xFFF86060),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10),
+        return GestureDetector(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
+            decoration: BoxDecoration(
+                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          width: 1, color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  child: Image.asset(inroom_datas[index]["group_profile"]!,
+                      width: 48, height: 48),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          color: Color(0xFFFFF2E9)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 8),
+                        child: Text(
+                          inroom_datas[index]["subject"]!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              color: Color(0xFFF86060),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    inroom_datas[index]["name"]!,
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Row(
-                children: [
-                  Text(inroom_datas[index]["grade"]!,
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      inroom_datas[index]["name"]!,
                       style: TextStyle(
                           fontFamily: 'Pretendard',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600])),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 2),
-                    child: Text('⋅'),
-                  ),
-                  Text('${inroom_datas[index]["number"]!}명 참여중',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600])),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 2),
-                    child: Text('⋅'),
-                  ),
-                  Text('D-${inroom_datas[index]["day"]!}',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600])),
-                ],
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                '${inroom_datas[index]["number"]}% 달성', //이후 퍼센티지 수정
-                style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF7260F8)),
-              )
-            ],
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.black),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: [
+                    Text(inroom_datas[index]["grade"]!,
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: PeeroreumColor.gray[600])),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: Text('⋅'),
+                    ),
+                    Text('${inroom_datas[index]["number"]!}명 참여중',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: PeeroreumColor.gray[600])),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: Text('⋅'),
+                    ),
+                    Text('D-${inroom_datas[index]["day"]!}',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: PeeroreumColor.gray[600])),
+                  ],
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  '${inroom_datas[index]["number"]}% 달성', //이후 퍼센티지 수정
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.primaryPuple[400]),
+                )
+              ],
+            ),
           ),
+          onTap: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => InWedu()))
+          },
         );
       },
     );
@@ -410,7 +419,8 @@ class _HomeWeduState extends State<HomeWedu> {
               children: [
                 DecoratedBox(
                   decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFEAEBEC), width: 1),
+                      border: Border.all(
+                          color: PeeroreumColor.gray[100]!, width: 1),
                       borderRadius: BorderRadius.circular(8)),
                   child: SizedBox(
                     width: 75,
@@ -422,7 +432,7 @@ class _HomeWeduState extends State<HomeWedu> {
                           icon: Padding(
                             padding: EdgeInsets.only(left: 7.0), //나중에 수정 8.0
                             child: Icon(Icons.expand_more,
-                                color: Color(0xFF6C6D6D)),
+                                color: PeeroreumColor.gray[600]),
                           ),
                           iconSize: 18,
                           underline: SizedBox.shrink(),
@@ -451,7 +461,8 @@ class _HomeWeduState extends State<HomeWedu> {
                 ),
                 DecoratedBox(
                   decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFEAEBEC), width: 1),
+                      border: Border.all(
+                          color: PeeroreumColor.gray[200]!, width: 1),
                       borderRadius: BorderRadius.circular(8)),
                   child: SizedBox(
                     width: 75,
@@ -464,7 +475,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             padding:
                                 const EdgeInsets.only(left: 7.0), //나중에 수정 8.0
                             child: Icon(Icons.expand_more,
-                                color: Color(0xFF6C6D6D)),
+                                color: PeeroreumColor.gray[600]),
                           ),
                           iconSize: 18,
                           underline: SizedBox.shrink(),
@@ -493,7 +504,7 @@ class _HomeWeduState extends State<HomeWedu> {
           ),
           DecoratedBox(
             decoration: BoxDecoration(
-                border: Border.all(color: Color(0xFFEAEBEC), width: 1),
+                border: Border.all(color: PeeroreumColor.gray[200]!, width: 1),
                 borderRadius: BorderRadius.circular(8)),
             child: SizedBox(
               width: 87,
@@ -505,7 +516,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     padding: const EdgeInsets.only(left: 6.0), //나중에 수정 8.0
                     child: Icon(
                       Icons.expand_more,
-                      color: Color(0xFF6C6D6D),
+                      color: PeeroreumColor.gray[600],
                     ),
                   ),
                   iconSize: 18,
@@ -544,94 +555,101 @@ class _HomeWeduState extends State<HomeWedu> {
         );
       },
       itemBuilder: (BuildContext context, int index) {
-        return Container(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-          decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
-              borderRadius: BorderRadius.all(Radius.circular(8.0))),
-          child: Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Color(0xFFEAEBEC)),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Image.asset(datas[index]["group_profile"]!,
-                    width: 44, height: 44),
-              ),
-              Container(
-                height: 44,
-                padding: EdgeInsets.only(left: 16),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          DecoratedBox(
-                            decoration: BoxDecoration(color: Color(0xFFFFE9E9)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 8),
-                              child: Text(
-                                datas[index]["subject"]!,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    color: Color(0xFFF86060),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10),
+        return GestureDetector(
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            decoration: BoxDecoration(
+                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            child: Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          width: 1, color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  child: Image.asset(datas[index]["group_profile"]!,
+                      width: 44, height: 44),
+                ),
+                Container(
+                  height: 44,
+                  padding: EdgeInsets.only(left: 16),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(4)),
+                                  color: Color(0xFFFFE9E9)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 8),
+                                child: Text(
+                                  datas[index]["subject"]!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      color: Color(0xFFF86060),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            datas[index]["name"]!,
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Row(
-                        children: [
-                          Text(datas[index]["grade"]!,
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              datas[index]["name"]!,
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[600])),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 2),
-                            child: Text('⋅'),
-                          ),
-                          Text('${datas[index]["number"]!}명 참여중',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[600])),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 2),
-                            child: Text('⋅'),
-                          ),
-                          Text('D-${datas[index]["day"]!}',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[600])),
-                        ],
-                      )
-                    ]),
-              )
-            ],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.black),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Row(
+                          children: [
+                            Text(datas[index]["grade"]!,
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: PeeroreumColor.gray[600])),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Text('⋅'),
+                            ),
+                            Text('${datas[index]["number"]!}명 참여중',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: PeeroreumColor.gray[600])),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Text('⋅'),
+                            ),
+                            Text('D-${datas[index]["day"]!}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: PeeroreumColor.gray[600])),
+                          ],
+                        )
+                      ]),
+                )
+              ],
+            ),
           ),
+          onTap: () {},
         );
       },
     );
@@ -648,9 +666,9 @@ class _HomeWeduState extends State<HomeWedu> {
               icon: Icon(Icons.perm_identity), label: '마이페이지'),
         ],
         currentIndex: selectedIndex,
-        unselectedItemColor: Colors.grey[400],
+        unselectedItemColor: PeeroreumColor.gray[400],
         unselectedLabelStyle: TextStyle(fontFamily: 'Pretendard', fontSize: 12),
-        selectedItemColor: Color(0xFF7260F8),
+        selectedItemColor: PeeroreumColor.primaryPuple[400],
         selectedLabelStyle: TextStyle(fontFamily: 'Pretendard', fontSize: 12),
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
