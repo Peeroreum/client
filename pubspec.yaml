@@ -39,6 +39,7 @@ dependencies:
   flutter_native_splash: ^2.3.4
   percent_indicator: ^4.2.3
   flutter_svg: ^2.0.9
+  flutter_expanded_tile: ^0.3.7
 
 dev_dependencies:
   flutter_test:
