@@ -12,29 +12,29 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          elevation: 0,
+        ),
+      ),
       body: Container(
         alignment: Alignment(0.0, 0.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Column(
-              children: [
-                SizedBox(
-                  height: 234.0,
-                ),
-                Image.asset(
-                  'assets/images/splash_logo.png',
-                  height: 236.0,
-                  width: 170.0,
-                ),
-                SizedBox(
-                  height: 134.0,
-                )
-              ],
+            Image.asset(
+              'assets/images/splash_logo.png',
+              height: 236.0,
+              width: 170.0,
             ),
             Container(
               padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 8.0),
               child: Column(
                 children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                  ),
                   Container(
                     width: 350.0,
                     height: 48.0,
@@ -43,14 +43,14 @@ class _SignInState extends State<SignIn> {
                       child: Text(
                         '카카오 로그인',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.0,
-                          color: Colors.black87
-                        ),
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16.0,
+                            color: Colors.black87),
                       ),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.grey[200]),
                       ),
                     ),
                   ),
@@ -66,11 +66,11 @@ class _SignInState extends State<SignIn> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 16.0,
-                            color: Colors.black87
-                        ),
+                            color: Colors.black87),
                       ),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.grey[200]),
                       ),
                     ),
                   ),
@@ -88,11 +88,11 @@ class _SignInState extends State<SignIn> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 16.0,
-                            color: Colors.black87
-                        ),
+                            color: Colors.black87),
                       ),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.grey[200]),
                       ),
                     ),
                   ),

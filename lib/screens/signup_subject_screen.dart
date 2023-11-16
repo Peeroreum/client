@@ -50,8 +50,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   progressColor: Color.fromARGB(255, 114, 96, 248),
                   backgroundColor: Colors.grey[100],
                   barRadius: Radius.circular(10),
-                )
-            ),
+                )),
             Container(
               height: 122,
               width: double.maxFinite,
@@ -59,154 +58,152 @@ class _SignUpSubjectState extends State<SignUpSubject> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                      "자신 있는 과목과 보완하고 싶은\n과목의 성취 수준을 알려주세요.",
+                  Text("자신 있는 과목과 보완하고 싶은\n과목의 성취 수준을 알려주세요.",
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black
-                      )
-                  ),
+                          color: Colors.black)),
                   SizedBox(
                     height: 10,
                   ),
-                  Text(
-                      "유사한 성취 수준의 친구가 있는 같이방을 추천해 드릴게요.",
+                  Text("유사한 성취 수준의 친구가 있는 같이방을 추천해 드릴게요.",
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey[800]
-                      )
-                  ),
+                          color: Colors.grey[800])),
                 ],
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(10, 56, 10, 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '자신 있는 과목',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black
+                padding: EdgeInsets.fromLTRB(10, 56, 10, 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '자신 있는 과목',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
                     ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      DropdownButton(
-                        value: _goodSubject,
-                        hint: Text(
-                          '과목',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DropdownButton(
+                          value: _goodSubject,
+                          hint: Text(
+                            '과목',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey[600]),
                           ),
-                        ),
-                        elevation: 0,
-                        dropdownColor: Colors.white,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
-                        ),
-                        items: _subjects
-                            .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        )).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _goodSubject = value!;
-                          });
-                        },
-                        icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600],),
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      DropdownButton(
-                        value: _selectedDetailGoodSubject,
-                        hint: Text(
-                          '세부과목',
+                          elevation: 0,
+                          dropdownColor: Colors.white,
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]
+                              color: Colors.grey[600]),
+                          items: _subjects
+                              .map((e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _goodSubject = value!;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.grey[600],
                           ),
                         ),
-                        elevation: 0,
-                        dropdownColor: Colors.white,
+                        SizedBox(
+                          width: 16,
+                        ),
+                        DropdownButton(
+                          value: _selectedDetailGoodSubject,
+                          hint: Text(
+                            '세부과목',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey[600]),
+                          ),
+                          elevation: 0,
+                          dropdownColor: Colors.white,
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey[600]),
+                          items: _subjects
+                              .map((e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedDetailGoodSubject = value!;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    DropdownButton(
+                      value: _goodLevel,
+                      hint: Text(
+                        '성취 수준을 선택해 주세요',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
-                        ),
-                        items: _subjects
-                            .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        )).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedDetailGoodSubject = value!;
-                          });
-                        },
-                        icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600],),
+                            color: Colors.grey[600]),
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  DropdownButton(
-                    value: _goodLevel,
-                    hint: Text(
-                      '성취 수준을 선택해 주세요',
+                      elevation: 0,
+                      dropdownColor: Colors.white,
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey[600]
+                          color: Colors.grey[600]),
+                      items: _levels
+                          .map((e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(e),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _goodLevel = value!;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.grey[600],
                       ),
                     ),
-                    elevation: 0,
-                    dropdownColor: Colors.white,
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey[600]
-                    ),
-                    items: _levels
-                        .map((e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e),
-                    )).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _goodLevel = value!;
-                      });
-                    },
-                    icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600],),
-                  ),
-                ],
-              )
-            ),
+                  ],
+                )),
             Container(
               padding: EdgeInsets.fromLTRB(10, 0, 10, 143),
               child: Column(
@@ -218,8 +215,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black
-                    ),
+                        color: Colors.black),
                   ),
                   SizedBox(
                     height: 8,
@@ -235,8 +231,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               fontFamily: 'Pretendard',
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]
-                          ),
+                              color: Colors.grey[600]),
                         ),
                         elevation: 0,
                         dropdownColor: Colors.white,
@@ -244,19 +239,22 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
-                        ),
+                            color: Colors.grey[600]),
                         items: _subjects
                             .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        )).toList(),
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
                         onChanged: (value) {
                           setState(() {
                             _badSubject = value!;
                           });
                         },
-                        icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600],),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey[600],
+                        ),
                       ),
                       SizedBox(
                         width: 16,
@@ -269,8 +267,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               fontFamily: 'Pretendard',
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]
-                          ),
+                              color: Colors.grey[600]),
                         ),
                         elevation: 0,
                         dropdownColor: Colors.white,
@@ -278,19 +275,22 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
-                        ),
+                            color: Colors.grey[600]),
                         items: _subjects
                             .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        )).toList(),
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
                         onChanged: (value) {
                           setState(() {
                             _selectedDetailBadSubject = value!;
                           });
                         },
-                        icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600],),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
                   ),
@@ -305,8 +305,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey[600]
-                      ),
+                          color: Colors.grey[600]),
                     ),
                     elevation: 0,
                     dropdownColor: Colors.white,
@@ -314,13 +313,13 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: Colors.grey[600]
-                    ),
+                        color: Colors.grey[600]),
                     items: _levels
                         .map((e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e),
-                    )).toList(),
+                              value: e,
+                              child: Text(e),
+                            ))
+                        .toList(),
                     onChanged: (value) {
                       setState(() {
                         _badLevel = value!;
@@ -334,36 +333,37 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              width: 350.0,
-              height: 48.0,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpGrade(),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)
-                    ),
-                  );
-                },
-                child: Text(
-                  '다음',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
-                      color: Colors.white
-                  ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
-                ),
-              ),
-            )
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+        child: TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => SignUpGrade(),
+                  transitionDuration: const Duration(seconds: 0),
+                  reverseTransitionDuration: const Duration(seconds: 0)),
+            );
+          },
+          child: Text(
+            '다음',
+            style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+                fontSize: 16.0,
+                color: Colors.white),
+          ),
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
+              padding:
+                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ))),
         ),
       ),
     );
