@@ -31,17 +31,16 @@ class _SignUpNicknameState extends State<SignUpNickname> {
         child: Column(
           children: [
             Container(
-              height: 40,
-              width: double.maxFinite,
-              child: LinearPercentIndicator(
-                animateFromLastPercent: true,
-                lineHeight: 8.0,
-                percent: 0.25,
-                progressColor: Color.fromARGB(255, 114, 96, 248),
-                backgroundColor: Colors.grey[100],
-                barRadius: Radius.circular(10),
-              )
-            ),
+                height: 40,
+                width: double.maxFinite,
+                child: LinearPercentIndicator(
+                  animateFromLastPercent: true,
+                  lineHeight: 8.0,
+                  percent: 0.25,
+                  progressColor: Color.fromARGB(255, 114, 96, 248),
+                  backgroundColor: Colors.grey[100],
+                  barRadius: Radius.circular(10),
+                )),
             Container(
               height: 122,
               width: double.maxFinite,
@@ -49,27 +48,21 @@ class _SignUpNicknameState extends State<SignUpNickname> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                      "피어오름에서 사용할 닉네임을\n알려주세요.",
+                  Text("피어오름에서 사용할 닉네임을\n알려주세요.",
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black
-                      )
-                  ),
+                          fontFamily: 'Pretendard',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black)),
                   SizedBox(
                     height: 10,
                   ),
-                  Text(
-                      "닉네임을 설정하면 30일 이후 변경할 수 있어요.",
+                  Text("닉네임을 설정하면 30일 이후 변경할 수 있어요.",
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey[800]
-                      )
-                  ),
+                          color: Colors.grey[800])),
                 ],
               ),
             ),
@@ -79,17 +72,14 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                 decoration: InputDecoration(
                   hintText: '닉네임을 입력하세요',
                   hintStyle: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey[600]
-                  ),
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey[600]),
                   enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 234, 235, 236)
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(10))
-                  ),
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 234, 235, 236)),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
               ),
             ),
@@ -98,75 +88,64 @@ class _SignUpNicknameState extends State<SignUpNickname> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                      "언더바(_)를 제외한 특수문자와 이모티콘은 사용할 수 없어요.",
+                  Text("언더바(_)를 제외한 특수문자와 이모티콘은 사용할 수 없어요.",
                       style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey[600]
-                      )
-                  ),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[600])),
                   Row(
                     children: [
-                      Text(
-                          "12",
+                      Text("12",
                           style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]
-                          )
-                      ),
-                      Text(
-                          "/",
+                              color: Colors.grey[600])),
+                      Text("/",
                           style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[200]
-                          )
-                      ),
-                      Text(
-                          "12",
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey[200])),
+                      Text("12",
                           style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
-                          )
-                      ),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey[600])),
                     ],
                   )
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              width: 350.0,
-              height: 48.0,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpSubject(),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)
-                    ),
-                  );
-                },
-                child: Text(
-                  '다음',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
-                      color: Colors.white
-                  ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
-                ),
-              ),
-            )
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+        child: TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => SignUpSubject(),
+                  transitionDuration: const Duration(seconds: 0),
+                  reverseTransitionDuration: const Duration(seconds: 0)),
+            );
+          },
+          child: Text(
+            '다음',
+            style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+                fontSize: 16.0,
+                color: Colors.white),
+          ),
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
+              padding:
+                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ))),
         ),
       ),
     );

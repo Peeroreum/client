@@ -46,8 +46,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                   progressColor: Color.fromARGB(255, 114, 96, 248),
                   backgroundColor: Colors.grey[100],
                   barRadius: Radius.circular(10),
-                )
-            ),
+                )),
             Container(
               height: 122,
               width: double.maxFinite,
@@ -55,27 +54,21 @@ class _SignUpSchoolState extends State<SignUpSchool> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                      "현재 다니는 학교를 알려주세요.",
+                  Text("현재 다니는 학교를 알려주세요.",
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black
-                      )
-                  ),
+                          color: Colors.black)),
                   SizedBox(
                     height: 10,
                   ),
-                  Text(
-                      "학교 정보는 추후 학교 대항전 등 이벤트에 활용될 수 있어요.",
+                  Text("학교 정보는 추후 학교 대항전 등 이벤트에 활용될 수 있어요.",
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey[800]
-                      )
-                  ),
+                          color: Colors.grey[800])),
                 ],
               ),
             ),
@@ -91,8 +84,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                         fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black
-                    ),
+                        color: Colors.black),
                   ),
                   SizedBox(
                     height: 8,
@@ -108,8 +100,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                               fontFamily: 'Pretendard',
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]
-                          ),
+                              color: Colors.grey[600]),
                         ),
                         elevation: 0,
                         dropdownColor: Colors.white,
@@ -117,19 +108,22 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
-                        ),
+                            color: Colors.grey[600]),
                         items: _siDos
                             .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        )).toList(),
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
                         onChanged: (value) {
                           setState(() {
                             _siDo = value!;
                           });
                         },
-                        icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600],),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey[600],
+                        ),
                       ),
                       SizedBox(
                         width: 16,
@@ -142,8 +136,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                               fontFamily: 'Pretendard',
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]
-                          ),
+                              color: Colors.grey[600]),
                         ),
                         elevation: 0,
                         dropdownColor: Colors.white,
@@ -151,19 +144,22 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]
-                        ),
+                            color: Colors.grey[600]),
                         items: _siDos
                             .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        )).toList(),
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
                         onChanged: (value) {
                           setState(() {
                             _siGuGun = value!;
                           });
                         },
-                        icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600],),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
                   ),
@@ -177,14 +173,11 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey[600]
-                      ),
+                          color: Colors.grey[600]),
                       enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 234, 235, 236)
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(10))
-                      ),
+                              color: Color.fromARGB(255, 234, 235, 236)),
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
                     ),
                   ),
                 ],
@@ -202,43 +195,42 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 14.0,
-                            color: Colors.grey[500]
-                        ),
-                      )
-                  ),
-
-                  Container(
-                    width: 350.0,
-                    height: 48.0,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => HomeWedu(),
-                            transitionDuration: const Duration(seconds: 0),
-                            reverseTransitionDuration: const Duration(seconds: 0)
-                          ),
-                        );
-                      },
-                      child: Text(
-                        '다음',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                            color: Colors.white
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
-                      ),
-                    ),
-                  ),
+                            color: Colors.grey[500]),
+                      )),
                 ],
               ),
             )
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+        child: TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => HomeWedu(),
+                  transitionDuration: const Duration(seconds: 0),
+                  reverseTransitionDuration: const Duration(seconds: 0)),
+            );
+          },
+          child: Text(
+            '다음',
+            style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+                fontSize: 16.0,
+                color: Colors.white),
+          ),
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
+              padding:
+                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ))),
         ),
       ),
     );

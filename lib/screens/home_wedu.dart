@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/create_wedu_screen.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
@@ -111,6 +112,7 @@ class _HomeWeduState extends State<HomeWedu> {
       elevation: 0,
       titleSpacing: 0,
       automaticallyImplyLeading: false,
+      // systemOverlayStyle: SystemUiOverlayStyle.light,
       title: Padding(
         padding: EdgeInsets.fromLTRB(20, 12, 0, 12),
         child: Row(
