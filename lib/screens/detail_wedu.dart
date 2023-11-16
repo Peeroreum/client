@@ -1,8 +1,15 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+
+final ImagePicker picker = ImagePicker();
+const  List<String> successList = ['수이', '공주', '밍밍이', '묭묭', '신졔', '철웅이'];
+const  List<String> notSuccessList = ['현지니', '쫑수', '꿍이', '단디', '루피', '짱기'];
 
 class DetailWedu extends StatefulWidget {
   const DetailWedu({super.key});
@@ -12,6 +19,12 @@ class DetailWedu extends StatefulWidget {
 }
 
 class _DetailWeduState extends State<DetailWedu> {
+  Future<List<XFile>>? _images;
+
+  Future<List<XFile>> takeImages() async {
+    return await picker.pickMultiImage();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -394,7 +407,9 @@ class _DetailWeduState extends State<DetailWedu> {
       bottomNavigationBar: Container(
         padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
         child: TextButton(
-          onPressed: () {},
+          onPressed: () {
+            _images = takeImages();
+          },
           child: Text(
             '인증하기',
             style: TextStyle(
@@ -423,282 +438,41 @@ class _DetailWeduState extends State<DetailWedu> {
       padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
       width: MediaQuery.of(context).size.width,
       height: 100,
-      child: ListView(
-        padding: EdgeInsets.only(right: 8),
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
+        padding: EdgeInsets.only(right: 8),
+        itemCount: successList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Column(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    child: CircleAvatar(
+                      radius: 250,
+                      backgroundImage: AssetImage("assets/images/oreum.png"),
+                      backgroundColor: PeeroreumColor.gray[50],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
+                  SizedBox(
+                    height: 8,
                   ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-        ],
+                  Text(
+                    successList[index],
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: PeeroreumColor.gray[800]),
+                  )
+                ],
+              ),
+            )
+          );
+        },
       ),
     );
   }
@@ -708,282 +482,41 @@ class _DetailWeduState extends State<DetailWedu> {
       padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
       width: MediaQuery.of(context).size.width,
       height: 100,
-      child: ListView(
-        padding: EdgeInsets.only(right: 8),
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
+        padding: EdgeInsets.only(right: 8),
+        itemCount: notSuccessList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      child: CircleAvatar(
+                        radius: 250,
+                        backgroundImage: AssetImage("assets/images/oreum.png"),
+                        backgroundColor: PeeroreumColor.gray[50],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      notSuccessList[index],
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: PeeroreumColor.gray[800]),
+                    )
+                  ],
                 ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'name',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: PeeroreumColor.gray[800]),
-                )
-              ],
-            ),
-          ),
-        ],
+              )
+          );
+        },
       ),
     );
   }
