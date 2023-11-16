@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/create_wedu_screen.dart';
-import 'package:peeroreum_client/screens/detail_wedu.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
 import 'package:peeroreum_client/screens/search_wedu.dart';
 
