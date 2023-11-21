@@ -29,91 +29,100 @@ class _SignUpNicknameState extends State<SignUpNickname> {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Column(
+          // mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Container(
-                height: 40,
-                width: double.maxFinite,
-                child: LinearPercentIndicator(
-                  animateFromLastPercent: true,
-                  lineHeight: 8.0,
-                  percent: 0.25,
-                  progressColor: Color.fromARGB(255, 114, 96, 248),
-                  backgroundColor: Colors.grey[100],
-                  barRadius: Radius.circular(10),
-                )),
-            Container(
-              height: 122,
-              width: double.maxFinite,
-              padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("피어오름에서 사용할 닉네임을\n알려주세요.",
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black)),
-                  SizedBox(
-                    height: 10,
+            Column(
+              children: [
+                SizedBox(
+                  height: 40,
+                  width: double.maxFinite,
+                  child: LinearPercentIndicator(
+                    animateFromLastPercent: true,
+                    lineHeight: 8.0,
+                    percent: 0.25,
+                    progressColor: Color.fromARGB(255, 114, 96, 248),
+                    backgroundColor: Colors.grey[100],
+                    barRadius: Radius.circular(10),
                   ),
-                  Text("닉네임을 설정하면 30일 이후 변경할 수 있어요.",
-                      style: TextStyle(
+                ),
+                Container(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("피어오름에서 사용할 닉네임을\n알려주세요.",
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black)),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("닉네임을 설정하면 30일 이후 변경할 수 있어요.",
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey[800])),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 120, 10, 4),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: '닉네임을 입력하세요',
+                      hintStyle: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey[800])),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(10, 120, 10, 4),
-              child: TextFormField(
-                decoration: InputDecoration(
-                  hintText: '닉네임을 입력하세요',
-                  hintStyle: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey[600]),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color.fromARGB(255, 234, 235, 236)),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                          color: Colors.grey[600]),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 234, 235, 236)),
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(18, 0, 18, 319),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("언더바(_)를 제외한 특수문자와 이모티콘은 사용할 수 없어요.",
-                      style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600])),
-                  Row(
+                Container(
+                  padding: EdgeInsets.fromLTRB(18, 0, 18, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("12",
+                      Text("언더바(_)를 제외한 특수문자와 이모티콘은 사용할 수 없어요.",
                           style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
                               color: Colors.grey[600])),
-                      Text("/",
-                          style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[200])),
-                      Text("12",
-                          style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600])),
+                      Row(
+                        children: [
+                          Text("12",
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey[600])),
+                          Text("/",
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey[200])),
+                          Text("12",
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey[600])),
+                        ],
+                      )
                     ],
-                  )
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

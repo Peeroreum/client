@@ -72,9 +72,12 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                 ],
               ),
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+            ),
             Container(
               width: double.maxFinite,
-              padding: EdgeInsets.fromLTRB(10, 79, 10, 248),
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
