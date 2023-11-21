@@ -52,7 +52,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   barRadius: Radius.circular(10),
                 )),
             Container(
-              height: 122,
+              // height: 122,
               width: double.maxFinite,
               padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
               child: Column(
@@ -77,7 +77,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
               ),
             ),
             Container(
-                padding: EdgeInsets.fromLTRB(10, 56, 10, 40),
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -128,9 +128,9 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                             color: Colors.grey[600],
                           ),
                         ),
-                        SizedBox(
-                          width: 16,
-                        ),
+                        // SizedBox(
+                        //   width: 16,
+                        // ),
                         DropdownButton(
                           value: _selectedDetailGoodSubject,
                           hint: Text(
@@ -166,9 +166,9 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
                     DropdownButton(
                       value: _goodLevel,
                       hint: Text(
@@ -204,8 +204,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                     ),
                   ],
                 )),
+            SizedBox(
+              height: 40,
+            ),
             Container(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 143),
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -293,9 +296,6 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         ),
                       ),
                     ],
-                  ),
-                  SizedBox(
-                    height: 20,
                   ),
                   DropdownButton(
                     value: _badLevel,

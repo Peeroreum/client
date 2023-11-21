@@ -72,8 +72,9 @@ class _SignUpGradeState extends State<SignUpGrade> {
                 ],
               ),
             ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.15),
             Container(
-                padding: EdgeInsets.fromLTRB(10, 167, 10, 312),
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
