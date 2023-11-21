@@ -43,6 +43,8 @@ dependencies:
   flutter_expanded_tile: ^0.3.7
   carousel_slider: ^4.2.1
 
+  textfield_tags: ^2.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

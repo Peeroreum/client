@@ -98,6 +98,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     ? BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         image: DecorationImage(
+                          colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.2), BlendMode.darken),
                           image: FileImage(File(_image!.path)),
                           fit: BoxFit.cover,
                         ),
@@ -202,6 +204,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 setState(() {
                                   _backgroundColor =
                                       PeeroreumColor.primaryPuple[400]!;
+                                  _fontColor = PeeroreumColor.white;
                                   _image = null;
                                 });
                               },
@@ -228,6 +231,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 setState(() {
                                   _backgroundColor =
                                       PeeroreumColor.primaryPuple[200]!;
+                                  _fontColor = PeeroreumColor.white;
                                   _image = null;
                                 });
                               },
@@ -254,6 +258,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 setState(() {
                                   _backgroundColor =
                                       PeeroreumColor.primaryPuple[50]!;
+                                  _fontColor = PeeroreumColor.black;
                                   _image = null;
                                 });
                               },
@@ -279,6 +284,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               onTap: () {
                                 setState(() {
                                   _backgroundColor = PeeroreumColor.white;
+                                  _fontColor = PeeroreumColor.black;
                                   _image = null;
                                 });
                               },
@@ -304,6 +310,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               onTap: () {
                                 setState(() {
                                   _backgroundColor = PeeroreumColor.black;
+                                  _fontColor = PeeroreumColor.white;
                                   _image = null;
                                 });
                               },
@@ -345,6 +352,14 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                 onColorChanged: (Color color) {
                                                   setState(() {
                                                     _backgroundColor = color;
+                                                    int red = color.red;
+                                                    int blue = color.blue;
+                                                    int green = color.green;
+                                                    _fontColor = Color.fromRGBO(
+                                                        255 - red,
+                                                        255 - green,
+                                                        255 - blue,
+                                                        1);
                                                   });
                                                 },
                                               ),
@@ -385,6 +400,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               behavior: HitTestBehavior.translucent,
                               onTap: () {
                                 getImage(ImageSource.gallery);
+                                _fontColor = PeeroreumColor.white;
                               },
                               child: Container(
                                 child: Icon(

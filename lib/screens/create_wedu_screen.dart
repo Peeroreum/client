@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 DateTime date = DateTime.now();
 const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
@@ -11,6 +13,7 @@ const List<String> grade = <String>['중1', '중2', '중3'];
 const List<int> headcount = <int>[10, 30, 50, 70, 100];
 const List<String> gender = <String>['전체', '여자', '남자'];
 const List<String> challenge = <String>['챌린지1', '챌린지2', '챌린지3', '기타'];
+List<String> _tag = [];
 
 class CreateWedu extends StatefulWidget {
   CreateWedu({super.key});
@@ -30,6 +33,8 @@ class _CreateWeduState extends State<CreateWedu> {
   final int maxPassword = 6;
   String nameValue = "";
   String passwordValue = "";
+  late TextfieldTagsController _controller;
+  Color _nextColor = PeeroreumColor.gray[500]!;
 
   XFile? _image; //이미지를 담을 변수 선언
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
@@ -41,6 +46,18 @@ class _CreateWeduState extends State<CreateWedu> {
         _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextfieldTagsController();
   }
 
   @override
@@ -69,7 +86,10 @@ class _CreateWeduState extends State<CreateWedu> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/next');
+              if (nameValue != "" && (dropdownChallenge != null)) {
+                Navigator.pushNamed(context, '/next');
+              } else
+                return null;
             },
             child: Text(
               '다음',
@@ -77,7 +97,7 @@ class _CreateWeduState extends State<CreateWedu> {
                 fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
-                color: PeeroreumColor.gray[500],
+                color: _nextColor,
               ),
             ),
           ),
@@ -357,43 +377,46 @@ class _CreateWeduState extends State<CreateWedu> {
                             SizedBox(
                               height: 8,
                             ),
-                            SizedBox(
-                              width: 69,
-                              child: DropdownButtonFormField(
-                                decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 12),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: PeeroreumColor.black,
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: PeeroreumColor.gray[200]!),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: SizedBox(
+                                height: 40,
+                                width: 70,
+                                child: DropdownButton(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 12),
+                                  underline: SizedBox.shrink(),
+                                  value: dropdownGrade,
+                                  iconSize: 18,
+                                  icon: Container(
+                                    margin: EdgeInsets.only(left: 7),
+                                    child: Icon(Icons.expand_more),
+                                  ),
+                                  items: grade.map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          color: PeeroreumColor.black,
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide(
-                                          color: PeeroreumColor.gray[200]!,
-                                        ))),
-                                value: dropdownGrade,
-                                items: grade.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    dropdownGrade = value!;
-                                  });
-                                },
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      dropdownGrade = value!;
+                                    });
+                                  },
+                                ),
                               ),
                             ),
                           ],
@@ -414,45 +437,42 @@ class _CreateWeduState extends State<CreateWedu> {
                               const SizedBox(
                                 height: 8,
                               ),
-                              SizedBox(
-                                width: 72,
-                                child: DropdownButtonFormField(
-                                    decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 8, horizontal: 12),
-                                        isDense: true,
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: PeeroreumColor.black,
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: PeeroreumColor.gray[200]!,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: SizedBox(
+                                  width: 72,
+                                  height: 40,
+                                  child: DropdownButton(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 8),
+                                      underline: SizedBox.shrink(),
+                                      value: dropdownHeadcount,
+                                      items: headcount
+                                          .map<DropdownMenuItem<int>>(
+                                              (int value) {
+                                        return DropdownMenuItem<int>(
+                                          value: value,
+                                          child: Text(
+                                            "$value",
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide(
-                                              color: PeeroreumColor.gray[200]!,
-                                            ))),
-                                    value: dropdownHeadcount,
-                                    items: headcount.map<DropdownMenuItem<int>>(
-                                        (int value) {
-                                      return DropdownMenuItem<int>(
-                                        value: value,
-                                        child: Text(
-                                          "$value",
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (int? value) {
-                                      setState(() {
-                                        dropdownHeadcount = value!;
-                                      });
-                                    }),
+                                        );
+                                      }).toList(),
+                                      onChanged: (int? value) {
+                                        setState(() {
+                                          dropdownHeadcount = value!;
+                                        });
+                                      }),
+                                ),
                               ),
                             ],
                           ),
@@ -632,34 +652,143 @@ class _CreateWeduState extends State<CreateWedu> {
                               ),
                               SizedBox(
                                 width: 350,
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                    isCollapsed: true,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 12, horizontal: 16),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: PeeroreumColor.black,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide(
-                                          color: PeeroreumColor.gray[200]!,
-                                        )),
-                                    hintText: '#피어오름 #오르미',
-                                    helperText: "해시태그(#)로 각 키워드를 구분해 주세요.",
-                                    hintStyle: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400),
-                                    helperStyle: const TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff6C6D6D),
-                                    ),
-                                  ),
+                                child: TextFieldTags(
+                                  textfieldTagsController: _controller,
+                                  initialTags: null,
+                                  textSeparators: [' '],
+                                  validator: (String tag) {
+                                    if (_controller.getTags!.contains(tag))
+                                      return 'you already entered that';
+                                    else {
+                                      _tag.add(tag);
+                                      return null;
+                                    }
+                                  },
+                                  inputfieldBuilder: (context, tec, fn, error,
+                                      onChanged, onSubmitted) {
+                                    return ((context, sc, tags, onTagDelete) {
+                                      return TextField(
+                                        controller: tec,
+                                        focusNode: fn,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide(
+                                              color: PeeroreumColor.gray[200]!,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: PeeroreumColor.black,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: PeeroreumColor.error,
+                                            ),
+                                          ),
+                                          helperText:
+                                              '해시태그(#)로 각 키워드를 구분해 주세요.',
+                                          helperStyle: const TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          hintText: _controller.hasTags
+                                              ? "#피어오름"
+                                              : "#피어오름 #오르미",
+                                          hintStyle: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400),
+                                          //errorText: error,
+                                          prefixIconConstraints: BoxConstraints(
+                                              maxWidth: 350 * 0.8),
+                                          prefixIcon: tags.isNotEmpty
+                                              ? SingleChildScrollView(
+                                                  controller: sc,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Row(
+                                                      children: tags
+                                                          .map((String tag) {
+                                                    return Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: PeeroreumColor
+                                                                    .primaryPuple[
+                                                                400]!),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(20.0),
+                                                        ),
+                                                        color:
+                                                            Colors.transparent,
+                                                      ),
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 5.0),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10.0,
+                                                          vertical: 5.0),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          InkWell(
+                                                            child: Text(
+                                                              '# $tag',
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      'Pretendard',
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: PeeroreumColor
+                                                                          .primaryPuple[
+                                                                      400]),
+                                                            ),
+                                                            onTap: () {
+                                                              print(
+                                                                  "$tag selected");
+                                                            },
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 4.0),
+                                                          InkWell(
+                                                            child: Icon(
+                                                              Icons.cancel,
+                                                              size: 16.0,
+                                                              color:
+                                                                  PeeroreumColor
+                                                                          .gray[
+                                                                      200]!,
+                                                            ),
+                                                            onTap: () {
+                                                              onTagDelete(tag);
+                                                              _tag.remove(tag);
+                                                            },
+                                                          )
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }).toList()),
+                                                )
+                                              : null,
+                                        ),
+                                        onChanged: onChanged,
+                                        onSubmitted: onSubmitted,
+                                      );
+                                    });
+                                  },
                                 ),
                               ),
                             ],
