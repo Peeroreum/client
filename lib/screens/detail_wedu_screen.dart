@@ -6,6 +6,8 @@ import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/compliment_list_screen.dart';
+import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 final ImagePicker picker = ImagePicker();
@@ -354,13 +356,26 @@ class _DetailWeduState extends State<DetailWedu> {
                           fontSize: 18,
                           color: PeeroreumColor.gray[800]),
                     ),
-                    Text(
-                      '전체보기',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: PeeroreumColor.gray[500]),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                              pageBuilder: (_, __, ___) => ComplimentList(),
+                              transitionDuration:
+                              const Duration(seconds: 0),
+                              reverseTransitionDuration:
+                              const Duration(seconds: 0)),
+                        );
+                      },
+                      child: Text(
+                        '전체보기',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[500]),
+                      ),
                     ),
                   ],
                 ),
@@ -379,13 +394,26 @@ class _DetailWeduState extends State<DetailWedu> {
                           fontSize: 18,
                           color: PeeroreumColor.gray[800]),
                     ),
-                    Text(
-                      '전체보기',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: PeeroreumColor.gray[500]),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                              pageBuilder: (_, __, ___) => EncouragementList(),
+                              transitionDuration:
+                              const Duration(seconds: 0),
+                              reverseTransitionDuration:
+                              const Duration(seconds: 0)),
+                        );
+                      },
+                      child: Text(
+                        '전체보기',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[500]),
+                      ),
                     ),
                   ],
                 ),
@@ -397,28 +425,31 @@ class _DetailWeduState extends State<DetailWedu> {
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-        child: TextButton(
-          onPressed: () {
-            takeImages();
-          },
-          child: Text(
-            '인증하기',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: PeeroreumColor.white,
+        child: SizedBox(
+          height: 48,
+          child: TextButton(
+            onPressed: () {
+              takeImages();
+            },
+            child: Text(
+              '인증하기',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: PeeroreumColor.white,
+              ),
             ),
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
+                padding:
+                    MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ))),
           ),
-          style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-              padding:
-                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ))),
         ),
       ),
     );
