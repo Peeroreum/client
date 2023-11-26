@@ -7,11 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
-DateTime date = DateTime.now();
+DateTime date = DateTime.now().add(Duration(days:66));
 const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
 const List<String> grade = <String>['중1', '중2', '중3'];
 const List<int> headcount = <int>[10, 30, 50, 70, 100];
-const List<String> gender = <String>['전체', '여자', '남자'];
+//const List<String> gender = <String>['전체', '여자', '남자'];
 const List<String> challenge = <String>['챌린지1', '챌린지2', '챌린지3', '기타'];
 List<String> _tag = [];
 
@@ -26,15 +26,32 @@ class _CreateWeduState extends State<CreateWedu> {
   String dropdownSubject = subject.first;
   String dropdownGrade = grade.first;
   int dropdownHeadcount = headcount.first;
-  String dropdownGender = gender.first;
+  //String dropdownGender = gender.first;
   String? dropdownChallenge;
+
   bool _isLocked = false;
+
   final int maxName = 16;
   final int maxPassword = 6;
   String nameValue = "";
   String passwordValue = "";
+
   late TextfieldTagsController _controller;
+
   Color _nextColor = PeeroreumColor.gray[500]!;
+
+  void check_validation(){
+     if (nameValue != "" && (dropdownChallenge != null)) {
+                setState(() {
+                  _nextColor=PeeroreumColor.primaryPuple[400]!;
+                });
+              }
+      else{
+        setState(() {
+          _nextColor = PeeroreumColor.gray[500]!;
+        });
+      }
+  }
 
   XFile? _image; //이미지를 담을 변수 선언
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
@@ -226,6 +243,7 @@ class _CreateWeduState extends State<CreateWedu> {
                             onChanged: (value) {
                               setState(() {
                                 nameValue = value;
+                                check_validation();
                               });
                             },
                           ),
@@ -326,8 +344,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                           context, // 팝업으로 띄우기 때문에 context 전달
                                       initialDate: DateTime.now().add(Duration(
                                           days:
-                                              30)), // 달력을 띄웠을 때 선택된 날짜. 위에서 date 변수에 오늘 날짜를 넣었으므로 오늘 날짜가 선택돼서 나옴
-                                      firstDate: DateTime.now(), // 시작 년도
+                                              66)), // 달력을 띄웠을 때 선택된 날짜. 위에서 date 변수에 오늘 날짜를 넣었으므로 오늘 날짜가 선택돼서 나옴
+                                      firstDate: DateTime.now().add(Duration(
+                                          days:
+                                              66)), // 시작 년도
                                       lastDate: DateTime.now()
                                           .add(Duration(days: 3 * 365)),
                                     );
@@ -336,7 +356,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                         date =
                                             selectedDate; // 선택한 날짜는 date 변수에 저장
                                       });
-                                    }
+                                    }     
                                   },
                                   icon: Icon(
                                     Icons.calendar_month,
@@ -344,7 +364,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   ),
                                   label: Text(
                                     '$date'.substring(0, 10),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
@@ -477,65 +497,7 @@ class _CreateWeduState extends State<CreateWedu> {
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(left: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '성별',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                width: 75,
-                                child: DropdownButtonFormField(
-                                  decoration: InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 12),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: PeeroreumColor.black,
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide(
-                                            color: PeeroreumColor.gray[200]!,
-                                          ))),
-                                  value: dropdownGender,
-                                  items: gender.map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      dropdownGender = value!;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        
                       ],
                     ),
                     const SizedBox(
@@ -591,6 +553,7 @@ class _CreateWeduState extends State<CreateWedu> {
                             setState(() {
                               dropdownChallenge = value!;
                             });
+                            check_validation();
                           },
                         ),
                         Container(
