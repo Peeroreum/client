@@ -1,6 +1,4 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-import 'dart:js_util';
-
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -22,7 +20,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
   void _checkInput() {
     if (id_controller.text.length >= 5 &&
         pw_controller.text.length >= 8 &&
-        equal(pw_controller.text, pw2_controller.text)) {
+        (pw_controller.text == pw2_controller.text)) {
       setState(() {
         is_Enabled = true;
       });
@@ -349,36 +347,41 @@ class _EmailSignUpState extends State<EmailSignUp> {
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-        child: TextButton(
-          onPressed: is_Enabled
-              ? () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpNickname(),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)),
-                  );
-                }
-              : null,
-          child: Text(
-            '다음',
-            style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w600,
-                fontSize: 16.0,
-                color: PeeroreumColor.white),
+        child: SizedBox(
+          height: 48,
+          child: TextButton(
+            onPressed: is_Enabled
+                ? () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => SignUpNickname(),
+                          transitionDuration: const Duration(seconds: 0),
+                          reverseTransitionDuration:
+                              const Duration(seconds: 0)),
+                    );
+                  }
+                : null,
+            child: Text(
+              '다음',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.0,
+                  color: PeeroreumColor.white),
+            ),
+            style: ButtonStyle(
+                backgroundColor: is_Enabled
+                    ? MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400])
+                    : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 12)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ))),
           ),
-          style: ButtonStyle(
-              backgroundColor: is_Enabled
-                  ? MaterialStateProperty.all(PeeroreumColor.primaryPuple[400])
-                  : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-              padding:
-                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ))),
         ),
       ),
     );

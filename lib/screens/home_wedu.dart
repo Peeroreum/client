@@ -6,6 +6,8 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/create_wedu_screen.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
 import 'package:peeroreum_client/screens/search_wedu.dart';
+import 'package:peeroreum_client/screens/detail_wedu_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -18,6 +20,7 @@ class _HomeWeduState extends State<HomeWedu> {
   int selectedIndex = 1;
   List<Map<String, String>> datas = [];
   List<Map<String, String>> inroom_datas = [];
+  List<Map<String, String>> searchData = [];
   List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> dropdownClassList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
   List<String> dropdownTypeList = ['추천순', '인기순'];
@@ -103,6 +106,16 @@ class _HomeWeduState extends State<HomeWedu> {
         "number": "NN",
         "day": "NNN",
       }
+    ];
+    searchData = [
+      {"cid": "1", "search_word": "검색어"},
+      {"cid": "2", "search_word": "검색어"},
+      {"cid": "3", "search_word": "검색어"},
+      {"cid": "4", "search_word": "검색어"},
+      {"cid": "5", "search_word": "검색어"},
+      {"cid": "6", "search_word": "검색어"},
+      {"cid": "7", "search_word": "검색어"},
+      {"cid": "8", "search_word": "검색어"},
     ];
   }
 
@@ -402,7 +415,7 @@ class _HomeWeduState extends State<HomeWedu> {
           ),
           onTap: () => {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => InWedu()))
+                .push(MaterialPageRoute(builder: (context) => DetailWedu()))
           },
         );
       },
@@ -650,21 +663,342 @@ class _HomeWeduState extends State<HomeWedu> {
               ],
             ),
           ),
-          onTap: () {},
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              showDragHandle: true,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              isScrollControlled: true,
+              builder: (context) {
+                // return challengeImages(successList[index]);
+                return roominfo(datas[index]);
+              },
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget roominfo(index) {
+    return SizedBox(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.64,
+      child: Scaffold(
+        body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 1, color: PeeroreumColor.gray[200]!),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Image.asset(datas[0]["group_profile"]!,
+                            width: 72, height: 72),
+                      ),
+                      Container(
+                        height: 72,
+                        padding: EdgeInsets.only(left: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(4)),
+                                  color: Color(0xFFFFE9E9)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 8),
+                                child: Text(
+                                  datas[0]["subject"]!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      color: Color(0xFFF86060),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              datas[0]["name"]!,
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.black),
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              children: [
+                                Text(datas[0]["grade"]!,
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: PeeroreumColor.gray[600])),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 2),
+                                  child: Text('⋅'),
+                                ),
+                                Text('${datas[0]["number"]!}명 참여중',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: PeeroreumColor.gray[600])),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 2),
+                                  child: Text('⋅'),
+                                ),
+                                Text('D-${datas[0]["day"]!}',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: PeeroreumColor.gray[600])),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: PeeroreumColor.gray[100],
+                        borderRadius: BorderRadius.circular(8)),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(
+                        'assets/icons/share.svg',
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              roominfo_tag(),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Text(
+                  "수학 문제 3장 풀기",
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
+                ),
+                decoration: BoxDecoration(
+                    color: PeeroreumColor.gray[50],
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                height: 162,
+                decoration: BoxDecoration(
+                    color: PeeroreumColor.primaryPuple[400],
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.all(20),
+          width: double.maxFinite,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    '닫기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.gray[600],
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    '참여하기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.white,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget roominfo_tag() {
+    return Padding(
+      padding: EdgeInsets.only(top: 16),
+      child: SizedBox(
+        height: 26,
+        child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        width: 1, color: PeeroreumColor.primaryPuple[400]!),
+                    borderRadius: BorderRadius.all(Radius.circular(100.0))),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      '#',
+                      style: TextStyle(
+                        color: PeeroreumColor.primaryPuple[200],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      '${searchData[index]["search_word"]}',
+                      style: TextStyle(
+                        color: PeeroreumColor.primaryPuple[400],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return SizedBox(
+                width: 4,
+              );
+            },
+            itemCount: searchData.length),
+      ),
     );
   }
 
   Widget bottomNavigatorBarWidget() {
     return BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: '같이해냄'),
-          BottomNavigationBarItem(icon: Icon(Icons.forum), label: '질의응답'),
-          BottomNavigationBarItem(icon: Icon(Icons.stars), label: '랭킹'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.perm_identity), label: '마이페이지'),
+              icon: SvgPicture.asset(
+                'assets/icons/home.svg',
+                color: PeeroreumColor.gray[400],
+              ),
+              activeIcon: SvgPicture.asset(
+                'assets/icons/home_fill.svg',
+                color: PeeroreumColor.primaryPuple[400],
+              ),
+              label: '홈'),
+          BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/icons/user_three.svg',
+                color: PeeroreumColor.gray[400],
+              ),
+              activeIcon: SvgPicture.asset(
+                'assets/icons/user_three_fill.svg',
+                color: PeeroreumColor.primaryPuple[400],
+              ),
+              label: '같이해냄'),
+          BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/icons/chats_tear_drop.svg',
+                color: PeeroreumColor.gray[400],
+              ),
+              activeIcon: SvgPicture.asset(
+                'assets/icons/chats_tear_drop_fill.svg',
+                color: PeeroreumColor.primaryPuple[400],
+              ),
+              label: '질의응답'),
+          BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/icons/medal.svg',
+                color: PeeroreumColor.gray[400],
+              ),
+              activeIcon: SvgPicture.asset(
+                'assets/icons/medal_fill.svg',
+                color: PeeroreumColor.primaryPuple[400],
+              ),
+              label: '랭킹'),
+          BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/icons/user.svg',
+                color: PeeroreumColor.gray[400],
+              ),
+              activeIcon: SvgPicture.asset(
+                'assets/icons/user_fill.svg',
+                color: PeeroreumColor.primaryPuple[400],
+              ),
+              label: '마이페이지'),
         ],
         currentIndex: selectedIndex,
         unselectedItemColor: PeeroreumColor.gray[400],

@@ -168,7 +168,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       constraints: BoxConstraints(),
                                       padding: EdgeInsets.zero,
                                     )
-                                  : SizedBox(),
+                                  : SizedBox(
+                                      width: 0,
+                                    ),
                               SizedBox(
                                 width: 12,
                               ),
