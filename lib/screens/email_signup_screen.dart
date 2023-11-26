@@ -2,6 +2,7 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
 
 class EmailSignUp extends StatefulWidget {
@@ -10,6 +11,7 @@ class EmailSignUp extends StatefulWidget {
 }
 
 class _EmailSignUpState extends State<EmailSignUp> {
+  Member member = Member();
   final id_controller = TextEditingController();
   final pw_controller = TextEditingController();
   final pw2_controller = TextEditingController();
@@ -23,6 +25,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
         (pw_controller.text == pw2_controller.text)) {
       setState(() {
         is_Enabled = true;
+        member.username = id_controller.text;
+        member.password = pw_controller.text;
       });
     } else {
       setState(() {
@@ -355,7 +359,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => SignUpNickname(),
+                          pageBuilder: (_, __, ___) => SignUpNickname(member),
                           transitionDuration: const Duration(seconds: 0),
                           reverseTransitionDuration:
                               const Duration(seconds: 0)),

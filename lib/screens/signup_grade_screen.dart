@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/screens/create_wedu_screen.dart';
 import 'package:peeroreum_client/screens/signup_school_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SignUpGrade extends StatefulWidget {
+  Member member;
+  SignUpGrade(this.member);
+
   @override
-  State<SignUpGrade> createState() => _SignUpGradeState();
+  State<SignUpGrade> createState() => _SignUpGradeState(member);
 }
 
 class _SignUpGradeState extends State<SignUpGrade> {
+  Member member;
+  _SignUpGradeState(this.member);
+  final _schools = ['중학교', '고등학교'];
+  final _grades = ['1학년', '2학년', '3학년'];
+  String? _school;
+  String? _grade;
+
   @override
   Widget build(BuildContext context) {
-    final _schools = ['중학교', '고등학교'];
-    final _grades = ['1학년', '2학년', '3학년'];
-    String? _school;
-    String? _grade;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -154,13 +161,17 @@ class _SignUpGradeState extends State<SignUpGrade> {
           height: 48,
           child: TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => SignUpSchool(),
-                    transitionDuration: const Duration(seconds: 0),
-                    reverseTransitionDuration: const Duration(seconds: 0)),
-              );
+              if(_school != null && _grade != null) {
+                member.grade = _school == "중학교"? _grades.indexOf(_grade!) + 1 : _grades.indexOf(_grade!) + 4;
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => SignUpSchool(member),
+                      transitionDuration: const Duration(seconds: 0),
+                      reverseTransitionDuration: const Duration(seconds: 0)),
+                );
+              }
+
             },
             child: Text(
               '다음',
