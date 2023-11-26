@@ -338,32 +338,35 @@ class _SignUpSubjectState extends State<SignUpSubject> {
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-        child: TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                  pageBuilder: (_, __, ___) => SignUpGrade(),
-                  transitionDuration: const Duration(seconds: 0),
-                  reverseTransitionDuration: const Duration(seconds: 0)),
-            );
-          },
-          child: Text(
-            '다음',
-            style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w600,
-                fontSize: 16.0,
-                color: Colors.white),
+        child: SizedBox(
+          height: 48,
+          child: TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => SignUpGrade(),
+                    transitionDuration: const Duration(seconds: 0),
+                    reverseTransitionDuration: const Duration(seconds: 0)),
+              );
+            },
+            child: Text(
+              '다음',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.0,
+                  color: Colors.white),
+            ),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 12)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ))),
           ),
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
-              padding:
-                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ))),
         ),
       ),
     );
