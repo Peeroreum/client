@@ -22,10 +22,10 @@ class PeeroreumApp extends StatelessWidget {
         '/signIn': (context) => SignIn(),
         '/signIn/email': (context) => EmailSignIn(),
         '/signUp/email': (context) => EmailSignUp(),
-        '/signUp/profile/nickname': (context) => SignUpNickname(),
-        '/signUp/profile/subject': (context) => SignUpSubject(),
-        '/signUp/profile/grade': (context) => SignUpGrade(),
-        '/signUp/profile/school': (context) => SignUpSchool()
+        // '/signUp/profile/nickname': (context) => SignUpNickname(),
+        // '/signUp/profile/subject': (context) => SignUpSubject(),
+        // '/signUp/profile/grade': (context) => SignUpGrade(),
+        // '/signUp/profile/school': (context) => SignUpSchool()
       },
       // debugShowCheckedModeBanner: false,
     );

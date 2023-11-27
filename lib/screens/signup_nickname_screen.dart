@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/signup_subject_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class SignUpNickname extends StatefulWidget {
+  Member member;
+  SignUpNickname(this.member);
+
   @override
-  State<SignUpNickname> createState() => _SignUpNicknameState();
+  State<SignUpNickname> createState() => _SignUpNicknameState(member);
 }
 
 class _SignUpNicknameState extends State<SignUpNickname> {
+  Member member;
+  _SignUpNicknameState(this.member);
+  final nicknameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +84,10 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 120, 10, 4),
                   child: TextFormField(
+                    controller: nicknameController,
+                    onChanged: (value) {
+                      member.nickname = value;
+                    },
                     decoration: InputDecoration(
                       hintText: '닉네임을 입력하세요',
                       hintStyle: TextStyle(
@@ -136,7 +148,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
               Navigator.push(
                 context,
                 PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => SignUpSubject(),
+                    pageBuilder: (_, __, ___) => SignUpSubject(member),
                     transitionDuration: const Duration(seconds: 0),
                     reverseTransitionDuration: const Duration(seconds: 0)),
               );

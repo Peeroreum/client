@@ -1,20 +1,31 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/screens/email_signin_screen.dart';
 import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:http/http.dart' as http;
 
 class SignUpSchool extends StatefulWidget {
+  Member member;
+  SignUpSchool(this.member);
+
   @override
-  State<SignUpSchool> createState() => _SignUpSchoolState();
+  State<SignUpSchool> createState() => _SignUpSchoolState(member);
 }
 
 class _SignUpSchoolState extends State<SignUpSchool> {
+  Member member;
+  _SignUpSchoolState(this.member);
+
+  final schoolController = TextEditingController();
+  final _siDos = ['서울특별시', '경기도', '강원도', '광주광역시', '울산광역시'];
+  String? _siDo;
+  String? _siGuGun;
+  String? _schoolName;
   @override
   Widget build(BuildContext context) {
-    final _siDos = ['서울특별시', '경기도', '강원도', '광주광역시', '울산광역시'];
-    String? _siDo;
-    String? _siGuGun;
-    String? _schoolName;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -170,6 +181,10 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     height: 20,
                   ),
                   TextFormField(
+                    controller: schoolController,
+                    onChanged: (value) {
+                      _schoolName = value;
+                    },
                     decoration: InputDecoration(
                       hintText: '학교명',
                       hintStyle: TextStyle(
@@ -211,14 +226,26 @@ class _SignUpSchoolState extends State<SignUpSchool> {
         child: SizedBox(
           height: 48,
           child: TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => HomeWedu(),
-                    transitionDuration: const Duration(seconds: 0),
-                    reverseTransitionDuration: const Duration(seconds: 0)),
-              );
+            onPressed: () async {
+              if(_siDo != null && _siGuGun != null && _schoolName != null) {
+                member.school = _schoolName;
+                var result = await http.post(
+                    Uri.parse('http://192.168.219.106:8080/signup'),
+                    body: jsonEncode(member),
+                    headers: {'Content-Type': 'application/json'}
+                );
+                if(result.statusCode == 200) {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => EmailSignIn(),
+                        transitionDuration: const Duration(seconds: 0),
+                        reverseTransitionDuration: const Duration(seconds: 0)),
+                  );
+                } else {
+                  print(result.statusCode);
+                }
+              }
             },
             child: Text(
               '다음',

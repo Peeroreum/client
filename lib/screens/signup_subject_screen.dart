@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/signup_grade_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SignUpSubject extends StatefulWidget {
+  Member member;
+  SignUpSubject(this.member);
+
   @override
-  State<SignUpSubject> createState() => _SignUpSubjectState();
+  State<SignUpSubject> createState() => _SignUpSubjectState(member);
 }
 
 class _SignUpSubjectState extends State<SignUpSubject> {
@@ -16,6 +20,9 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   String? _selectedDetailBadSubject;
   String? _goodLevel;
   String? _badLevel;
+
+  Member member;
+  _SignUpSubjectState(this.member);
 
   @override
   Widget build(BuildContext context) {
@@ -342,13 +349,18 @@ class _SignUpSubjectState extends State<SignUpSubject> {
           height: 48,
           child: TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => SignUpGrade(),
-                    transitionDuration: const Duration(seconds: 0),
-                    reverseTransitionDuration: const Duration(seconds: 0)),
-              );
+              if(_goodSubject != null && _badSubject != null) {
+                member.goodSubject = _subjects.indexOf(_goodSubject!) + 1;
+                member.badSubject = _subjects.indexOf(_badSubject!) + 1;
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => SignUpGrade(member),
+                      transitionDuration: const Duration(seconds: 0),
+                      reverseTransitionDuration: const Duration(seconds: 0)),
+                );
+              }
+
             },
             child: Text(
               '다음',
