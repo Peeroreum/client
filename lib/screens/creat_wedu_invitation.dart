@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart' as svg_provider;
 
 class CreateInvitation extends StatefulWidget {
   const CreateInvitation({super.key});
@@ -17,7 +18,16 @@ class _CreateInvitationState extends State<CreateInvitation> {
 
   Color _backgroundColor = PeeroreumColor.primaryPuple[400]!;
   Color _fontColor = PeeroreumColor.white;
-  String _inviText = "같이방에서 같이 공부해요~ ♥";
+  String _inviText = "같이방에서 같이 공부해요~ ☆";
+
+
+
+  Map<String, String> iconMap = {
+    '♡': '★',
+    '♥': '☆',
+    '☆': '♥',
+    '★': '♡',
+  };
 
   Color? pickerColor;
   void changeColor(Color color) {
@@ -50,7 +60,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
             Navigator.pop(context);
           },
         ),
-        title: Text(
+        title: const Text(
           '초대장 만들기',
           style: TextStyle(
             fontFamily: 'Pretendard',
@@ -76,13 +86,13 @@ class _CreateInvitationState extends State<CreateInvitation> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(
             children: [
               Container(
                 width: 350,
                 height: 162,
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Center(
                   child: Text(
                     _inviText,
@@ -109,7 +119,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                         borderRadius: BorderRadius.circular(8),
                       ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
@@ -125,20 +135,24 @@ class _CreateInvitationState extends State<CreateInvitation> {
                       color: PeeroreumColor.black,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   Container(
                     width: 350,
                     child: TextFormField(
                       onFieldSubmitted: (value) {
+                        
                         setState(() {
-                          _inviText = value;
+                          _inviText=value.replaceAllMapped(
+                            RegExp(r'[♡♥☆★]'),
+                            (match) => iconMap[match.group(0)]!,
+                          );
                         });
                       },
                       decoration: InputDecoration(
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -151,7 +165,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 color: PeeroreumColor.gray[200]!,
                               )),
                           hintText: "같이방에서 같이 공부해요~ ♥",
-                          helperText: "초대장 내용은 만든 후에 변경할 수 없어요.",
+                          helperText: "초대장은 만든 후에 변경할 수 없어요.",
                           helperStyle: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -338,8 +352,11 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                   context: context,
                                   builder: (context) {
                                     return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0), // 테두리의 둥근 정도 조절
+                                        ),
                                       child: Padding(
-                                          padding: const EdgeInsets.all(8),
+                                          padding: const EdgeInsets.all(10),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
@@ -348,6 +365,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               ColorPicker(
+                                                showLabel: false,
+                                                enableAlpha: false,
                                                 pickerColor: _backgroundColor,
                                                 onColorChanged: (Color color) {
                                                   setState(() {
@@ -363,11 +382,16 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                   });
                                                 },
                                               ),
+                                              
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: const Text('확인'),
+                                                child: const Text('확인',
+                                                style: TextStyle(
+                                                  color: PeeroreumColor.black,
+                                                  fontFamily: 'Pretendard'
+                                                ),),
                                               )
                                             ],
                                           )),
@@ -379,18 +403,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 }
                               },
                               child: Container(
-                                margin: EdgeInsets.all(2),
-                                width: 28,
-                                height: 28,
-                                child: Icon(Icons.colorize),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: PeeroreumColor.error,
-                                  border: Border.all(
-                                    color: PeeroreumColor.gray[100]!,
-                                    width: 2,
-                                  ),
-                                ),
+                                child:Image(image: AssetImage('assets/icons/color_picker.png'))
+                                
                               ),
                             ),
                             SizedBox(
@@ -408,8 +422,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                   color: PeeroreumColor.white,
                                 ),
                                 margin: EdgeInsets.all(2),
-                                width: 28,
-                                height: 28,
+                                width: 30,
+                                height: 30,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Color(0xffCACACA),
