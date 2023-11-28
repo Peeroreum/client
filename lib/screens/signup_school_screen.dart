@@ -43,6 +43,121 @@ class _SignUpSchoolState extends State<SignUpSchool> {
     }
   }
 
+  void SkipDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "학교 입력을 건너뛰실 건가요?",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                  color: PeeroreumColor.black,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "학교를 입력하지 않은 경우, 학교 대항전과 같은\n이벤트 참여에 제한이 생길 수 있어요.",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Pretendard',
+                  color: PeeroreumColor.gray[600],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        '취소',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.gray[600],
+                        ),
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          PageRouteBuilder(
+                              pageBuilder: (_, __, ___) => SignIn(),
+                              transitionDuration: const Duration(seconds: 0),
+                              reverseTransitionDuration:
+                                  const Duration(seconds: 0)),
+                          (route) => false);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        '건너뛰기',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.white,
+                        ),
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400]),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,14 +309,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => SignIn(),
-                          transitionDuration: const Duration(seconds: 0),
-                          reverseTransitionDuration:
-                              const Duration(seconds: 0)),
-                      (route) => false);
+                  SkipDialog();
                 },
                 child: Text(
                   '건너뛰기',
