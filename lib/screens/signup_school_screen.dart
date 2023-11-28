@@ -7,6 +7,8 @@ import 'package:peeroreum_client/screens/signin_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 
+import '../api/PeeroreumApi.dart';
+
 class SignUpSchool extends StatefulWidget {
   Member member;
   SignUpSchool(this.member);
@@ -230,7 +232,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
               if(_siDo != null && _siGuGun != null && _schoolName != null) {
                 member.school = _schoolName;
                 var result = await http.post(
-                    Uri.parse('http://172.30.1.74:8080/signup'),
+                    Uri.parse('${API.hostConnect}/signup'),
                     body: jsonEncode(member),
                     headers: {'Content-Type': 'application/json'}
                 );
