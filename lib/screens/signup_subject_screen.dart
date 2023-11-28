@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/designs/PeeroreumButton.dart';
+import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/screens/create_wedu_screen.dart';
 import 'package:peeroreum_client/screens/signup_grade_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -100,114 +103,48 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       height: 8,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        DropdownButton(
+                        PeeroreumButton<String>(
+                          items: _subjects,
                           value: _goodSubject,
-                          hint: Text(
-                            '과목',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey[600]),
-                          ),
-                          elevation: 0,
-                          dropdownColor: Colors.white,
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                          items: _subjects
-                              .map((e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e),
-                                  ))
-                              .toList(),
                           onChanged: (value) {
                             setState(() {
-                              _goodSubject = value!;
+                              _goodSubject = value;
                             });
                           },
-                          icon: Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.grey[600],
-                          ),
+                          hintText: '과목',
                         ),
-                        // SizedBox(
-                        //   width: 16,
-                        // ),
-                        DropdownButton(
-                          value: _selectedDetailGoodSubject,
-                          hint: Text(
-                            '세부과목',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey[600]),
-                          ),
-                          elevation: 0,
-                          dropdownColor: Colors.white,
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                          items: _subjects
-                              .map((e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedDetailGoodSubject = value!;
-                            });
-                          },
-                          icon: Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.grey[600],
-                          ),
+                        SizedBox(
+                          width: 16,
                         ),
+                        Expanded(
+                          child: PeeroreumButton<String>(
+                              width: double.infinity,
+                              items: subject,
+                              value: _selectedDetailGoodSubject,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedDetailGoodSubject = value;
+                                });
+                              },
+                              hintText: '세부 과목'),
+                        )
                       ],
                     ),
-                    // SizedBox(
-                    //   height: 20,
-                    // ),
-                    DropdownButton(
+                    SizedBox(
+                      height: 20,
+                    ),
+                    PeeroreumButton<String>(
+                      width: double.infinity,
+                      items: _levels,
                       value: _goodLevel,
-                      hint: Text(
-                        '성취 수준을 선택해 주세요',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]),
-                      ),
-                      elevation: 0,
-                      dropdownColor: Colors.white,
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600]),
-                      items: _levels
-                          .map((e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(e),
-                              ))
-                          .toList(),
                       onChanged: (value) {
                         setState(() {
-                          _goodLevel = value!;
+                          _goodLevel = value;
                         });
                       },
-                      icon: Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.grey[600],
-                      ),
+                      hintText: '성취 수준을 선택해 주세요',
                     ),
                   ],
                 )),
@@ -231,111 +168,49 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                     height: 8,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      DropdownButton(
+                      PeeroreumButton<String>(
+                        items: _subjects,
                         value: _badSubject,
-                        hint: Text(
-                          '과목',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                        ),
-                        elevation: 0,
-                        dropdownColor: Colors.white,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]),
-                        items: _subjects
-                            .map((e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(e),
-                                ))
-                            .toList(),
                         onChanged: (value) {
                           setState(() {
-                            _badSubject = value!;
+                            _badSubject = value;
                           });
                         },
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey[600],
-                        ),
+                        hintText: '과목',
                       ),
                       SizedBox(
                         width: 16,
                       ),
-                      DropdownButton(
-                        value: _selectedDetailBadSubject,
-                        hint: Text(
-                          '세부과목',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                        ),
-                        elevation: 0,
-                        dropdownColor: Colors.white,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]),
-                        items: _subjects
-                            .map((e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(e),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedDetailBadSubject = value!;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey[600],
+                      Expanded(
+                        child: PeeroreumButton<String>(
+                          width: double.infinity,
+                          items: _subjects,
+                          value: _selectedDetailBadSubject,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedDetailBadSubject = value;
+                            });
+                          },
+                          hintText: '세부 과목',
                         ),
                       ),
                     ],
                   ),
-                  DropdownButton(
+                  SizedBox(
+                    height: 20,
+                  ),
+                  PeeroreumButton<String>(
+                    width: double.infinity,
+                    items: _levels,
                     value: _badLevel,
-                    hint: Text(
-                      '성취 수준을 선택해 주세요',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600]),
-                    ),
-                    elevation: 0,
-                    dropdownColor: Colors.white,
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey[600]),
-                    items: _levels
-                        .map((e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(e),
-                            ))
-                        .toList(),
                     onChanged: (value) {
                       setState(() {
-                        _badLevel = value!;
+                        _badLevel = value;
                       });
                     },
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey[600],
-                    ),
+                    hintText: '성취 수준을 선택해 주세요',
                   ),
                 ],
               ),
@@ -349,7 +224,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
           height: 48,
           child: TextButton(
             onPressed: () {
-              if(_goodSubject != null && _badSubject != null) {
+              if (_goodSubject != null && _badSubject != null) {
                 member.goodSubject = _subjects.indexOf(_goodSubject!) + 1;
                 member.badSubject = _subjects.indexOf(_badSubject!) + 1;
                 Navigator.push(
@@ -360,7 +235,6 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       reverseTransitionDuration: const Duration(seconds: 0)),
                 );
               }
-
             },
             child: Text(
               '다음',
