@@ -6,6 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'package:peeroreum_client/model/Wedo.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+
 
 DateTime date = DateTime.now().add(Duration(days:66));
 const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학','한국사', '기타'];
@@ -23,6 +27,7 @@ class CreateWedu extends StatefulWidget {
 }
 
 class _CreateWeduState extends State<CreateWedu> {
+  Wedo wedo = Wedo();
   String dropdownSubject = subject.first;
   String dropdownGrade = grade.first;
   int dropdownHeadcount = headcount.first;
@@ -91,12 +96,14 @@ class _CreateWeduState extends State<CreateWedu> {
   Future getImage(ImageSource imageSource) async {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    
     if (pickedFile != null) {
       setState(() {
-        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장        
       });
     }
   }
+  
 
   @override
   void dispose() {
@@ -273,6 +280,7 @@ class _CreateWeduState extends State<CreateWedu> {
                             onChanged: (value) {
                               setState(() {
                                 nameValue = value;
+                                wedo.title = nameValue;
                                 check_validation();
                               });
                             },
@@ -339,6 +347,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     setState(() {
                                       dropdownSubject = value!;
                                       change_challenge(value);
+                                      wedo.subject=subject.indexOf(value);
                                     });
                                   },
                                 ),
@@ -383,6 +392,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                       setState(() {
                                         date =
                                             selectedDate; // 선택한 날짜는 date 변수에 저장
+                                            wedo.targetDate=selectedDate;
                                       });
                                     }     
                                   },
@@ -476,6 +486,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (String? value) {
                                     setState(() {
                                       dropdownGrade = value!;
+                                      wedo.grade=grade.indexOf(value);
                                     });
                                   },
                                 ),
@@ -536,6 +547,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (int? value) {
                                     setState(() {
                                       dropdownHeadcount = value!;
+                                      wedo.maximumPeople=value;
                                     });
                                   },
                                 ),
@@ -605,6 +617,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                       onChanged: (String? value) {
                                         setState(() {
                                           dropdownChallenge = value!;
+                                          wedo.challenge=value;
                                           check_validation();
                                         });
                                         
@@ -655,6 +668,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                           onChanged: (value) {
                               setState(() {
                                 personalChallenge = value;
+                                wedo.challenge=value;
                                 check_validation();
                               });
                               
@@ -691,6 +705,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                       return 'you already entered that';
                                     else {
                                       _tag.add(tag);
+                                      wedo.hashTags=_tag;
                                       return null;
                                     }
                                   },
@@ -851,6 +866,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (bool value) {
                                     setState(() {
                                       _isLocked = value;
+                                      wedo.isLocked=value;
                                       check_validation();
                                     });
                                    
@@ -924,6 +940,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                         onChanged: (value) {
                                           setState(() {
                                             passwordValue = value;
+                                            wedo.password=value;
                                             check_validation();
                                           });
                                        
