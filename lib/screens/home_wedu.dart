@@ -1,13 +1,18 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/create_wedu_screen.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
 import 'package:peeroreum_client/screens/search_wedu.dart';
 import 'package:peeroreum_client/screens/detail_wedu_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -18,105 +23,50 @@ class HomeWedu extends StatefulWidget {
 
 class _HomeWeduState extends State<HomeWedu> {
   int selectedIndex = 1;
-  List<Map<String, String>> datas = [];
-  List<Map<String, String>> inroom_datas = [];
+  List<dynamic> datas = [];
+  List<dynamic> inroom_datas = [];
   List<Map<String, String>> searchData = [];
   List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> dropdownClassList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
-  List<String> dropdownTypeList = ['추천순', '인기순'];
+  List<String> dropdownTypeList = ['최신순', '추천순', '인기순'];
   String selectedDropdownGrade = '전체';
-  String selectedDropdownClass = '국어';
-  String selectedDropdownType = '추천순';
+  String selectedDropdownClass = '전체';
+  String selectedDropdownType = '최신순';
 
   @override
   void initState() {
     super.initState();
-    datas = [
-      {
-        "cid": "1",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "국어",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      },
-      {
-        "cid": "2",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "수학",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      },
-      {
-        "cid": "3",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "영어",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      },
-      {
-        "cid": "4",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "과학",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      },
-      {
-        "cid": "5",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "수학",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      },
-    ];
-    inroom_datas = [
-      {
-        "cid": "1",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "국어",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      },
-      {
-        "cid": "2",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "수학",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      },
-      {
-        "cid": "3",
-        "group_profile": "assets/images/splash_logo.png",
-        "subject": "영어",
-        "name": "Group Name",
-        "grade": "학년",
-        "number": "NN",
-        "day": "NNN",
-      }
-    ];
-    searchData = [
-      {"cid": "1", "search_word": "검색어"},
-      {"cid": "2", "search_word": "검색어"},
-      {"cid": "3", "search_word": "검색어"},
-      {"cid": "4", "search_word": "검색어"},
-      {"cid": "5", "search_word": "검색어"},
-      {"cid": "6", "search_word": "검색어"},
-      {"cid": "7", "search_word": "검색어"},
-      {"cid": "8", "search_word": "검색어"},
-    ];
+    doSomeAsyncStuff();
+  }
+
+  Future<void> doSomeAsyncStuff() async {
+    var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwZWVyb3JldW1AZ21haWwuY29tIiwiaWF0IjoxNzAwNTU1Njk2LCJleHAiOjE3MzExNDEyOTZ9.ANaSWjojldsoL1WRDHckgqGmIpyfiKnab-f8nPO1Bck";
+
+    var weduResult = await http.get(
+        Uri.parse( '${API.hostConnect}/wedu?sort&grade=0&subject=0'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+    );
+    if(weduResult.statusCode == 200) {
+      datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+      print(datas);
+    } else {
+      print("에러${weduResult.statusCode}");
+    }
+    var inWeduResult = await http.get(
+        Uri.parse('${API.hostConnect}/wedu/my'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+    );
+    if(inWeduResult.statusCode == 200) {
+      inroom_datas = jsonDecode(utf8.decode(inWeduResult.bodyBytes))['data'];
+    } else {
+      print("에러${weduResult.statusCode}");
+    }
   }
 
   PreferredSizeWidget appbarWidget() {
@@ -327,7 +277,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       border: Border.all(
                           width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: Image.asset(inroom_datas[index]["group_profile"]!,
+                  child: Image.network(inroom_datas[index]['imagePath']!,
                       width: 48, height: 48),
                 ),
                 SizedBox(
@@ -343,7 +293,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 8),
                         child: Text(
-                          inroom_datas[index]["subject"]!,
+                          dropdownClassList[inroom_datas[index]['subject']],
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -357,7 +307,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       width: 4,
                     ),
                     Text(
-                      inroom_datas[index]["name"]!,
+                      inroom_datas[index]["title"]!,
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 16,
@@ -371,7 +321,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 ),
                 Row(
                   children: [
-                    Text(inroom_datas[index]["grade"]!,
+                    Text(dropdownGradeList[inroom_datas[index]["grade"]],
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -381,7 +331,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       padding: EdgeInsets.symmetric(horizontal: 2),
                       child: Text('⋅'),
                     ),
-                    Text('${inroom_datas[index]["number"]!}명 참여중',
+                    Text('${inroom_datas[index]["attendingPeopleNum"]!}명 참여중',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -391,7 +341,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       padding: EdgeInsets.symmetric(horizontal: 2),
                       child: Text('⋅'),
                     ),
-                    Text('D-${inroom_datas[index]["day"]!}',
+                    Text('D-${inroom_datas[index]["dday"]!}',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -403,7 +353,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   height: 8,
                 ),
                 Text(
-                  '${inroom_datas[index]["number"]}% 달성', //이후 퍼센티지 수정
+                  '${inroom_datas[index]["progress"]}% 달성', //이후 퍼센티지 수정
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 14,
@@ -582,7 +532,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       border: Border.all(
                           width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: Image.asset(datas[index]["group_profile"]!,
+                  child: Image.network(datas[index]["imagePath"]!,
                       width: 44, height: 44),
                 ),
                 Container(
@@ -602,7 +552,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 8),
                                 child: Text(
-                                  datas[index]["subject"]!,
+                                  dropdownClassList[datas[index]['subject']],
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
@@ -616,7 +566,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               width: 4,
                             ),
                             Text(
-                              datas[index]["name"]!,
+                              datas[index]["title"]!,
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
@@ -630,7 +580,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         ),
                         Row(
                           children: [
-                            Text(datas[index]["grade"]!,
+                            Text(dropdownGradeList[datas[index]["grade"]],
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -640,7 +590,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               padding: EdgeInsets.symmetric(horizontal: 2),
                               child: Text('⋅'),
                             ),
-                            Text('${datas[index]["number"]!}명 참여중',
+                            Text('${datas[index]["attendingPeopleNum"]!}명 참여중',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -650,7 +600,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               padding: EdgeInsets.symmetric(horizontal: 2),
                               child: Text('⋅'),
                             ),
-                            Text('D-${datas[index]["day"]!}',
+                            Text('D-${datas[index]["dday"]!}',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -703,7 +653,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 width: 1, color: PeeroreumColor.gray[200]!),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
-                        child: Image.asset(datas[0]["group_profile"]!,
+                        child: Image.network(datas[0]["imagePath"]!,
                             width: 72, height: 72),
                       ),
                       Container(
@@ -721,7 +671,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 8),
                                 child: Text(
-                                  datas[0]["subject"]!,
+                                  dropdownClassList[datas[0]["subject"]],
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
@@ -735,7 +685,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               height: 4,
                             ),
                             Text(
-                              datas[0]["name"]!,
+                              datas[0]["title"]!,
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 18,
@@ -747,7 +697,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             ),
                             Row(
                               children: [
-                                Text(datas[0]["grade"]!,
+                                Text(dropdownGradeList[datas[0]["grade"]],
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
@@ -757,7 +707,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                   padding: EdgeInsets.symmetric(horizontal: 2),
                                   child: Text('⋅'),
                                 ),
-                                Text('${datas[0]["number"]!}명 참여중',
+                                Text('${datas[0]["attendingPeopleNum"]!}명 참여중',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
@@ -767,7 +717,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                   padding: EdgeInsets.symmetric(horizontal: 2),
                                   child: Text('⋅'),
                                 ),
-                                Text('D-${datas[0]["day"]!}',
+                                Text('D-${datas[0]["dday"]!}',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,

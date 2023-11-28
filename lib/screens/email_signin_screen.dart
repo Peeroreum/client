@@ -12,6 +12,8 @@ import 'package:peeroreum_client/screens/email_signup_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/screens/home_wedu.dart';
 
+import '../api/PeeroreumApi.dart';
+
 class EmailSignIn extends StatefulWidget {
   const EmailSignIn({super.key});
 
@@ -256,7 +258,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                           signIn.email = id_controller.text;
                           signIn.password = pw_controller.text;
                           var result = await http.post(
-                              Uri.parse('http://172.30.1.74:8080/login'),
+                              Uri.parse('${API.hostConnect}/login'),
                               body: jsonEncode(signIn),
                               headers: {'Content-Type': 'application/json'}
                           );
