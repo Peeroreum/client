@@ -666,7 +666,7 @@ class _HomeWeduState extends State<HomeWedu> {
           onTap: () {
             showModalBottomSheet(
               context: context,
-              showDragHandle: true,
+              // showDragHandle: false,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -685,10 +685,10 @@ class _HomeWeduState extends State<HomeWedu> {
   Widget roominfo(index) {
     return SizedBox(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.64,
+      height: MediaQuery.of(context).size.height * 0.7,
       child: Scaffold(
         body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
