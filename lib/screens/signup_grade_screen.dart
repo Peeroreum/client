@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/designs/PeeroreumButton.dart';
+import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/create_wedu_screen.dart';
 import 'package:peeroreum_client/screens/signup_school_screen.dart';
@@ -19,6 +21,16 @@ class _SignUpGradeState extends State<SignUpGrade> {
   final _grades = ['1학년', '2학년', '3학년'];
   String? _school;
   String? _grade;
+
+  bool is_Enabled = false;
+
+  void _checkInput() {
+    if (_school != null && _grade != null) {
+      setState(() {
+        is_Enabled = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,70 +97,35 @@ class _SignUpGradeState extends State<SignUpGrade> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      DropdownButton(
-                        value: _school,
-                        hint: Text(
-                          '학교',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                        ),
-                        elevation: 0,
-                        dropdownColor: Colors.white,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]),
-                        items: _schools
-                            .map((e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(e),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _school = value!;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey[600],
+                      Expanded(
+                        child: PeeroreumButton<String>(
+                          width: double.infinity,
+                          items: _schools,
+                          value: _school,
+                          onChanged: (value) {
+                            setState(() {
+                              _school = value;
+                              _checkInput();
+                            });
+                          },
+                          hintText: '학교',
                         ),
                       ),
-                      DropdownButton(
-                        value: _grade,
-                        hint: Text(
-                          '학년',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                        ),
-                        elevation: 0,
-                        dropdownColor: Colors.white,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]),
-                        items: _grades
-                            .map((e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(e),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _grade = value!;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey[600],
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: PeeroreumButton<String>(
+                          width: double.infinity,
+                          items: _grades,
+                          value: _grade,
+                          onChanged: (value) {
+                            setState(() {
+                              _grade = value;
+                              _checkInput();
+                            });
+                          },
+                          hintText: '학년',
                         ),
                       ),
                     ])),
@@ -161,8 +138,10 @@ class _SignUpGradeState extends State<SignUpGrade> {
           height: 48,
           child: TextButton(
             onPressed: () {
-              if(_school != null && _grade != null) {
-                member.grade = _school == "중학교"? _grades.indexOf(_grade!) + 1 : _grades.indexOf(_grade!) + 4;
+              if (_school != null && _grade != null) {
+                member.grade = _school == "중학교"
+                    ? _grades.indexOf(_grade!) + 1
+                    : _grades.indexOf(_grade!) + 4;
                 Navigator.push(
                   context,
                   PageRouteBuilder(
@@ -171,7 +150,6 @@ class _SignUpGradeState extends State<SignUpGrade> {
                       reverseTransitionDuration: const Duration(seconds: 0)),
                 );
               }
-
             },
             child: Text(
               '다음',
@@ -182,7 +160,10 @@ class _SignUpGradeState extends State<SignUpGrade> {
                   color: Colors.white),
             ),
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
+                backgroundColor: is_Enabled
+                    ? MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400])
+                    : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                 padding: MaterialStateProperty.all(
                     EdgeInsets.symmetric(vertical: 12)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(

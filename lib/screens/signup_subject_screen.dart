@@ -24,6 +24,21 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   String? _goodLevel;
   String? _badLevel;
 
+  bool is_Enabled = false;
+
+  void _checkInput() {
+    if (_goodSubject != null &&
+        _badSubject != null &&
+        _selectedDetailGoodSubject != null &&
+        _selectedDetailBadSubject != null &&
+        _goodLevel != null &&
+        _badLevel != null) {
+      setState(() {
+        is_Enabled = true;
+      });
+    }
+  }
+
   Member member;
   _SignUpSubjectState(this.member);
 
@@ -126,6 +141,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               onChanged: (value) {
                                 setState(() {
                                   _selectedDetailGoodSubject = value;
+                                  _checkInput();
                                 });
                               },
                               hintText: '세부 과목'),
@@ -142,6 +158,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       onChanged: (value) {
                         setState(() {
                           _goodLevel = value;
+                          _checkInput();
                         });
                       },
                       hintText: '성취 수준을 선택해 주세요',
@@ -176,6 +193,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         onChanged: (value) {
                           setState(() {
                             _badSubject = value;
+                            _checkInput();
                           });
                         },
                         hintText: '과목',
@@ -191,6 +209,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           onChanged: (value) {
                             setState(() {
                               _selectedDetailBadSubject = value;
+                              _checkInput();
                             });
                           },
                           hintText: '세부 과목',
@@ -208,6 +227,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                     onChanged: (value) {
                       setState(() {
                         _badLevel = value;
+                        _checkInput();
                       });
                     },
                     hintText: '성취 수준을 선택해 주세요',
@@ -245,7 +265,10 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   color: Colors.white),
             ),
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
+                backgroundColor: is_Enabled
+                    ? MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400])
+                    : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                 padding: MaterialStateProperty.all(
                     EdgeInsets.symmetric(vertical: 12)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
