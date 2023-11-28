@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/screens/email_signin_screen.dart';
 import 'package:peeroreum_client/screens/email_signup_screen.dart';
+import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/signin_screen.dart';
-import 'package:peeroreum_client/screens/signup_grade_screen.dart';
-import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
-import 'package:peeroreum_client/screens/signup_school_screen.dart';
-import 'package:peeroreum_client/screens/signup_subject_screen.dart';
 
 void main() => runApp(PeeroreumApp());
 
@@ -15,17 +13,17 @@ class PeeroreumApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final storage = FlutterSecureStorage();
+    dynamic memberInfo = storage.read(key:'memberInfo');
+
     return MaterialApp(
       title: 'Peeroreum',
-      initialRoute: '/signIn',
+      initialRoute: (memberInfo == null)? '/signIn' : '/wedu',
       routes: {
         '/signIn': (context) => SignIn(),
         '/signIn/email': (context) => EmailSignIn(),
         '/signUp/email': (context) => EmailSignUp(),
-        // '/signUp/profile/nickname': (context) => SignUpNickname(),
-        // '/signUp/profile/subject': (context) => SignUpSubject(),
-        // '/signUp/profile/grade': (context) => SignUpGrade(),
-        // '/signUp/profile/school': (context) => SignUpSchool()
+        '/wedu': (context) => HomeWedu()
       },
       // debugShowCheckedModeBanner: false,
     );

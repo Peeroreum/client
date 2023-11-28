@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart' as svg_provider;
 
 class CreateInvitation extends StatefulWidget {
   const CreateInvitation({super.key});

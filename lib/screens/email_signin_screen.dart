@@ -1,9 +1,16 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, prefer_is_empty
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/model/MemberInfo.dart';
+import 'package:peeroreum_client/model/SignIn.dart';
 import 'package:peeroreum_client/screens/email_signup_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:peeroreum_client/screens/home_wedu.dart';
 
 class EmailSignIn extends StatefulWidget {
   const EmailSignIn({super.key});
@@ -13,9 +20,14 @@ class EmailSignIn extends StatefulWidget {
 }
 
 class _EmailSignInState extends State<EmailSignIn> {
-  var is_checked = false;
+  static final storage = FlutterSecureStorage();
+
+  MemberInfo memberInfo = MemberInfo();
+  SignIn signIn = SignIn();
+
   final id_controller = TextEditingController();
   final pw_controller = TextEditingController();
+  var is_checked = false;
   bool is_Enabled = false;
   bool pw_visible = true;
 
@@ -240,7 +252,29 @@ class _EmailSignInState extends State<EmailSignIn> {
                       width: double.infinity,
                       height: 48.0,
                       child: TextButton(
-                        onPressed: is_Enabled ? () {} : null,
+                        onPressed: is_Enabled ? () async {
+                          signIn.email = id_controller.text;
+                          signIn.password = pw_controller.text;
+                          var result = await http.post(
+                              Uri.parse('http://172.30.1.74:8080/login'),
+                              body: jsonEncode(signIn),
+                              headers: {'Content-Type': 'application/json'}
+                          );
+                          if(result.statusCode == 200) {
+                            var data = jsonDecode(result.body)['data'];
+                            storage.write(key: "memberInfo", value: data['accessToken']);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => HomeWedu(),
+                                  transitionDuration:
+                                  const Duration(seconds: 0),
+                                  reverseTransitionDuration:
+                                  const Duration(seconds: 0)),
+                                (route) => false
+                            );
+                          }
+                        } : null,
                         child: Text(
                           '로그인',
                           style: TextStyle(
