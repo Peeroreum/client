@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/email_signin_screen.dart';
-import 'package:peeroreum_client/screens/home_wedu.dart';
+import 'package:peeroreum_client/screens/signin_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 
@@ -230,17 +230,18 @@ class _SignUpSchoolState extends State<SignUpSchool> {
               if(_siDo != null && _siGuGun != null && _schoolName != null) {
                 member.school = _schoolName;
                 var result = await http.post(
-                    Uri.parse('http://192.168.219.106:8080/signup'),
+                    Uri.parse('http://172.30.1.74:8080/signup'),
                     body: jsonEncode(member),
                     headers: {'Content-Type': 'application/json'}
                 );
                 if(result.statusCode == 200) {
-                  Navigator.push(
+                  Navigator.pushAndRemoveUntil(
                     context,
                     PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => EmailSignIn(),
+                        pageBuilder: (_, __, ___) => SignIn(),
                         transitionDuration: const Duration(seconds: 0),
                         reverseTransitionDuration: const Duration(seconds: 0)),
+                      (route) => false
                   );
                 } else {
                   print(result.statusCode);
