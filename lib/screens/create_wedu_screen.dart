@@ -1,18 +1,19 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 DateTime date = DateTime.now().add(Duration(days:66));
-const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
+const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학','한국사', '기타'];
 const List<String> grade = <String>['중1', '중2', '중3'];
 const List<int> headcount = <int>[10, 30, 50, 70, 100];
 //const List<String> gender = <String>['전체', '여자', '남자'];
-const List<String> challenge = <String>['챌린지1', '챌린지2', '챌린지3', '기타'];
+List<String> challenge = <String>['문제 30개 풀기', '공부 2시간' ,'기타'];
 List<String> _tag = [];
 
 class CreateWedu extends StatefulWidget {
@@ -36,21 +37,54 @@ class _CreateWeduState extends State<CreateWedu> {
   String nameValue = "";
   String passwordValue = "";
 
+  String personalChallenge="";
+
   late TextfieldTagsController _controller;
 
   Color _nextColor = PeeroreumColor.gray[500]!;
 
   void check_validation(){
-     if (nameValue != "" && (dropdownChallenge != null)) {
+     if (nameValue != "" &&
+      ((dropdownChallenge != null && dropdownChallenge !=challenge.last) || (dropdownChallenge == challenge.last && personalChallenge != "")) && 
+      (_isLocked == false || (_isLocked == true && passwordValue !=""))) {
                 setState(() {
                   _nextColor=PeeroreumColor.primaryPuple[400]!;
                 });
               }
+  
       else{
         setState(() {
           _nextColor = PeeroreumColor.gray[500]!;
         });
       }
+  }
+
+  void check_subject(value){
+    switch(value){
+        case '국어': challenge.insert(2, '지문 분석');
+          break;
+        case '영어': challenge.insert(2, '단어 암기');
+          break;
+        case '수학': challenge.insert(2, '오답 노트');
+          break;
+        case '사회':
+        case '과학':
+        case '한국사':
+        case '기타': challenge.insert(2, '개념 공부(노트 필기)');
+          break;
+        default:
+        break;
+      }
+  }
+
+  void change_challenge(value){
+    if (challenge.length==3){
+      check_subject(value);
+    }
+    else if(challenge.length==4){
+      challenge.removeAt(2);
+      check_subject(value);
+    }
   }
 
   XFile? _image; //이미지를 담을 변수 선언
@@ -86,7 +120,7 @@ class _CreateWeduState extends State<CreateWedu> {
         backgroundColor: PeeroreumColor.white,
         leading: IconButton(
           color: PeeroreumColor.black,
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -169,10 +203,7 @@ class _CreateWeduState extends State<CreateWedu> {
                         width: 1,
                       ),
                     ),
-                    child: Icon(
-                      Icons.camera_alt_outlined,
-                      color: PeeroreumColor.gray[800],
-                    ),
+                    child:  SvgPicture.asset('assets/icons/camera.svg')
                   ),
                 ),
               ),
@@ -270,46 +301,50 @@ class _CreateWeduState extends State<CreateWedu> {
                             SizedBox(
                               height: 8,
                             ),
-                            SizedBox(
-                              width: 75,
-                              child: DropdownButtonFormField(
-                                value: dropdownSubject,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 12),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: PeeroreumColor.black,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(
-                                        color: PeeroreumColor.gray[200]!,
-                                      )),
-                                ),
-                                items: subject.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    dropdownSubject = value!;
-                                  });
-                                },
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: PeeroreumColor.gray[200]!),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                            )
+                              child: SizedBox(
+                                height: 40,
+                                width: 147,
+                                child: DropdownButton(
+                                  isExpanded: true,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 12),
+                                  underline: SizedBox.shrink(),
+                                  value: dropdownSubject,
+                                  iconSize: 18,
+                                  icon: Container(
+                                    margin: EdgeInsets.only(left: 7),
+                                    child: SvgPicture.asset('assets/icons/down.svg'),
+                                  ),
+                                  items: subject.map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          color: PeeroreumColor.black,
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      dropdownSubject = value!;
+                                      change_challenge(value);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         Container(
@@ -329,16 +364,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                 height: 8,
                               ),
                               SizedBox(
-                                width: 146,
+                                width: 153,
                                 height: 40,
-                                child: OutlinedButton.icon(
-                                  style: OutlinedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                  )),
-                                  onPressed: () async {
+                                child: InkWell(
+                                  onTap: () async {
                                     final selectedDate = await showDatePicker(
                                       context:
                                           context, // 팝업으로 띄우기 때문에 context 전달
@@ -358,17 +387,31 @@ class _CreateWeduState extends State<CreateWedu> {
                                       });
                                     }     
                                   },
-                                  icon: Icon(
-                                    Icons.calendar_month,
-                                    color: PeeroreumColor.black,
-                                  ),
-                                  label: Text(
-                                    '$date'.substring(0, 10),
-                                    style: const TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: PeeroreumColor.black,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 8,horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: PeeroreumColor.gray[200]!,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset('assets/icons/calendar.svg'),
+                                        const SizedBox(width: 8.0),
+                                        Text(
+                                          '$date'.substring(0, 10),
+                                          style: const TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: PeeroreumColor.black,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8.0),
+                                        SvgPicture.asset('assets/icons/down.svg'),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -414,7 +457,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   iconSize: 18,
                                   icon: Container(
                                     margin: EdgeInsets.only(left: 7),
-                                    child: Icon(Icons.expand_more),
+                                    child: SvgPicture.asset('assets/icons/down.svg'),
                                   ),
                                   items: grade.map<DropdownMenuItem<String>>(
                                       (String value) {
@@ -458,42 +501,47 @@ class _CreateWeduState extends State<CreateWedu> {
                                 height: 8,
                               ),
                               DecoratedBox(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: PeeroreumColor.gray[200]!,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: PeeroreumColor.gray[200]!),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: SizedBox(
+                                height: 40,
+                                width: 72,
+                                child: DropdownButton(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 12),
+                                  underline: SizedBox.shrink(),
+                                  value: dropdownHeadcount,
+                                  iconSize: 18,
+                                  icon: Container(
+                                    margin: EdgeInsets.only(left: 7),
+                                    child: SvgPicture.asset('assets/icons/down.svg'),
                                   ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: SizedBox(
-                                  width: 72,
-                                  height: 40,
-                                  child: DropdownButton(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 8),
-                                      underline: SizedBox.shrink(),
-                                      value: dropdownHeadcount,
-                                      items: headcount
-                                          .map<DropdownMenuItem<int>>(
-                                              (int value) {
-                                        return DropdownMenuItem<int>(
-                                          value: value,
-                                          child: Text(
-                                            "$value",
-                                            style: TextStyle(
-                                              fontFamily: 'Pretendard',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: (int? value) {
-                                        setState(() {
-                                          dropdownHeadcount = value!;
-                                        });
-                                      }),
+                                  items: headcount.map<DropdownMenuItem<int>>(
+                                      (int value) {
+                                    return DropdownMenuItem<int>(
+                                      value: value,
+                                      child: Text(
+                                        "$value",
+                                        style: TextStyle(
+                                          color: PeeroreumColor.black,
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      dropdownHeadcount = value!;
+                                    });
+                                  },
                                 ),
                               ),
+                            ),
                             ],
                           ),
                         ),
@@ -515,47 +563,59 @@ class _CreateWeduState extends State<CreateWedu> {
                         const SizedBox(
                           height: 8,
                         ),
-                        DropdownButtonFormField(
-                          hint: const Text('챌린지를 설정하세요',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              )),
-                          decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 12,
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: PeeroreumColor.black,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
+                        SizedBox(
+                          width: double.infinity,
+                          height: 40,
+                          child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: PeeroreumColor.gray[200]!),
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: PeeroreumColor.gray[200]!,
-                                  ))),
-                          value: dropdownChallenge,
-                          items: challenge
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: const TextStyle(fontSize: 14),
+                                ),
+                                    child: DropdownButton(
+                                      isExpanded: true,
+                                      hint: Text('챌린지를 설정하세요',
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                      ),),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 12),
+                                      underline: SizedBox.shrink(),
+                                      value: dropdownChallenge,
+                                      iconSize: 18,
+                                      icon: Container(
+                                        child: SvgPicture.asset('assets/icons/down.svg'),
+                                      ),
+                                      items: challenge.map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              color: PeeroreumColor.black,
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          dropdownChallenge = value!;
+                                          check_validation();
+                                        });
+                                        
+                                      },
+                                    ),
+                                  
+                                
                               ),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              dropdownChallenge = value!;
-                            });
-                            check_validation();
-                          },
                         ),
+                        
                         Container(
                           child: Visibility(
                             maintainState: true,
@@ -568,7 +628,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     height: 20,
                                   ),
                                   SizedBox(
-                                    width: 350,
+                                    width: double.infinity,
                                     child: TextFormField(
                                       decoration: InputDecoration(
                                           isDense: true,
@@ -591,7 +651,15 @@ class _CreateWeduState extends State<CreateWedu> {
                                             fontFamily: 'Pretendard',
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
+                                            
                                           )),
+                                          onChanged: (value) {
+                              setState(() {
+                                personalChallenge = value;
+                                check_validation();
+                              });
+                              
+                            },
                                     ),
                                   )
                                 ]),
@@ -784,7 +852,9 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (bool value) {
                                     setState(() {
                                       _isLocked = value;
+                                      check_validation();
                                     });
+                                   
                                   }),
                             ],
                           ),
@@ -855,7 +925,9 @@ class _CreateWeduState extends State<CreateWedu> {
                                         onChanged: (value) {
                                           setState(() {
                                             passwordValue = value;
+                                            check_validation();
                                           });
+                                       
                                         }),
                                   )
                                 ],
