@@ -22,9 +22,12 @@ class HomeWedu extends StatefulWidget {
 }
 
 class _HomeWeduState extends State<HomeWedu> {
+  var token;
   int selectedIndex = 1;
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
+  List<dynamic> inviDatas = [];
+  List<dynamic> hashTags = [];
   List<Map<String, String>> searchData = [];
   List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> dropdownClassList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
@@ -36,36 +39,43 @@ class _HomeWeduState extends State<HomeWedu> {
   @override
   void initState() {
     super.initState();
-    doSomeAsyncStuff();
+    fetchDatas();
   }
 
-  Future<void> doSomeAsyncStuff() async {
-    var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwZWVyb3JldW1AZ21haWwuY29tIiwiaWF0IjoxNzAwNTU1Njk2LCJleHAiOjE3MzExNDEyOTZ9.ANaSWjojldsoL1WRDHckgqGmIpyfiKnab-f8nPO1Bck";
-
+  Future<void> fetchDatas() async {
+    token = await FlutterSecureStorage().read(key: "memberInfo");
     var weduResult = await http.get(
-        Uri.parse( '${API.hostConnect}/wedu?sort&grade=0&subject=0'),
+        Uri.parse('${API.hostConnect}/wedu?sort&grade=0&subject=0'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
-        }
-    );
-    if(weduResult.statusCode == 200) {
+        });
+    if (weduResult.statusCode == 200) {
       datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
-      print(datas);
     } else {
       print("에러${weduResult.statusCode}");
     }
-    var inWeduResult = await http.get(
-        Uri.parse('${API.hostConnect}/wedu/my'),
+    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
-        }
-    );
-    if(inWeduResult.statusCode == 200) {
+        });
+    if (inWeduResult.statusCode == 200) {
       inroom_datas = jsonDecode(utf8.decode(inWeduResult.bodyBytes))['data'];
     } else {
       print("에러${weduResult.statusCode}");
+    }
+
+    await fetchImage(datas);
+  }
+
+  fetchImage(datas) async {
+    var inviData;
+    for(var data in datas) {
+      inviData = await fetchInvitation(data['id']);
+      print(inviData);
+      inviDatas.add(inviData);
+      hashTags.add(inviData['hashTags']);
     }
   }
 
@@ -77,7 +87,7 @@ class _HomeWeduState extends State<HomeWedu> {
       automaticallyImplyLeading: false,
       // systemOverlayStyle: SystemUiOverlayStyle.light,
       title: Padding(
-        padding: EdgeInsets.fromLTRB(20, 12, 0, 12),
+        padding: EdgeInsets.fromLTRB(20, 20, 0, 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -98,10 +108,9 @@ class _HomeWeduState extends State<HomeWedu> {
                         EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.search,
+                        SvgPicture.asset(
+                          'assets/icons/search.svg',
                           color: PeeroreumColor.gray[600],
-                          size: 18,
                         ),
                         SizedBox(width: 8.0),
                         SizedBox(
@@ -126,18 +135,14 @@ class _HomeWeduState extends State<HomeWedu> {
       ),
       actions: [
         Padding(
-          // padding: EdgeInsets.symmetric(horizontal: 12),
-          padding: EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.only(right: 20),
           child: Row(
             children: [
               IconButton(
-                constraints: BoxConstraints(maxWidth: 24),
-                splashRadius: 24.0,
-                icon: Icon(
-                  Icons.add_box,
-                  size: 24,
-                  color: PeeroreumColor.gray[800],
-                ),
+                padding: EdgeInsets.only(right: 4),
+                constraints: BoxConstraints(),
+                icon: SvgPicture.asset('assets/icons/plus_square.svg',
+                    color: PeeroreumColor.gray[800]),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -148,21 +153,14 @@ class _HomeWeduState extends State<HomeWedu> {
                   );
                 },
               ),
-              SizedBox(
-                width: 4,
-              ),
               IconButton(
-                constraints: BoxConstraints(maxWidth: 24),
-                splashRadius: 24.0,
-                icon: Icon(
-                  Icons.notifications_none,
-                  size: 24,
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
+                icon: SvgPicture.asset(
+                  'assets/icons/bell_none.svg',
                   color: PeeroreumColor.gray[800],
                 ),
                 onPressed: () {},
-              ),
-              SizedBox(
-                width: 12,
               )
             ],
           ),
@@ -178,12 +176,16 @@ class _HomeWeduState extends State<HomeWedu> {
           child: Column(
         children: [
           room_body(),
-          SizedBox(
-              height: 193, //180으로 나중에 수정
-              child: in_room_body()),
+          (inroom_datas.length != 0)
+              ? SizedBox(
+                  height: 193, //180으로 나중에 수정
+                  child: in_room_body())
+              : SizedBox(
+                  height: 0,
+                ),
           Container(
             height: 8,
-            color: PeeroreumColor.gray[200],
+            color: PeeroreumColor.gray[50],
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -233,17 +235,17 @@ class _HomeWeduState extends State<HomeWedu> {
                 ),
               ],
             ),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => InWedu()));
-                },
-                child: Text('전체 보기',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[500])))
+            // TextButton(
+            //     onPressed: () {
+            //       Navigator.of(context)
+            //           .push(MaterialPageRoute(builder: (context) => InWedu()));
+            //     },
+            //     child: Text('전체 보기',
+            //         style: TextStyle(
+            //             fontFamily: 'Pretendard',
+            //             fontWeight: FontWeight.w600,
+            //             fontSize: 14,
+            //             color: PeeroreumColor.gray[500])))
           ],
         ),
       ),
@@ -264,12 +266,13 @@ class _HomeWeduState extends State<HomeWedu> {
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           child: Container(
+            width: 150,
             padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
                 borderRadius: BorderRadius.all(Radius.circular(8.0))),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
@@ -284,11 +287,13 @@ class _HomeWeduState extends State<HomeWedu> {
                   height: 16,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     DecoratedBox(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(4)),
-                          color: Color(0xFFFFF2E9)),
+                          color: PeeroreumColor.subjectColor[subject[index]]
+                              ?[0]),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 8),
@@ -296,10 +301,12 @@ class _HomeWeduState extends State<HomeWedu> {
                           dropdownClassList[inroom_datas[index]['subject']],
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              color: Color(0xFFF86060),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10),
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10,
+                            color: PeeroreumColor.subjectColor[subject[index]]
+                                ?[1],
+                          ),
                         ),
                       ),
                     ),
@@ -320,6 +327,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   height: 4,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(dropdownGradeList[inroom_datas[index]["grade"]],
                         style: TextStyle(
@@ -363,9 +371,9 @@ class _HomeWeduState extends State<HomeWedu> {
               ],
             ),
           ),
-          onTap: () => {
+          onTap: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => DetailWedu()))
+                .push(MaterialPageRoute(builder: (context) => DetailWedu(inroom_datas[index]["id"])));
           },
         );
       },
@@ -545,9 +553,11 @@ class _HomeWeduState extends State<HomeWedu> {
                           children: [
                             DecoratedBox(
                               decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4)),
-                                  color: Color(0xFFFFE9E9)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                                color: PeeroreumColor
+                                    .subjectColor[dropdownClassList[datas[index]['subject']]]?[0],
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 8),
@@ -555,10 +565,12 @@ class _HomeWeduState extends State<HomeWedu> {
                                   dropdownClassList[datas[index]['subject']],
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      color: Color(0xFFF86060),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 10),
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10,
+                                    color: PeeroreumColor
+                                        .subjectColor[dropdownClassList[datas[index]['subject']]]?[1],
+                                  ),
                                 ),
                               ),
                             ),
@@ -616,14 +628,12 @@ class _HomeWeduState extends State<HomeWedu> {
           onTap: () {
             showModalBottomSheet(
               context: context,
-              // showDragHandle: false,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
               isScrollControlled: true,
               builder: (context) {
-                // return challengeImages(successList[index]);
-                return roominfo(datas[index]);
+                return roominfo(index);
               },
             );
           },
@@ -635,7 +645,7 @@ class _HomeWeduState extends State<HomeWedu> {
   Widget roominfo(index) {
     return SizedBox(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height * 0.5,
       child: Scaffold(
         body: Container(
           padding: EdgeInsets.all(20),
@@ -653,7 +663,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 width: 1, color: PeeroreumColor.gray[200]!),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
-                        child: Image.network(datas[0]["imagePath"]!,
+                        child: Image.network(datas[index]["imagePath"]!,
                             width: 72, height: 72),
                       ),
                       Container(
@@ -671,7 +681,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 8),
                                 child: Text(
-                                  dropdownClassList[datas[0]["subject"]],
+                                  dropdownClassList[datas[index]["subject"]],
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
@@ -685,7 +695,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               height: 4,
                             ),
                             Text(
-                              datas[0]["title"]!,
+                              datas[index]["title"]!,
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 18,
@@ -697,7 +707,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             ),
                             Row(
                               children: [
-                                Text(dropdownGradeList[datas[0]["grade"]],
+                                Text(dropdownGradeList[datas[index]["grade"]],
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
@@ -707,7 +717,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                   padding: EdgeInsets.symmetric(horizontal: 2),
                                   child: Text('⋅'),
                                 ),
-                                Text('${datas[0]["attendingPeopleNum"]!}명 참여중',
+                                Text('${datas[index]["attendingPeopleNum"]!}명 참여중',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
@@ -717,7 +727,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                   padding: EdgeInsets.symmetric(horizontal: 2),
                                   child: Text('⋅'),
                                 ),
-                                Text('D-${datas[0]["dday"]!}',
+                                Text('D-${datas[index]["dday"]!}',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
@@ -743,7 +753,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   )
                 ],
               ),
-              roominfo_tag(),
+              // roominfo_tag(index),
               SizedBox(
                 height: 16,
               ),
@@ -752,7 +762,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 child: Text(
-                  "수학 문제 3장 풀기",
+                  inviDatas[index]['challenge'],
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 14,
@@ -768,6 +778,10 @@ class _HomeWeduState extends State<HomeWedu> {
               Container(
                 height: 162,
                 decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage(inviDatas[index]['invitationUrl']),
+                      fit: BoxFit.cover
+                  ),
                     color: PeeroreumColor.primaryPuple[400],
                     borderRadius: BorderRadius.circular(8)),
               ),
@@ -844,7 +858,7 @@ class _HomeWeduState extends State<HomeWedu> {
     );
   }
 
-  Widget roominfo_tag() {
+  Widget roominfo_tag(roomIndex) {
     return Padding(
       padding: EdgeInsets.only(top: 16),
       child: SizedBox(
@@ -875,7 +889,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       width: 2,
                     ),
                     Text(
-                      '${searchData[index]["search_word"]}',
+                      hashTags[roomIndex][index],
                       style: TextStyle(
                         color: PeeroreumColor.primaryPuple[400],
                         fontSize: 12,
@@ -891,7 +905,8 @@ class _HomeWeduState extends State<HomeWedu> {
                 width: 4,
               );
             },
-            itemCount: searchData.length),
+            itemCount: hashTags[roomIndex].length
+        ),
       ),
     );
   }
@@ -970,5 +985,19 @@ class _HomeWeduState extends State<HomeWedu> {
       body: bodyWidget(),
       bottomNavigationBar: bottomNavigatorBarWidget(),
     );
+  }
+
+  fetchInvitation(id) async {
+    var inviResult = await http.get(
+        Uri.parse('${API.hostConnect}/wedu/$id/invitation'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (inviResult.statusCode == 200) {
+      return await jsonDecode(utf8.decode(inviResult.bodyBytes))['data'];
+    } else {
+      print("에러${inviResult.statusCode}");
+    }
   }
 }
