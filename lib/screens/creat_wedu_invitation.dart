@@ -1,8 +1,17 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:peeroreum_client/model/Wedu.dart';
+import 'package:http/http.dart' as http;
+import 'package:widgets_to_image/widgets_to_image.dart';
+
+import '../api/PeeroreumApi.dart';
 
 class CreateInvitation extends StatefulWidget {
   const CreateInvitation({super.key});
@@ -19,7 +28,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
   Color _fontColor = PeeroreumColor.white;
   String _inviText = "같이방에서 같이 공부해요~ ☆";
 
-
+  WidgetsToImageController controller = WidgetsToImageController();
+  Uint8List? bytes;
 
   Map<String, String> iconMap = {
     '♡': '★',
@@ -47,6 +57,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
 
   @override
   Widget build(BuildContext context) {
+    var weduMap = ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       appBar: AppBar(
@@ -70,7 +81,9 @@ class _CreateInvitationState extends State<CreateInvitation> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: null,
+            onPressed: () {
+              postWeduAndInvitation(weduMap);
+            },
             child: Text(
               '만들기',
               style: TextStyle(
@@ -88,35 +101,38 @@ class _CreateInvitationState extends State<CreateInvitation> {
           margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(
             children: [
-              Container(
-                width: 350,
-                height: 162,
-                padding: const EdgeInsets.all(16),
-                child: Center(
-                  child: Text(
-                    _inviText,
-                    style: TextStyle(
-                      fontFamily: 'UhBeeRami',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 26,
-                      color: _fontColor,
+              WidgetsToImage(
+                controller: controller,
+                child: Container(
+                  width: 350,
+                  height: 162,
+                  padding: const EdgeInsets.all(16),
+                  child: Center(
+                    child: Text(
+                      _inviText,
+                      style: TextStyle(
+                        fontFamily: 'UhBeeRami',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 26,
+                        color: _fontColor,
+                      ),
                     ),
                   ),
-                ),
-                decoration: _image != null
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.2), BlendMode.darken),
-                          image: FileImage(File(_image!.path)),
-                          fit: BoxFit.cover,
+                  decoration: _image != null
+                      ? BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.2), BlendMode.darken),
+                            image: FileImage(File(_image!.path)),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : BoxDecoration(
+                          color: _backgroundColor,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      )
-                    : BoxDecoration(
-                        color: _backgroundColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                ),
               ),
               const SizedBox(
                 height: 20,
@@ -573,5 +589,22 @@ class _CreateInvitationState extends State<CreateInvitation> {
         ),
       ),
     );
+  }
+
+  postWeduAndInvitation(weduMap) async {
+    var dio = Dio();
+    final token = await FlutterSecureStorage().read(key: "memberInfo");
+    bytes = await controller.capture();
+    var byteList = bytes?.toList();
+    weduMap.addAll({"inviFile": await MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")});
+    FormData formData = await FormData.fromMap(weduMap);
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.headers = {'Authorization': 'Bearer $token'};
+    var inviResult = await dio.post('${API.hostConnect}/wedu', data: formData);
+    if(inviResult.statusCode == 200) {
+      Navigator.pushNamedAndRemoveUntil(context, '/wedu', (route) => false);
+    } else {
+      print("초대장 ${inviResult.statusMessage}");
+    }
   }
 }
