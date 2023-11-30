@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:flutter/material.dart';
 
 final class PeeroreumColor extends Color {
@@ -29,5 +30,13 @@ final class PeeroreumColor extends Color {
     700: Color.fromARGB(255, 84, 41, 207),
     800: Color.fromARGB(255, 78, 25, 193),
     900: Color.fromARGB(255, 68, 0, 169)
+  };
+  static const Map<String, List<Color>> subjectColor = <String, List<Color>> {
+    "국어": [Color.fromARGB(255, 255, 242, 233), Color.fromARGB(255, 248, 123, 96)],
+    "수학": [Color.fromARGB(255, 233, 246, 255), Color.fromARGB(255, 96, 148, 248)],
+    "영어": [Color.fromARGB(255, 240, 255, 233), Color.fromARGB(255, 129, 219, 87)],
+    "사회": [Color.fromARGB(255, 255, 250, 233), Color.fromARGB(255, 248, 205, 96)],
+    "과학": [Color.fromARGB(255, 255, 233, 249), Color.fromARGB(255, 248, 96, 169)],
+    "전체": [Color.fromARGB(255, 236, 233, 255), Color.fromARGB(255, 114, 96, 248)]
   };
 }
