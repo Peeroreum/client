@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,12 +7,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:textfield_tags/textfield_tags.dart';
-import 'package:peeroreum_client/model/Wedo.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
+import 'package:peeroreum_client/model/Wedu.dart';
 
 
-DateTime date = DateTime.now().add(Duration(days:66));
+DateTime date = DateTime.now().add(const Duration(days:66));
 const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학','한국사', '기타'];
 const List<String> grade = <String>['중1', '중2', '중3'];
 const List<int> headcount = <int>[10, 30, 50, 70, 100];
@@ -27,7 +26,7 @@ class CreateWedu extends StatefulWidget {
 }
 
 class _CreateWeduState extends State<CreateWedu> {
-  Wedo wedo = Wedo();
+  Wedu wedu = Wedu();
   String dropdownSubject = subject.first;
   String dropdownGrade = grade.first;
   int dropdownHeadcount = headcount.first;
@@ -144,9 +143,10 @@ class _CreateWeduState extends State<CreateWedu> {
           TextButton(
             onPressed: () {
               if (nameValue != "" && (dropdownChallenge != null)) {
-                Navigator.pushNamed(context, '/next');
-              } else
-                return null;
+                fetchWedu();
+              } else {
+                return;
+              }
             },
             child: Text(
               '다음',
@@ -280,7 +280,6 @@ class _CreateWeduState extends State<CreateWedu> {
                             onChanged: (value) {
                               setState(() {
                                 nameValue = value;
-                                wedo.title = nameValue;
                                 check_validation();
                               });
                             },
@@ -316,7 +315,7 @@ class _CreateWeduState extends State<CreateWedu> {
                               ),
                               child: SizedBox(
                                 height: 40,
-                                width: 147,
+                                width: 146,
                                 child: DropdownButton(
                                   isExpanded: true,
                                   padding: EdgeInsets.symmetric(
@@ -347,7 +346,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                     setState(() {
                                       dropdownSubject = value!;
                                       change_challenge(value);
-                                      wedo.subject=subject.indexOf(value);
                                     });
                                   },
                                 ),
@@ -372,7 +370,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                 height: 8,
                               ),
                               SizedBox(
-                                width: 153,
+                                width: 152,
                                 height: 40,
                                 child: InkWell(
                                   onTap: () async {
@@ -390,9 +388,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     );
                                     if (selectedDate != null) {
                                       setState(() {
-                                        date =
-                                            selectedDate; // 선택한 날짜는 date 변수에 저장
-                                            wedo.targetDate=selectedDate;
+                                        date = selectedDate;// 선택한 날짜는 date 변수에 저장
                                       });
                                     }     
                                   },
@@ -406,19 +402,24 @@ class _CreateWeduState extends State<CreateWedu> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        SvgPicture.asset('assets/icons/calendar.svg'),
-                                        const SizedBox(width: 8.0),
-                                        Text(
-                                          '$date'.substring(0, 10),
-                                          style: const TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: PeeroreumColor.black,
-                                          ),
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset('assets/icons/calendar.svg'),
+                                            const SizedBox(width: 8.0),
+                                            Text(
+                                              '$date'.substring(0, 10),
+                                              style: const TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: PeeroreumColor.black,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 8.0),
+                                        // const SizedBox(width: 8.0),
                                         SvgPicture.asset('assets/icons/down.svg'),
                                       ],
                                     ),
@@ -486,7 +487,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (String? value) {
                                     setState(() {
                                       dropdownGrade = value!;
-                                      wedo.grade=grade.indexOf(value);
                                     });
                                   },
                                 ),
@@ -547,7 +547,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (int? value) {
                                     setState(() {
                                       dropdownHeadcount = value!;
-                                      wedo.maximumPeople=value;
                                     });
                                   },
                                 ),
@@ -617,7 +616,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                       onChanged: (String? value) {
                                         setState(() {
                                           dropdownChallenge = value!;
-                                          wedo.challenge=value;
                                           check_validation();
                                         });
                                         
@@ -668,7 +666,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                           onChanged: (value) {
                               setState(() {
                                 personalChallenge = value;
-                                wedo.challenge=value;
                                 check_validation();
                               });
                               
@@ -705,7 +702,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                       return 'you already entered that';
                                     else {
                                       _tag.add(tag);
-                                      wedo.hashTags=_tag;
                                       return null;
                                     }
                                   },
@@ -866,7 +862,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (bool value) {
                                     setState(() {
                                       _isLocked = value;
-                                      wedo.isLocked=value;
                                       check_validation();
                                     });
                                    
@@ -940,7 +935,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                         onChanged: (value) {
                                           setState(() {
                                             passwordValue = value;
-                                            wedo.password=value;
                                             check_validation();
                                           });
                                        
@@ -959,5 +953,21 @@ class _CreateWeduState extends State<CreateWedu> {
         ),
       ),
     );
+  }
+
+  void fetchWedu() async {
+    var weduMap = <String, dynamic> {
+      'title': nameValue,
+      'subject': subject.indexOf(dropdownSubject),
+      'targetDate': '$date'.substring(0, 10),
+      'grade': grade.indexOf(dropdownGrade),
+      'maximumPeople':dropdownHeadcount,
+      'challenge': dropdownChallenge,
+      'isLocked': _isLocked? 1 : 0,
+      'password': passwordValue,
+      'file': (_image != null) ? await MultipartFile.fromFile(_image!.path) : null,
+      'hashTags': _tag
+    };
+      Navigator.pushNamed(context, '/wedu/create_invitaion', arguments: weduMap);
   }
 }
