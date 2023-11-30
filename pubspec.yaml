@@ -47,6 +47,9 @@ dependencies:
   http: ^1.1.0
   get: ^4.6.6
   flutter_secure_storage: ^9.0.0
+  intl: ^0.18.1
+  dio: ^5.3.4
+  widgets_to_image: ^0.0.2
 
 dev_dependencies:
   flutter_test:
