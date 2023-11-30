@@ -1,3 +1,4 @@
 class API {
-  static const hostConnect = "http://172.30.1.74:8080";
+  static const ip = "";
+  static const hostConnect = "http://${ip}:8080";
 }
