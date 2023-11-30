@@ -1,6 +1,6 @@
-import 'package:http/http.dart';
+import 'package:dio/dio.dart';
 
-class Wedo{
+class Wedu{
   String? title;
   int? subject;
   String? targetDate;
@@ -12,7 +12,7 @@ class Wedo{
   MultipartFile? file;
   List? hashTags;
 
-  Wedo({
+  Wedu({
     this.title,
     this.subject,
     this.targetDate,
@@ -25,16 +25,4 @@ class Wedo{
     this.hashTags
   });
 
-  Map<String, dynamic> toFormData()=>{
-    'title':title,
-    'subject':subject,
-    'targetDate':targetDate,
-    'grade':grade,
-    'maximumPeople':maximumPeople,
-    'challenge':challenge,
-    'isLocked':isLocked,
-    'password':password,
-    'file':file,
-    'hashTags':hashTags
-  };
 }
