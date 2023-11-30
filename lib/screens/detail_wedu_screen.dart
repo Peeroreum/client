@@ -1,36 +1,135 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/compliment_list_screen.dart';
 import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:http/http.dart' as http;
 
-final ImagePicker picker = ImagePicker();
-const List<String> successList = ['수이', '공주', '밍밍이', '묭묭', '신졔', '철웅이'];
-const List<String> notSuccessList = ['현지니', '쫑수', '꿍이', '단디', '루피', '짱기'];
+import '../api/PeeroreumApi.dart';
 
 class DetailWedu extends StatefulWidget {
-  const DetailWedu({super.key});
+  DetailWedu(this.id);
+  int id;
 
   @override
-  State<DetailWedu> createState() => _DetailWeduState();
+  State<DetailWedu> createState() => _DetailWeduState(id);
 }
 
 class _DetailWeduState extends State<DetailWedu> {
-  List<XFile?> _images = [];
+  int id;
+  _DetailWeduState(this.id);
+  var token;
+
+  final ImagePicker picker = ImagePicker();
+
+  List<dynamic> successList = [];
+  List<dynamic> notSuccessList = [];
+  List<dynamic> challengeImageList = [];
+  dynamic weduData = '';
+  dynamic weduTitle = '';
+  dynamic weduImage = '';
+  dynamic weduDday = '';
+  dynamic weduProgress = '';
+  dynamic weduChallenge = '';
+  dynamic challengeImage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDatas();
+  }
+
+  Future<void> fetchDatas() async {
+    token = await FlutterSecureStorage().read(key: "memberInfo");
+
+    var weduResult = await http.get(
+        Uri.parse( '${API.hostConnect}/wedu/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+    );
+    if(weduResult.statusCode == 200) {
+      weduData = await jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+      weduTitle = weduData['title'];
+      weduImage = weduData['imageUrl'];
+      weduDday = weduData['dday'];
+      weduProgress = weduData['progress'].toString();
+      weduChallenge = weduData['challenge'];
+    } else {
+      print("에러${weduResult.statusCode}");
+    }
+
+    var now = DateTime.now();
+    String formatDate = DateFormat('yyyyMMdd').format(now);
+    var challengeList = await http.get(
+        Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$formatDate'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+    );
+    if(challengeList.statusCode == 200) {
+      successList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['successMembers'];
+      notSuccessList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['failMembers'];
+    } else {
+      print("목록${challengeList.statusCode}");
+    }
+
+    await fetchImages(successList);
+  }
+
+  fetchImages(List<dynamic> successList) async {
+    var now = DateTime.now();
+    String formatDate = DateFormat('yyyyMMdd').format(now);
+    List<dynamic> resultImageList = [];
+    for (var index = 0; index < successList.length; index++) {
+      var successOne = successList[index]['nickname'].toString();
+      var result = await http.get(
+          Uri.parse('${API.hostConnect}/wedu/$id/challenge/$successOne/$formatDate'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+      );
+      if(result.statusCode == 200) {
+        var body = await jsonDecode(result.body);
+        resultImageList.add(body['data']['imageUrls'][0]);
+      } else {
+        print('이미지 에러 ${result.body}');
+      }
+
+    }
+    challengeImageList = resultImageList;
+  }
 
   void takeImages() async {
-    final List<XFile>? pickedImages =  await picker.pickMultiImage();
-    if(pickedImages != null) {
-      setState(() {
-        _images = pickedImages;
+    final XFile? image =  await picker.pickImage(source: ImageSource.camera);
+    if(image != null) {
+      dynamic sendFile = image.path;
+      var formData = FormData.fromMap({
+        'files': await MultipartFile.fromFile(sendFile)
       });
+
+      postImages(formData);
     }
+  }
+
+  Future<void> postImages(dynamic input) async {
+    var dio = Dio();
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.headers = {'Authorization': 'Bearer $token'};
+    await dio.post('${API.hostConnect}/wedu/$id/challenge', data: input);
   }
 
   @override
@@ -54,7 +153,7 @@ class _DetailWeduState extends State<DetailWedu> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '9월모고 1등급 만들기',
+              weduTitle,
               style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w500,
@@ -64,12 +163,12 @@ class _DetailWeduState extends State<DetailWedu> {
             SizedBox(
               width: 7,
             ),
-            SvgPicture.asset(
-              'assets/icons/lock.svg',
-              color: PeeroreumColor.gray[400],
-              width: 12,
-              height: 14,
-            )
+            // SvgPicture.asset(
+            //   'assets/icons/lock.svg',
+            //   color: PeeroreumColor.gray[400],
+            //   width: 12,
+            //   height: 14,
+            // )
           ],
         ),
         actions: [
@@ -147,8 +246,8 @@ class _DetailWeduState extends State<DetailWedu> {
                                           side: BorderSide(
                                               color:
                                                   PeeroreumColor.gray[100]!)),
-                                      child: Image.asset(
-                                        'assets/images/example_logo.png',
+                                      child: Image.network(
+                                        weduImage,
                                         width: 64,
                                         height: 64,
                                       ),
@@ -201,7 +300,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                                 width: 4,
                                               ),
                                               Text(
-                                                '22',
+                                                '${weduDday}',
                                                 style: TextStyle(
                                                     fontFamily: 'Pretendard',
                                                     fontWeight: FontWeight.w600,
@@ -230,7 +329,7 @@ class _DetailWeduState extends State<DetailWedu> {
                               color: PeeroreumColor.primaryPuple[400],
                               width: 37,
                               child: Text(
-                                '50%',
+                                '${weduProgress}%',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w600,
@@ -241,7 +340,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             LinearPercentIndicator(
                               padding: EdgeInsets.all(0),
                               lineHeight: 8,
-                              percent: 0.5,
+                              percent: double.parse(weduProgress)/100,
                               backgroundColor: PeeroreumColor.gray[200],
                               linearGradient: LinearGradient(colors: [
                                 PeeroreumColor.primaryPuple[400]!,
@@ -320,7 +419,7 @@ class _DetailWeduState extends State<DetailWedu> {
                               Container(
                                 width: 180,
                                 child: Text(
-                                  'ㅌㅊㅌㅊㅌㅊㅌㅊㅌㅊㅌㅊㅌㅊㅌㅊㅌㅊㅌㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊㅊ',
+                                  weduChallenge,
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w500,
@@ -348,73 +447,103 @@ class _DetailWeduState extends State<DetailWedu> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '달성',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                          color: PeeroreumColor.gray[800]),
+                    Row(
+                      children: [
+                        Text(
+                          '달성',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: PeeroreumColor.gray[800]),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '${successList.length}',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: PeeroreumColor.gray[800]),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => ComplimentList(),
-                              transitionDuration:
-                              const Duration(seconds: 0),
-                              reverseTransitionDuration:
-                              const Duration(seconds: 0)),
-                        );
-                      },
-                      child: Text(
-                        '전체보기',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: PeeroreumColor.gray[500]),
-                      ),
-                    ),
+                    // TextButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       PageRouteBuilder(
+                    //           pageBuilder: (_, __, ___) => ComplimentList(),
+                    //           transitionDuration:
+                    //           const Duration(seconds: 0),
+                    //           reverseTransitionDuration:
+                    //           const Duration(seconds: 0)),
+                    //     );
+                    //   },
+                    //   child: Text(
+                    //     '전체보기',
+                    //     style: TextStyle(
+                    //         fontFamily: 'Pretendard',
+                    //         fontWeight: FontWeight.w600,
+                    //         fontSize: 14,
+                    //         color: PeeroreumColor.gray[500]),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
-              okList(),
+              (successList.length > 0) ? okList() : Container(),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '미달성',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                          color: PeeroreumColor.gray[800]),
+                    Row(
+                      children: [
+                        Text(
+                          '미달성',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: PeeroreumColor.gray[800]),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '${notSuccessList.length}',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: PeeroreumColor.gray[800]),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => EncouragementList(),
-                              transitionDuration:
-                              const Duration(seconds: 0),
-                              reverseTransitionDuration:
-                              const Duration(seconds: 0)),
-                        );
-                      },
-                      child: Text(
-                        '전체보기',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: PeeroreumColor.gray[500]),
-                      ),
-                    ),
+                    // TextButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       PageRouteBuilder(
+                    //           pageBuilder: (_, __, ___) => EncouragementList(),
+                    //           transitionDuration:
+                    //           const Duration(seconds: 0),
+                    //           reverseTransitionDuration:
+                    //           const Duration(seconds: 0)),
+                    //     );
+                    //   },
+                    //   child: Text(
+                    //     '전체보기',
+                    //     style: TextStyle(
+                    //         fontFamily: 'Pretendard',
+                    //         fontWeight: FontWeight.w600,
+                    //         fontSize: 14,
+                    //         color: PeeroreumColor.gray[500]),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -483,22 +612,23 @@ class _DetailWeduState extends State<DetailWedu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      showDragHandle: true,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       isScrollControlled: true,
                       builder: (context) {
-                        return challengeImages(successList[index]);
+                        return challengeImages(successList[index], index);
                       },
-                    );
+                    ).timeout(const Duration(seconds: 5), onTimeout: () {
+                      fetchImages(successList[index]);
+                    });
                   },
                 ),
                 SizedBox(
                   height: 8,
                 ),
                 Text(
-                  successList[index],
+                  '${successList[index]['nickname']}',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w500,
@@ -541,7 +671,7 @@ class _DetailWeduState extends State<DetailWedu> {
                   height: 8,
                 ),
                 Text(
-                  notSuccessList[index],
+                  '${notSuccessList[index]['nickname']}',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w500,
@@ -556,13 +686,15 @@ class _DetailWeduState extends State<DetailWedu> {
     );
   }
 
-  challengeImages(String successNickname) {
+
+  challengeImages(dynamic successOne, var index) {
+    challengeImage = challengeImageList[index];
     return SizedBox(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.65,
+      height: MediaQuery.of(context).size.height * 0.68,
       child: Scaffold(
         body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.all(20),
           child: Column(
             children: [
               ButtonBar(
@@ -575,13 +707,14 @@ class _DetailWeduState extends State<DetailWedu> {
                         height: 48,
                         child: CircleAvatar(
                           radius: 250,
-                          backgroundImage: AssetImage("assets/images/oreum.png"),
                           backgroundColor: PeeroreumColor.gray[50],
+                          child: Image.asset('assets/images/oreum.png')
+                          // Image.network(successOne['profileImage']),
                         ),
                       ),
                       SizedBox(width: 8),
                       Text(
-                        successNickname,
+                        successOne["nickname"].toString(),
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,
@@ -601,33 +734,45 @@ class _DetailWeduState extends State<DetailWedu> {
                 ],
               ),
                SizedBox(height: 20),
-               CarouselSlider(
-                  items: _images.map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: double.maxFinite,
-                          height: 380,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: PeeroreumColor.gray[100],
-                          ),
-                          child: Image.file(
-                            File(i!.path),
-                            fit: BoxFit.fill,
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                      enableInfiniteScroll: false,
-                    viewportFraction: 1,
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    enlargeCenterPage: true,
-
-                  ),
+              Container(
+                width: double.maxFinite,
+                height: 380,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: PeeroreumColor.gray[100],
                 ),
+                child: Image.network(
+                  challengeImage,
+                  fit: BoxFit.cover,
+                ),
+              )
+               // CarouselSlider(
+               //    items: _images.map((i) {
+               //      return Builder(
+               //        builder: (BuildContext context) {
+               //          return Container(
+               //            width: double.maxFinite,
+               //            height: 380,
+               //            decoration: BoxDecoration(
+               //              borderRadius: BorderRadius.circular(8),
+               //              color: PeeroreumColor.gray[100],
+               //            ),
+               //            child: Image.file(
+               //              File(i!.path),
+               //              fit: BoxFit.fill,
+               //            ),
+               //          );
+               //        },
+               //      );
+               //    }).toList(),
+               //    options: CarouselOptions(
+               //        enableInfiniteScroll: false,
+               //      viewportFraction: 1,
+               //      height: MediaQuery.of(context).size.height * 0.45,
+               //      enlargeCenterPage: true,
+               //
+               //    ),
+               //  ),
             ],
           ),
         ),
