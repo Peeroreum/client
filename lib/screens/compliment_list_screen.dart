@@ -6,10 +6,12 @@ class ComplimentList extends StatefulWidget {
   @override
   State<ComplimentList> createState() => _ComplimentListState();
 }
-const List<String> successList = ['수이', '공주', '밍밍이', '묭묭', '신졔', '철웅이'];
 class _ComplimentListState extends State<ComplimentList> {
+  List<dynamic> successList =[];
   @override
   Widget build(BuildContext context) {
+    successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+
     return Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
@@ -66,7 +68,7 @@ class _ComplimentListState extends State<ComplimentList> {
                             width: 4,
                           ),
                           Text(
-                            'NN',
+                            '${successList.length}',
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w500,
@@ -157,19 +159,24 @@ class _ComplimentListState extends State<ComplimentList> {
               child: Row(
                 children: [
                   Container(
+                    padding: EdgeInsets.all(3.5),
                     width: 48,
                     height: 48,
-                    child: CircleAvatar(
-                      radius: 250,
-                      backgroundImage: AssetImage("assets/images/oreum.png"),
-                      backgroundColor: PeeroreumColor.gray[50],
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: PeeroreumColor.gradeColor[successList[index]['grade']]!
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg')
+                      ),
                     ),
                   ),
                   SizedBox(
                     width: 8,
                   ),
                   Text(
-                    successList[index],
+                    successList[index]['nickname'],
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w500,

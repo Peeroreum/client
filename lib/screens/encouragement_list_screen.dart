@@ -8,11 +8,13 @@ class EncouragementList extends StatefulWidget {
   State<EncouragementList> createState() => _EncouragementListState();
 }
 
-const List<String> notSuccessList = ['현지니', '쫑수', '꿍이', '단디', '루피', '짱기'];
+
 
 class _EncouragementListState extends State<EncouragementList> {
+  List<dynamic> notSuccessList = [];
   @override
   Widget build(BuildContext context) {
+    notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
     return Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
@@ -72,7 +74,7 @@ class _EncouragementListState extends State<EncouragementList> {
                             width: 4,
                           ),
                           Text(
-                            'NN',
+                            '${notSuccessList.length}',
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w500,
@@ -165,19 +167,24 @@ class _EncouragementListState extends State<EncouragementList> {
                 child: Row(
                   children: [
                     Container(
+                      padding: EdgeInsets.all(3.5),
                       width: 48,
                       height: 48,
-                      child: CircleAvatar(
-                        radius: 250,
-                        backgroundImage: AssetImage("assets/images/oreum.png"),
-                        backgroundColor: PeeroreumColor.gray[50],
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
+                        ),
+                        image: DecorationImage(
+                            image: AssetImage('assets/images/user.jpg')
+                        ),
                       ),
                     ),
                     SizedBox(
                       width: 8,
                     ),
                     Text(
-                      notSuccessList[index],
+                      notSuccessList[index]['nickname'],
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w500,
