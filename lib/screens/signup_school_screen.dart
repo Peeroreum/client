@@ -152,215 +152,220 @@ class _SignUpSchoolState extends State<SignUpSchool> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
-        elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.grey[800],
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 40,
-                  width: double.maxFinite,
-                  child: LinearPercentIndicator(
-                    animateFromLastPercent: true,
-                    lineHeight: 8.0,
-                    percent: 1,
-                    progressColor: Color.fromARGB(255, 114, 96, 248),
-                    backgroundColor: Colors.grey[100],
-                    barRadius: Radius.circular(10),
-                  ),
-                ),
-                Container(
-                  height: 122,
-                  width: double.maxFinite,
-                  padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("현재 다니는 학교를 알려주세요.",
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text("학교 정보는 추후 학교 대항전 등 이벤트에 활용될 수 있어요.",
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[800])),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.05,
-                ),
-                Container(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '지역',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: PeeroreumButton<String>(
-                              width: double.infinity,
-                              items: _siDos,
-                              value: _siDo,
-                              onChanged: (value) {
-                                setState(() {
-                                  _siDo = value;
-                                  _checkInput();
-                                });
-                              },
-                              hintText: '시･도',
-                            ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Expanded(
-                            child: PeeroreumButton<String>(
-                              width: double.infinity,
-                              items: _siDos,
-                              value: _siGuGun,
-                              onChanged: (value) {
-                                setState(() {
-                                  _siGuGun = value;
-                                  _checkInput();
-                                });
-                              },
-                              hintText: '시･구･군',
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        controller: schoolController,
-                        onChanged: (value) {
-                          _schoolName = value;
-                          _checkInput();
-                        },
-                        decoration: InputDecoration(
-                          hintText: '학교명',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 234, 235, 236)),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.grey[800],
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: TextButton(
-                onPressed: () {
-                  SkipDialog();
-                },
-                child: Text(
-                  '건너뛰기',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.0,
-                      color: Colors.grey[500]),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-        child: SizedBox(
-          height: 48,
-          child: TextButton(
-            onPressed: () async {
-              if (_siDo != null && _siGuGun != null && _schoolName != null) {
-                member.school = _schoolName;
-                var result = await http.post(
-                    Uri.parse('${API.hostConnect}/signup'),
-                    body: jsonEncode(member),
-                    headers: {'Content-Type': 'application/json'});
-                if (result.statusCode == 200) {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => SignIn(),
-                          transitionDuration: const Duration(seconds: 0),
-                          reverseTransitionDuration:
-                              const Duration(seconds: 0)),
-                      (route) => false);
-                } else {
-                  print(result.statusCode);
-                }
-              }
+            onPressed: () {
+              Navigator.pop(context);
             },
-            child: Text(
-              '다음',
-              style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.0,
-                  color: Colors.white),
+          ),
+        ),
+        body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 40,
+                    width: double.maxFinite,
+                    child: LinearPercentIndicator(
+                      animateFromLastPercent: true,
+                      lineHeight: 8.0,
+                      percent: 1,
+                      progressColor: Color.fromARGB(255, 114, 96, 248),
+                      backgroundColor: Colors.grey[100],
+                      barRadius: Radius.circular(10),
+                    ),
+                  ),
+                  Container(
+                    height: 122,
+                    width: double.maxFinite,
+                    padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("현재 다니는 학교를 알려주세요.",
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text("학교 정보는 추후 학교 대항전 등 이벤트에 활용될 수 있어요.",
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey[800])),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  Container(
+                    width: double.maxFinite,
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '지역',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: PeeroreumButton<String>(
+                                width: double.infinity,
+                                items: _siDos,
+                                value: _siDo,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _siDo = value;
+                                    _checkInput();
+                                  });
+                                },
+                                hintText: '시･도',
+                              ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Expanded(
+                              child: PeeroreumButton<String>(
+                                width: double.infinity,
+                                items: _siDos,
+                                value: _siGuGun,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _siGuGun = value;
+                                    _checkInput();
+                                  });
+                                },
+                                hintText: '시･구･군',
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: schoolController,
+                          onChanged: (value) {
+                            _schoolName = value;
+                            _checkInput();
+                          },
+                          decoration: InputDecoration(
+                            hintText: '학교명',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey[600]),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 234, 235, 236)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: TextButton(
+                  onPressed: () {
+                    SkipDialog();
+                  },
+                  child: Text(
+                    '건너뛰기',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.0,
+                        color: Colors.grey[500]),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+          child: SizedBox(
+            height: 48,
+            child: TextButton(
+              onPressed: () async {
+                if (_siDo != null && _siGuGun != null && _schoolName != null) {
+                  member.school = _schoolName;
+                  var result = await http.post(
+                      Uri.parse('${API.hostConnect}/signup'),
+                      body: jsonEncode(member),
+                      headers: {'Content-Type': 'application/json'});
+                  if (result.statusCode == 200) {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => SignIn(),
+                            transitionDuration: const Duration(seconds: 0),
+                            reverseTransitionDuration:
+                                const Duration(seconds: 0)),
+                        (route) => false);
+                  } else {
+                    print(result.statusCode);
+                  }
+                }
+              },
+              child: Text(
+                '다음',
+                style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.0,
+                    color: Colors.white),
+              ),
+              style: ButtonStyle(
+                  backgroundColor: is_Enabled
+                      ? MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400])
+                      : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                  padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(vertical: 12)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ))),
             ),
-            style: ButtonStyle(
-                backgroundColor: is_Enabled
-                    ? MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400])
-                    : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 12)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ))),
           ),
         ),
       ),
