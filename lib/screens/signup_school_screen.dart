@@ -13,6 +13,7 @@ import '../api/PeeroreumApi.dart';
 
 class SignUpSchool extends StatefulWidget {
   Member member;
+
   SignUpSchool(this.member);
 
   @override
@@ -21,6 +22,7 @@ class SignUpSchool extends StatefulWidget {
 
 class _SignUpSchoolState extends State<SignUpSchool> {
   Member member;
+
   _SignUpSchoolState(this.member);
 
   final schoolController = TextEditingController();
@@ -50,36 +52,26 @@ class _SignUpSchoolState extends State<SignUpSchool> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "학교 입력을 건너뛰실 건가요?",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
-                  color: PeeroreumColor.black,
-                ),
-              ),
-            ],
+          title: Text(
+            "학교 입력을 건너뛰실 건가요?",
+            textAlign: TextAlign.center
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "학교를 입력하지 않은 경우, 학교 대항전과 같은\n이벤트 참여에 제한이 생길 수 있어요.",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Pretendard',
-                  color: PeeroreumColor.gray[600],
-                ),
-              ),
-            ],
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Pretendard',
+            color: PeeroreumColor.black,
+          ),
+          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          content: Text(
+            "학교를 입력하지 않은 경우, 학교 대항전과 같은 이벤트 참여에 제한이 생길 수 있어요.",
+            textAlign: TextAlign.center,
+          ),
+          contentTextStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            fontFamily: 'Pretendard',
+            color: PeeroreumColor.gray[600],
           ),
           actions: [
             Row(
