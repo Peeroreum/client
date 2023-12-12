@@ -114,7 +114,7 @@ class _DetailWeduState extends State<DetailWedu> {
   }
 
   void takeImages() async {
-    final XFile? image =  await picker.pickImage(source: ImageSource.camera);
+    final XFile? image =  await picker.pickImage(source: ImageSource.gallery);
     if(image != null) {
       dynamic sendFile = image.path;
       var formData = FormData.fromMap({
@@ -410,10 +410,19 @@ class _DetailWeduState extends State<DetailWedu> {
                                   ),
                                 ),
                               ),
+                              // SizedBox(width: 8,),
+                              // Text(
+                              //   weduChallenge,
+                              //   style: TextStyle(
+                              //       fontFamily: 'Pretendard',
+                              //       fontWeight: FontWeight.w500,
+                              //       fontSize: 18,
+                              //       color: PeeroreumColor.gray[800]),
+                              // ),
                             ],
                           ),
                           content: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
@@ -470,27 +479,19 @@ class _DetailWeduState extends State<DetailWedu> {
                         ),
                       ],
                     ),
-                    // TextButton(
-                    //   onPressed: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       PageRouteBuilder(
-                    //           pageBuilder: (_, __, ___) => ComplimentList(),
-                    //           transitionDuration:
-                    //           const Duration(seconds: 0),
-                    //           reverseTransitionDuration:
-                    //           const Duration(seconds: 0)),
-                    //     );
-                    //   },
-                    //   child: Text(
-                    //     '전체보기',
-                    //     style: TextStyle(
-                    //         fontFamily: 'Pretendard',
-                    //         fontWeight: FontWeight.w600,
-                    //         fontSize: 14,
-                    //         color: PeeroreumColor.gray[500]),
-                    //   ),
-                    // ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/wedu/challenge/ok', arguments: successList);
+                      },
+                      child: Text(
+                        '전체보기',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[500]),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -523,27 +524,19 @@ class _DetailWeduState extends State<DetailWedu> {
                         ),
                       ],
                     ),
-                    // TextButton(
-                    //   onPressed: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       PageRouteBuilder(
-                    //           pageBuilder: (_, __, ___) => EncouragementList(),
-                    //           transitionDuration:
-                    //           const Duration(seconds: 0),
-                    //           reverseTransitionDuration:
-                    //           const Duration(seconds: 0)),
-                    //     );
-                    //   },
-                    //   child: Text(
-                    //     '전체보기',
-                    //     style: TextStyle(
-                    //         fontFamily: 'Pretendard',
-                    //         fontWeight: FontWeight.w600,
-                    //         fontSize: 14,
-                    //         color: PeeroreumColor.gray[500]),
-                    //   ),
-                    // ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/wedu/challenge/notok', arguments: notSuccessList);
+                      },
+                      child: Text(
+                        '전체보기',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[500]),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -558,7 +551,81 @@ class _DetailWeduState extends State<DetailWedu> {
           height: 48,
           child: TextButton(
             onPressed: () {
-              takeImages();
+              showModalBottomSheet(context: context, builder: (context) {
+                return Container(
+                  padding: EdgeInsets.all(20),
+                  alignment: Alignment.center,
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '인증 방식을 선택하세요.',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.gray[800],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  takeImages();
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  '카메라',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.white,
+                                  ),
+                                ),
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(PeeroreumColor.primaryPuple[200]),
+                                  padding: MaterialStateProperty.all(EdgeInsets.all(12)),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ))),
+                            ),
+                            SizedBox(width: 20),
+                            TextButton(
+                              onPressed: () {
+                                takeImages();
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                '갤러리',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.white,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(PeeroreumColor.primaryPuple[200]),
+                                  padding: MaterialStateProperty.all(EdgeInsets.all(12)),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ))),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
             },
             child: Text(
               '인증하기',
@@ -596,17 +663,22 @@ class _DetailWeduState extends State<DetailWedu> {
         itemBuilder: (BuildContext context, int index) {
           return Container(
               child: Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 12),
             child: Column(
               children: [
                 GestureDetector(
                   child: Container(
+                    padding: EdgeInsets.all(3.5),
                     width: 48,
                     height: 48,
-                    child: CircleAvatar(
-                      radius: 250,
-                      backgroundImage: AssetImage("assets/images/oreum.png"),
-                      backgroundColor: PeeroreumColor.gray[50],
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg')
+                      ),
                     ),
                   ),
                   onTap: () {
@@ -655,16 +727,21 @@ class _DetailWeduState extends State<DetailWedu> {
         itemBuilder: (BuildContext context, int index) {
           return Container(
               child: Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 12),
             child: Column(
               children: [
                 Container(
+                  padding: EdgeInsets.all(3.5),
                   width: 48,
                   height: 48,
-                  child: CircleAvatar(
-                    radius: 250,
-                    backgroundImage: AssetImage("assets/images/oreum.png"),
-                    backgroundColor: PeeroreumColor.gray[50],
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
+                      ),
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/user.jpg')
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -703,13 +780,17 @@ class _DetailWeduState extends State<DetailWedu> {
                   Row(
                     children: [
                       Container(
+                        padding: EdgeInsets.all(3.5),
                         width: 48,
                         height: 48,
-                        child: CircleAvatar(
-                          radius: 250,
-                          backgroundColor: PeeroreumColor.gray[50],
-                          child: Image.asset('assets/images/oreum.png')
-                          // Image.network(successOne['profileImage']),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: PeeroreumColor.gradeColor[successOne['grade']]!
+                          ),
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/user.jpg')
+                          ),
                         ),
                       ),
                       SizedBox(width: 8),
@@ -740,10 +821,10 @@ class _DetailWeduState extends State<DetailWedu> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   color: PeeroreumColor.gray[100],
-                ),
-                child: Image.network(
-                  challengeImage,
-                  fit: BoxFit.cover,
+                  image: DecorationImage(
+                      image: NetworkImage(challengeImage),
+                    fit: BoxFit.fill
+                  )
                 ),
               )
                // CarouselSlider(
