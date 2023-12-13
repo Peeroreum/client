@@ -280,8 +280,8 @@ class _HomeWeduState extends State<HomeWedu> {
                       border: Border.all(
                           width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: Image.network(inroom_datas[index]['imagePath']!,
-                      width: 48, height: 48),
+                  child: (inroom_datas[index]['imagePath'] != null)? Image.network(inroom_datas[index]['imagePath']!,
+                      width: 48, height: 48) : Image.asset('assets/images/example_logo.png', width: 48, height: 48),
                 ),
                 SizedBox(
                   height: 16,
@@ -292,8 +292,8 @@ class _HomeWeduState extends State<HomeWedu> {
                     DecoratedBox(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(4)),
-                          color: PeeroreumColor.subjectColor[subject[index]]
-                              ?[0]),
+                          color: PeeroreumColor.subjectColor[dropdownClassList[inroom_datas[index]['subject']]]?[0],
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 8),
@@ -304,22 +304,23 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
-                            color: PeeroreumColor.subjectColor[subject[index]]
-                                ?[1],
+                            color: PeeroreumColor.subjectColor[dropdownClassList[inroom_datas[index]['subject']]]?[1],
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      inroom_datas[index]["title"]!,
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.black),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      width: 98,
+                      child: Text(
+                        inroom_datas[index]["title"]!,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.black),
+                      ),
                     ),
                   ],
                 ),
@@ -540,8 +541,8 @@ class _HomeWeduState extends State<HomeWedu> {
                       border: Border.all(
                           width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: Image.network(datas[index]["imagePath"]!,
-                      width: 44, height: 44),
+                  child: (datas[index]["imagePath"] != null)? Image.network(datas[index]["imagePath"]!,
+                      width: 44, height: 44) : Image.asset('assets/images/example_logo.png', width: 44, height: 44),
                 ),
                 Container(
                   height: 44,
@@ -563,7 +564,6 @@ class _HomeWeduState extends State<HomeWedu> {
                                     vertical: 2, horizontal: 8),
                                 child: Text(
                                   dropdownClassList[datas[index]['subject']],
-                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w600,
@@ -645,9 +645,12 @@ class _HomeWeduState extends State<HomeWedu> {
   Widget roominfo(index) {
     return SizedBox(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.55,
       child: Scaffold(
         body: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8)
+          ),
           padding: EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -676,7 +679,8 @@ class _HomeWeduState extends State<HomeWedu> {
                               decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(4)),
-                                  color: Color(0xFFFFE9E9)),
+                                  color: PeeroreumColor.subjectColor[dropdownClassList[datas[index]['subject']]]?[0],
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 8),
@@ -685,7 +689,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
-                                      color: Color(0xFFF86060),
+                                      color: PeeroreumColor.subjectColor[dropdownClassList[datas[index]['subject']]]?[1],
                                       fontWeight: FontWeight.w600,
                                       fontSize: 10),
                                 ),
@@ -753,7 +757,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   )
                 ],
               ),
-              // roominfo_tag(index),
+              roominfo_tag(index),
               SizedBox(
                 height: 16,
               ),
@@ -993,6 +997,9 @@ class _HomeWeduState extends State<HomeWedu> {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
+
+
+
         });
     if (inviResult.statusCode == 200) {
       return await jsonDecode(utf8.decode(inviResult.bodyBytes))['data'];
