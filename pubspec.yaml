@@ -51,6 +51,7 @@ dependencies:
   dio: ^5.3.4
   widgets_to_image: ^0.0.2
   kakao_flutter_sdk: ^1.7.0
+  google_sign_in: ^6.1.6
 
 dev_dependencies:
   flutter_test:
