@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
@@ -71,7 +72,9 @@ class _SignInState extends State<SignIn> {
                     width: 350.0,
                     height: 48.0,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        googleSignIn();
+                      },
                       child: Text(
                         '구글 로그인',
                         style: TextStyle(
@@ -160,7 +163,7 @@ class _SignInState extends State<SignIn> {
       var accessToken = jsonDecode(result.body)['data'];
       storage.write(key: "memberInfo", value: accessToken);
       Navigator.pushNamedAndRemoveUntil(context, '/wedu', (route) => false);
-    } else {
+    } else if(result.statusCode == 404) {
       Member member = Member();
       member.username = socialAccount;
       Navigator.push(
@@ -171,6 +174,19 @@ class _SignInState extends State<SignIn> {
             reverseTransitionDuration:
             const Duration(seconds: 0)),
       );
+    } else {
+      print("소셜 로그인 실패");
+    }
+  }
+
+  void googleSignIn() async {
+    final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+    var socialAccount = "";
+    if(googleSignInAccount != null) {
+      socialAccount = googleSignInAccount.email;
+      fetchSocialLogin(socialAccount);
+    } else {
+      print("구글계정으로 로그인 실패");
     }
   }
 }
