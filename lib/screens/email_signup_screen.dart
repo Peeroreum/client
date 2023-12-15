@@ -21,8 +21,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
   final pw_controller = TextEditingController();
   final pw2_controller = TextEditingController();
   bool is_Enabled = false;
-  bool pw_visible = true;
-  bool pw2_visible = true;
+  bool pw_hide = true;
+  bool pw2_hide = true;
 
   bool id_check = false;
   bool id_duplicate = false;
@@ -180,19 +180,19 @@ class _EmailSignUpState extends State<EmailSignUp> {
                               vertical: 12, horizontal: 16),
                           focusedBorder: id_check
                               ? OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(
                                       color: PeeroreumColor.primaryPuple[400]!),
                                 )
                               : OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(
                                     color: PeeroreumColor.black,
                                   ),
                                 ),
                           enabledBorder: id_check
                               ? OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(
                                       color: PeeroreumColor.primaryPuple[400]!),
                                 )
@@ -228,83 +228,104 @@ class _EmailSignUpState extends State<EmailSignUp> {
                       child: TextFormField(
                         controller: pw_controller,
                         onChanged: (value) {
-                          _checkInput();
-                          if (value.length > 0) {
+                          if (value.isNotEmpty) {
                             pw_showClearbutton = true;
                           } else {
                             pw_showClearbutton = false;
                           }
+                          _checkInput();
+                          if (RegExp(
+                              r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
+                              .hasMatch(pw_controller.text)) {
+                            pw_check = true;
+                          }
                         },
-                        obscureText: pw_visible,
-                        obscuringCharacter: '●',
                         decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide:
-                                  BorderSide(color: PeeroreumColor.gray[200]!)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide:
-                                  BorderSide(color: PeeroreumColor.black)),
                           hintText: '비밀번호를 입력하세요',
                           hintStyle: TextStyle(
                               fontFamily: 'Pretendard',
-                              fontSize: 14,
                               fontWeight: FontWeight.w400,
+                              fontSize: 14,
                               color: PeeroreumColor.gray[600]),
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                pw_showClearbutton
-                                    ? IconButton(
-                                        onPressed: () {
-                                          pw_controller.clear();
-                                          setState(() {
-                                            pw_showClearbutton = false;
-                                            _checkInput();
-                                          });
-                                        },
-                                        icon: SvgPicture.asset(
-                                          "assets/icons/x_circle.svg",
-                                          color: PeeroreumColor.gray[200],
-                                        ),
-                                        constraints: BoxConstraints(),
-                                        padding: EdgeInsets.zero,
-                                      )
-                                    : SizedBox(),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      pw_visible = !pw_visible;
-                                    });
-                                  },
-                                  child: SvgPicture.asset(
-                                    pw_visible
-                                        ? "assets/icons/eye_on.svg"
-                                        : "assets/icons/eye_off.svg",
-                                    color: PeeroreumColor.gray[600],
-                                  ),
-                                ),
-                              ],
+                          errorText: pw_controller.text.length >= 12 && !pw_check
+                              ? "영문, 숫자, 특수문자 포함 8자~12자"
+                              : null,
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: PeeroreumColor.error,
                             ),
                           ),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: PeeroreumColor.error,
+                              )),
+                          suffixIcon: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                  padding: EdgeInsets.only(left: 12),
+                                  child: pw_showClearbutton
+                                      ? IconButton(
+                                          onPressed: () {
+                                            pw_controller.clear();
+                                            setState(() {
+                                              pw_showClearbutton = false;
+                                              pw_check = false;
+                                              _checkInput();
+                                            });
+                                          },
+                                          icon: SvgPicture.asset(
+                                            "assets/icons/x_circle.svg",
+                                            color: PeeroreumColor.gray[200],
+                                          ))
+                                      : null),
+                              pw_suffix()
+                            ],
+                          ),
+                          helperText: pw_check? "사용 가능한 비밀번호입니다." : "영문, 숫자, 특수문자 포함 8자~12자",
+                          helperStyle: pw_check
+                              ? TextStyle(
+                                  fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: PeeroreumColor.primaryPuple[400])
+                              : TextStyle(
+                                  fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: PeeroreumColor.gray[600]),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          focusedBorder: pw_check
+                              ? OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: PeeroreumColor.primaryPuple[400]!),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: PeeroreumColor.black,
+                                  ),
+                                ),
+                          enabledBorder: pw_check
+                              ? OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: PeeroreumColor.primaryPuple[400]!),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: PeeroreumColor.gray[200]!,
+                                  )),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-                      child: Text(
-                        '영문, 숫자, 특수문자 포함 8자~12자',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12),
+                        showCursor: false,
+                        obscureText: pw_hide,
+                        obscuringCharacter: '●',
                       ),
                     ),
                   ],
@@ -329,33 +350,64 @@ class _EmailSignUpState extends State<EmailSignUp> {
                       controller: pw2_controller,
                       onChanged: (value) {
                         _checkInput();
-                        if (value.length > 0) {
+                        if (value.isNotEmpty) {
                           pw2_showClearbutton = true;
                         } else {
                           pw2_showClearbutton = false;
                         }
+                        if(pw_controller.text == pw2_controller.text) {
+                          setState(() {
+                            pw2_check = true;
+                          });
+                        } else {
+                          setState(() {
+                            pw2_check = false;
+                          });
+                        }
                       },
-                      obscureText: pw2_visible,
+                      obscureText: pw2_hide,
                       obscuringCharacter: '●',
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                BorderSide(color: PeeroreumColor.gray[200]!)),
+                            borderSide: BorderSide(color: pw2_check? PeeroreumColor.primaryPuple[400]! : PeeroreumColor.gray[200]!)
+                        ),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide:
-                                BorderSide(color: PeeroreumColor.black)),
+                                BorderSide(color: pw2_check? PeeroreumColor.primaryPuple[400]! : PeeroreumColor.black)),
                         hintText: '비밀번호를 재입력하세요',
                         hintStyle: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: PeeroreumColor.gray[600]),
+                        helperText: pw2_check? "비밀번호가 일치합니다." : "",
+                        helperStyle: TextStyle(
+                            fontFamily: "Pretendard",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            color: PeeroreumColor.primaryPuple[400]
+                        ),
+                        errorText: !pw2_check && pw2_controller.text.length >= 12 ? "비밀번호가 일치하지 않습니다." : null,
+                        errorStyle: !pw2_check && pw2_controller.text.length >= 12 ? TextStyle(
+                            fontFamily: "Pretendard",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            color: PeeroreumColor.error
+                        ) : null,
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: PeeroreumColor.error)
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: PeeroreumColor.error)
+                        ),
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         suffixIcon: Padding(
-                          padding: EdgeInsets.fromLTRB(12, 0, 16, 0),
+                          padding: EdgeInsets.only(left: 12),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             mainAxisSize: MainAxisSize.min,
@@ -366,6 +418,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                         pw2_controller.clear();
                                         setState(() {
                                           pw2_showClearbutton = false;
+                                          pw2_check = false;
                                           _checkInput();
                                         });
                                       },
@@ -377,22 +430,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                       padding: EdgeInsets.zero,
                                     )
                                   : SizedBox(),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    pw2_visible = !pw2_visible;
-                                  });
-                                },
-                                child: SvgPicture.asset(
-                                  pw_visible
-                                      ? "assets/icons/eye_on.svg"
-                                      : "assets/icons/eye_off.svg",
-                                  color: PeeroreumColor.gray[600],
-                                ),
-                              )
+                              pw2_suffix()
                             ],
                           ),
                         ),
@@ -407,7 +445,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
             ),
           ),
         ),
-        bottomSheet: Container (
+        bottomSheet: Container(
           child: Container(
             color: PeeroreumColor.white,
             padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
@@ -417,17 +455,18 @@ class _EmailSignUpState extends State<EmailSignUp> {
               child: TextButton(
                 onPressed: is_Enabled
                     ? () {
-                  member.username = id_controller.text;
-                  member.password = pw_controller.text;
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpNickname(member),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration:
-                        const Duration(seconds: 0)),
-                  );
-                }
+                        member.username = id_controller.text;
+                        member.password = pw_controller.text;
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                              pageBuilder: (_, __, ___) =>
+                                  SignUpNickname(member),
+                              transitionDuration: const Duration(seconds: 0),
+                              reverseTransitionDuration:
+                                  const Duration(seconds: 0)),
+                        );
+                      }
                     : null,
                 child: Text(
                   '다음',
@@ -440,14 +479,14 @@ class _EmailSignUpState extends State<EmailSignUp> {
                 style: ButtonStyle(
                     backgroundColor: is_Enabled
                         ? MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400])
+                            PeeroreumColor.primaryPuple[400])
                         : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                     padding: MaterialStateProperty.all(
                         EdgeInsets.symmetric(vertical: 12)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ))),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
               ),
             ),
           ),
@@ -504,5 +543,78 @@ class _EmailSignUpState extends State<EmailSignUp> {
           color: PeeroreumColor.error);
     }
     return TextStyle();
+  }
+
+  pw_suffix() {
+    if (pw_check) {
+      return Container(
+          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          child: SvgPicture.asset(
+            "assets/icons/check.svg",
+            color: PeeroreumColor.primaryPuple[400],
+          ));
+    }
+    if (pw_controller.text.length >= 12 && !pw_check) {
+      return Container(
+          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          child: SvgPicture.asset(
+            "assets/icons/warning_circle.svg",
+            color: PeeroreumColor.error,
+          )
+      );
+    }
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          pw_hide = !pw_hide;
+        });
+      },
+      child: Container(
+        padding: EdgeInsets.only(right: 16),
+        child: SvgPicture.asset(
+          pw_hide
+              ? "assets/icons/eye_off.svg"
+              : "assets/icons/eye_on.svg",
+          color: PeeroreumColor.gray[600],
+        ),
+      ),
+    );
+  }
+
+  pw2_suffix() {
+    if(pw2_check) {
+      return Container(
+          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          child: SvgPicture.asset(
+            "assets/icons/check.svg",
+            color: PeeroreumColor.primaryPuple[400],
+          )
+      );
+    }
+    if (pw2_controller.text.length >= 12 && !pw2_check) {
+      return Container(
+          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          child: SvgPicture.asset(
+            "assets/icons/warning_circle.svg",
+            color: PeeroreumColor.error,
+          )
+      );
+    }
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          pw2_hide = !pw2_hide;
+        });
+      },
+      child: Container(
+        padding: EdgeInsets.fromLTRB(12, 0, 16, 0),
+        child: SvgPicture.asset(
+          pw2_hide
+              ? "assets/icons/eye_off.svg"
+              : "assets/icons/eye_on.svg",
+          color: PeeroreumColor.gray[600],
+        ),
+      ),
+    );
   }
 }
