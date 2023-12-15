@@ -283,6 +283,8 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 Fluttertoast.showToast(
                                     msg: "이메일 혹은 비밀번호가 일치하지 않습니다."
                                 );
+                              } else {
+                                Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
                               }
                             } : null,
                             child: Text(
