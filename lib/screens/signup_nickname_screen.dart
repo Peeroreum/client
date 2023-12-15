@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/signup_subject_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+
+import '../api/PeeroreumApi.dart';
+import '../designs/PeeroreumColor.dart';
 
 class SignUpNickname extends StatefulWidget {
   Member member;
@@ -15,6 +20,22 @@ class _SignUpNicknameState extends State<SignUpNickname> {
   Member member;
   _SignUpNicknameState(this.member);
   final nicknameController = TextEditingController();
+  bool isDuplicateNickname = false;
+  bool checkNickname = false;
+  bool showNicknameClearButton = false;
+
+  checkDuplicateNickname(String value) async {
+    var result = await http.get(
+        Uri.parse('${API.hostConnect}/signup/nickname/$value'),
+        headers: {'Content-Type': 'application/json'});
+    if (result.statusCode == 409) {
+      setState(() {
+        isDuplicateNickname = true;
+      });
+    } else {
+      isDuplicateNickname = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,72 +104,139 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                   ),
                 ],
               ),
-              Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 120, 10, 4),
-                    child: TextFormField(
-                      controller: nicknameController,
-                      onChanged: (value) {
-                        member.nickname = value;
-                      },
-                      decoration: InputDecoration(
-                        hintText: '닉네임을 입력하세요',
-                        hintStyle: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[600]),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 234, 235, 236)),
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 136, 10, 0),
+                width: MediaQuery.of(context).size.width,
+                child: TextFormField(
+                  controller: nicknameController,
+                  onChanged: (value) {
+                    if(nicknameController.text.isNotEmpty) {
+                      setState(() {
+                        showNicknameClearButton = true;
+                        if(nicknameController.text.length >= 2 && nicknameController.text.length <= 12) {
+                          checkNickname = true;
+                        } else {
+                          checkNickname = false;
+                        }
+                      });
+                    } else {
+                      setState(() {
+                        showNicknameClearButton = false;
+                        checkNickname = false;
+                        isDuplicateNickname = false;
+                      });
+                    }
+                    checkDuplicateNickname(value);
+
+                  },
+                  decoration: InputDecoration(
+                    hintText: '닉네임을 입력하세요',
+                    hintStyle: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: PeeroreumColor.gray[600]),
+                    helperText: checkNickname && !isDuplicateNickname? "사용 가능한 닉네임입니다." : "언더바(_)를 제외한 특수문자는 사용할 수 없어요.",
+                    helperStyle: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        color: checkNickname && !isDuplicateNickname? PeeroreumColor.primaryPuple[400] : PeeroreumColor.gray[600]),
+                    errorText: checkError(),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: PeeroreumColor.error,
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(18, 0, 18, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("언더바(_)를 제외한 특수문자와 이모티콘은 사용할 수 없어요.",
-                            style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey[600])),
-                        Row(
-                          children: [
-                            Text("12",
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600])),
-                            Text("/",
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey[200])),
-                            Text("12",
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600])),
-                          ],
-                        )
-                      ],
+                      focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: PeeroreumColor.error,
+                          )
+                      ),
+                      counterText: '${nicknameController.text.length} / 12',
+                      counterStyle: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: PeeroreumColor.gray[600]!
+                      ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16),
+                    focusedBorder: checkNickname && !isDuplicateNickname
+                        ? OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: PeeroreumColor.primaryPuple[400]!),
+                    )
+                        : OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: PeeroreumColor.black,
+                      ),
                     ),
+                    enabledBorder: checkNickname && !isDuplicateNickname
+                        ? OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                          color: PeeroreumColor.primaryPuple[400]!),
+                    )
+                        : OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: PeeroreumColor.gray[200]!,
+                        )
+                    ),
+                    suffixIcon: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                            padding: EdgeInsets.only(left: 12),
+                            child:  showNicknameClearButton
+                                ? IconButton(
+                                onPressed: () {
+                                  nicknameController.clear();
+                                  setState(() {
+                                    checkNickname = false;
+                                    isDuplicateNickname = false;
+                                    showNicknameClearButton = false;
+                                  });
+                                },
+                                icon: SvgPicture.asset(
+                                  "assets/icons/x_circle.svg",
+                                  color: PeeroreumColor.gray[200],
+                                ))
+                                : null),
+                        Container(
+                            padding: EdgeInsets.only(right: 16),
+                            child: checkNickname && !isDuplicateNickname
+                                ? SvgPicture.asset(
+                              "assets/icons/check.svg",
+                              color: PeeroreumColor.primaryPuple[400],
+                            )
+                                : nicknameController.text.isNotEmpty? SvgPicture.asset(
+                              "assets/icons/warning_circle.svg",
+                              color: PeeroreumColor.error,
+                            ) : null
+                        ),
+                      ],
+                    )
                   ),
-                ],
-              ),
+                ),
+              )
             ],
           ),
         ),
-        bottomNavigationBar: Container(
+        bottomSheet: Container(
+          color: PeeroreumColor.white,
+          width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
           child: SizedBox(
             height: 48,
             child: TextButton(
-              onPressed: () {
+              onPressed: checkNickname && !isDuplicateNickname ? () {
+                member.nickname = nicknameController.text;
                 Navigator.push(
                   context,
                   PageRouteBuilder(
@@ -156,7 +244,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                       transitionDuration: const Duration(seconds: 0),
                       reverseTransitionDuration: const Duration(seconds: 0)),
                 );
-              },
+              } : null,
               child: Text(
                 '다음',
                 style: TextStyle(
@@ -166,9 +254,9 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                     color: Colors.white),
               ),
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey[300]),
+                  backgroundColor: MaterialStateProperty.all(checkNickname && !isDuplicateNickname? PeeroreumColor.primaryPuple[400] : PeeroreumColor.gray[300]),
                   padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
+                      const EdgeInsets.symmetric(vertical: 12)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
@@ -178,5 +266,15 @@ class _SignUpNicknameState extends State<SignUpNickname> {
         ),
       ),
     );
+  }
+
+  checkError() {
+    if(!checkNickname && nicknameController.text.length > 0) {
+      return "한글 2자, 영문/숫자 4자 이상 적어주세요.";
+    }
+    if(isDuplicateNickname) {
+      return "이미 사용 중인 닉네임입니다.";
+    }
+    return null;
   }
 }

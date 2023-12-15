@@ -1,15 +1,15 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, prefer_is_empty
 
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
 import 'package:peeroreum_client/screens/email_signup_screen.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/screens/home_wedu.dart';
 
 import '../api/PeeroreumApi.dart';
@@ -279,6 +279,12 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       const Duration(seconds: 0)),
                                     (route) => false
                                 );
+                              } else if(result.statusCode == 404 || result.statusCode == 401) {
+                                Fluttertoast.showToast(
+                                    msg: "이메일 혹은 비밀번호가 일치하지 않습니다."
+                                );
+                              } else {
+                                Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
                               }
                             } : null,
                             child: Text(
