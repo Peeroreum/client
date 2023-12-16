@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/search_result_wedu_screen.dart';
 
 class searchWedu extends StatefulWidget {
   const searchWedu({super.key});
@@ -32,20 +34,20 @@ class _searchWeduState extends State<searchWedu> {
     return AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leadingWidth: 24,
+        // leadingWidth: 36,
         leading: IconButton(
-          iconSize: 24,
-          icon: Icon(
-            Icons.arrow_back,
+          // iconSize: 24,
+          icon: SvgPicture.asset(
+            'assets/icons/arrow-left.svg',
+            color: PeeroreumColor.gray[800],
           ),
           onPressed: () {
             Navigator.of(context).pop();
           },
-          color: PeeroreumColor.gray[800],
         ),
         titleSpacing: 0,
         title: Padding(
-          padding: EdgeInsets.fromLTRB(12, 12, 20, 12),
+          padding: EdgeInsets.fromLTRB(0, 12, 20, 12),
           child: SearchBar(
             // padding: MaterialStateProperty.all(
             //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
@@ -56,31 +58,33 @@ class _searchWeduState extends State<searchWedu> {
             // shape: MaterialStateProperty.all(ContinuousRectangleBorder(
             //     borderRadius: BorderRadius.all(Radius.circular(37.0)))),
             constraints: BoxConstraints(maxHeight: 40),
-            hintText: '어떤 문제가 궁금하세요?',
+            hintText: '같이방에서 함께 공부해요!',
             hintStyle: MaterialStateProperty.all(TextStyle(
                 color: PeeroreumColor.gray[600],
                 fontFamily: 'Pretendard',
                 fontSize: 14,
                 fontWeight: FontWeight.w400)),
             trailing: [
-              IconButton(
-                constraints: BoxConstraints(maxWidth: 24),
-                splashRadius: 24.0,
-                onPressed: () => _textEditingController.clear(),
-                icon: Icon(
-                  Icons.cancel,
-                  color: Colors.grey[600],
-                  size: 16,
-                ),
+              GestureDetector(
+                onTap: () => _textEditingController.clear(),
+                child: SvgPicture.asset(
+                  'assets/icons/x_circle.svg',
+                  color: PeeroreumColor.gray[600],
+                )
               ),
               IconButton(
-                constraints: BoxConstraints(maxWidth: 30),
-                splashRadius: 24.0,
-                onPressed: () {},
-                icon: Icon(
-                  Icons.search,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => SearchResultWedu(_textEditingController.text),
+                        transitionDuration: const Duration(seconds: 0),
+                        reverseTransitionDuration: const Duration(seconds: 0)),
+                  );
+                },
+                icon: SvgPicture.asset(
+                  'assets/icons/search.svg',
                   color: Colors.grey[600],
-                  size: 18,
                 ),
               ),
             ],
@@ -111,7 +115,7 @@ class _searchWeduState extends State<searchWedu> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 274, 16),
+              padding: const EdgeInsets.fromLTRB(20, 16, 0, 16),
               child: Text(
                 '실시간 검색어',
                 style: TextStyle(
