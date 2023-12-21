@@ -3,7 +3,7 @@ import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/create_wedu_screen.dart';
-import 'package:peeroreum_client/screens/signup_grade_screen.dart';
+import 'package:peeroreum_client/screens/signup_school_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SignUpSubject extends StatefulWidget {
@@ -254,7 +254,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpGrade(member),
+                        pageBuilder: (_, __, ___) => SignUpSchool(member),
                         transitionDuration: const Duration(seconds: 0),
                         reverseTransitionDuration: const Duration(seconds: 0)),
                   );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/signup_subject_screen.dart';
+import 'package:peeroreum_client/screens/signup_grade_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../api/PeeroreumApi.dart';
@@ -240,7 +240,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                 Navigator.push(
                   context,
                   PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => SignUpSubject(member),
+                      pageBuilder: (_, __, ___) => SignUpGrade(member),
                       transitionDuration: const Duration(seconds: 0),
                       reverseTransitionDuration: const Duration(seconds: 0)),
                 );

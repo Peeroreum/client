@@ -347,7 +347,6 @@ class _EmailSignUpState extends State<EmailSignUp> {
                     TextField(
                       controller: pw2_controller,
                       onChanged: (value) {
-                        _checkInput();
                         if (value.isNotEmpty) {
                           pw2_showClearbutton = true;
                         } else {
@@ -362,6 +361,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             pw2_check = false;
                           });
                         }
+                        _checkInput();
                       },
                       obscureText: pw2_hide,
                       obscuringCharacter: '●',
