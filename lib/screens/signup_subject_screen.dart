@@ -88,7 +88,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
               Container(
                 // height: 122,
                 width: double.maxFinite,
-                padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
+                padding: EdgeInsets.fromLTRB(10, 16, 10, 56),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

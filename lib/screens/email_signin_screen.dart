@@ -77,13 +77,18 @@ class _EmailSignInState extends State<EmailSignIn> {
               alignment: Alignment(0.0, 0.0),
               child: Column(
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                  SizedBox(
+                      // height: MediaQuery.of(context).size.height * 0.1
+                    height: 60,
+                  ),
                   Image.asset(
                     'assets/images/splash_logo.png',
                     height: 236.0,
                     width: 170.0,
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                  SizedBox(
+                      height: 60
+                  ),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
@@ -214,45 +219,45 @@ class _EmailSignInState extends State<EmailSignIn> {
                         SizedBox(
                           height: 16.0,
                         ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: Checkbox(
-                                value: is_checked,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                splashRadius: 24,
-                                onChanged: (value) {
-                                  setState(() {
-                                    is_checked = value!;
-                                  });
-                                  activate();
-                                },
-                                side: BorderSide(
-                                    width: 2, color: PeeroreumColor.gray[200]!),
-                                checkColor: PeeroreumColor.white,
-                                activeColor: PeeroreumColor.primaryPuple[400],
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4)),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Text(
-                              '로그인 상태 유지',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: PeeroreumColor.gray[600]),
-                            )
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     SizedBox(
+                        //       width: 24,
+                        //       height: 24,
+                        //       child: Checkbox(
+                        //         value: is_checked,
+                        //         materialTapTargetSize:
+                        //             MaterialTapTargetSize.shrinkWrap,
+                        //         splashRadius: 24,
+                        //         onChanged: (value) {
+                        //           setState(() {
+                        //             is_checked = value!;
+                        //           });
+                        //           activate();
+                        //         },
+                        //         side: BorderSide(
+                        //             width: 2, color: PeeroreumColor.gray[200]!),
+                        //         checkColor: PeeroreumColor.white,
+                        //         activeColor: PeeroreumColor.primaryPuple[400],
+                        //         shape: RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(4)),
+                        //       ),
+                        //     ),
+                        //     SizedBox(
+                        //       width: 8,
+                        //     ),
+                        //     Text(
+                        //       '로그인 상태 유지',
+                        //       style: TextStyle(
+                        //           fontFamily: 'Pretendard',
+                        //           fontSize: 14,
+                        //           fontWeight: FontWeight.w400,
+                        //           color: PeeroreumColor.gray[600]),
+                        //     )
+                        //   ],
+                        // ),
                         SizedBox(
-                          height: 40.0, //40.0
+                          height: 20.0, //40.0
                         ),
                         SizedBox(
                           width: double.infinity,
@@ -304,26 +309,32 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       PeeroreumColor.primaryPuple[400])
                                   : MaterialStateProperty.all(
                                       PeeroreumColor.gray[300]),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  )
+                              )
                             ),
                           ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  '이메일 찾기',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14.0,
-                                      color: Colors.grey[600]),
-                                )),
-                            Text(
-                              '|',
-                              style: TextStyle(color: Colors.grey[200]),
-                            ),
+                            // TextButton(
+                            //     onPressed: () {},
+                            //     child: Text(
+                            //       '이메일 찾기',
+                            //       style: TextStyle(
+                            //           fontFamily: 'Pretendard',
+                            //           fontWeight: FontWeight.w600,
+                            //           fontSize: 14.0,
+                            //           color: Colors.grey[600]),
+                            //     )
+                            // ),
+                            // Text(
+                            //   '|',
+                            //   style: TextStyle(color: Colors.grey[200]),
+                            // ),
                             TextButton(
                                 onPressed: () {},
                                 child: Text(
@@ -363,9 +374,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                       ],
                     ),
                   ),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom))
+
                 ],
               ),
             ),
