@@ -4,7 +4,11 @@ class Member {
   String? nickname;
   int? grade;
   int? goodSubject;
+  int? goodDetailSubject;
+  int? goodLevel;
   int? badSubject;
+  int? badDetailSubject;
+  int? badLevel;
   String? school;
 
   Member({
@@ -13,7 +17,11 @@ class Member {
     this.nickname,
     this.grade,
     this.goodSubject,
+    this.goodDetailSubject,
+    this.goodLevel,
     this.badSubject,
+    this.badDetailSubject,
+    this.badLevel,
     this.school
   });
 

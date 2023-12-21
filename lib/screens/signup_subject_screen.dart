@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/create_wedu_screen.dart';
+import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/screens/signup_school_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -15,8 +15,16 @@ class SignUpSubject extends StatefulWidget {
 }
 
 class _SignUpSubjectState extends State<SignUpSubject> {
-  final _subjects = ['국어', '영어', '수학', '사회', '과학', '기타'];
+  Member member;
+  _SignUpSubjectState(this.member);
+
+  final subjects = Subject.subject;
+  final middleSubjects = Subject.middleSubject;
+  final highSubjects = Subject.highSubject;
+
   final _levels = ['상', '중', '하'];
+  List<String> goodDetailSubjects = [];
+  List<String> badDetailSubjects = [];
   String? _goodSubject;
   String? _selectedDetailGoodSubject;
   String? _badSubject;
@@ -24,7 +32,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   String? _goodLevel;
   String? _badLevel;
 
-  bool is_Enabled = false;
+  bool isEnabled = false;
 
   void _checkInput() {
     if (_goodSubject != null &&
@@ -34,13 +42,10 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         _goodLevel != null &&
         _badLevel != null) {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     }
   }
-
-  Member member;
-  _SignUpSubjectState(this.member);
 
   @override
   Widget build(BuildContext context) {
@@ -125,11 +130,14 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           PeeroreumButton<String>(
-                            items: _subjects,
+                            items: Subject.subject,
                             value: _goodSubject,
                             onChanged: (value) {
                               setState(() {
                                 _goodSubject = value;
+                                goodDetailSubjects = ((member.grade! <= 3)
+                                    ? middleSubjects[_goodSubject]
+                                    : highSubjects[_goodSubject])!;
                               });
                             },
                             hintText: '과목',
@@ -140,7 +148,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           Expanded(
                             child: PeeroreumButton<String>(
                                 width: double.infinity,
-                                items: subject,
+                                items: goodDetailSubjects,
                                 value: _selectedDetailGoodSubject,
                                 onChanged: (value) {
                                   setState(() {
@@ -192,11 +200,14 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         PeeroreumButton<String>(
-                          items: _subjects,
+                          items: Subject.subject,
                           value: _badSubject,
                           onChanged: (value) {
                             setState(() {
                               _badSubject = value;
+                              badDetailSubjects = ((member.grade! <= 3)
+                                  ? middleSubjects[_badSubject]
+                                  : highSubjects[_badSubject])!;
                               _checkInput();
                             });
                           },
@@ -208,7 +219,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         Expanded(
                           child: PeeroreumButton<String>(
                             width: double.infinity,
-                            items: _subjects,
+                            items: badDetailSubjects,
                             value: _selectedDetailBadSubject,
                             onChanged: (value) {
                               setState(() {
@@ -248,9 +259,13 @@ class _SignUpSubjectState extends State<SignUpSubject> {
             height: 48,
             child: TextButton(
               onPressed: () {
-                if (_goodSubject != null && _badSubject != null) {
-                  member.goodSubject = _subjects.indexOf(_goodSubject!) + 1;
-                  member.badSubject = _subjects.indexOf(_badSubject!) + 1;
+                if (isEnabled) {
+                  member.goodSubject = subjects.indexOf(_goodSubject!) + 1;
+                  member.goodDetailSubject = goodDetailSubjects.indexOf(_selectedDetailGoodSubject!);
+                  member.goodLevel = _levels.indexOf(_goodLevel!);
+                  member.badSubject = subjects.indexOf(_badSubject!) + 1;
+                  member.badDetailSubject = badDetailSubjects.indexOf(_selectedDetailBadSubject!);
+                  member.badLevel = _levels.indexOf(_badLevel!);
                   Navigator.push(
                     context,
                     PageRouteBuilder(
@@ -269,7 +284,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                     color: Colors.white),
               ),
               style: ButtonStyle(
-                  backgroundColor: is_Enabled
+                  backgroundColor: isEnabled
                       ? MaterialStateProperty.all(
                           PeeroreumColor.primaryPuple[400])
                       : MaterialStateProperty.all(PeeroreumColor.gray[300]),
