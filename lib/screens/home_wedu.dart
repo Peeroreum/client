@@ -106,7 +106,7 @@ class _HomeWeduState extends State<HomeWedu> {
                           borderRadius: BorderRadius.circular(37.0))),
                   child: Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                     child: Row(
                       children: [
                         SvgPicture.asset(
@@ -175,36 +175,36 @@ class _HomeWeduState extends State<HomeWedu> {
       backgroundColor: PeeroreumColor.white,
       body: Container(
           child: Column(
-        children: [
-          room_body(),
-          (inroom_datas.length != 0)
-              ? SizedBox(
+            children: [
+              room_body(),
+              (inroom_datas.length != 0)
+                  ? SizedBox(
                   height: 193, //180으로 나중에 수정
                   child: in_room_body())
-              : SizedBox(
-                  height: 0,
+                  : SizedBox(
+                height: 0,
+              ),
+              Container(
+                height: 8,
+                color: PeeroreumColor.gray[50],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('같이방',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Pretendard')),
+                  ],
                 ),
-          Container(
-            height: 8,
-            color: PeeroreumColor.gray[50],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('같이방',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Pretendard')),
-              ],
-            ),
-          ),
-          dropdown_body(),
-          Expanded(child: listview_body())
-        ],
-      )),
+              ),
+              dropdown_body(),
+              Expanded(child: listview_body())
+            ],
+          )),
     );
   }
 
@@ -283,9 +283,9 @@ class _HomeWeduState extends State<HomeWedu> {
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: (inroom_datas[index]['imagePath'] != null)
                       ? Image.network(inroom_datas[index]['imagePath']!,
-                          width: 48, height: 48)
+                      width: 48, height: 48)
                       : Image.asset('assets/images/example_logo.png',
-                          width: 48, height: 48),
+                      width: 48, height: 48),
                 ),
                 SizedBox(
                   height: 16,
@@ -297,7 +297,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
                         color: PeeroreumColor.subjectColor[dropdownSubjectList[
-                            inroom_datas[index]['subject']]]?[0],
+                        inroom_datas[index]['subject']]]?[0],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -310,8 +310,8 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
                             color: PeeroreumColor.subjectColor[
-                                dropdownSubjectList[inroom_datas[index]
-                                    ['subject']]]?[1],
+                            dropdownSubjectList[inroom_datas[index]
+                            ['subject']]]?[1],
                           ),
                         ),
                       ),
@@ -407,7 +407,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     height: 40,
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: DropdownButton(
                           icon: Padding(
                             padding: EdgeInsets.only(left: 7.0), //나중에 수정 8.0
@@ -450,11 +450,11 @@ class _HomeWeduState extends State<HomeWedu> {
                     height: 40,
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: DropdownButton(
                           icon: Padding(
                             padding:
-                                const EdgeInsets.only(left: 7.0), //나중에 수정 8.0
+                            const EdgeInsets.only(left: 7.0), //나중에 수정 8.0
                             child: Icon(Icons.expand_more,
                                 color: PeeroreumColor.gray[600]),
                           ),
@@ -552,9 +552,9 @@ class _HomeWeduState extends State<HomeWedu> {
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: (datas[index]["imagePath"] != null)
                       ? Image.network(datas[index]["imagePath"]!,
-                          width: 44, height: 44)
+                      width: 44, height: 44)
                       : Image.asset('assets/images/example_logo.png',
-                          width: 44, height: 44),
+                      width: 44, height: 44),
                 ),
                 Container(
                   height: 44,
@@ -567,10 +567,10 @@ class _HomeWeduState extends State<HomeWedu> {
                             DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                BorderRadius.all(Radius.circular(4)),
                                 color: PeeroreumColor.subjectColor[
-                                    dropdownSubjectList[datas[index]
-                                        ['subject']]]?[0],
+                                dropdownSubjectList[datas[index]
+                                ['subject']]]?[0],
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -582,8 +582,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                     fontWeight: FontWeight.w600,
                                     fontSize: 10,
                                     color: PeeroreumColor.subjectColor[
-                                        dropdownSubjectList[datas[index]
-                                            ['subject']]]?[1],
+                                    dropdownSubjectList[datas[index]
+                                    ['subject']]]?[1],
                                   ),
                                 ),
                               ),
@@ -677,7 +677,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             border: Border.all(
                                 width: 1, color: PeeroreumColor.gray[200]!),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
+                            BorderRadius.all(Radius.circular(5.0))),
                         child: Image.network(datas[index]["imagePath"]!,
                             width: 72, height: 72),
                       ),
@@ -690,10 +690,10 @@ class _HomeWeduState extends State<HomeWedu> {
                             DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                BorderRadius.all(Radius.circular(4)),
                                 color: PeeroreumColor.subjectColor[
-                                    dropdownSubjectList[datas[index]
-                                        ['subject']]]?[0],
+                                dropdownSubjectList[datas[index]
+                                ['subject']]]?[0],
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -704,8 +704,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       color: PeeroreumColor.subjectColor[
-                                          dropdownSubjectList[datas[index]
-                                              ['subject']]]?[1],
+                                      dropdownSubjectList[datas[index]
+                                      ['subject']]]?[1],
                                       fontWeight: FontWeight.w600,
                                       fontSize: 10),
                                 ),
@@ -781,7 +781,7 @@ class _HomeWeduState extends State<HomeWedu> {
               Container(
                 width: double.infinity,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 child: Text(
                   inviDatas[index]['challenge'],
                   style: TextStyle(
@@ -830,7 +830,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   ),
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    MaterialStateProperty.all(PeeroreumColor.gray[300]),
                     padding: MaterialStateProperty.all(
                         EdgeInsets.symmetric(vertical: 12)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -1006,7 +1006,7 @@ class _HomeWeduState extends State<HomeWedu> {
           future: fetchDatas(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center();
+              return bodyWidget();
             } else if (snapshot.hasError) {
               // 에러 발생 시
               return Center(child: Text('Error: ${snapshot.error}'));
@@ -1033,7 +1033,7 @@ class _HomeWeduState extends State<HomeWedu> {
 
   void enrollWedu(index) async {
     var id = datas[index]['id'];
-    var enrollResult = await await http
+    var enrollResult = await http
         .post(Uri.parse('${API.hostConnect}/wedu/$id/enroll'), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
