@@ -97,11 +97,11 @@ class _searchWeduState extends State<searchWedu> {
       backgroundColor: PeeroreumColor.white,
       body: Column(
         children: [
-          realtimeSearch(),
-          Container(
-            height: 8,
-            color: PeeroreumColor.gray[100],
-          ),
+          // realtimeSearch(),
+          // Container(
+          //   height: 8,
+          //   color: PeeroreumColor.gray[100],
+          // ),
           Expanded(child: recentSearch())
         ],
       ),
