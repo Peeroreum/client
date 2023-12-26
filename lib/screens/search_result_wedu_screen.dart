@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 import '../api/PeeroreumApi.dart';
+import '../data/WeduSearchHistory.dart';
 
 class SearchResultWedu extends StatefulWidget {
   final String keyword;
@@ -23,6 +24,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   String keyword;
   _SearchResultWeduState(this.keyword);
 
+  List<Map<String, String>> _searchHistory = [];
   List<dynamic> datas = [];
   List<dynamic> inviDatas = [];
   List<dynamic> hashTags = [];
@@ -78,6 +80,16 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     }
   }
 
+  _loadSearchHistory() async {
+    _searchHistory = await SearchHistory.getSearchHistory();
+    setState(() {});
+  }
+
+  _saveSearchHistory(String value) async {
+    await SearchHistory.addSearchItem(value);
+    _loadSearchHistory();
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController textEditingController = TextEditingController();
@@ -98,7 +110,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                 color: PeeroreumColor.gray[800],
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(_searchHistory);
               },
             ),
             titleSpacing: 0,
@@ -135,6 +147,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                       setState(() {
                         keyword = textEditingController.text;
                         fetchDatas();
+                        _saveSearchHistory(keyword);
                       });
                     },
                     icon: SvgPicture.asset(
