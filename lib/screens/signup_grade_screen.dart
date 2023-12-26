@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/signup_school_screen.dart';
+import 'package:peeroreum_client/screens/signup_subject_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SignUpGrade extends StatefulWidget {
@@ -142,13 +142,13 @@ class _SignUpGradeState extends State<SignUpGrade> {
             child: TextButton(
               onPressed: () {
                 if (_school != null && _grade != null) {
-                  member.grade = _school == "중학교"
+                  member.grade = (_school == "중학교")
                       ? _grades.indexOf(_grade!) + 1
                       : _grades.indexOf(_grade!) + 4;
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpSchool(member),
+                        pageBuilder: (_, __, ___) => SignUpSubject(member),
                         transitionDuration: const Duration(seconds: 0),
                         reverseTransitionDuration: const Duration(seconds: 0)),
                   );

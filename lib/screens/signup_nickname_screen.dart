@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/signup_subject_screen.dart';
+import 'package:peeroreum_client/screens/signup_grade_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../api/PeeroreumApi.dart';
@@ -223,6 +223,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                       ],
                     )
                   ),
+                    cursorColor: PeeroreumColor.gray[600]
                 ),
               )
             ],
@@ -231,7 +232,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
         bottomSheet: Container(
           color: PeeroreumColor.white,
           width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+          padding: MediaQuery.of(context).viewInsets.bottom > 0? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.fromLTRB(20, 8, 20, 28),
           child: SizedBox(
             height: 48,
             child: TextButton(
@@ -240,7 +241,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                 Navigator.push(
                   context,
                   PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => SignUpSubject(member),
+                      pageBuilder: (_, __, ___) => SignUpGrade(member),
                       transitionDuration: const Duration(seconds: 0),
                       reverseTransitionDuration: const Duration(seconds: 0)),
                 );
@@ -259,7 +260,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                       const EdgeInsets.symmetric(vertical: 12)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: MediaQuery.of(context).viewInsets.bottom > 0? BorderRadius.zero : BorderRadius.circular(8.0),
                   ))),
             ),
           ),

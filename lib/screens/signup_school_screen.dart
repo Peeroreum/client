@@ -31,16 +31,16 @@ class _SignUpSchoolState extends State<SignUpSchool> {
   String? _siGuGun;
   String? _schoolName;
 
-  bool is_Enabled = false;
+  bool isEnabled = false;
 
   void _checkInput() {
-    if (_siDo != null && _siGuGun != null && _schoolName != null) {
+    if (_siDo != null && _siGuGun != null && schoolController.text.isNotEmpty) {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     } else {
       setState(() {
-        is_Enabled = false;
+        isEnabled = false;
       });
     }
   }
@@ -276,24 +276,32 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                         SizedBox(
                           height: 20,
                         ),
-                        TextFormField(
-                          controller: schoolController,
-                          onChanged: (value) {
-                            _schoolName = value;
-                            _checkInput();
-                          },
-                          decoration: InputDecoration(
-                            hintText: '학교명',
-                            hintStyle: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey[600]),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 234, 235, 236)),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 48,
+                          child: TextFormField(
+                            controller: schoolController,
+                            onChanged: (value) {
+                              _schoolName = value;
+                              _checkInput();
+                            },
+                            decoration: InputDecoration(
+                              hintText: '학교명',
+                              hintStyle: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey[600]),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                                  borderRadius: BorderRadius.all(Radius.circular(8))
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                                  borderRadius: BorderRadius.all(Radius.circular(8))
+                              ),
+                            ),
+                            cursorColor: PeeroreumColor.gray[600],
                           ),
                         ),
                       ],
@@ -355,7 +363,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     color: Colors.white),
               ),
               style: ButtonStyle(
-                  backgroundColor: is_Enabled
+                  backgroundColor: isEnabled
                       ? MaterialStateProperty.all(
                           PeeroreumColor.primaryPuple[400])
                       : MaterialStateProperty.all(PeeroreumColor.gray[300]),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
@@ -507,6 +508,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               Expanded(
                 child: TextButton(
                   onPressed: () {
+                    enrollWedu(index);
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -537,7 +539,6 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
       ),
     );
   }
-
   Widget roominfo_tag(roomIndex) {
     return Padding(
       padding: EdgeInsets.only(top: 16),
@@ -589,5 +590,24 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
         ),
       ),
     );
+  }
+
+  void enrollWedu(index) async {
+    var id = datas[index]['id'];
+    var enrollResult = await http
+        .post(Uri.parse('${API.hostConnect}/wedu/$id/enroll'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    if(enrollResult.statusCode == 200) {
+      Fluttertoast.showToast(
+          msg: "같이방 참여 완료!"
+      );
+    } else if(enrollResult.statusCode == 409) {
+      Fluttertoast.showToast(msg: '이미 참여 중인 같이방입니다.');
+    } else {
+      Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
+      print('에러${enrollResult.statusCode}${enrollResult.body}');
+    }
   }
 }

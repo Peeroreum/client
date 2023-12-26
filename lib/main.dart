@@ -5,12 +5,10 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/compliment_list_screen.dart';
 import 'package:peeroreum_client/screens/create_wedu_invitation.dart';
 import 'package:peeroreum_client/screens/email_signin_screen.dart';
-import 'package:peeroreum_client/screens/email_signup_screen.dart';
+import 'package:peeroreum_client/screens/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
 import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
-import 'package:peeroreum_client/screens/signin_screen.dart';
-import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
 
 void main() {
   final native_app_key = "a6ab4f390d7270d5fee060c7305c8784";
@@ -36,8 +34,7 @@ class PeeroreumApp extends StatelessWidget {
       title: 'Peeroreum',
       initialRoute: '/signIn',
       routes: {
-        '/signIn': (context) => SignIn(),
-        '/signIn/email': (context) => EmailSignIn(),
+        '/signIn': (context) => EmailSignIn(),
         '/signUp/email': (context) => EmailSignUp(),
         '/wedu': (context) => HomeWedu(),
         '/wedu/create_invitaion': (context) => CreateInvitation(),
