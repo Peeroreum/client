@@ -27,12 +27,18 @@ class SearchHistory {
   static Future<void> addSearchItem(String searchItem) async {
     List<Map<String, String>> history = await getSearchHistory();
     final String currentDate = DateFormat('yy.MM.dd').format(DateTime.now());
-    Map<String, String> newEntry = {'keyword': searchItem, 'date': currentDate};
+    Map<String, String> searchEntry = {'keyword': searchItem, 'date': currentDate};
 
-    if (!history.any((item) => item['keyword'] == searchItem)) {
-      history.add(newEntry);
-      saveSearchHistory(history);
+    // 중복 검색 기록 삭제
+    history.removeWhere((item) => item['keyword'] == searchItem);
+
+    // 10개 초과 시 가장 오래된 기록 삭제
+    if (history.length == 10) {
+      history.removeAt(0);
     }
+
+    history.add(searchEntry);
+    saveSearchHistory(history);
   }
 
   // 검색 기록 삭제
