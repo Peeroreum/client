@@ -20,7 +20,7 @@ class SearchHistory {
     return historyStringList.map((item) {
       final decodedItem = jsonDecode(item) as Map;
       return decodedItem.map((key, value) => MapEntry(key as String, value as String));
-    }).toList();
+    }).toList().reversed.toList();
   }
 
   // 검색 기록에 새 항목 추가
