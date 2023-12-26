@@ -200,7 +200,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                     color: PeeroreumColor.gray[200]!,
                                   )),
                         ),
-                        showCursor: false,
+                          cursorColor: PeeroreumColor.gray[600]
                       ),
                     )
                   ],
@@ -446,7 +446,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
         bottomSheet: Container(
           child: Container(
             color: PeeroreumColor.white,
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: MediaQuery.of(context).viewInsets.bottom > 0 ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.fromLTRB(20, 8, 20, 28),
             width: MediaQuery.of(context).size.width,
             child: SizedBox(
               height: 48,
@@ -483,7 +483,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         EdgeInsets.symmetric(vertical: 12)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0? BorderRadius.zero : BorderRadius.circular(8.0),
                     ))),
               ),
             ),

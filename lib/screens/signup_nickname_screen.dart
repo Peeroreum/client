@@ -223,6 +223,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                       ],
                     )
                   ),
+                    cursorColor: PeeroreumColor.gray[600]
                 ),
               )
             ],
@@ -231,7 +232,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
         bottomSheet: Container(
           color: PeeroreumColor.white,
           width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+          padding: MediaQuery.of(context).viewInsets.bottom > 0? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.fromLTRB(20, 8, 20, 28),
           child: SizedBox(
             height: 48,
             child: TextButton(
@@ -259,7 +260,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                       const EdgeInsets.symmetric(vertical: 12)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: MediaQuery.of(context).viewInsets.bottom > 0? BorderRadius.zero : BorderRadius.circular(8.0),
                   ))),
             ),
           ),

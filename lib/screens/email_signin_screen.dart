@@ -12,7 +12,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
-import 'package:peeroreum_client/screens/email_signup_screen.dart';
+import 'package:peeroreum_client/screens/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
 
