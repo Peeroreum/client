@@ -2,8 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/search_result_wedu_screen.dart';
+
+import '../data/WeduSearchHistory.dart';
 
 class searchWedu extends StatefulWidget {
   const searchWedu({super.key});
@@ -13,21 +16,32 @@ class searchWedu extends StatefulWidget {
 }
 
 class _searchWeduState extends State<searchWedu> {
-  final TextEditingController _textEditingController = TextEditingController();
-  List<Map<String, String>> searchData = [];
+  final TextEditingController _searchController = TextEditingController();
+  List<Map<String, String>> _searchHistory = [];
 
   void initState() {
     super.initState();
-    searchData = [
-      {"cid": "1", "search_word": "검색어"},
-      {"cid": "2", "search_word": "검색어"},
-      {"cid": "3", "search_word": "검색어"},
-      {"cid": "4", "search_word": "검색어"},
-      {"cid": "5", "search_word": "검색어"},
-      {"cid": "6", "search_word": "검색어"},
-      {"cid": "7", "search_word": "검색어"},
-      {"cid": "8", "search_word": "검색어"},
-    ];
+    _loadSearchHistory();
+  }
+
+  _loadSearchHistory() async {
+    _searchHistory = await SearchHistory.getSearchHistory();
+    setState(() {});
+  }
+
+  _saveSearchHistory(String value) async {
+    await SearchHistory.addSearchItem(value);
+    _loadSearchHistory();
+  }
+
+  _deleteSearchHistory(String item) async {
+    await SearchHistory.deleteSearchItem(item);
+    _loadSearchHistory();
+  }
+
+  _deleteAllSearchHistory() async {
+    await SearchHistory.deleteAllSearchItem();
+    _loadSearchHistory();
   }
 
   PreferredSizeWidget appbarWidget() {
@@ -51,7 +65,7 @@ class _searchWeduState extends State<searchWedu> {
           child: SearchBar(
             // padding: MaterialStateProperty.all(
             //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
-            controller: _textEditingController,
+            controller: _searchController,
             backgroundColor:
                 MaterialStateProperty.all(PeeroreumColor.gray[100]),
             elevation: MaterialStateProperty.all(0),
@@ -66,7 +80,7 @@ class _searchWeduState extends State<searchWedu> {
                 fontWeight: FontWeight.w400)),
             trailing: [
               GestureDetector(
-                onTap: () => _textEditingController.clear(),
+                onTap: () => _searchController.clear(),
                 child: SvgPicture.asset(
                   'assets/icons/x_circle.svg',
                   color: PeeroreumColor.gray[600],
@@ -74,13 +88,13 @@ class _searchWeduState extends State<searchWedu> {
               ),
               IconButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SearchResultWedu(_textEditingController.text),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)),
-                  );
+                  if(_searchController.text.isNotEmpty) {
+                    _saveSearchHistory(_searchController.text);
+                    goToSearchResult(_searchController.text);
+                  }
+                  else {
+                    Fluttertoast.showToast(msg: '검색어를 입력하세요.');
+                  }
                 },
                 icon: SvgPicture.asset(
                   'assets/icons/search.svg',
@@ -97,11 +111,11 @@ class _searchWeduState extends State<searchWedu> {
       backgroundColor: PeeroreumColor.white,
       body: Column(
         children: [
-          realtimeSearch(),
-          Container(
-            height: 8,
-            color: PeeroreumColor.gray[100],
-          ),
+          // realtimeSearch(),
+          // Container(
+          //   height: 8,
+          //   color: PeeroreumColor.gray[100],
+          // ),
           Expanded(child: recentSearch())
         ],
       ),
@@ -154,7 +168,7 @@ class _searchWeduState extends State<searchWedu> {
                           width: 4,
                         ),
                         Text(
-                          '${searchData[index]["search_word"]}',
+                          '${_searchHistory[index]["search_word"]}',
                           style: TextStyle(
                               color: PeeroreumColor.primaryPuple[400]),
                         ),
@@ -167,7 +181,7 @@ class _searchWeduState extends State<searchWedu> {
                     width: 8,
                   );
                 },
-                itemCount: searchData.length),
+                itemCount: _searchHistory.length),
           ),
         )
       ],
@@ -198,15 +212,18 @@ class _searchWeduState extends State<searchWedu> {
                       fontWeight: FontWeight.w600,
                       color: PeeroreumColor.gray[500]),
                 ),
-                onPressed: () => {},
+                onPressed: () {
+                  _deleteAllSearchHistory();
+                  setState(() { });
+                },
               )
             ],
           ),
         ),
         Expanded(
-          child: ListView.builder(
+          child: ListView.separated(
               shrinkWrap: true,
-              itemCount: searchData.length,
+              itemCount: _searchHistory.length,
               itemBuilder: (context, index) {
                 return Container(
                   padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
@@ -215,18 +232,29 @@ class _searchWeduState extends State<searchWedu> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '${searchData[index]["search_word"]}',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Pretendard',
-                                color: PeeroreumColor.gray[600]),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) => SearchResultWedu(_searchHistory[index]['keyword'].toString()),
+                                    transitionDuration: const Duration(seconds: 0),
+                                    reverseTransitionDuration: const Duration(seconds: 0)),
+                              );
+                            },
+                            child: Text(
+                              '${_searchHistory[index]['keyword']}',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Pretendard',
+                                  color: PeeroreumColor.gray[600]),
+                            ),
                           ),
                           Row(
                             children: [
                               Text(
-                                'YY.MM.DD',
+                                '${_searchHistory[index]['date']}',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -236,22 +264,30 @@ class _searchWeduState extends State<searchWedu> {
                               SizedBox(
                                 width: 8,
                               ),
-                              Icon(
-                                Icons.close,
-                                size: 18,
-                                color: PeeroreumColor.gray[800],
-                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  _deleteSearchHistory(_searchHistory[index]['keyword'].toString());
+                                  setState(() {});
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/icons/x.svg',
+                                  color: PeeroreumColor.gray[800],
+                                ),
+                              )
                             ],
                           ),
                         ],
-                      ),
-                      Divider(
-                        color: PeeroreumColor.gray[100],
                       )
                     ],
                   ),
                 );
-              }),
+              },
+            separatorBuilder: (BuildContext context, int index) {
+                return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Divider(color: PeeroreumColor.gray[100]));
+                },
+          ),
         )
       ],
     );
@@ -263,5 +299,20 @@ class _searchWeduState extends State<searchWedu> {
       appBar: appbarWidget(),
       body: bodyWidget(),
     );
+  }
+
+  Future<void> goToSearchResult(String text) async {
+    var result = await Navigator.push(
+      context,
+      PageRouteBuilder(
+          pageBuilder: (_, __, ___) => SearchResultWedu(_searchController.text),
+          transitionDuration: const Duration(seconds: 0),
+          reverseTransitionDuration: const Duration(seconds: 0)
+      ),
+    );
+
+    if(result != null) {
+      _loadSearchHistory();
+    }
   }
 }
