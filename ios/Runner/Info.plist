@@ -47,5 +47,15 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>CFBundleURLTypes</key>
+            <array>
+              <dict>
+              <key>CFBundleURLSchemes</key>
+              <array>
+                <!-- google login -->
+                <string>com.googleusercontent.apps.80878849816-m1807p78onupqumcgmgt7m6r7umaltg3</string>
+              </array>
+              </dict>
+            </array>
 	</dict>
 </plist>
