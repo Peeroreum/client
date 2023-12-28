@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/email_signin_screen.dart';
+import 'package:peeroreum_client/screens/signin_email_screen.dart';
 import 'package:peeroreum_client/screens/signin_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -110,14 +110,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                 Expanded(
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => SignIn(),
-                              transitionDuration: const Duration(seconds: 0),
-                              reverseTransitionDuration:
-                                  const Duration(seconds: 0)),
-                          (route) => false);
+                      signUpAPI();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -336,22 +329,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
               onPressed: () async {
                 if (_siDo != null && _siGuGun != null && _schoolName != null) {
                   member.school = _schoolName;
-                  var result = await http.post(
-                      Uri.parse('${API.hostConnect}/signup'),
-                      body: jsonEncode(member),
-                      headers: {'Content-Type': 'application/json'});
-                  if (result.statusCode == 200) {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => SignIn(),
-                            transitionDuration: const Duration(seconds: 0),
-                            reverseTransitionDuration:
-                                const Duration(seconds: 0)),
-                        (route) => false);
-                  } else {
-                    print(result.statusCode);
-                  }
+                  signUpAPI();
                 }
               },
               child: Text(
@@ -378,5 +356,24 @@ class _SignUpSchoolState extends State<SignUpSchool> {
         ),
       ),
     );
+  }
+
+  Future<void> signUpAPI() async {
+    var result = await http.post(
+        Uri.parse('${API.hostConnect}/signup'),
+        body: jsonEncode(member),
+        headers: {'Content-Type': 'application/json'});
+    if (result.statusCode == 200) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+              pageBuilder: (_, __, ___) => EmailSignIn(),
+              transitionDuration: const Duration(seconds: 0),
+              reverseTransitionDuration:
+              const Duration(seconds: 0)),
+              (route) => false);
+    } else {
+      print(result.statusCode);
+    }
   }
 }
