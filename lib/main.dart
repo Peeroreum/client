@@ -4,7 +4,8 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/compliment_list_screen.dart';
 import 'package:peeroreum_client/screens/create_wedu_invitation.dart';
-import 'package:peeroreum_client/screens/email_signin_screen.dart';
+import 'package:peeroreum_client/screens/signin_email_screen.dart';
+import 'package:peeroreum_client/screens/signin_screen.dart';
 import 'package:peeroreum_client/screens/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
 import 'package:peeroreum_client/screens/home_wedu.dart';
@@ -32,9 +33,10 @@ class PeeroreumApp extends StatelessWidget {
           )
       ),
       title: 'Peeroreum',
-      initialRoute: '/signIn',
+      initialRoute: '/signIn/email',
       routes: {
-        '/signIn': (context) => EmailSignIn(),
+        '/signIn': (context) => SignIn(),
+        '/signIn/email': (context) => EmailSignIn(),
         '/signUp/email': (context) => EmailSignUp(),
         '/wedu': (context) => HomeWedu(),
         '/wedu/create_invitaion': (context) => CreateInvitation(),
