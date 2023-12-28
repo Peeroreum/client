@@ -12,7 +12,7 @@ import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
 
 void main() {
-  final native_app_key = "a6ab4f390d7270d5fee060c7305c8784";
+  final native_app_key = "a17f729816582e161afaae9395c1f1b5";
   KakaoSdk.init(nativeAppKey: native_app_key);
   runApp(PeeroreumApp());
 }
