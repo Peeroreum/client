@@ -5,7 +5,6 @@ import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/signin_email_screen.dart';
-import 'package:peeroreum_client/screens/signin_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 

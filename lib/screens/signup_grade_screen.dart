@@ -64,7 +64,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
                   child: LinearPercentIndicator(
                     animateFromLastPercent: true,
                     lineHeight: 8.0,
-                    percent: 0.75,
+                    percent: 0.5,
                     progressColor: Color.fromARGB(255, 114, 96, 248),
                     backgroundColor: Colors.grey[100],
                     barRadius: Radius.circular(10),

@@ -82,16 +82,13 @@ class _EmailSignInState extends State<EmailSignIn> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                SizedBox(
-                  // height: MediaQuery.of(context).size.height * 0.1
-                  height: 60,
-                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 Image.asset(
                   'assets/images/splash_logo.png',
                   height: 236.0,
                   width: 170.0,
                 ),
-                SizedBox(height: 60),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 Column(
                   children: [
                     TextFormField(
