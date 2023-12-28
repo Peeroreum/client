@@ -80,7 +80,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   child: LinearPercentIndicator(
                     animateFromLastPercent: true,
                     lineHeight: 8.0,
-                    percent: 0.5,
+                    percent: 0.75,
                     progressColor: Color.fromARGB(255, 114, 96, 248),
                     backgroundColor: Colors.grey[100],
                     barRadius: Radius.circular(10),
