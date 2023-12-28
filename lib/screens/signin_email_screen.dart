@@ -470,6 +470,7 @@ class _EmailSignInState extends State<EmailSignIn> {
           print('카카오계정으로 로그인 성공');
         } catch (error) {
           print('카카오계정으로 로그인 실패 $error');
+          return;
         }
       }
     } else {
@@ -478,6 +479,7 @@ class _EmailSignInState extends State<EmailSignIn> {
         print('카카오계정으로 로그인 성공');
       } catch (error) {
         print('카카오계정으로 로그인 실패 $error');
+        return;
       }
     }
 
@@ -493,6 +495,7 @@ class _EmailSignInState extends State<EmailSignIn> {
       fetchSocialLogin(socialAccount);
     } else {
       print("구글계정으로 로그인 실패");
+      return;
     }
   }
 
