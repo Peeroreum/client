@@ -387,8 +387,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             fontSize: 12,
                             color: PeeroreumColor.primaryPuple[400]
                         ),
-                        errorText: !pw2_check && pw2_controller.text.length >= 12 ? "비밀번호가 일치하지 않습니다." : null,
-                        errorStyle: !pw2_check && pw2_controller.text.length >= 12 ? TextStyle(
+                        errorText: !pw2_check && pw2_controller.text.length >= 8 ? "비밀번호가 일치하지 않습니다." : null,
+                        errorStyle: !pw2_check && pw2_controller.text.length >= 8 ? TextStyle(
                             fontFamily: "Pretendard",
                             fontWeight: FontWeight.w400,
                             fontSize: 12,
@@ -589,7 +589,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
           )
       );
     }
-    if (pw2_controller.text.length >= 12 && !pw2_check) {
+    if (pw2_controller.text.length >= 8 && !pw2_check) {
       return Container(
           padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
