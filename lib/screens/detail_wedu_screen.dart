@@ -602,6 +602,7 @@ class _DetailWeduState extends State<DetailWedu> {
               child: Column(
                 children: [
                   Card(
+                    color: Colors.transparent,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
