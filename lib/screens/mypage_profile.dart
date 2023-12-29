@@ -22,6 +22,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
   List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
   List<String> dropdownSortTypeList = ['최신순', '추천순', '인기순'];
+  bool am_i = false;
+  bool is_friend = false;
 
   @override
   void initState() {
@@ -89,14 +91,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget bodyWidget() {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
-      body: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          myProfile(),
-          friends(),
-          myWedu(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            myProfile(),
+            myWedu(),
+          ],
+        ),
       ),
     );
   }
@@ -105,16 +106,18 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           myinfo(),
+          SizedBox(
+            height: 16,
+          ),
+          friends(),
         ],
       ),
     );
   }
 
   Widget myinfo() {
-    bool is_friend = true;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       decoration: BoxDecoration(
@@ -130,11 +133,23 @@ class _MyPageProfileState extends State<MyPageProfile> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset('assets/images/example_logo.png'),
+                  Image.asset('assets/images/color_logo.png'),
                   Container(width: 4),
-                  Text('+'),
+                  Text(
+                    '+',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
                   Container(width: 2),
-                  Text('NN'),
+                  Text(
+                    'NN',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
                 ],
               ),
               SizedBox(
@@ -167,20 +182,32 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
             ],
           ),
+          SizedBox(
+            height: 104,
+          ),
           Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: TextButton(
               onPressed: () {
                 setState(() {
-                  is_friend = !is_friend;
+                  if (am_i = false) {
+                    is_friend = !is_friend;
+                  } else {
+                    //프로필공유하는 링크
+                  }
                 });
               },
               style: ButtonStyle(
-                  maximumSize: MaterialStateProperty.all<Size>(Size(124, 40)),
-                  backgroundColor: is_friend
-                      ? MaterialStateProperty.all(PeeroreumColor.gray[300])
-                      : MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
+                  maximumSize: am_i
+                      ? MaterialStateProperty.all<Size>(Size(138, 40))
+                      : MaterialStateProperty.all<Size>(Size(124, 40)),
+                  backgroundColor: am_i
+                      ? MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400])
+                      : (is_friend
+                          ? MaterialStateProperty.all(PeeroreumColor.gray[300])
+                          : MaterialStateProperty.all(
+                              PeeroreumColor.primaryPuple[400])),
                   padding: MaterialStateProperty.all(
                       EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -190,24 +217,31 @@ class _MyPageProfileState extends State<MyPageProfile> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(
-                    'assets/icons/plus_user.svg',
-                    color: is_friend
-                        ? PeeroreumColor.gray[600]
-                        : PeeroreumColor.white,
-                  ),
+                  am_i
+                      ? SvgPicture.asset(
+                          'assets/icons/share.svg',
+                          color: PeeroreumColor.white,
+                        )
+                      : SvgPicture.asset(
+                          'assets/icons/plus_user.svg',
+                          color: is_friend
+                              ? PeeroreumColor.gray[600]
+                              : PeeroreumColor.white,
+                        ),
                   SizedBox(
                     width: 10,
                   ),
                   Text(
-                    is_friend ? '친구 끊기' : '친구신청',
+                    am_i ? '프로필 공유' : (is_friend ? '친구 끊기' : '친구신청'),
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: is_friend
-                          ? PeeroreumColor.gray[600]
-                          : PeeroreumColor.white,
+                      color: am_i
+                          ? PeeroreumColor.white
+                          : (is_friend
+                              ? PeeroreumColor.gray[600]
+                              : PeeroreumColor.white),
                     ),
                   ),
                 ],
@@ -220,119 +254,116 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Widget friends() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Column(
-              children: [
-                Text(
-                  '친구',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+              border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          child: Column(
+            children: [
+              Text(
+                '친구',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
                 ),
-                SizedBox(
-                  height: 4,
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                'NN',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[600],
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Pretendard',
                 ),
-                Text(
-                  'NN',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[600],
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Pretendard',
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          SizedBox(
-            width: 8,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+              border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '배지',
+                    style: TextStyle(
+                      color: PeeroreumColor.gray[800],
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Pretendard',
+                    ),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    'NN 개 보유',
+                    style: TextStyle(
+                      color: PeeroreumColor.gray[600],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Pretendard',
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                   children: [
-                    Text(
-                      '배지',
-                      style: TextStyle(
-                        color: PeeroreumColor.gray[800],
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Pretendard',
-                      ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: PeeroreumColor.gray[100]),
                     ),
                     SizedBox(
-                      height: 4,
+                      width: 2,
                     ),
-                    Text(
-                      'NN 개 보유',
-                      style: TextStyle(
-                        color: PeeroreumColor.gray[600],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Pretendard',
-                      ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: PeeroreumColor.gray[100]),
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: PeeroreumColor.gray[100]),
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 20,
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: PeeroreumColor.gray[100]),
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: PeeroreumColor.gray[100]),
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: PeeroreumColor.gray[100]),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

@@ -18,7 +18,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  int selectedIndex = 5;
+  int selectedIndex = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +132,13 @@ class _MyPageState extends State<MyPage> {
                 ),
               ),
             ])),
-            SvgPicture.asset('assets/icons/right.svg')
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => MyPageProfile()));
+              },
+              icon: SvgPicture.asset('assets/icons/right.svg'),
+            )
           ],
         ),
         SizedBox(
@@ -150,12 +156,24 @@ class _MyPageState extends State<MyPage> {
           children: [
             IconButton(
               onPressed: () => MyPageProfile(),
-              icon: SvgPicture.asset('assets/images/oreum.png'),
+              icon: Image.asset('assets/images/color_logo.png'),
             ),
             Container(width: 4),
-            Text('+'),
+            Text(
+              '+',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             Container(width: 2),
-            Text('NN'),
+            Text('NN',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                )),
           ],
         ),
       ],
@@ -167,7 +185,10 @@ class _MyPageState extends State<MyPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextButton(
-          onPressed: () => InWedu(),
+          onPressed: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => InWedu()))
+          },
           child: Text(
             '내 같이방',
             style: TextStyle(
@@ -211,7 +232,10 @@ class _MyPageState extends State<MyPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextButton(
-          onPressed: () => MyPageNotification(),
+          onPressed: () => {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => MyPageNotification()))
+          },
           child: Text(
             '알림 설정',
             style: TextStyle(
@@ -223,7 +247,10 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         TextButton(
-          onPressed: () => MyPageAccount(),
+          onPressed: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
+          },
           child: Text(
             '계정 관리',
             style: TextStyle(
@@ -255,7 +282,10 @@ class _MyPageState extends State<MyPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextButton(
-          onPressed: () => MyPageVersion(),
+          onPressed: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
+          },
           child: Text(
             '버전 정보',
             style: TextStyle(
@@ -385,72 +415,5 @@ class _MyPageState extends State<MyPage> {
         );
       },
     );
-  }
-
-  Widget bottomNavigatorBarWidget() {
-    return BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/home.svg',
-                color: PeeroreumColor.gray[400],
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/home_fill.svg',
-                color: PeeroreumColor.primaryPuple[400],
-              ),
-              label: '홈'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/user_three.svg',
-                color: PeeroreumColor.gray[400],
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/user_three_fill.svg',
-                color: PeeroreumColor.primaryPuple[400],
-              ),
-              label: '같이해냄'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/chats_tear_drop.svg',
-                color: PeeroreumColor.gray[400],
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/chats_tear_drop_fill.svg',
-                color: PeeroreumColor.primaryPuple[400],
-              ),
-              label: '질의응답'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/medal.svg',
-                color: PeeroreumColor.gray[400],
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/medal_fill.svg',
-                color: PeeroreumColor.primaryPuple[400],
-              ),
-              label: '랭킹'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/user.svg',
-                color: PeeroreumColor.gray[400],
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icons/user_fill.svg',
-                color: PeeroreumColor.primaryPuple[400],
-              ),
-              label: '마이페이지'),
-        ],
-        currentIndex: selectedIndex,
-        unselectedItemColor: PeeroreumColor.gray[400],
-        unselectedLabelStyle: TextStyle(fontFamily: 'Pretendard', fontSize: 12),
-        selectedItemColor: PeeroreumColor.primaryPuple[400],
-        selectedLabelStyle: TextStyle(fontFamily: 'Pretendard', fontSize: 12),
-        type: BottomNavigationBarType.fixed,
-        onTap: (int index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        });
   }
 }
