@@ -1099,7 +1099,8 @@ class _HomeWeduState extends State<HomeWedu> {
                 Expanded(
                   child: TextButton(
                     onPressed: () {
-                      enrollWedu(index);
+                      passwordController.text == datas[index]['password'] ?
+                        enrollWedu(index) : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
                       Navigator.pop(context);
                       },
                     child: Text(
