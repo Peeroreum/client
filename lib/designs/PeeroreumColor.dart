@@ -37,7 +37,8 @@ final class PeeroreumColor extends Color {
     "영어": [Color.fromARGB(255, 240, 255, 233), Color.fromARGB(255, 129, 219, 87)],
     "사회": [Color.fromARGB(255, 255, 250, 233), Color.fromARGB(255, 248, 205, 96)],
     "과학": [Color.fromARGB(255, 255, 233, 249), Color.fromARGB(255, 248, 96, 169)],
-    "전체": [Color.fromARGB(255, 236, 233, 255), Color.fromARGB(255, 114, 96, 248)]
+    "전체": [Color.fromARGB(255, 236, 233, 255), Color.fromARGB(255, 114, 96, 248)],
+    "기타": [Color.fromARGB(255, 234, 235, 236), Color.fromARGB(255, 108, 109, 109)]
   };
   static const Map<int, Color> gradeColor = <int, Color> {
     1: Color.fromARGB(255, 224, 0, 0),

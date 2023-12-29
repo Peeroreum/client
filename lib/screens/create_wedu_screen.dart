@@ -462,7 +462,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                 ),
                                 child: SizedBox(
                                   height: 40,
-                                  width: 70,
+                                  width: 80,
                                   child: DropdownButton(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 12),
@@ -522,7 +522,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                 ),
                                 child: SizedBox(
                                   height: 40,
-                                  width: 72,
+                                  width: 80,
                                   child: DropdownButton(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 12),
@@ -738,7 +738,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                               ),
                                             ),
                                             helperText:
-                                                '해시태그(#)로 각 키워드를 구분해 주세요.',
+                                                '띄어쓰기로 각 키워드를 구분해 주세요.',
                                             helperStyle: const TextStyle(
                                               fontFamily: 'Pretendard',
                                               fontSize: 12,
@@ -970,9 +970,13 @@ class _CreateWeduState extends State<CreateWedu> {
       'challenge': dropdownChallenge,
       'isLocked': _isLocked? 1 : 0,
       'password': passwordValue,
-      'file': (_image != null) ? await MultipartFile.fromFile(_image!.path) : null,
       'hashTags': _tag
     };
-      Navigator.pushNamed(context, '/wedu/create_invitaion', arguments: weduMap);
+    if(_image != null) {
+      weduMap.addAll({
+        'file': MultipartFile.fromFile(_image!.path)
+      });
+    }
+    Navigator.pushNamed(context, '/wedu/create_invitaion', arguments: weduMap);
   }
 }
