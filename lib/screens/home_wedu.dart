@@ -177,17 +177,25 @@ class _HomeWeduState extends State<HomeWedu> {
           child: Column(
             children: [
               room_body(),
-              (inroom_datas.length != 0)
+              (inroom_datas.isNotEmpty)
                   ? SizedBox(
-                  height: 193, //180으로 나중에 수정
+                  height: 180, //180으로 나중에 수정
                   child: in_room_body())
                   : SizedBox(
                 height: 0,
+              ),
+              SizedBox(
+                height: 20,
               ),
               Container(
                 height: 8,
                 color: PeeroreumColor.gray[50],
               ),
+              // Divider(
+              //   height: 28,
+              //   thickness: 8,
+              //   color: PeeroreumColor.gray[50],
+              // ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
@@ -257,7 +265,7 @@ class _HomeWeduState extends State<HomeWedu> {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       shrinkWrap: true,
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       itemCount: inroom_datas.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(
@@ -318,7 +326,6 @@ class _HomeWeduState extends State<HomeWedu> {
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 4),
-                      width: 98,
                       child: Text(
                         inroom_datas[index]["title"]!,
                         overflow: TextOverflow.ellipsis,
@@ -601,9 +608,9 @@ class _HomeWeduState extends State<HomeWedu> {
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 4,
-                        ),
+                        // SizedBox(
+                        //   height: 4,
+                        // ),
                         Row(
                           children: [
                             Text(dropdownGradeList[datas[index]["grade"]],
@@ -642,9 +649,6 @@ class _HomeWeduState extends State<HomeWedu> {
           onTap: () {
             showModalBottomSheet(
               context: context,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
               isScrollControlled: true,
               builder: (context) {
                 return roominfo(index);
@@ -657,13 +661,20 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Widget roominfo(index) {
-    return SizedBox(
+    return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.55,
+      height: hashTags[index].length == 0 ? MediaQuery.of(context).size.height * 0.55 - 26 : MediaQuery.of(context).size.height * 0.55,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+      ),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -723,9 +734,9 @@ class _HomeWeduState extends State<HomeWedu> {
                                   fontWeight: FontWeight.w600,
                                   color: PeeroreumColor.black),
                             ),
-                            SizedBox(
-                              height: 4,
-                            ),
+                            // SizedBox(
+                            //   height: 4,
+                            // ),
                             Row(
                               children: [
                                 Text(dropdownGradeList[datas[index]["grade"]],
@@ -777,7 +788,7 @@ class _HomeWeduState extends State<HomeWedu> {
               ),
               roominfo_tag(index),
               SizedBox(
-                height: 16,
+                height: 8,
               ),
               Container(
                 width: double.infinity,
@@ -810,7 +821,7 @@ class _HomeWeduState extends State<HomeWedu> {
           ),
         ),
         bottomNavigationBar: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 32),
           width: double.maxFinite,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -881,6 +892,9 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Widget roominfo_tag(roomIndex) {
+    if(hashTags[roomIndex].length == 0) {
+      return Container();
+    }
     return Padding(
       padding: EdgeInsets.only(top: 16),
       child: SizedBox(
