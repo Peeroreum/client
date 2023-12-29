@@ -31,10 +31,15 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   void initState() {
     super.initState();
     calendarDays = generateCalendarDays();
+    focusedDay=DateTime.now().day;
   }
    void _updateCalendar() {
     setState(() {
+      
       calendarDays = generateCalendarDays();
+      if(DateTime.now().month==currentDate.month){
+        focusedDay=DateTime.now().day;
+      }
     });
   }
 
@@ -154,13 +159,24 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             icon: SvgPicture.asset('assets/icons/left.svg'),
           ),
           Text(
-            '${currentDate.month}월',
+            '${currentDate.month}',
             textAlign: TextAlign.center,
             style: const TextStyle(
+              fontFamily: 'pretendard',
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
           ),
+          SizedBox(
+            width: 2,
+          ),
+          Text('월',
+           textAlign: TextAlign.center,
+          style: const TextStyle(
+              fontFamily: 'pretendard',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),),
           IconButton(
             onPressed: () {
               setState(() {
@@ -187,7 +203,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               for (int day = 0; day < 7; day++)
                 Container(
@@ -197,8 +213,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   child: Text(
                     '${days[day]}',
                     style: TextStyle(
+                      fontFamily: 'pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
+                      color: PeeroreumColor.black,
                     ),
                   ),
                 ),
@@ -209,7 +227,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
           ),
           for (List<int> week in calendarDays)
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 for (int day in week)
                   if (day != 0 &&
@@ -243,12 +261,13 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                                 height: 36,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.deepPurpleAccent,
+                                  color: PeeroreumColor.primaryPuple[400],
                                 ),
                                 child: Text(
                                   '${progress[day - 1]}',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    fontFamily: 'pretendard',
+                                    color: PeeroreumColor.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -261,8 +280,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                                   child: Text(
                                     '$day',
                                     style: TextStyle(
+                                      fontFamily: 'pretendard',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[500],
                                     ),
                                   ),
                                 ),

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 class PieChart extends CustomPainter {
   int percentage = 0;
@@ -8,7 +9,7 @@ class PieChart extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint() // 화면에 그릴 때 쓸 Paint를 정의합니다.
-      ..color = const Color(0xffDBDCDD)
+      ..color = PeeroreumColor.gray[300]!
       ..strokeWidth = 4.0 // 선의 길이를 정합니다.
       ..style =
           PaintingStyle.stroke // 선의 스타일을 정합니다. stroke면 외곽선만 그리고, fill이면 다 채웁니다.
@@ -27,7 +28,7 @@ class PieChart extends CustomPainter {
     double arcAngle =
         2 * pi * (percentage / 100); // 호(arc)의 각도를 정함. 정해진 각도만큼만 그리도록 함.
 
-    paint.color = Color(0xff7260F8); // 호를 그릴 때는 색을 바꿔줌.
+    paint.color = PeeroreumColor.primaryPuple[400]!; // 호를 그릴 때는 색을 바꿔줌.
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2,
         arcAngle, false, paint); // 호(arc)를 그림.
 

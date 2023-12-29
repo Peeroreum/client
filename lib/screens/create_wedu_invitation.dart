@@ -156,15 +156,15 @@ class _CreateInvitationState extends State<CreateInvitation> {
                 SizedBox(
                   width: 350,
                   child: TextFormField(
-                    onFieldSubmitted: (value) {
+                    // onFieldSubmitted: (value) {
 
-                      setState(() {
-                        _inviText=value.replaceAllMapped(
-                          RegExp(r'[♡♥☆★]'),
-                          (match) => iconMap[match.group(0)]!,
-                        );
-                      });
-                    },
+                    //   setState(() {
+                    //     _inviText=value.replaceAllMapped(
+                    //       RegExp(r'[♡♥☆★]'),
+                    //       (match) => iconMap[match.group(0)]!,
+                    //     );
+                    //   });
+                    // },
                     decoration: InputDecoration(
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
@@ -202,6 +202,9 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     onChanged: (value) {
                       setState(() {
                         contextValue = value;
+                        _inviText=value.replaceAllMapped(
+                          RegExp(r'[♡♥☆★]'),
+                          (match) => iconMap[match.group(0)]!,);
                       });
                     },
                   ),
