@@ -47,7 +47,8 @@ class _HomeWeduState extends State<HomeWedu> {
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "memberInfo");
     var weduResult = await http.get(
-        Uri.parse('${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject'),
+        Uri.parse('${API
+            .hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -479,7 +480,8 @@ class _HomeWeduState extends State<HomeWedu> {
                           onChanged: (dynamic value) {
                             setState(() {
                               selectedSubject = value;
-                              subject = dropdownSubjectList.indexOf(selectedSubject);
+                              subject =
+                                  dropdownSubjectList.indexOf(selectedSubject);
                             });
                           }),
                     ),
@@ -606,6 +608,11 @@ class _HomeWeduState extends State<HomeWedu> {
                                   fontWeight: FontWeight.w600,
                                   color: PeeroreumColor.black),
                             ),
+                            SizedBox(width: 4),
+                            datas[index]['locked'].toString() == "true"
+                                ? SvgPicture.asset('assets/icons/lock.svg',
+                                color: PeeroreumColor.gray[400], width: 12)
+                                : Container()
                           ],
                         ),
                         // SizedBox(
@@ -663,7 +670,13 @@ class _HomeWeduState extends State<HomeWedu> {
   Widget roominfo(index) {
     return Container(
       width: double.maxFinite,
-      height: hashTags[index].length == 0 ? MediaQuery.of(context).size.height * 0.55 - 26 : MediaQuery.of(context).size.height * 0.55,
+      height: hashTags[index].length == 0 ? MediaQuery
+          .of(context)
+          .size
+          .height * 0.55 - 26 : MediaQuery
+          .of(context)
+          .size
+          .height * 0.55,
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
@@ -684,14 +697,17 @@ class _HomeWeduState extends State<HomeWedu> {
                   Row(
                     children: [
                       Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 1, color: PeeroreumColor.gray[200]!),
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(5.0))),
-                        child: (datas[index]['imagePath'] != null)
-                            ? Image.network(datas[index]['imagePath']!, width: 72, height: 72)
-                            : Image.asset('assets/images/example_logo.png', width: 72, height: 72)
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 1, color: PeeroreumColor.gray[200]!),
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(5.0))),
+                          child: (datas[index]['imagePath'] != null)
+                              ? Image.network(
+                              datas[index]['imagePath']!, width: 72, height: 72)
+                              : Image.asset(
+                              'assets/images/example_logo.png', width: 72,
+                              height: 72)
                       ),
                       Container(
                         height: 72,
@@ -726,13 +742,23 @@ class _HomeWeduState extends State<HomeWedu> {
                             SizedBox(
                               height: 4,
                             ),
-                            Text(
-                              datas[index]["title"]!,
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.black),
+                            Row(
+                              children: [
+                                Text(
+                                  datas[index]["title"]!,
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: PeeroreumColor.black
+                                  ),
+                                ),
+                                SizedBox(width: 4,),
+                                datas[index]['locked'].toString() == "true"
+                                    ? SvgPicture.asset('assets/icons/lock.svg',
+                                    color: PeeroreumColor.gray[400])
+                                    : Container()
+                              ],
                             ),
                             // SizedBox(
                             //   height: 4,
@@ -824,75 +850,76 @@ class _HomeWeduState extends State<HomeWedu> {
           padding: EdgeInsets.fromLTRB(20, 0, 20, 32),
           width: double.maxFinite,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    '닫기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.gray[600],
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                ),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+          Expanded(
+          child: TextButton(
+          onPressed: () { Navigator.pop(context); },
+          child: Text(
+            '닫기',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: PeeroreumColor.gray[600],
+            ),
+          ),
+          style: ButtonStyle(
+            backgroundColor:
+            MaterialStateProperty.all(PeeroreumColor.gray[300]),
+            padding: MaterialStateProperty.all(
+                EdgeInsets.symmetric(vertical: 12)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    enrollWedu(index);
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    '참여하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.white,
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
+      SizedBox(
+        width: 8,
+      ),
+      Expanded(
+        child: TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            datas[index]['locked'].toString() == "true"
+                ? insertPassword(index)
+                : enrollWedu(index);
+          },
+          child: Text(
+            '참여하기',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: PeeroreumColor.white,
+            ),
+          ),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+                PeeroreumColor.primaryPuple[400]),
+            padding: MaterialStateProperty.all(
+                EdgeInsets.symmetric(vertical: 12)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+          ),
+        ),
+      ),
+      ],
+    ),)
+    ,
+    )
+    ,
     );
   }
 
   Widget roominfo_tag(roomIndex) {
-    if(hashTags[roomIndex].length == 0) {
+    if (hashTags[roomIndex].length == 0) {
       return Container();
     }
     return Padding(
@@ -1053,15 +1080,118 @@ class _HomeWeduState extends State<HomeWedu> {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     });
-    if(enrollResult.statusCode == 200) {
+    if (enrollResult.statusCode == 200) {
       Fluttertoast.showToast(
           msg: "같이방 참여 완료!"
       );
-    } else if(enrollResult.statusCode == 409) {
+    } else if (enrollResult.statusCode == 409) {
       Fluttertoast.showToast(msg: '이미 참여 중인 같이방입니다.');
     } else {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
       print('에러${enrollResult.statusCode}${enrollResult.body}');
     }
+  }
+
+  void insertPassword(index) {
+    TextEditingController passwordController = TextEditingController();
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+        surfaceTintColor: Colors.transparent,
+          title: Text(
+              "비밀번호",
+              textAlign: TextAlign.center
+          ),
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Pretendard',
+            color: PeeroreumColor.black,
+          ),
+          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          content: Container(
+              color: PeeroreumColor.white,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: 48,
+                  child: TextFormField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      hintText: '비밀번호를 입력하세요.',
+                      hintStyle: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: PeeroreumColor.gray[600]
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: PeeroreumColor.gray[200]!),
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: PeeroreumColor.gray[200]!),
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
+                    ),
+                    cursorColor: PeeroreumColor.gray[600],
+                  ),
+                ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextButton(
+                      onPressed: () { Navigator.pop(context); },
+                      child: Text(
+                        '취소',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.gray[600]
+                        ),
+                      ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16), // 패딩
+                      shape: RoundedRectangleBorder( // 모양
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      enrollWedu(index);
+                      Navigator.pop(context);
+                      },
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.white
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.primaryPuple[400],
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+      );
+    });
   }
 }
