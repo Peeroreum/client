@@ -57,7 +57,7 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
                 'assets/icons/chats_tear_drop_fill.svg',
                 color: PeeroreumColor.primaryPuple[400],
               ),
-              label: '질의응답'),
+              label: '내가해냄'),
           BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 'assets/icons/medal.svg',
