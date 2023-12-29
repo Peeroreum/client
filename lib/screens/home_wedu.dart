@@ -678,8 +678,9 @@ class _HomeWeduState extends State<HomeWedu> {
                                 width: 1, color: PeeroreumColor.gray[200]!),
                             borderRadius:
                             BorderRadius.all(Radius.circular(5.0))),
-                        child: Image.network(datas[index]["imagePath"]!,
-                            width: 72, height: 72),
+                        child: (datas[index]['imagePath'] != null)
+                            ? Image.network(datas[index]['imagePath']!, width: 72, height: 72)
+                            : Image.asset('assets/images/example_logo.png', width: 72, height: 72)
                       ),
                       Container(
                         height: 72,
