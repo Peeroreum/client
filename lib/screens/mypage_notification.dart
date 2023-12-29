@@ -275,12 +275,12 @@ class _MyPageNotificationState extends State<MyPageNotification> {
           // width: 26,
           // height: 26,
           child: CupertinoSwitch(
-            value: _allChecked,
+            value: _rankChecked,
             activeColor: PeeroreumColor.primaryPuple[400],
             trackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
-                _allChecked = value;
+                _rankChecked = value;
               });
             },
           ),
