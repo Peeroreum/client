@@ -21,9 +21,22 @@ final days = ['월', '화', '수', '목', '금', '토', '일'];
 late List<List<int>> calendarDays;
  int daysInMonth = 0;
   DateTime currentDate = DateTime.now();
+  DateTime firstDayOfCurrentMonth = DateTime(currentDate.year, currentDate.month, 1);
+  DateTime lastDayOfCurrentMonth = DateTime(currentDate.year, currentDate.month, DateTime(currentDate.year, currentDate.month+1, 0).day);
+
   int? focusedDay; // Added variable to track the focused day
+  int? savedFocusedDay=focusedDay;
+  int? focusedMonth;
+
+  DateTime startDate = DateTime(2023,9,10);
+  DateTime finalDate = DateTime(2024,12,31);
+
+  bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
+  bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
+  
 
 class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
+  
 
  var progress = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
@@ -32,13 +45,32 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     super.initState();
     calendarDays = generateCalendarDays();
     focusedDay=DateTime.now().day;
+    savedFocusedDay=focusedDay;
+    focusedMonth=currentDate.month;
+    if (currentDate.isAfter(finalDate)) {
+      currentDate = finalDate;
+      focusedMonth=finalDate.month;
+      focusedDay=finalDate.day;
+      savedFocusedDay=focusedDay;
+    }
   }
    void _updateCalendar() {
     setState(() {
-      
       calendarDays = generateCalendarDays();
-      if(DateTime.now().month==currentDate.month){
-        focusedDay=DateTime.now().day;
+      if(focusedMonth==currentDate.month){
+        focusedDay=savedFocusedDay;
+      }
+      if(currentDate.year==startDate.year && currentDate.month==startDate.month){
+        _isLeftButtonWork=false;
+      }
+      else{
+        _isLeftButtonWork=true;
+      }
+      if(currentDate.year==finalDate.year && currentDate.month==finalDate.month){
+        _isRightButtonWork=false;
+      }
+      else{
+        _isRightButtonWork=true;
       }
     });
   }
@@ -133,9 +165,14 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       child: Column(
         children: [
           calendarHeader(),
-          calendarBody()
-
-          
+          calendarBody(),
+          Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
+          Text('${currentDate}'),
+          Text('${finalDate}'),
+          Divider(
+              color: PeeroreumColor.gray[50],
+              thickness: 8,
+            ),
         ],
       ),
     );
@@ -146,18 +183,19 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                currentDate = DateTime(
-                  currentDate.year,
-                  currentDate.month - 1,
-                );
-                _updateCalendar();
-              });
-            },
-            icon: SvgPicture.asset('assets/icons/left.svg'),
-          ),
+            IconButton(
+              onPressed: () {
+                if (_isLeftButtonWork)
+                  setState(() {
+                    currentDate = DateTime(
+                      currentDate.year,
+                      currentDate.month - 1,
+                    );
+                    _updateCalendar();
+                  });
+              },
+              icon: SvgPicture.asset('assets/icons/left.svg'),
+            ),
           Text(
             '${currentDate.month}',
             textAlign: TextAlign.center,
@@ -177,20 +215,22 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                currentDate = DateTime(
-                  currentDate.year,
-                  currentDate.month + 1,
-                );
-                _updateCalendar();
-              });
-            },
-            icon: SvgPicture.asset('assets/icons/right.svg',
-            width: 24,
-            ),
-          ),
+          
+            IconButton(
+              onPressed: () {
+                if (_isRightButtonWork)
+                  setState(() {
+                    currentDate = DateTime(
+                      currentDate.year,
+                      currentDate.month + 1,
+                    );
+                    _updateCalendar();
+                  });
+              },
+              icon: SvgPicture.asset('assets/icons/right.svg',
+              width: 24,),
+            )
+        
         ],
       ),
     );
@@ -237,10 +277,12 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
+                          focusedMonth=currentDate.month;
                           if (focusedDay == day) {
                             focusedDay = null; // Unfocus if already focused
                           } else {
                             focusedDay = day; // Set focused day
+                            savedFocusedDay = focusedDay;
                           }
                         });
                       },
