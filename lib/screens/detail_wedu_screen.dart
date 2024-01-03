@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/compliment_list_screen.dart';
+import 'package:peeroreum_client/screens/detail_wedu_calendar.dart';
 import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -353,17 +354,32 @@ class _DetailWeduState extends State<DetailWedu> {
               children: [
                 GestureDetector(
                   child: Container(
-                    padding: EdgeInsets.all(3.5),
+                    //padding: EdgeInsets.all(3.5),
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
+                        width: 2,
                           color: PeeroreumColor.gradeColor[successList[index]['grade']]!
                       ),
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/user.jpg')
+                      // image: DecorationImage(
+                      //     image: AssetImage('assets/images/user.jpg',)
+                      // ),
+                    ),
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                          color: PeeroreumColor.white,
                       ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg',)
+                      ),
+                    ),
                     ),
                   ),
                   onTap: () {
@@ -416,18 +432,33 @@ class _DetailWeduState extends State<DetailWedu> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(3.5),
+                  //padding: EdgeInsets.all(3.5),
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
+                        width: 2,
                           color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
                       ),
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/user.jpg')
-                    ),
+                    // image: DecorationImage(
+                    //   image: AssetImage('assets/images/user.jpg')
+                    // ),
                   ),
+                  child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                          color: PeeroreumColor.white,
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg',)
+                      ),
+                    ),
+                    ),
                 ),
                 SizedBox(
                   height: 8,
@@ -597,86 +628,99 @@ class _DetailWeduState extends State<DetailWedu> {
                         children: [
                           Row(
                             children: [
-                              Row(
-                                children: [
-                                  Card(
-                                    elevation: 0,
-                                    color: PeeroreumColor.gray[50],
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8)),
-                                        side: BorderSide(
-                                            color:
-                                            PeeroreumColor.gray[100]!)),
-                                    child: Image.network(
-                                      weduImage,
-                                      width: 64,
-                                      height: 64,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Container(
-                                    height: 64,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '목표 달성',
-                                          style: TextStyle(
-                                              fontFamily: 'Pretendard',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Card(
+                                      elevation: 0,
+                                      color: PeeroreumColor.gray[50],
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8)),
+                                          side: BorderSide(
                                               color:
-                                              PeeroreumColor.gray[600]),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'DAY',
-                                              style: TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18,
-                                                  color: PeeroreumColor
-                                                      .gray[800]),
-                                            ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                            Text(
-                                              '-',
-                                              style: TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18,
-                                                  color: PeeroreumColor
-                                                      .gray[800]),
-                                            ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                            Text(
-                                              '${weduDday}',
-                                              style: TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18,
-                                                  color: PeeroreumColor
-                                                      .gray[800]),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                              PeeroreumColor.gray[100]!)),
+                                      child: Image.network(
+                                        weduImage,
+                                        width: 64,
+                                        height: 64,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Container(
+                                      height: 64,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '목표 달성',
+                                            style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color:
+                                                PeeroreumColor.gray[600]),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'DAY',
+                                                style: TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18,
+                                                    color: PeeroreumColor
+                                                        .gray[800]),
+                                              ),
+                                              SizedBox(
+                                                width: 4,
+                                              ),
+                                              Text(
+                                                '-',
+                                                style: TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18,
+                                                    color: PeeroreumColor
+                                                        .gray[800]),
+                                              ),
+                                              SizedBox(
+                                                width: 4,
+                                              ),
+                                              Text(
+                                                '${weduDday}',
+                                                style: TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18,
+                                                    color: PeeroreumColor
+                                                        .gray[800]),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                    alignment: Alignment.centerRight,
+                                    child: GestureDetector(child: SvgPicture.asset('assets/icons/right.svg',
+                                    color: PeeroreumColor.gray[500],
+                                    ),
+                                    onTap: (){
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailWeduCalendar(id, weduTitle)));
+                                    },
                                     ),
                                   ),
-                                ],
-                              ),
                             ],
                           ),
                           Divider(
