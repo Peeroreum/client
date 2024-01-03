@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
+import 'package:intl/intl.dart';
 
 
 DateTime date = DateTime.now().add(const Duration(days:66));
@@ -320,16 +322,28 @@ class _CreateWeduState extends State<CreateWedu> {
                                 child: SizedBox(
                                   height: 40,
                                   width: 146,
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 12),
+                                  child: DropdownButton2(
+                                    isExpanded: false,
                                     underline: SizedBox.shrink(),
+                                    dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      ),
+                                    ),
+                                    menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
                                     value: dropdownSubject,
-                                    iconSize: 18,
-                                    icon: Container(
-                                      margin: EdgeInsets.only(left: 7),
-                                      child: SvgPicture.asset('assets/icons/down.svg'),
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: 146,
+                                    ),
+                                    iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg'),
                                     ),
                                     items: subject.map<DropdownMenuItem<String>>(
                                         (String value) {
@@ -379,6 +393,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   child: InkWell(
                                     onTap: () async {
                                       final selectedDate = await showDatePicker(
+                                        locale: const Locale('ko', 'KR'),
                                         context:
                                             context, // 팝업으로 띄우기 때문에 context 전달
                                         initialDate: DateTime.now().add(Duration(
@@ -389,7 +404,9 @@ class _CreateWeduState extends State<CreateWedu> {
                                                 66)), // 시작 년도
                                         lastDate: DateTime.now()
                                             .add(Duration(days: 3 * 365)),
+                                        helpText: '',
                                       );
+                                      
                                       if (selectedDate != null) {
                                         setState(() {
                                           date = selectedDate;// 선택한 날짜는 date 변수에 저장
@@ -463,15 +480,28 @@ class _CreateWeduState extends State<CreateWedu> {
                                 child: SizedBox(
                                   height: 40,
                                   width: 80,
-                                  child: DropdownButton(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 12),
+                                  child: DropdownButton2(
+                                    isExpanded: false,
                                     underline: SizedBox.shrink(),
+                                    dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      ),
+                                    ),
+                                    menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
                                     value: dropdownGrade,
-                                    iconSize: 18,
-                                    icon: Container(
-                                      margin: EdgeInsets.only(left: 7),
-                                      child: SvgPicture.asset('assets/icons/down.svg'),
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: 80,
+                                    ),
+                                    iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg'),
                                     ),
                                     items: grade.map<DropdownMenuItem<String>>(
                                         (String value) {
@@ -523,15 +553,27 @@ class _CreateWeduState extends State<CreateWedu> {
                                 child: SizedBox(
                                   height: 40,
                                   width: 80,
-                                  child: DropdownButton(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 12),
+                                  child: DropdownButton2(
+                                    dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      ),
+                                    ),
+                                    menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
                                     underline: SizedBox.shrink(),
                                     value: dropdownHeadcount,
-                                    iconSize: 18,
-                                    icon: Container(
-                                      margin: EdgeInsets.only(left: 7),
-                                      child: SvgPicture.asset('assets/icons/down.svg'),
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: 80,
+                                    ),
+                                    iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg'),
                                     ),
                                     items: headcount.map<DropdownMenuItem<int>>(
                                         (int value) {
@@ -586,22 +628,34 @@ class _CreateWeduState extends State<CreateWedu> {
                                         color: PeeroreumColor.gray[200]!),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                      child: DropdownButton(
-                                        isExpanded: true,
+                                      child: DropdownButton2(
                                         hint: Text('챌린지를 설정하세요',
                                         style: TextStyle(
-                                          fontFamily: 'Pretendard',
+                                          fontFamily: 'pretendard',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
                                         ),),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 8, horizontal: 12),
-                                        underline: SizedBox.shrink(),
+                                        dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      ),
+                                    ),
+                                    menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
+                                    underline: SizedBox.shrink(),
                                         value: dropdownChallenge,
-                                        iconSize: 18,
-                                        icon: Container(
-                                          child: SvgPicture.asset('assets/icons/down.svg'),
-                                        ),
+                                        buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: 350,
+                                    ),
+                                    iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg'),
+                                    ),
                                         items: challenge.map<DropdownMenuItem<String>>(
                                             (String value) {
                                           return DropdownMenuItem<String>(
