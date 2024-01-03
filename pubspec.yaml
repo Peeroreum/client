@@ -55,6 +55,9 @@ dependencies:
   fluttertoast: ^8.2.4
   shared_preferences: ^2.2.2
 
+  dropdown_button2: ^2.3.9
+  flutter_localization: ^0.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

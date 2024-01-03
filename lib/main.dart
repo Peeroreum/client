@@ -10,6 +10,7 @@ import 'package:peeroreum_client/screens/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
 import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   final native_app_key = "a17f729816582e161afaae9395c1f1b5";
@@ -24,6 +25,13 @@ class PeeroreumApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+      const Locale('ko', 'KR'),
+      ],
       theme: ThemeData(
           appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
