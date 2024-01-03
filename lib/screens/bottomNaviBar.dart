@@ -5,7 +5,7 @@ import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/mypage.dart';
 import 'package:peeroreum_client/screens/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage_notification.dart';
-import 'package:peeroreum_client/screens/mypage_profile.dart';
+import 'package:peeroreum_client/screens/mypage_version.dart';
 
 class bottomNaviBar extends StatefulWidget {
   const bottomNaviBar({super.key});
@@ -21,7 +21,7 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
     HomeWedu(),
     MyPageAccount(),
     MyPageNotification(),
-    MyPageProfile(),
+    MyPageVersion(),
     MyPage(),
   ];
 
@@ -84,6 +84,7 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
         unselectedLabelStyle: TextStyle(fontFamily: 'Pretendard', fontSize: 12),
         selectedItemColor: PeeroreumColor.primaryPuple[400],
         selectedLabelStyle: TextStyle(fontFamily: 'Pretendard', fontSize: 12),
+        backgroundColor: PeeroreumColor.white,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
           setState(() {

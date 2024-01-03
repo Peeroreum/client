@@ -17,6 +17,18 @@ class _MyPageNotificationState extends State<MyPageNotification> {
   bool _weduChecked = false;
   bool _iduChecked = false;
   bool _rankChecked = false;
+  void Check() {
+    if (_weduChecked || _iduChecked || _rankChecked) {
+      setState(() {
+        _allChecked = false;
+      });
+    }
+    if (_weduChecked && _iduChecked && _rankChecked) {
+      setState(() {
+        _allChecked = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +140,9 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             onChanged: (value) {
               setState(() {
                 _allChecked = value;
+                _weduChecked = value;
+                _iduChecked = value;
+                _rankChecked = value;
               });
             },
           ),
@@ -179,6 +194,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             onChanged: (value) {
               setState(() {
                 _weduChecked = value;
+                Check();
               });
             },
           ),
@@ -230,6 +246,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             onChanged: (value) {
               setState(() {
                 _iduChecked = value;
+                Check();
               });
             },
           ),
@@ -281,6 +298,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             onChanged: (value) {
               setState(() {
                 _rankChecked = value;
+                Check();
               });
             },
           ),
