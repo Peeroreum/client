@@ -51,6 +51,8 @@ class _SignUpSchoolState extends State<SignUpSchool> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
           title: Text(
             "학교 입력을 건너뛰실 건가요?",
             textAlign: TextAlign.center

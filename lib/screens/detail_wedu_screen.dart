@@ -238,6 +238,13 @@ class _DetailWeduState extends State<DetailWedu> {
                         padding: EdgeInsets.all(20),
                         alignment: Alignment.center,
                         height: MediaQuery.of(context).size.height * 0.2,
+                        decoration: BoxDecoration(
+                          color: PeeroreumColor.white, // 여기에 색상 지정
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0),
+                          ),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -482,10 +489,18 @@ class _DetailWeduState extends State<DetailWedu> {
 
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
-    return SizedBox(
+    return Container(
       width: double.maxFinite,
       height: MediaQuery.of(context).size.height * 0.68,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+      ),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Container(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -618,6 +633,7 @@ class _DetailWeduState extends State<DetailWedu> {
               child: Column(
                 children: [
                   Card(
+                    color: Colors.transparent,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
