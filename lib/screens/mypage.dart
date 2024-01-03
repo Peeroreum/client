@@ -25,15 +25,16 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   int selectedIndex = 4;
   var token;
+  var nickname;
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
   List<dynamic> inviDatas = [];
   List<dynamic> hashTags = [];
-  var nickname;
+  List<dynamic> notSuccessList = [];
 
   fetchStatus() async {
-    nickname = await FlutterSecureStorage().read(key: "memberNickname");
     token = await FlutterSecureStorage().read(key: "memberInfo");
+    nickname = await FlutterSecureStorage().read(key: "memberNickname");
   }
 
   @override
@@ -124,27 +125,44 @@ class _MyPageState extends State<MyPage> {
   Widget first_col() {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
+        ElevatedButton(
+          onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => MyPageProfile(nickname, true)));
           },
+          style: ElevatedButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+            backgroundColor: PeeroreumColor.white,
+            elevation: 0,
+            padding: EdgeInsets.all(0),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                   child: Row(children: [
                 Container(
-                  padding: EdgeInsets.all(3.5),
-                  width: 42,
-                  height: 42,
+                  width: 45,
+                  height: 45,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: PeeroreumColor.gray[200]!
-                        //color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                        ),
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/user.jpg')),
+                    border: Border.all(
+                        width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                  ),
+                  child: Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                        color: PeeroreumColor.white,
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage(
+                        'assets/images/user.jpg',
+                      )),
+                    ),
                   ),
                 ),
                 Container(width: 11),

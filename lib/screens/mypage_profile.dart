@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, deprecated_member_use, non_constant_identifier_names, avoid_print, sized_box_for_whitespace, must_be_immutable, prefer_typing_uninitialized_variables
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -32,15 +34,46 @@ class _MyPageProfileState extends State<MyPageProfile> {
   List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
   late bool is_friend;
   List<dynamic> badges = ['1', '2', '3', '4'];
+  var grade;
+  var profileImage;
+  var friendNumber;
 
   @override
   void initState() {
     super.initState();
+    fetchDatas();
     is_friend = false;
   }
 
-  fetchStatus() async {
+  Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "memberInfo");
+    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (inWeduResult.statusCode == 200) {
+      inroom_datas = jsonDecode(utf8.decode(inWeduResult.bodyBytes))['data'];
+      //print("내같이방 성공 ${inWeduResult.statusCode}");
+    } else {
+      print("내같이방 에러 ${inWeduResult.statusCode}");
+    }
+
+    var profileinfo = await http.get(
+        Uri.parse('${API.hostConnect}/member/profile?nickname=$nickname'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (profileinfo.statusCode == 200) {
+      grade = jsonDecode(utf8.decode(profileinfo.bodyBytes))["data"]["grade"];
+      friendNumber = jsonDecode(utf8.decode(profileinfo.bodyBytes))["data"]
+          ["friendNumber"];
+      profileImage = jsonDecode(utf8.decode(profileinfo.bodyBytes))["data"]
+          ["profileImage"];
+      print(
+          "프로필정보 grade = $grade, friendNumber = $friendNumber, profileImage = $profileImage");
+    }
   }
 
   follow() async {
@@ -76,6 +109,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
     if (friendName.statusCode == 200) {
       is_friend = false;
+      Fluttertoast.showToast(msg: "친구 언팔로우 성공");
     } else {
       is_friend = true;
       print("친구언팔 에러${friendName.statusCode}");
@@ -91,7 +125,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           'Authorization': 'Bearer $token'
         });
     if (friendName.statusCode == 200) {
-      // check_friend();
+      //check_friend(nickname_controller.text);
       Navigator.of(context).pop();
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) =>
@@ -103,14 +137,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
     }
   }
 
-  void check_friend() async {
-    var myfriend = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/member/friend=${nickname_controller.text}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+  void check_friend(nickname) async {
+    var myfriend = await http
+        .get(Uri.parse('${API.hostConnect}/member/friend=$nickname'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
     if (myfriend.statusCode == 200) {
       is_friend = true;
     } else {
@@ -124,7 +156,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchStatus(),
+          future: fetchDatas(),
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -362,16 +394,28 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 height: 20,
               ),
               Container(
-                padding: EdgeInsets.all(3.5),
-                width: 96,
-                height: 96,
+                width: 90,
+                height: 90,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: PeeroreumColor.gray[200]!
-                      //color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                      ),
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/user.jpg')),
+                  border: Border.all(
+                      width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                ),
+                child: Container(
+                  height: 84,
+                  width: 84,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      width: 2,
+                      color: PeeroreumColor.white,
+                    ),
+                    image: DecorationImage(
+                        image: profileImage = profileImage ??
+                            AssetImage(
+                              'assets/images/user.jpg',
+                            )),
+                  ),
                 ),
               ),
               SizedBox(
@@ -496,7 +540,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     height: 4,
                   ),
                   Text(
-                    'NN',
+                    '$friendNumber',
                     style: TextStyle(
                       color: PeeroreumColor.gray[600],
                       fontSize: 14,
@@ -716,7 +760,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 4),
-                      width: 98,
                       child: Text(
                         inroom_datas[index]["title"]!,
                         overflow: TextOverflow.ellipsis,
