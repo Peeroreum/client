@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/mypage.dart';
 import 'package:peeroreum_client/screens/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage_notification.dart';
 import 'package:peeroreum_client/screens/mypage_version.dart';
+import 'package:peeroreum_client/screens/prepare.dart';
 
 class bottomNaviBar extends StatefulWidget {
   const bottomNaviBar({super.key});
@@ -15,13 +17,13 @@ class bottomNaviBar extends StatefulWidget {
 }
 
 class _bottomNaviBarState extends State<bottomNaviBar> {
-  var selectedIndex = 4;
+  var selectedIndex = 1;
 
   List _pages = [
+    Prepare(),
     HomeWedu(),
-    MyPageAccount(),
-    MyPageNotification(),
-    MyPageVersion(),
+    Prepare(),
+    Prepare(),
     MyPage(),
   ];
 
