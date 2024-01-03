@@ -1,6 +1,13 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:http/http.dart' as http;
 
 class MyPageProfileFriend extends StatefulWidget {
   const MyPageProfileFriend(String s, {super.key});
@@ -10,18 +17,33 @@ class MyPageProfileFriend extends StatefulWidget {
 }
 
 class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
-  var myfriends = [
-    {"name": "오르미"},
-    {"name": "내리미"},
-    {"name": "name"},
-    {"name": "name"},
-  ];
+  var token;
+  var myfriends = [];
+
+  Future<void> fetchDatas() async {
+    token = await FlutterSecureStorage().read(key: "memberInfo");
+    var friend = await http.get(Uri.parse('${API.hostConnect}/member/friend'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (friend.statusCode == 200) {
+      myfriends = jsonDecode(utf8.decode(friend.bodyBytes))['data'];
+      print("친구 성공 ${myfriends[0]["nickname"]}");
+    } else {
+      print("친구 에러 ${friend.statusCode}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(),
-      body: bodyWiget(),
+      body: FutureBuilder<void>(
+          future: fetchDatas(),
+          builder: (context, snapshot) {
+            return bodyWidget();
+          }),
     );
   }
 
@@ -50,7 +72,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
     );
   }
 
-  Widget bodyWiget() {
+  Widget bodyWidget() {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: Column(
@@ -94,23 +116,37 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(3.5),
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: PeeroreumColor.gray[200]!
-                        //color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                        ),
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/user.jpg')),
+                    border: Border.all(
+                        width: 2,
+                        color: PeeroreumColor
+                            .gradeColor[myfriends[index]["grade"]]!),
+                  ),
+                  child: Container(
+                    height: 36,
+                    width: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 2,
+                        color: PeeroreumColor.white,
+                      ),
+                      image: DecorationImage(
+                          image: myfriends[index]["profileImage"] ??
+                              AssetImage(
+                                'assets/images/user.jpg',
+                              )),
+                    ),
                   ),
                 ),
                 SizedBox(
                   width: 8,
                 ),
                 Text(
-                  myfriends[index]["name"]!,
+                  myfriends[index]["nickname"],
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 14,
