@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/compliment_list_screen.dart';
 import 'package:peeroreum_client/screens/create_wedu_invitation.dart';
 import 'package:peeroreum_client/screens/signin_email_screen.dart';
@@ -38,6 +39,7 @@ class PeeroreumApp extends StatelessWidget {
         '/signIn': (context) => SignIn(),
         '/signIn/email': (context) => EmailSignIn(),
         '/signUp/email': (context) => EmailSignUp(),
+        '/home': (context) => bottomNaviBar(),
         '/wedu': (context) => HomeWedu(),
         '/wedu/create_invitaion': (context) => CreateInvitation(),
         'wedu/my': (context) => InWedu(),

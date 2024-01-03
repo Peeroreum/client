@@ -12,8 +12,8 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
+import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/signup_email_screen.dart';
-import 'package:peeroreum_client/screens/home_wedu.dart';
 import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
 
 import '../api/PeeroreumApi.dart';
@@ -286,7 +286,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       context,
                                       PageRouteBuilder(
                                           pageBuilder: (_, __, ___) =>
-                                              HomeWedu(),
+                                              bottomNaviBar(),
                                           transitionDuration:
                                               const Duration(seconds: 0),
                                           reverseTransitionDuration:
@@ -506,7 +506,7 @@ class _EmailSignInState extends State<EmailSignIn> {
     if (result.statusCode == 200) {
       var accessToken = jsonDecode(result.body)['data'];
       storage.write(key: "memberInfo", value: accessToken);
-      Navigator.pushNamedAndRemoveUntil(context, '/wedu', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } else if (result.statusCode == 404) {
       Member member = Member();
       member.username = socialAccount;

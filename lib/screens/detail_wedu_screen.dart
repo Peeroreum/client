@@ -39,10 +39,9 @@ class _DetailWeduState extends State<DetailWedu> {
   List<dynamic> notSuccessList = [];
   List<dynamic> challengeImageList = [];
   List<dynamic> challengeImage = [];
-  int _currentIndex = 1;
   dynamic weduData = '';
   dynamic weduTitle = '';
-  dynamic weduImage = '';
+  dynamic weduImage = null;
   dynamic weduDday = '';
   dynamic weduProgress = '';
   dynamic weduChallenge = '';
@@ -634,9 +633,6 @@ class _DetailWeduState extends State<DetailWedu> {
           width: double.maxFinite,
           child: TextButton(
             onPressed: () {
-              setState(() {
-                _currentIndex = 1;
-              });
               Navigator.pop(context);
             },
             child: Text(
@@ -696,11 +692,12 @@ class _DetailWeduState extends State<DetailWedu> {
                                           side: BorderSide(
                                               color:
                                               PeeroreumColor.gray[100]!)),
-                                      child: Image.network(
+                                      child: weduImage != null? Image.network(
                                         weduImage,
                                         width: 64,
                                         height: 64,
-                                      ),
+                                      ) : Image.asset('assets/images/example_logo.png',
+                                          width: 64, height: 64),
                                     ),
                                     SizedBox(
                                       width: 15,
