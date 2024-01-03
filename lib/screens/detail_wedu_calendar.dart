@@ -1,3 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,43 +19,183 @@ import '../api/PeeroreumApi.dart';
 
 
 class DetailWeduCalendar extends StatefulWidget {
-  const DetailWeduCalendar({super.key});
+  //const DetailWeduCalendar({super.key});
+  DetailWeduCalendar(this.id, this.weduTitle);
+  int id;
+  String weduTitle;
 
   @override
-  State<DetailWeduCalendar> createState() => _DetailWeduCalendarState();
+  State<DetailWeduCalendar> createState() => _DetailWeduCalendarState(id, weduTitle);
 }
 
 final days = ['월', '화', '수', '목', '금', '토', '일'];
 late List<List<int>> calendarDays;
  int daysInMonth = 0;
   DateTime currentDate = DateTime.now();
+  DateTime firstDayOfCurrentMonth = DateTime(currentDate.year, currentDate.month, 1);
+  DateTime lastDayOfCurrentMonth = DateTime(currentDate.year, currentDate.month, DateTime(currentDate.year, currentDate.month+1, 0).day);
+
   int? focusedDay; // Added variable to track the focused day
+  int? savedFocusedDay=focusedDay;
+  int? focusedMonth;
+
+  DateTime startDate = DateTime(2023,9,10);
+  DateTime finalDate = DateTime(2024,12,31);
+
+  bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
+  bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
+  
 
 class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
+  var token;
+  int id;
+  String weduTitle;
+  _DetailWeduCalendarState(this.id, this.weduTitle);
+  dynamic weduData = '';
+  dynamic weduMonthlyData = '';
+  dynamic challengeImage = '';
+  List<dynamic> successList = [];
+  List<dynamic> notSuccessList = [];
+  List<dynamic> challengeImageList = [];
 
- var progress = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+  List<dynamic> progress = [0,0,0,0,0,0,0,0,0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
  @override
   void initState() {
     super.initState();
+    currentDate = DateTime.now();
     calendarDays = generateCalendarDays();
     focusedDay=DateTime.now().day;
+    savedFocusedDay=focusedDay;
+    focusedMonth=currentDate.month;
+    if (currentDate.isAfter(finalDate)) {
+      currentDate = finalDate;
+      focusedMonth=finalDate.month;
+      focusedDay=finalDate.day;
+      savedFocusedDay=focusedDay;
+    }
   }
    void _updateCalendar() {
     setState(() {
-      
       calendarDays = generateCalendarDays();
-      if(DateTime.now().month==currentDate.month){
-        focusedDay=DateTime.now().day;
+      if(focusedMonth==currentDate.month){
+        focusedDay=savedFocusedDay;
+      }
+      if(currentDate.year==startDate.year && currentDate.month==startDate.month){
+        _isLeftButtonWork=false;
+      }
+      else{
+        _isLeftButtonWork=true;
+      }
+      if(currentDate.year==finalDate.year && currentDate.month==finalDate.month){
+        _isRightButtonWork=false;
+      }
+      else{
+        _isRightButtonWork=true;
       }
     });
+  }
+
+  Future<void> fetchDatas() async {
+    
+    token = await const FlutterSecureStorage().read(key: "memberInfo");
+
+    var weduResult = await http.get(
+        Uri.parse( '${API.hostConnect}/wedu/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+    );
+
+    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    String requestFormatDate = DateFormat('yyyyMMdd').format(requestDate);
+    var weduProgress = await http.get(
+      Uri.parse( '${API.hostConnect}/wedu/$id/monthly/$requestFormatDate'),
+      //localhost:8080/wedu/2/monthly/20231231
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      }
+    );
+
+    if(weduProgress.statusCode == 200){
+      weduMonthlyData = await jsonDecode(utf8.decode(weduProgress.bodyBytes))['data'];
+      progress = weduMonthlyData['monthlyProgress'];
+      startDate = DateTime.parse(weduMonthlyData['createdDate']);
+      finalDate = DateTime.parse(weduMonthlyData['targetDate']);
+    } else{
+      print("에러${weduProgress.statusCode}");
+    }
+
+
+    // if(weduResult.statusCode == 200) {
+    //   weduData = await jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+    //   weduTitle = weduData['title'];
+    // } else {
+    //   print("에러${weduResult.statusCode}");
+    // }
+
+    //var now = DateTime.now();
+    //String formatDate = DateFormat('yyyyMMdd').format(now);
+    var challengeList = await http.get(
+        Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$requestFormatDate'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+    );
+    if(challengeList.statusCode == 200) {
+      successList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['successMembers'];
+      notSuccessList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['failMembers'];
+    } else {
+      print("목록${challengeList.statusCode}");
+    }
+
+    await fetchImages(successList);
+  }
+   fetchImages(List<dynamic> successList) async {
+    var now = DateTime.now();
+    String formatDate = DateFormat('yyyyMMdd').format(now);
+    List<dynamic> resultImageList = [];
+    for (var index = 0; index < successList.length; index++) {
+      var successOne = successList[index]['nickname'].toString();
+      var result = await http.get(
+          Uri.parse('${API.hostConnect}/wedu/$id/challenge/$successOne/$formatDate'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+      );
+      if(result.statusCode == 200) {
+        var body = await jsonDecode(result.body);
+        resultImageList.add(body['data']['imageUrls'][0]);
+      } else {
+        print('이미지 에러 ${result.body}');
+      }
+
+    }
+    challengeImageList = resultImageList;
   }
 
 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return FutureBuilder<void>(
+      future: fetchDatas(),
+      builder: (context, snapshot) {
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   // 데이터를 기다리는 동안 로딩 인디케이터를 보여줌
+        //   return Container(
+        //     color: PeeroreumColor.white,
+        //   );
+        // } else if (snapshot.hasError) {
+        //   // 에러 발생 시
+        //   return Center(child: Text('Error: ${snapshot.error}'));
+        // } else {
+        //   // 데이터 로드 성공 시
+          return Scaffold(
       backgroundColor: PeeroreumColor.white,
             appBar: AppBar(
               backgroundColor: PeeroreumColor.white,
@@ -59,7 +207,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   color: PeeroreumColor.gray[800],
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).pop();
                 },
               ),
               title: const Row(
@@ -126,6 +274,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               ),
             ),
             body: bodyWidget(),
+        
+          );
+        //}
+      },
     );
   }
   Widget bodyWidget(){
@@ -133,9 +285,16 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       child: Column(
         children: [
           calendarHeader(),
-          calendarBody()
-
-          
+          calendarBody(),
+          Divider(
+              color: PeeroreumColor.gray[50],
+              thickness: 8,
+            ),
+          calendarList(),
+          // Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
+          // Text('${currentDate}'),
+          // Text('$startDate'),
+          // Text('${finalDate}'),
         ],
       ),
     );
@@ -146,18 +305,19 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                currentDate = DateTime(
-                  currentDate.year,
-                  currentDate.month - 1,
-                );
-                _updateCalendar();
-              });
-            },
-            icon: SvgPicture.asset('assets/icons/left.svg'),
-          ),
+            IconButton(
+              onPressed: () {
+                if (_isLeftButtonWork)
+                  setState(() {
+                    currentDate = DateTime(
+                      currentDate.year,
+                      currentDate.month - 1,
+                    );
+                    _updateCalendar();
+                  });
+              },
+              icon: SvgPicture.asset('assets/icons/left.svg'),
+            ),
           Text(
             '${currentDate.month}',
             textAlign: TextAlign.center,
@@ -177,20 +337,22 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                currentDate = DateTime(
-                  currentDate.year,
-                  currentDate.month + 1,
-                );
-                _updateCalendar();
-              });
-            },
-            icon: SvgPicture.asset('assets/icons/right.svg',
-            width: 24,
-            ),
-          ),
+          
+            IconButton(
+              onPressed: () {
+                if (_isRightButtonWork)
+                  setState(() {
+                    currentDate = DateTime(
+                      currentDate.year,
+                      currentDate.month + 1,
+                    );
+                    _updateCalendar();
+                  });
+              },
+              icon: SvgPicture.asset('assets/icons/right.svg',
+              width: 24,),
+            )
+        
         ],
       ),
     );
@@ -237,11 +399,14 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
+                          focusedMonth=currentDate.month;
                           if (focusedDay == day) {
                             focusedDay = null; // Unfocus if already focused
                           } else {
                             focusedDay = day; // Set focused day
+                            savedFocusedDay = focusedDay;
                           }
+                          fetchDatas();
                         });
                       },
                       child: Container(
@@ -309,6 +474,370 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
+  
+  calendarList(){
+    return Column(
+      children: [
+        Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '달성',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: PeeroreumColor.gray[800]),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        '${successList.length}',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: PeeroreumColor.gray[800]),
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/wedu/challenge/ok', arguments: successList);
+                    },
+                    child: Text(
+                      '전체보기',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[500]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            (successList.length > 0) ? okList() : Container(),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '미달성',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: PeeroreumColor.gray[800]),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        '${notSuccessList.length}',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: PeeroreumColor.gray[800]),
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/wedu/challenge/notok', arguments: notSuccessList);
+                    },
+                    child: Text(
+                      '전체보기',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[500]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            notOkList()
+          ],
+        );
+  }
+
+  okList() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+      width: MediaQuery.of(context).size.width,
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.only(right: 8),
+        itemCount: successList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+              child: Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Column(
+              children: [
+                GestureDetector(
+                  child: Container(
+                    //padding: EdgeInsets.all(3.5),
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 2,
+                          color: PeeroreumColor.gradeColor[successList[index]['grade']]!
+                      ),
+                      // image: DecorationImage(
+                      //     image: AssetImage('assets/images/user.jpg',)
+                      // ),
+                    ),
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                          color: PeeroreumColor.white,
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg',)
+                      ),
+                    ),
+                    ),
+                  ),
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return challengeImages(successList[index], index);
+                      },
+                    ).timeout(const Duration(seconds: 5), onTimeout: () {
+                      fetchImages(successList[index]);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  '${successList[index]['nickname']}',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: PeeroreumColor.gray[800]),
+                )
+              ],
+            ),
+          ));
+        },
+      ),
+    );
+  }
+
+  notOkList() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+      width: MediaQuery.of(context).size.width,
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.only(right: 8),
+        itemCount: notSuccessList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+              child: Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Column(
+              children: [
+                Container(
+                  //padding: EdgeInsets.all(3.5),
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 2,
+                        color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
+                      ),
+                    // image: DecorationImage(
+                    //   image: AssetImage('assets/images/user.jpg')
+                    // ),
+                  ),
+                  child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                          color: PeeroreumColor.white,
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg',)
+                      ),
+                    ),
+                    ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  '${notSuccessList[index]['nickname']}',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: PeeroreumColor.gray[800]),
+                )
+              ],
+            ),
+          ));
+        },
+      ),
+    );
+  }
+  
+  challengeImages(dynamic successOne, var index) {
+    challengeImage = challengeImageList[index];
+    return SizedBox(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.68,
+      child: Scaffold(
+        body: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              ButtonBar(
+                alignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(3.5),
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: PeeroreumColor.gradeColor[successOne['grade']]!
+                          ),
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/user.jpg')
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        successOne["nickname"].toString(),
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[800]
+                        ),
+                      )
+                    ],
+                  ),
+                  GestureDetector(
+                    child: SvgPicture.asset(
+                      'assets/icons/icon_dots_mono.svg',
+                      color: PeeroreumColor.gray[800],
+                    ),
+                    onTap: () {},
+                  )
+                ],
+              ),
+               SizedBox(height: 20),
+              Container(
+                width: double.maxFinite,
+                height: 380,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: PeeroreumColor.gray[100],
+                  image: DecorationImage(
+                      image: NetworkImage(challengeImage),
+                    fit: BoxFit.fill
+                  )
+                ),
+              )
+               // CarouselSlider(
+               //    items: _images.map((i) {
+               //      return Builder(
+               //        builder: (BuildContext context) {
+               //          return Container(
+               //            width: double.maxFinite,
+               //            height: 380,
+               //            decoration: BoxDecoration(
+               //              borderRadius: BorderRadius.circular(8),
+               //              color: PeeroreumColor.gray[100],
+               //            ),
+               //            child: Image.file(
+               //              File(i!.path),
+               //              fit: BoxFit.fill,
+               //            ),
+               //          );
+               //        },
+               //      );
+               //    }).toList(),
+               //    options: CarouselOptions(
+               //        enableInfiniteScroll: false,
+               //      viewportFraction: 1,
+               //      height: MediaQuery.of(context).size.height * 0.45,
+               //      enlargeCenterPage: true,
+               //
+               //    ),
+               //  ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.all(20),
+          width: double.maxFinite,
+          child: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              '닫기',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: PeeroreumColor.gray[600],
+              ),
+            ),
+            style: ButtonStyle(
+                backgroundColor:
+                MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                padding:
+                MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+          ),
+        ),
+      ),
+    );
+  }
+
 
     
 }
@@ -346,4 +875,3 @@ List<List<int>> generateCalendarDays() {
 
     return calendarDays;
   }
-
