@@ -24,6 +24,10 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>사진 촬영 또는 갤러리 사진을 선택하여 프로필, 본문 및 대표 이미지, 챌린지 인증 등에 첨부 및 등록하는 기능을 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>사진 촬영 또는 갤러리 사진을 선택하여 프로필, 본문 및 대표 이미지, 챌린지 인증 등에 첨부 및 등록하는 기능을 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
