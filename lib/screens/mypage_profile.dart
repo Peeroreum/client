@@ -362,16 +362,27 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 height: 20,
               ),
               Container(
-                padding: EdgeInsets.all(3.5),
-                width: 96,
-                height: 96,
+                width: 90,
+                height: 90,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: PeeroreumColor.gray[200]!
-                      //color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                      ),
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/user.jpg')),
+                  border: Border.all(
+                      width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                ),
+                child: Container(
+                  height: 84,
+                  width: 84,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      width: 2,
+                      color: PeeroreumColor.white,
+                    ),
+                    image: DecorationImage(
+                        image: AssetImage(
+                      'assets/images/user.jpg',
+                    )),
+                  ),
                 ),
               ),
               SizedBox(
