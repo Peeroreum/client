@@ -37,13 +37,14 @@ class _DetailWeduState extends State<DetailWedu> {
   List<dynamic> successList = [];
   List<dynamic> notSuccessList = [];
   List<dynamic> challengeImageList = [];
+  List<dynamic> challengeImage = [];
+  int _currentIndex = 1;
   dynamic weduData = '';
   dynamic weduTitle = '';
   dynamic weduImage = '';
   dynamic weduDday = '';
   dynamic weduProgress = '';
   dynamic weduChallenge = '';
-  dynamic challengeImage = '';
   double percent = 0.0;
 
   @override
@@ -108,7 +109,7 @@ class _DetailWeduState extends State<DetailWedu> {
       );
       if(result.statusCode == 200) {
         var body = await jsonDecode(result.body);
-        resultImageList.add(body['data']['imageUrls'][0]);
+        resultImageList.add(body['data']['imageUrls']);
       } else {
         print('이미지 에러 ${result.body}');
       }
@@ -492,9 +493,10 @@ class _DetailWeduState extends State<DetailWedu> {
 
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
+
     return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.68,
+      height: MediaQuery.of(context).size.height * 0.7,
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
@@ -549,53 +551,61 @@ class _DetailWeduState extends State<DetailWedu> {
                 ],
               ),
                SizedBox(height: 20),
-              Container(
-                width: double.maxFinite,
-                height: 380,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: PeeroreumColor.gray[100],
-                    image: challengeImage != null? DecorationImage(
-                      image: NetworkImage(challengeImage),
-                    fit: BoxFit.fill
-                  ) : null
+               CarouselSlider(
+                  items: challengeImage.map((i) {
+                    var imageUrl = i.toString();
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: double.maxFinite,
+                          height: 380,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: PeeroreumColor.gray[100],
+                            image: i != null? DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.fill) : null
+                          ),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                                margin: EdgeInsets.all(12),
+                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Color.fromARGB(100, 0, 0, 0),
+                                ),
+                                child: Text(
+                                  '${challengeImage.indexOf(i)+1} / ${challengeImage.length}',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: PeeroreumColor.white
+                                  ),
+                                )
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                  options: CarouselOptions(
+                      enableInfiniteScroll: false,
+                    viewportFraction: 1,
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    enlargeCenterPage: true,
+                  ),
                 ),
-              )
-               // CarouselSlider(
-               //    items: _images.map((i) {
-               //      return Builder(
-               //        builder: (BuildContext context) {
-               //          return Container(
-               //            width: double.maxFinite,
-               //            height: 380,
-               //            decoration: BoxDecoration(
-               //              borderRadius: BorderRadius.circular(8),
-               //              color: PeeroreumColor.gray[100],
-               //            ),
-               //            child: Image.file(
-               //              File(i!.path),
-               //              fit: BoxFit.fill,
-               //            ),
-               //          );
-               //        },
-               //      );
-               //    }).toList(),
-               //    options: CarouselOptions(
-               //        enableInfiniteScroll: false,
-               //      viewportFraction: 1,
-               //      height: MediaQuery.of(context).size.height * 0.45,
-               //      enlargeCenterPage: true,
-               //
-               //    ),
-               //  ),
             ],
           ),
         ),
         bottomNavigationBar: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 32),
           width: double.maxFinite,
           child: TextButton(
             onPressed: () {
+              setState(() {
+                _currentIndex = 1;
+              });
               Navigator.pop(context);
             },
             child: Text(
@@ -902,7 +912,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 ],
               ),
             ),
-            (successList.length > 0) ? okList() : Container(),
+            (successList.isNotEmpty) ? okList() : Container(),
             Container(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
               child: Row(
@@ -953,4 +963,5 @@ class _DetailWeduState extends State<DetailWedu> {
       ),
     );
   }
+
 }
