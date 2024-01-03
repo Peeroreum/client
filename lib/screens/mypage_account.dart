@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/mypage_acount_ps.dart';
 
 class MyPageAccount extends StatefulWidget {
   const MyPageAccount({super.key});
@@ -112,7 +113,10 @@ class _MyPageAccountState extends State<MyPageAccount> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => MyPageAccountPS()));
+                        },
                         style: TextButton.styleFrom(minimumSize: Size(24, 24)),
                         child: Text(
                           '변경',

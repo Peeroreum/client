@@ -1,14 +1,19 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, non_constant_identifier_names
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/in_wedu.dart';
 import 'package:peeroreum_client/screens/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage_notification.dart';
 import 'package:peeroreum_client/screens/mypage_profile.dart';
 import 'package:peeroreum_client/screens/mypage_version.dart';
-import 'package:peeroreum_client/screens/signin_screen.dart';
+import 'package:peeroreum_client/screens/signin_email_screen.dart';
+import 'package:http/http.dart' as http;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -19,12 +24,27 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   int selectedIndex = 4;
+  var token;
+  List<dynamic> datas = [];
+  List<dynamic> inroom_datas = [];
+  List<dynamic> inviDatas = [];
+  List<dynamic> hashTags = [];
+  var nickname;
+
+  fetchStatus() async {
+    nickname = await FlutterSecureStorage().read(key: "memberNickname");
+    token = await FlutterSecureStorage().read(key: "memberInfo");
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(),
-      body: bodyWidget(),
+      body: FutureBuilder<void>(
+          future: fetchStatus(),
+          builder: (context, snapshot) {
+            return bodyWidget();
+          }),
     );
   }
 
@@ -32,6 +52,7 @@ class _MyPageState extends State<MyPage> {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
       elevation: 1,
+      shadowColor: PeeroreumColor.gray[100],
       title: Text(
         "마이페이지",
         style: TextStyle(
@@ -47,9 +68,9 @@ class _MyPageState extends State<MyPage> {
   Widget bodyWidget() {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
               Container(
@@ -103,43 +124,43 @@ class _MyPageState extends State<MyPage> {
   Widget first_col() {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-                child: Row(children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => MyPageProfile(nickname, true)));
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Container(
-                padding: EdgeInsets.all(3.5),
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: PeeroreumColor.gray[200]!
-                      //color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                      ),
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/user.jpg')),
+                  child: Row(children: [
+                Container(
+                  padding: EdgeInsets.all(3.5),
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: PeeroreumColor.gray[200]!
+                        //color: PeeroreumColor.gradeColor[successList[index]['grade']]!
+                        ),
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/user.jpg')),
+                  ),
                 ),
-              ),
-              Container(width: 11),
-              Text(
-                'name',
-                style: TextStyle(
-                  color: PeeroreumColor.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Pretendard',
+                Container(width: 11),
+                Text(
+                  '$nickname',
+                  style: TextStyle(
+                    color: PeeroreumColor.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ])),
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => MyPageProfile()));
-              },
-              icon: SvgPicture.asset('assets/icons/right.svg'),
-            )
-          ],
+              ])),
+              SvgPicture.asset('assets/icons/right.svg'),
+            ],
+          ),
         ),
         SizedBox(
           height: 17,
@@ -154,10 +175,7 @@ class _MyPageState extends State<MyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            IconButton(
-              onPressed: () => MyPageProfile(),
-              icon: Image.asset('assets/images/color_logo.png'),
-            ),
+            Image.asset('assets/images/color_logo.png'),
             Container(width: 4),
             Text(
               '+',
@@ -189,38 +207,62 @@ class _MyPageState extends State<MyPage> {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => InWedu()))
           },
-          child: Text(
-            '내 같이방',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '내 같이방',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
         TextButton(
-          onPressed: () => {},
-          child: Text(
-            '내 질의응답',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '내 질의응답',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
         TextButton(
-          onPressed: () => {},
-          child: Text(
-            '스크랩',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '스크랩',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -236,14 +278,22 @@ class _MyPageState extends State<MyPage> {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => MyPageNotification()))
           },
-          child: Text(
-            '알림 설정',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '알림 설정',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
         TextButton(
@@ -251,26 +301,42 @@ class _MyPageState extends State<MyPage> {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
           },
-          child: Text(
-            '계정 관리',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '계정 관리',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
         TextButton(
-          onPressed: () => {},
-          child: Text(
-            '멤버십/구독 관리',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '멤버십/구독 관리',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -286,28 +352,44 @@ class _MyPageState extends State<MyPage> {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
           },
-          child: Text(
-            '버전 정보',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '버전 정보',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
         TextButton(
           onPressed: () {
             logout();
           },
-          child: Text(
-            '로그아웃',
-            style: TextStyle(
-              color: PeeroreumColor.gray[800],
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-            ),
+          style: TextButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '로그아웃',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -321,6 +403,8 @@ class _MyPageState extends State<MyPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
           title: Text("로그아웃", textAlign: TextAlign.center),
           titleTextStyle: TextStyle(
             fontSize: 20,
@@ -328,89 +412,74 @@ class _MyPageState extends State<MyPage> {
             fontFamily: 'Pretendard',
             color: PeeroreumColor.black,
           ),
-          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 8),
+          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
           content: Text(
             "로그아웃 하시겠습니까?",
             textAlign: TextAlign.center,
           ),
           contentTextStyle: TextStyle(
+            fontFamily: 'Pretendard',
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            fontFamily: 'Pretendard',
             color: PeeroreumColor.gray[600],
           ),
-          contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 16),
+          actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
           actions: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16), // 패딩
+                      shape: RoundedRectangleBorder(
+                        // 모양
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        '취소',
-                        style: TextStyle(
+                    child: Text(
+                      '취소',
+                      style: TextStyle(
                           fontFamily: 'Pretendard',
-                          fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.gray[600],
-                        ),
-                      ),
+                          fontSize: 16,
+                          color: PeeroreumColor.gray[600]),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 8,
-                ),
+                SizedBox(width: 8),
                 Expanded(
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => SignIn(),
-                              transitionDuration: const Duration(seconds: 0),
-                              reverseTransitionDuration:
-                                  const Duration(seconds: 0)),
-                          (route) => false);
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => EmailSignIn()));
+                      token = FlutterSecureStorage().deleteAll();
                     },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.primaryPuple[400],
+                      padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        '확인',
-                        style: TextStyle(
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
                           fontFamily: 'Pretendard',
-                          fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.white,
-                        ),
-                      ),
+                          fontSize: 16,
+                          color: PeeroreumColor.white),
                     ),
                   ),
                 ),
               ],
-            ),
+            )
           ],
         );
       },

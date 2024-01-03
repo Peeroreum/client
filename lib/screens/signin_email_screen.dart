@@ -101,17 +101,17 @@ class _EmailSignInState extends State<EmailSignIn> {
                           id_showClearbutton = false;
                         }
                       },
-                      style: TextStyle(
-                          fontSize: 14, color: PeeroreumColor.black),
+                      style:
+                          TextStyle(fontSize: 14, color: PeeroreumColor.black),
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: PeeroreumColor.gray[200]!)
-                          ),
+                              borderSide:
+                                  BorderSide(color: PeeroreumColor.gray[200]!)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: PeeroreumColor.black)
-                          ),
+                              borderSide:
+                                  BorderSide(color: PeeroreumColor.black)),
                           hintText: '이메일을 입력하세요.',
                           hintStyle: TextStyle(
                               fontFamily: 'Pretendard',
@@ -150,25 +150,25 @@ class _EmailSignInState extends State<EmailSignIn> {
                       },
                       obscureText: pw_visible,
                       obscuringCharacter: '●',
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w400),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: PeeroreumColor.gray[200]!)
-                        ),
+                            borderSide:
+                                BorderSide(color: PeeroreumColor.gray[200]!)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: PeeroreumColor.black)
-                        ),
+                            borderSide:
+                                BorderSide(color: PeeroreumColor.black)),
                         hintText: '비밀번호를 입력하세요.',
                         hintStyle: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: PeeroreumColor.gray[600]),
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         suffixIcon: Padding(
                           padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
                           child: Row(
@@ -274,10 +274,14 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       'Content-Type': 'application/json'
                                     });
                                 if (result.statusCode == 200) {
-                                  var data = jsonDecode(result.body)['data'];
+                                  var data = jsonDecode(
+                                      utf8.decode(result.bodyBytes))['data'];
                                   storage.write(
                                       key: "memberInfo",
                                       value: data['accessToken']);
+                                  storage.write(
+                                      key: "memberNickname",
+                                      value: data['nickname']);
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       PageRouteBuilder(
@@ -316,8 +320,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 : MaterialStateProperty.all(
                                     PeeroreumColor.gray[300]),
                             shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
+                                RoundedRectangleBorder>(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ))),
                       ),
@@ -359,8 +362,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                               Navigator.push(
                                 context,
                                 PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) =>
-                                        EmailSignUp(),
+                                    pageBuilder: (_, __, ___) => EmailSignUp(),
                                     transitionDuration:
                                         const Duration(seconds: 0),
                                     reverseTransitionDuration:
@@ -414,13 +416,12 @@ class _EmailSignInState extends State<EmailSignIn> {
                     children: [
                       GestureDetector(
                         child: Container(
-                            height: 48,
-                            width: 48,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: PeeroreumColor.gray[100]
-                            ),
-                          ),
+                          height: 48,
+                          width: 48,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: PeeroreumColor.gray[100]),
+                        ),
                         onTap: () {
                           kakaoSignIn();
                         },
@@ -434,9 +435,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                             width: 48,
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: PeeroreumColor.gray[100]
-                            )
-                        ),
+                                color: PeeroreumColor.gray[100])),
                         onTap: () {
                           googleSignIn();
                         },
@@ -447,8 +446,7 @@ class _EmailSignInState extends State<EmailSignIn> {
               ],
             ),
           ),
-        ]
-        ),
+        ]),
       ),
     );
   }
@@ -489,8 +487,9 @@ class _EmailSignInState extends State<EmailSignIn> {
   }
 
   void googleSignIn() async {
-    final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
-    if(googleSignInAccount != null) {
+    final GoogleSignInAccount? googleSignInAccount =
+        await GoogleSignIn().signIn();
+    if (googleSignInAccount != null) {
       socialAccount = googleSignInAccount.email;
       fetchSocialLogin(socialAccount);
     } else {
@@ -502,14 +501,13 @@ class _EmailSignInState extends State<EmailSignIn> {
   Future<void> fetchSocialLogin(String socialAccount) async {
     var result = await http.get(
         Uri.parse('${API.hostConnect}/socialLogin?email=${socialAccount}'),
-        headers: {'Content-Type': 'application/json'}
-    );
+        headers: {'Content-Type': 'application/json'});
 
-    if(result.statusCode == 200) {
+    if (result.statusCode == 200) {
       var accessToken = jsonDecode(result.body)['data'];
       storage.write(key: "memberInfo", value: accessToken);
       Navigator.pushNamedAndRemoveUntil(context, '/wedu', (route) => false);
-    } else if(result.statusCode == 404) {
+    } else if (result.statusCode == 404) {
       Member member = Member();
       member.username = socialAccount;
       Navigator.push(
@@ -517,8 +515,7 @@ class _EmailSignInState extends State<EmailSignIn> {
         PageRouteBuilder(
             pageBuilder: (_, __, ___) => SignUpNickname(member),
             transitionDuration: const Duration(seconds: 0),
-            reverseTransitionDuration:
-            const Duration(seconds: 0)),
+            reverseTransitionDuration: const Duration(seconds: 0)),
       );
     } else {
       print("소셜 로그인 실패");
