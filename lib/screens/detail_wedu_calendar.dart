@@ -63,6 +63,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
  @override
   void initState() {
     super.initState();
+    currentDate = DateTime.now();
     calendarDays = generateCalendarDays();
     focusedDay=DateTime.now().day;
     savedFocusedDay=focusedDay;
@@ -135,10 +136,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     //   print("에러${weduResult.statusCode}");
     // }
 
-    var now = DateTime.now();
-    String formatDate = DateFormat('yyyyMMdd').format(now);
+    //var now = DateTime.now();
+    //String formatDate = DateFormat('yyyyMMdd').format(now);
     var challengeList = await http.get(
-        Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$formatDate'),
+        Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$requestFormatDate'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -206,7 +207,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   color: PeeroreumColor.gray[800],
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).pop();
                 },
               ),
               title: const Row(
@@ -285,14 +286,15 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         children: [
           calendarHeader(),
           calendarBody(),
-          Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
-          Text('${currentDate}'),
-          Text('$startDate'),
-          Text('${finalDate}'),
           Divider(
               color: PeeroreumColor.gray[50],
               thickness: 8,
             ),
+          calendarList(),
+          // Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
+          // Text('${currentDate}'),
+          // Text('$startDate'),
+          // Text('${finalDate}'),
         ],
       ),
     );
@@ -404,6 +406,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                             focusedDay = day; // Set focused day
                             savedFocusedDay = focusedDay;
                           }
+                          fetchDatas();
                         });
                       },
                       child: Container(
@@ -471,7 +474,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
-  achievementList(){
+  
+  calendarList(){
     return Column(
       children: [
         Container(
@@ -564,8 +568,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               ),
             ),
             notOkList()
-      ],
-    );
+          ],
+        );
   }
 
   okList() {
@@ -585,17 +589,32 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               children: [
                 GestureDetector(
                   child: Container(
-                    padding: EdgeInsets.all(3.5),
+                    //padding: EdgeInsets.all(3.5),
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
+                        width: 2,
                           color: PeeroreumColor.gradeColor[successList[index]['grade']]!
                       ),
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/user.jpg')
+                      // image: DecorationImage(
+                      //     image: AssetImage('assets/images/user.jpg',)
+                      // ),
+                    ),
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                          color: PeeroreumColor.white,
                       ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg',)
+                      ),
+                    ),
                     ),
                   ),
                   onTap: () {
@@ -648,18 +667,33 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(3.5),
+                  //padding: EdgeInsets.all(3.5),
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                          color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
+                        width: 2,
+                        color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
                       ),
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/user.jpg')
-                    ),
+                    // image: DecorationImage(
+                    //   image: AssetImage('assets/images/user.jpg')
+                    // ),
                   ),
+                  child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                          color: PeeroreumColor.white,
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/user.jpg',)
+                      ),
+                    ),
+                    ),
                 ),
                 SizedBox(
                   height: 8,
@@ -679,6 +713,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
+  
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
     return SizedBox(
@@ -802,6 +837,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
+
 
     
 }
