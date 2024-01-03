@@ -699,7 +699,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
       itemCount: inroom_datas.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(

@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:http/http.dart' as http;
+import 'package:peeroreum_client/screens/mypage_profile.dart';
 
 class MyPageProfileFriend extends StatefulWidget {
   const MyPageProfileFriend(String s, {super.key});
@@ -111,50 +112,63 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
     return ListView.separated(
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        width: 2,
-                        color: PeeroreumColor
-                            .gradeColor[myfriends[index]["grade"]]!),
-                  ),
-                  child: Container(
-                    height: 36,
-                    width: 36,
+          return ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      MyPageProfile(myfriends[index]["nickname"], false)));
+            },
+            style: ElevatedButton.styleFrom(
+              minimumSize: Size.fromHeight(56),
+              backgroundColor: PeeroreumColor.white,
+              elevation: 0,
+              padding: EdgeInsets.all(0),
+            ),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        width: 2,
-                        color: PeeroreumColor.white,
+                          width: 2,
+                          color: PeeroreumColor
+                              .gradeColor[myfriends[index]["grade"]]!),
+                    ),
+                    child: Container(
+                      height: 36,
+                      width: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          width: 2,
+                          color: PeeroreumColor.white,
+                        ),
+                        image: DecorationImage(
+                            image: myfriends[index]["profileImage"] ??
+                                AssetImage(
+                                  'assets/images/user.jpg',
+                                )),
                       ),
-                      image: DecorationImage(
-                          image: myfriends[index]["profileImage"] ??
-                              AssetImage(
-                                'assets/images/user.jpg',
-                              )),
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  myfriends[index]["nickname"],
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: PeeroreumColor.gray[800],
+                  SizedBox(
+                    width: 8,
                   ),
-                ),
-              ],
+                  Text(
+                    myfriends[index]["nickname"],
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: PeeroreumColor.gray[800],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },

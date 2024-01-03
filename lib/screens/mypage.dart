@@ -125,11 +125,17 @@ class _MyPageState extends State<MyPage> {
   Widget first_col() {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
+        ElevatedButton(
+          onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => MyPageProfile(nickname, true)));
           },
+          style: ElevatedButton.styleFrom(
+            minimumSize: Size.fromHeight(56),
+            backgroundColor: PeeroreumColor.white,
+            elevation: 0,
+            padding: EdgeInsets.all(0),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
