@@ -206,12 +206,157 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   'assets/icons/icon_dots_mono.svg',
                   color: PeeroreumColor.black,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  am_i
+                      ? showModalBottomSheet(
+                          //'나'일 경우 프로필 수정
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return changeMe();
+                          },
+                        )
+                      : showModalBottomSheet(
+                          //다른 사람일 경우 신고하기
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return reportUser();
+                          },
+                        );
+                },
               )
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget changeMe() {
+    return Container(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.30 - 26,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: PeeroreumColor.white,
+        body: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Text(
+                  '프로필 수정',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                color: PeeroreumColor.gray[200],
+                height: 1,
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  minimumSize: Size.fromHeight(40),
+                ),
+                child: Text(
+                  '프로필 사진 변경하기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  minimumSize: Size.fromHeight(40),
+                ),
+                child: Text(
+                  '닉네임 변경하기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget reportUser() {
+    return Container(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.25 - 26,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: PeeroreumColor.white,
+        body: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Text(
+                  '신고하기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                color: PeeroreumColor.gray[200],
+                height: 1,
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  minimumSize: Size.fromHeight(40),
+                ),
+                child: Text(
+                  '${nickname} 신고하기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
