@@ -12,6 +12,8 @@ import 'package:peeroreum_client/screens/wedu/wedu_search.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:dropdown_button2/dropdown_button2.dart';
+
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -413,16 +415,28 @@ class _HomeWeduState extends State<HomeWedu> {
                   child: SizedBox(
                     width: 75,
                     height: 40,
-                    child: Padding(
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: DropdownButton(
-                          icon: Padding(
-                            padding: EdgeInsets.only(left: 7.0), //나중에 수정 8.0
-                            child: Icon(Icons.expand_more,
-                                color: PeeroreumColor.gray[600]),
-                          ),
-                          iconSize: 18,
+                    
+                      child: DropdownButton2(
+                          buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: 75,
+                                    ),
+                                    iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg',
+                                      color: PeeroreumColor.gray[600]),
+                                    ),
+                          dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      ),
+                                    ),
+                          menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
                           underline: SizedBox.shrink(),
                           value: selectedGrade,
                           items: dropdownGradeList.map((String item) {
@@ -431,6 +445,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 child: Text(
                                   item,
                                   style: TextStyle(
+                                    fontFamily: 'Pretendard',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -442,7 +457,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               grade = dropdownGradeList.indexOf(selectedGrade);
                             });
                           }),
-                    ),
+                    
                   ),
                 ),
                 SizedBox(
@@ -456,17 +471,28 @@ class _HomeWeduState extends State<HomeWedu> {
                   child: SizedBox(
                     width: 75,
                     height: 40,
-                    child: Padding(
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: DropdownButton(
-                          icon: Padding(
-                            padding:
-                            const EdgeInsets.only(left: 7.0), //나중에 수정 8.0
-                            child: Icon(Icons.expand_more,
-                                color: PeeroreumColor.gray[600]),
-                          ),
-                          iconSize: 18,
+                    
+                      child: DropdownButton2(
+                          buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: 75,
+                                    ),
+                                    iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg',
+                                      color: PeeroreumColor.gray[600]),
+                                    ),
+                          dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      ),
+                                    ),
+                          menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
                           underline: SizedBox.shrink(),
                           value: selectedSubject,
                           items: dropdownSubjectList.map((String item) {
@@ -474,7 +500,10 @@ class _HomeWeduState extends State<HomeWedu> {
                                 value: item,
                                 child: Text(
                                   item,
-                                  style: TextStyle(fontSize: 14),
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,),
                                 ));
                           }).toList(),
                           onChanged: (dynamic value) {
@@ -484,7 +513,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                   dropdownSubjectList.indexOf(selectedSubject);
                             });
                           }),
-                    ),
+                    
                   ),
                 )
               ],
@@ -500,17 +529,28 @@ class _HomeWeduState extends State<HomeWedu> {
             child: SizedBox(
               width: 87,
               height: 40,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: DropdownButton(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(left: 6.0), //나중에 수정 8.0
-                    child: Icon(
-                      Icons.expand_more,
-                      color: PeeroreumColor.gray[600],
-                    ),
-                  ),
-                  iconSize: 18,
+              
+                child: DropdownButton2(
+                  buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: 87,
+                                    ),
+                                    iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg',
+                                      color: PeeroreumColor.gray[600]),
+                                    ),
+                          dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      ),
+                                    ),
+                          menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
                   underline: SizedBox.shrink(),
                   value: selectedSortType,
                   items: dropdownSortTypeList.map((String item) {
@@ -518,7 +558,11 @@ class _HomeWeduState extends State<HomeWedu> {
                         value: item,
                         child: Text(
                           item,
-                          style: TextStyle(fontSize: 14),
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ));
                   }).toList(),
                   onChanged: (dynamic value) {
@@ -527,7 +571,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     });
                   },
                 ),
-              ),
+              
             ),
           ),
         ],
