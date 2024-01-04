@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'PeeroreumColor.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+
 
 class PeeroreumButton<T> extends StatelessWidget {
   final List<T> items;
@@ -26,16 +28,19 @@ class PeeroreumButton<T> extends StatelessWidget {
       child: SizedBox(
         height: 40,
         width: width,
-        child: DropdownButton<T>(
+        child: DropdownButton2<T>(
           isExpanded: true,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                      height: 40,
+                                      width: double.infinity,
+                                    ),
           value: value,
-          iconSize: 18,
-          icon: Container(
-            margin: EdgeInsets.only(left: 7),
-            child: SvgPicture.asset('assets/icons/down.svg',
-                color: PeeroreumColor.gray[600]),
-          ),
+          iconStyleData: IconStyleData(
+                                      icon: SvgPicture.asset('assets/icons/down.svg',
+                                      color: PeeroreumColor.gray[600]),
+                                      ),
+                                    
           items: items.map((e) {
             return DropdownMenuItem<T>(
               value: e,
@@ -61,6 +66,16 @@ class PeeroreumButton<T> extends StatelessWidget {
             ),
           ),
           underline: SizedBox.shrink(), // 밑줄 숨기기
+          dropdownStyleData: DropdownStyleData(
+                                      elevation: 0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                                        color: PeeroreumColor.white,
+                                      )),
+                                      menuItemStyleData: MenuItemStyleData(
+                                      height: 44,
+                                    ),
         ),
       ),
     );
