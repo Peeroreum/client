@@ -95,7 +95,17 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                         ],
                       ),
                       TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          for (int i = 0; i < isCheckedList.length; i++) {
+                            if (isActiveList[i] = true){
+                              if (isCheckedList[i]==false) {
+                                setState(() {
+                                  isCheckedList[i] = true;
+                                });
+                              }
+                            }
+                          }
+                        },
                         icon: SvgPicture.asset(
                             'assets/icons/check.svg',
                           color: PeeroreumColor.gray[500],
@@ -223,19 +233,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),
-                          //color: PeeroreumColor.black,
                           color: isActiveList[index]
                           ? (isCheckedList[index]
                               ? PeeroreumColor.primaryPuple[400]!
                               : PeeroreumColor.white)
                           : PeeroreumColor.gray[300]!,
-
-                          // color: _isActive
-                          // ? (_isChecked
-                          //     ? PeeroreumColor.primaryPuple[400]!
-                          //     : PeeroreumColor.white)
-                          // : PeeroreumColor.gray[300]!,
-                          // ),
                         ),
                         child: isCheckedList[index]
                             ? Center(
