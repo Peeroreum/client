@@ -11,7 +11,8 @@ class ComplimentCheckList extends StatefulWidget {
 class _ComplimentCheckListState extends State<ComplimentCheckList> {
 
   List<dynamic> successList = [];
-  late List<bool> isCheckedList = List.generate(successList.length, (index) => true);
+  late List<bool> isCheckedList = List.generate(successList.length, (index) => false);
+  late List<bool> isActiveList = List.generate(successList.length, (index) => true);
   
   @override
   Widget build(BuildContext context) {
@@ -130,7 +131,16 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
             height: 48,
             child: TextButton(
               onPressed: () {
-                
+                for (int i = 0; i < isCheckedList.length; i++) {
+                  if (isActiveList[i] = true){
+                    if (isCheckedList[i]) {
+                      setState(() {
+                        // _isChecked 값이 true인 경우에만 isActive를 false로 설정
+                        isActiveList[i] = false;
+                      });
+                    }
+                  }
+                }
               },
               child: Text(
                 '칭찬하기',
@@ -198,9 +208,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                   ),
                     InkWell(
                       onTap: () {
-                        setState(() {
-                          isCheckedList[index] = !isCheckedList[index];
-                        });
+                        if (isActiveList[index]){
+                          setState(() {
+                            isCheckedList[index] = !isCheckedList[index];
+                          });
+                        }
                       },
                       child: Container(
                         width: 24,
@@ -212,9 +224,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                           ),
                           borderRadius: BorderRadius.circular(4.0),
                           //color: PeeroreumColor.black,
-                          color: isCheckedList[index]
+                          color: isActiveList[index]
+                          ? (isCheckedList[index]
                               ? PeeroreumColor.primaryPuple[400]!
-                              : PeeroreumColor.white,
+                              : PeeroreumColor.white)
+                          : PeeroreumColor.gray[300]!,
 
                           // color: _isActive
                           // ? (_isChecked
