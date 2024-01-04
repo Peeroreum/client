@@ -30,10 +30,6 @@ class PeeroreumApp extends StatelessWidget {
       GlobalMaterialLocalizations.delegate,
       GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-      const Locale('ko', 'KR'),
-        const Locale('en')
-      ],
       theme: ThemeData(
           appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(

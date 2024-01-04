@@ -228,6 +228,15 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         onChanged: (value) {
                           if (value.isNotEmpty) {
                             pw_showClearbutton = true;
+                            if(pw_controller.text == pw2_controller.text) {
+                              setState(() {
+                                pw2_check = true;
+                              });
+                            } else {
+                              setState(() {
+                                pw2_check = false;
+                              });
+                            }
                           } else {
                             pw_showClearbutton = false;
                           }
@@ -236,6 +245,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
                               r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
                               .hasMatch(pw_controller.text)) {
                             pw_check = true;
+                          } else{
+                            setState(() {
+                              pw_check = false;
+                            });
                           }
                         },
                         decoration: InputDecoration(

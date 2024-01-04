@@ -364,6 +364,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                       setState(() {
                                         dropdownSubject = value!;
                                         change_challenge(value);
+                                        dropdownChallenge = null;
                                       });
                                     },
                                   ),
@@ -393,7 +394,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   child: InkWell(
                                     onTap: () async {
                                       final selectedDate = await showDatePicker(
-                                        locale: const Locale('ko', 'KR'),
+                                        locale: const Locale('ko'),
                                         context:
                                             context, // 팝업으로 띄우기 때문에 context 전달
                                         initialDate: DateTime.now().add(Duration(
