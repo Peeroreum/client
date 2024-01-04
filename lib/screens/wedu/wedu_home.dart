@@ -7,9 +7,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/create_wedu_screen.dart';
-import 'package:peeroreum_client/screens/search_wedu.dart';
-import 'package:peeroreum_client/screens/detail_wedu_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_search.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 

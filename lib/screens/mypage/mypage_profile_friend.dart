@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:http/http.dart' as http;
-import 'package:peeroreum_client/screens/mypage_profile.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 
 class MyPageProfileFriend extends StatefulWidget {
   const MyPageProfileFriend(String s, {super.key});

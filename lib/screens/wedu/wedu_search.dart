@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/search_result_wedu_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_search_result_screen.dart';
 
-import '../data/WeduSearchHistory.dart';
+import '../../data/WeduSearchHistory.dart';
 
 class searchWedu extends StatefulWidget {
   const searchWedu({super.key});

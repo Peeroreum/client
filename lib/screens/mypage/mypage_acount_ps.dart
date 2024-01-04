@@ -6,10 +6,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
-import 'package:peeroreum_client/screens/mypage.dart';
+import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
-import 'package:peeroreum_client/screens/mypage_account.dart';
-import '../api/PeeroreumApi.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
+import '../../api/PeeroreumApi.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class MyPageAccountPS extends StatefulWidget {

@@ -12,7 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/screens/pie_chart.dart';
 
 
-import '../api/PeeroreumApi.dart';
+import '../../api/PeeroreumApi.dart';
 
 
 

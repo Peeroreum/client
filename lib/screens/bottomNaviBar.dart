@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/home_wedu.dart';
-import 'package:peeroreum_client/screens/mypage.dart';
-import 'package:peeroreum_client/screens/mypage_account.dart';
-import 'package:peeroreum_client/screens/mypage_notification.dart';
-import 'package:peeroreum_client/screens/mypage_version.dart';
+import 'package:peeroreum_client/screens/mypage/mypage.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
 import 'package:peeroreum_client/screens/prepare.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 
 class bottomNaviBar extends StatefulWidget {
   const bottomNaviBar({super.key});

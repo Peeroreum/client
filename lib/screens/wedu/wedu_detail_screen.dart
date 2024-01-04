@@ -11,13 +11,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/compliment_list_screen.dart';
-import 'package:peeroreum_client/screens/detail_wedu_calendar.dart';
-import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
+import 'package:peeroreum_client/screens/wedu/compliment_list_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_detail_calendar.dart';
+import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 
-import '../api/PeeroreumApi.dart';
+import '../../api/PeeroreumApi.dart';
 
 class DetailWedu extends StatefulWidget {
   DetailWedu(this.id);

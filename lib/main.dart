@@ -3,14 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
-import 'package:peeroreum_client/screens/compliment_list_screen.dart';
-import 'package:peeroreum_client/screens/create_wedu_invitation.dart';
-import 'package:peeroreum_client/screens/signin_email_screen.dart';
-import 'package:peeroreum_client/screens/signin_screen.dart';
-import 'package:peeroreum_client/screens/signup_email_screen.dart';
-import 'package:peeroreum_client/screens/encouragement_list_screen.dart';
-import 'package:peeroreum_client/screens/home_wedu.dart';
-import 'package:peeroreum_client/screens/in_wedu.dart';
+import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
+import 'package:peeroreum_client/screens/sign/signin_screen.dart';
+import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
+import 'package:peeroreum_client/screens/wedu/compliment_list_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_create_invitation.dart';
+import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
@@ -32,6 +32,7 @@ class PeeroreumApp extends StatelessWidget {
       ],
       supportedLocales: [
       const Locale('ko', 'KR'),
+        const Locale('en')
       ],
       theme: ThemeData(
           appBarTheme: AppBarTheme(

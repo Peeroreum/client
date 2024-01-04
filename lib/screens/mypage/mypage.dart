@@ -7,12 +7,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/in_wedu.dart';
-import 'package:peeroreum_client/screens/mypage_account.dart';
-import 'package:peeroreum_client/screens/mypage_notification.dart';
-import 'package:peeroreum_client/screens/mypage_profile.dart';
-import 'package:peeroreum_client/screens/mypage_version.dart';
-import 'package:peeroreum_client/screens/signin_email_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_version.dart';
+import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:http/http.dart' as http;
 
 class MyPage extends StatefulWidget {

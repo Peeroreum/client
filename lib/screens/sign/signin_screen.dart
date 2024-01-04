@@ -7,9 +7,9 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
+import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
-import '../api/PeeroreumApi.dart';
+import '../../api/PeeroreumApi.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
