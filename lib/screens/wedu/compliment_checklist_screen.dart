@@ -97,7 +97,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                       TextButton.icon(
                         onPressed: () {
                           for (int i = 0; i < isCheckedList.length; i++) {
-                            if (isActiveList[i] = true){
+                            if (isActiveList[i] == true){
                               if (isCheckedList[i]==false) {
                                 setState(() {
                                   isCheckedList[i] = true;
