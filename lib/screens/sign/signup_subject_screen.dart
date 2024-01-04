@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
@@ -43,6 +44,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         _badLevel != null) {
       setState(() {
         isEnabled = true;
+      });
+    }
+    else{
+      setState(() {
+        isEnabled = false;
       });
     }
   }
@@ -138,6 +144,8 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                 goodDetailSubjects = ((member.grade! <= 3)
                                     ? middleSubjects[_goodSubject]
                                     : highSubjects[_goodSubject])!;
+                                _selectedDetailGoodSubject=null;
+                                _checkInput();
                               });
                             },
                             hintText: '과목',
@@ -208,6 +216,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               badDetailSubjects = ((member.grade! <= 3)
                                   ? middleSubjects[_badSubject]
                                   : highSubjects[_badSubject])!;
+                              _selectedDetailBadSubject=null;
                               _checkInput();
                             });
                           },
