@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
+import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
-import '../api/PeeroreumApi.dart';
+import '../../api/PeeroreumApi.dart';
 
 class EmailSignUp extends StatefulWidget {
   @override

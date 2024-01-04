@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
-import '../api/PeeroreumApi.dart';
+import '../../api/PeeroreumApi.dart';
 
 class CreateInvitation extends StatefulWidget {
   const CreateInvitation({super.key});

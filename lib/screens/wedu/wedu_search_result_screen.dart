@@ -7,8 +7,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
-import '../api/PeeroreumApi.dart';
-import '../data/WeduSearchHistory.dart';
+import '../../api/PeeroreumApi.dart';
+import '../../data/WeduSearchHistory.dart';
 
 class SearchResultWedu extends StatefulWidget {
   final String keyword;

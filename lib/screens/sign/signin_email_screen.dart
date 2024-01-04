@@ -13,11 +13,11 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
-import 'package:peeroreum_client/screens/signup_email_screen.dart';
-import 'package:peeroreum_client/screens/signup_nickname_screen.dart';
+import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
+import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
-import '../api/PeeroreumApi.dart';
-import '../model/Member.dart';
+import '../../api/PeeroreumApi.dart';
+import '../../model/Member.dart';
 
 class EmailSignIn extends StatefulWidget {
   const EmailSignIn({super.key});
@@ -505,7 +505,8 @@ class _EmailSignInState extends State<EmailSignIn> {
 
     if (result.statusCode == 200) {
       var accessToken = jsonDecode(result.body)['data'];
-      storage.write(key: "memberInfo", value: accessToken);
+      // storage.write(key: "memberInfo", value: accessToken);
+      // storage.write(key: "memberNickname", value: data['nickname']);
       Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } else if (result.statusCode == 404) {
       Member member = Member();

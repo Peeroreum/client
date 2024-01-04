@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../designs/PeeroreumColor.dart';
+import '../../designs/PeeroreumColor.dart';
 
 class EncouragementList extends StatefulWidget {
   @override

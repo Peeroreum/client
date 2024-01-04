@@ -3,7 +3,7 @@ import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/data/Subject.dart';
-import 'package:peeroreum_client/screens/signup_school_screen.dart';
+import 'package:peeroreum_client/screens/sign/signup_school_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SignUpSubject extends StatefulWidget {
