@@ -588,7 +588,7 @@ class _DetailWeduState extends State<DetailWedu> {
                       builder: (BuildContext context) {
                         return Container(
                           width: double.maxFinite,
-                          height: 380,
+                          height: double.maxFinite,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[100],
@@ -629,7 +629,7 @@ class _DetailWeduState extends State<DetailWedu> {
           ),
         ),
         bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 32),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 28),
           width: double.maxFinite,
           child: TextButton(
             onPressed: () {

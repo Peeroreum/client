@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -39,8 +40,8 @@ late List<List<int>> calendarDays;
   int? savedFocusedDay=focusedDay;
   int? focusedMonth;
 
-  DateTime startDate = DateTime(2023,9,10);
-  DateTime finalDate = DateTime(2024,12,31);
+  var startDate;
+  var finalDate;
 
   bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
   bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
@@ -53,12 +54,12 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   _DetailWeduCalendarState(this.id, this.weduTitle);
   dynamic weduData = '';
   dynamic weduMonthlyData = '';
-  dynamic challengeImage = '';
+  List<dynamic> challengeImage = [];
   List<dynamic> successList = [];
   List<dynamic> notSuccessList = [];
   List<dynamic> challengeImageList = [];
 
-  List<dynamic> progress = [0,0,0,0,0,0,0,0,0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+  List<dynamic> progress = [];
 
  @override
   void initState() {
@@ -94,7 +95,9 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         _isRightButtonWork=true;
       }
     });
+    fetchDatas();
   }
+
 
   Future<void> fetchDatas() async {
     
@@ -108,10 +111,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         }
     );
 
-    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
-    String requestFormatDate = DateFormat('yyyyMMdd').format(requestDate);
+    //DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    String requestFormatDate2 = DateFormat('yyyyMMdd').format(currentDate);
     var weduProgress = await http.get(
-      Uri.parse( '${API.hostConnect}/wedu/$id/monthly/$requestFormatDate'),
+      Uri.parse( '${API.hostConnect}/wedu/$id/monthly/$requestFormatDate2'),
       //localhost:8080/wedu/2/monthly/20231231
       headers: {
         'Content-Type': 'application/json',
@@ -138,6 +141,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
 
     //var now = DateTime.now();
     //String formatDate = DateFormat('yyyyMMdd').format(now);
+    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    String requestFormatDate = DateFormat('yyyyMMdd').format(requestDate);
     var challengeList = await http.get(
         Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$requestFormatDate'),
         headers: {
@@ -152,11 +157,13 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       print("목록${challengeList.statusCode}");
     }
 
-    await fetchImages(successList);
+    if (successList.isNotEmpty){
+      await fetchImages(successList);
+    }
   }
    fetchImages(List<dynamic> successList) async {
-    var now = DateTime.now();
-    String formatDate = DateFormat('yyyyMMdd').format(now);
+    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    String formatDate = DateFormat('yyyyMMdd').format(requestDate);
     List<dynamic> resultImageList = [];
     for (var index = 0; index < successList.length; index++) {
       var successOne = successList[index]['nickname'].toString();
@@ -169,7 +176,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       );
       if(result.statusCode == 200) {
         var body = await jsonDecode(result.body);
-        resultImageList.add(body['data']['imageUrls'][0]);
+        resultImageList.add(body['data']['imageUrls']);
       } else {
         print('이미지 에러 ${result.body}');
       }
@@ -291,10 +298,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               thickness: 8,
             ),
           calendarList(),
-          // Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
-          // Text('${currentDate}'),
-          // Text('$startDate'),
-          // Text('${finalDate}'),
+          Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
+          Text('${currentDate}'),
+          Text('$startDate'),
+          Text('${finalDate}'),
         ],
       ),
     );
@@ -406,7 +413,6 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                             focusedDay = day; // Set focused day
                             savedFocusedDay = focusedDay;
                           }
-                          fetchDatas();
                         });
                       },
                       child: Container(
@@ -716,10 +722,19 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
-    return SizedBox(
+
+    return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.68,
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+      ),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Container(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -765,50 +780,55 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 ],
               ),
                SizedBox(height: 20),
-              Container(
-                width: double.maxFinite,
-                height: 380,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: PeeroreumColor.gray[100],
-                  image: DecorationImage(
-                      image: NetworkImage(challengeImage),
-                    fit: BoxFit.fill
-                  )
+              CarouselSlider(
+                  items: challengeImage.map((i) {
+                    var imageUrl = i.toString();
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: double.maxFinite,
+                          height: double.maxFinite,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: PeeroreumColor.gray[100],
+                            image: i != null? DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.fill) : null
+                          ),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                                margin: EdgeInsets.all(12),
+                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Color.fromARGB(100, 0, 0, 0),
+                                ),
+                                child: Text(
+                                  '${challengeImage.indexOf(i)+1} / ${challengeImage.length}',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: PeeroreumColor.white
+                                  ),
+                                )
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                  options: CarouselOptions(
+                      enableInfiniteScroll: false,
+                    viewportFraction: 1,
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    enlargeCenterPage: true,
+                  ),
                 ),
-              )
-               // CarouselSlider(
-               //    items: _images.map((i) {
-               //      return Builder(
-               //        builder: (BuildContext context) {
-               //          return Container(
-               //            width: double.maxFinite,
-               //            height: 380,
-               //            decoration: BoxDecoration(
-               //              borderRadius: BorderRadius.circular(8),
-               //              color: PeeroreumColor.gray[100],
-               //            ),
-               //            child: Image.file(
-               //              File(i!.path),
-               //              fit: BoxFit.fill,
-               //            ),
-               //          );
-               //        },
-               //      );
-               //    }).toList(),
-               //    options: CarouselOptions(
-               //        enableInfiniteScroll: false,
-               //      viewportFraction: 1,
-               //      height: MediaQuery.of(context).size.height * 0.45,
-               //      enlargeCenterPage: true,
-               //
-               //    ),
-               //  ),
             ],
           ),
         ),
         bottomNavigationBar: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 28),
           width: double.maxFinite,
           child: TextButton(
             onPressed: () {
