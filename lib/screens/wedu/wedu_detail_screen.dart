@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
@@ -157,6 +158,8 @@ class _DetailWeduState extends State<DetailWedu> {
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: '오늘의 챌린지 인증 성공!');
+      fetchDatas();
+      setState(() { });
     } else {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시작해 주세요.');
     }
@@ -216,6 +219,20 @@ class _DetailWeduState extends State<DetailWedu> {
               preferredSize: Size.fromHeight(20),
               child: Column(
                 children: [
+                  Flexible(
+                    child: CustomWidgetMarquee(
+                      child: Text(
+                        weduTitle,
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: PeeroreumColor.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 7,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -714,25 +731,15 @@ class _DetailWeduState extends State<DetailWedu> {
                               Expanded(
                                 child: Row(
                                   children: [
-                                    Card(
-                                      elevation: 0,
-                                      color: PeeroreumColor.gray[50],
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8)),
-                                          side: BorderSide(
-                                              color:
-                                                  PeeroreumColor.gray[100]!)),
-                                      child: weduImage != null
-                                          ? Image.network(
-                                              weduImage,
-                                              width: 64,
-                                              height: 64,
-                                            )
-                                          : Image.asset(
-                                              'assets/images/example_logo.png',
-                                              width: 64,
-                                              height: 64),
+                                    Container(
+                                      width: 64, height: 64,
+                                      decoration: BoxDecoration(
+                                        image: weduImage != null?
+                                            DecorationImage(image: NetworkImage(weduImage), fit: BoxFit.cover)
+                                            : DecorationImage(image: AssetImage('assets/images/example_logo.png')),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(width: 1, color: PeeroreumColor.gray[100]!),
+                                      ),
                                     ),
                                     SizedBox(
                                       width: 15,
@@ -804,6 +811,11 @@ class _DetailWeduState extends State<DetailWedu> {
                                   child: SvgPicture.asset(
                                     'assets/icons/right.svg',
                                     color: PeeroreumColor.gray[500],
+                                    ),
+                                    onTap: (){
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailWeduCalendar(id, weduTitle.toString())));
+                                    },
+                                    ),
                                   ),
                                   onTap: () {
                                     Navigator.of(context).push(

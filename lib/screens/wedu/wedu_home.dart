@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -288,16 +289,17 @@ class _HomeWeduState extends State<HomeWedu> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
+                  height: 48,
+                  width: 48,
                   decoration: BoxDecoration(
                       border: Border.all(
                           width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: (inroom_datas[index]['imagePath'] != null)
-                      ? Image.network(inroom_datas[index]['imagePath']!,
-                      width: 48, height: 48)
-                      : Image.asset('assets/images/example_logo.png',
-                      width: 48, height: 48),
-                ),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    image: (inroom_datas[index]['imagePath'] != null)?
+                    DecorationImage(image: NetworkImage(inroom_datas[index]['imagePath']), fit: BoxFit.cover)
+                        : DecorationImage(image: AssetImage('assets/images/example_logo.png'))
+                    )
+                  ),
                 SizedBox(
                   height: 16,
                 ),
@@ -327,16 +329,21 @@ class _HomeWeduState extends State<HomeWedu> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        inroom_datas[index]["title"]!,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.black),
+                    SizedBox(width: 4,),
+                    Flexible(
+                      child: CustomWidgetMarquee(
+                        animationDuration: Duration(seconds: 5),
+                        pauseDuration: Duration(seconds: 1),
+                        directionOption: DirectionOption.oneDirection,
+                        child: Text(
+                          inroom_datas[index]["title"]!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.black),
+                        ),
                       ),
                     ),
                   ],
@@ -354,7 +361,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
                     Text('${inroom_datas[index]["attendingPeopleNum"]!}명 참여중',
@@ -364,7 +371,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
                     Text('D-${inroom_datas[index]["dday"]!}',
@@ -599,15 +606,15 @@ class _HomeWeduState extends State<HomeWedu> {
             child: Row(
               children: [
                 Container(
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: (datas[index]["imagePath"] != null)
-                      ? Image.network(datas[index]["imagePath"]!,
-                      width: 44, height: 44)
-                      : Image.asset('assets/images/example_logo.png',
-                      width: 44, height: 44),
+                      border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    image: (datas[index]["imagePath"] != null)?
+                        DecorationImage(image: NetworkImage(datas[index]["imagePath"]), fit: BoxFit.cover)
+                        : DecorationImage(image: AssetImage('assets/images/example_logo.png'))
+                  ),
                 ),
                 Container(
                   height: 44,
@@ -644,19 +651,24 @@ class _HomeWeduState extends State<HomeWedu> {
                             SizedBox(
                               width: 4,
                             ),
-                            Text(
-                              datas[index]["title"]!,
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.black),
-                            ),
-                            SizedBox(width: 4),
                             datas[index]['locked'].toString() == "true"
                                 ? SvgPicture.asset('assets/icons/lock.svg',
                                 color: PeeroreumColor.gray[400], width: 12)
-                                : Container()
+                                : Container(),
+                            SizedBox(width: 4),
+                            SizedBox(
+                              width: datas[index]['locked'].toString() == "true"
+                                  ? MediaQuery.of(context).size.width * 0.48 : MediaQuery.of(context).size.width * 0.52,
+                              child: Text(
+                                datas[index]["title"]!,
+                                style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.black),
+                              ),
+                            ),
                           ],
                         ),
                         // SizedBox(
@@ -741,17 +753,14 @@ class _HomeWeduState extends State<HomeWedu> {
                   Row(
                     children: [
                       Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1, color: PeeroreumColor.gray[200]!),
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(5.0))),
-                          child: (datas[index]['imagePath'] != null)
-                              ? Image.network(
-                              datas[index]['imagePath']!, width: 72, height: 72)
-                              : Image.asset(
-                              'assets/images/example_logo.png', width: 72,
-                              height: 72)
+                        width: 72,
+                        height: 72,
+                        decoration: BoxDecoration(
+                            image: (datas[index]['imagePath'] != null)?
+                            DecorationImage(image: NetworkImage(datas[index]['imagePath']), fit: BoxFit.cover)
+                                : DecorationImage(image: AssetImage('assets/images/example_logo.png')),
+                            border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                            borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       ),
                       Container(
                         height: 72,
@@ -788,20 +797,29 @@ class _HomeWeduState extends State<HomeWedu> {
                             ),
                             Row(
                               children: [
-                                Text(
-                                  datas[index]["title"]!,
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: PeeroreumColor.black
-                                  ),
-                                ),
-                                SizedBox(width: 4,),
                                 datas[index]['locked'].toString() == "true"
                                     ? SvgPicture.asset('assets/icons/lock.svg',
-                                    color: PeeroreumColor.gray[400])
-                                    : Container()
+                                    color: PeeroreumColor.gray[400]) : Container()
+                                    ,
+                                SizedBox(width: 4,),
+                                SizedBox(
+                                  width: datas[index]['locked'].toString() == "true"
+                                      ? MediaQuery.of(context).size.width * 0.45 : MediaQuery.of(context).size.width * 0.5,
+                                  child: CustomWidgetMarquee(
+                                    animationDuration: Duration(seconds: 3),
+                                    pauseDuration: Duration(seconds: 1),
+                                    directionOption: DirectionOption.oneDirection,
+                                    child: Text(
+                                      datas[index]["title"]!,
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: PeeroreumColor.black
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                             // SizedBox(
@@ -844,6 +862,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     ],
                   ),
                   Container(
+                    padding: EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
                         color: PeeroreumColor.gray[100],
                         borderRadius: BorderRadius.circular(8)),
@@ -931,6 +950,10 @@ class _HomeWeduState extends State<HomeWedu> {
             datas[index]['locked'].toString() == "true"
                 ? insertPassword(index)
                 : enrollWedu(index);
+            fetchDatas();
+            setState(() {
+
+            });
           },
           child: Text(
             '참여하기',
@@ -1066,6 +1089,8 @@ class _HomeWeduState extends State<HomeWedu> {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
       print('에러${enrollResult.statusCode}${enrollResult.body}');
     }
+    setState(() {
+    });
   }
 
   void insertPassword(index) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -161,7 +162,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       await fetchImages(successList);
     }
   }
-   fetchImages(List<dynamic> successList) async {
+  fetchImages(List<dynamic> successList) async {
     DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
     String formatDate = DateFormat('yyyyMMdd').format(requestDate);
     List<dynamic> resultImageList = [];
@@ -217,16 +218,20 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   Navigator.of(context).pop();
                 },
               ),
-              title: const Row(
+              title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "weduTitle",
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: PeeroreumColor.black),
+                  Flexible(
+                    child: CustomWidgetMarquee(
+                      child: Text(
+                        weduTitle,
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: PeeroreumColor.black),
+                      ),
+                    ),
                   ),
                   SizedBox(
                     width: 7,
@@ -298,10 +303,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               thickness: 8,
             ),
           calendarList(),
-          Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
-          Text('${currentDate}'),
-          Text('$startDate'),
-          Text('${finalDate}'),
+          // Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
+          // Text('${currentDate}'),
+          // Text('$startDate'),
+          // Text('${finalDate}'),
         ],
       ),
     );
