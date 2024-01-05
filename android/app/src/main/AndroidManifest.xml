@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <application
-        android:label="peeroreum_client"
+        android:label="피어오름"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <!-- 카카오 로그인 커스텀 URL 스킴 설정 -->
