@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -227,12 +228,15 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
             child: Row(
               children: [
                 Container(
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: (datas[index]["imagePath"] != null)? Image.network(datas[index]["imagePath"]!,
-                      width: 44, height: 44) : Image.asset('assets/images/example_logo.png', width: 44, height: 44),
+                      border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      image: (datas[index]["imagePath"] != null)?
+                      DecorationImage(image: NetworkImage(datas[index]["imagePath"]), fit: BoxFit.cover)
+                          : DecorationImage(image: AssetImage('assets/images/example_logo.png'))
+                  ),
                 ),
                 Container(
                   height: 44,
@@ -246,8 +250,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               decoration: BoxDecoration(
                                 borderRadius:
                                 BorderRadius.all(Radius.circular(4)),
-                                color: PeeroreumColor
-                                    .subjectColor[subjectList[datas[index]['subject']]]?[0],
+                                color: PeeroreumColor.subjectColor[
+                                subjectList[datas[index]
+                                ['subject']]]?[0],
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -258,8 +263,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w600,
                                     fontSize: 10,
-                                    color: PeeroreumColor
-                                        .subjectColor[subjectList[datas[index]['subject']]]?[1],
+                                    color: PeeroreumColor.subjectColor[
+                                    subjectList[datas[index]
+                                    ['subject']]]?[1],
                                   ),
                                 ),
                               ),
@@ -267,19 +273,29 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             SizedBox(
                               width: 4,
                             ),
-                            Text(
-                              datas[index]["title"]!,
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.black),
+                            datas[index]['locked'].toString() == "true"
+                                ? SvgPicture.asset('assets/icons/lock.svg',
+                                color: PeeroreumColor.gray[400], width: 12)
+                                : Container(),
+                            SizedBox(width: 4),
+                            SizedBox(
+                              width: datas[index]['locked'].toString() == "true"
+                                  ? MediaQuery.of(context).size.width * 0.48 : MediaQuery.of(context).size.width * 0.52,
+                              child: Text(
+                                datas[index]["title"]!,
+                                style: TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.black),
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 4,
-                        ),
+                        // SizedBox(
+                        //   height: 4,
+                        // ),
                         Row(
                           children: [
                             Text(gradeList[datas[index]["grade"]],
@@ -318,9 +334,6 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
           onTap: () {
             showModalBottomSheet(
               context: context,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
               isScrollControlled: true,
               builder: (context) {
                 return roominfo(index);
@@ -333,15 +346,26 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   }
 
   Widget roominfo(index) {
-    return SizedBox(
+    return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.55,
+      height: hashTags[index].length == 0 ? MediaQuery
+          .of(context)
+          .size
+          .height * 0.55 - 26 : MediaQuery
+          .of(context)
+          .size
+          .height * 0.55,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+      ),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8)
-          ),
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -351,13 +375,14 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   Row(
                     children: [
                       Container(
+                        width: 72,
+                        height: 72,
                         decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 1, color: PeeroreumColor.gray[200]!),
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(5.0))),
-                        child: Image.network(datas[index]["imagePath"]!,
-                            width: 72, height: 72),
+                            image: (datas[index]['imagePath'] != null)?
+                            DecorationImage(image: NetworkImage(datas[index]['imagePath']), fit: BoxFit.cover)
+                                : DecorationImage(image: AssetImage('assets/images/example_logo.png')),
+                            border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                            borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       ),
                       Container(
                         height: 72,
@@ -369,7 +394,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               decoration: BoxDecoration(
                                 borderRadius:
                                 BorderRadius.all(Radius.circular(4)),
-                                color: PeeroreumColor.subjectColor[subjectList[datas[index]['subject']]]?[0],
+                                color: PeeroreumColor.subjectColor[
+                                subjectList[datas[index]
+                                ['subject']]]?[0],
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -379,7 +406,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
-                                      color: PeeroreumColor.subjectColor[subjectList[datas[index]['subject']]]?[1],
+                                      color: PeeroreumColor.subjectColor[
+                                      subjectList[datas[index]
+                                      ['subject']]]?[1],
                                       fontWeight: FontWeight.w600,
                                       fontSize: 10),
                                 ),
@@ -388,17 +417,36 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             SizedBox(
                               height: 4,
                             ),
-                            Text(
-                              datas[index]["title"]!,
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.black),
+                            Row(
+                              children: [
+                                datas[index]['locked'].toString() == "true"
+                                    ? SvgPicture.asset('assets/icons/lock.svg',
+                                    color: PeeroreumColor.gray[400]) : Container()
+                                ,
+                                SizedBox(width: 4,),
+                                SizedBox(
+                                  width: datas[index]['locked'].toString() == "true"
+                                      ? MediaQuery.of(context).size.width * 0.45 : MediaQuery.of(context).size.width * 0.5,
+                                  child: CustomWidgetMarquee(
+                                    animationDuration: Duration(seconds: 3),
+                                    pauseDuration: Duration(seconds: 1),
+                                    directionOption: DirectionOption.oneDirection,
+                                    child: Text(
+                                      datas[index]["title"]!,
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: PeeroreumColor.black
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              height: 4,
-                            ),
+                            // SizedBox(
+                            //   height: 4,
+                            // ),
                             Row(
                               children: [
                                 Text(gradeList[datas[index]["grade"]],
@@ -411,7 +459,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   padding: EdgeInsets.symmetric(horizontal: 2),
                                   child: Text('⋅'),
                                 ),
-                                Text('${datas[index]["attendingPeopleNum"]!}명 참여중',
+                                Text(
+                                    '${datas[index]["attendingPeopleNum"]!}명 참여중',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
@@ -435,6 +484,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                     ],
                   ),
                   Container(
+                    padding: EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
                         color: PeeroreumColor.gray[100],
                         borderRadius: BorderRadius.circular(8)),
@@ -449,7 +499,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               ),
               roominfo_tag(index),
               SizedBox(
-                height: 16,
+                height: 8,
               ),
               Container(
                 width: double.infinity,
@@ -474,8 +524,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(inviDatas[index]['invitationUrl']),
-                        fit: BoxFit.cover
-                    ),
+                        fit: BoxFit.cover),
                     color: PeeroreumColor.primaryPuple[400],
                     borderRadius: BorderRadius.circular(8)),
               ),
@@ -483,16 +532,14 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
           ),
         ),
         bottomNavigationBar: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 32),
           width: double.maxFinite,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: () { Navigator.pop(context); },
                   child: Text(
                     '닫기',
                     style: TextStyle(
@@ -521,8 +568,14 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               Expanded(
                 child: TextButton(
                   onPressed: () {
-                    enrollWedu(index);
                     Navigator.pop(context);
+                    datas[index]['locked'].toString() == "true"
+                        ? insertPassword(index)
+                        : enrollWedu(index);
+                    fetchDatas();
+                    setState(() {
+
+                    });
                   },
                   child: Text(
                     '참여하기',
@@ -547,11 +600,13 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
+          ),)
+        ,
+      )
+      ,
     );
   }
+
   Widget roominfo_tag(roomIndex) {
     return Padding(
       padding: EdgeInsets.only(top: 16),
@@ -622,5 +677,109 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
       print('에러${enrollResult.statusCode}${enrollResult.body}');
     }
+  }
+
+  void insertPassword(index) {
+    TextEditingController passwordController = TextEditingController();
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        backgroundColor: PeeroreumColor.white,
+        surfaceTintColor: Colors.transparent,
+        title: Text(
+            "비밀번호",
+            textAlign: TextAlign.center
+        ),
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Pretendard',
+          color: PeeroreumColor.black,
+        ),
+        titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+        content: Container(
+          color: PeeroreumColor.white,
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: 48,
+          child: TextFormField(
+            controller: passwordController,
+            decoration: InputDecoration(
+              hintText: '비밀번호를 입력하세요.',
+              hintStyle: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.gray[600]
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8))
+              ),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8))
+              ),
+            ),
+            cursorColor: PeeroreumColor.gray[600],
+          ),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () { Navigator.pop(context); },
+                  child: Text(
+                    '취소',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: PeeroreumColor.gray[600]
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16), // 패딩
+                    shape: RoundedRectangleBorder( // 모양
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    passwordController.text == datas[index]['password'] ?
+                    enrollWedu(index) : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    '확인',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: PeeroreumColor.white
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: PeeroreumColor.primaryPuple[400],
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      );
+    });
   }
 }
