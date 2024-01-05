@@ -1216,7 +1216,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget room_body() {
     return Container(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -1241,21 +1241,21 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => InWedu()));
-              },
-              child: Text(
-                '전체 보기',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: PeeroreumColor.gray[500],
-                ),
-              ),
-            )
+            // TextButton(
+            //   onPressed: () {
+            //     Navigator.of(context)
+            //         .push(MaterialPageRoute(builder: (context) => InWedu()));
+            //   },
+            //   child: Text(
+            //     '전체 보기',
+            //     style: TextStyle(
+            //       fontFamily: 'Pretendard',
+            //       fontWeight: FontWeight.w600,
+            //       fontSize: 14,
+            //       color: PeeroreumColor.gray[500],
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),

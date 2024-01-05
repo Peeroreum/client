@@ -231,8 +231,9 @@ class _MyPageState extends State<MyPage> {
       children: [
         TextButton(
           onPressed: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => InWedu()))
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => InWedu()))
+            Fluttertoast.showToast(msg: "준비중 입니다.")
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
