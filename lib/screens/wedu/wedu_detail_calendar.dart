@@ -40,8 +40,8 @@ late List<List<int>> calendarDays;
   int? savedFocusedDay=focusedDay;
   int? focusedMonth;
 
-  DateTime startDate = DateTime(2023,9,10);
-  DateTime finalDate = DateTime(2024,12,31);
+  var startDate;
+  var finalDate;
 
   bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
   bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
