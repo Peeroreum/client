@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/data/Subject.dart';
-import 'package:peeroreum_client/screens/sign/signup_school_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:http/http.dart' as http;
+
+import '../../api/PeeroreumApi.dart';
 
 class SignUpSubject extends StatefulWidget {
   Member member;
@@ -86,7 +90,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   child: LinearPercentIndicator(
                     animateFromLastPercent: true,
                     lineHeight: 8.0,
-                    percent: 0.75,
+                    percent: 1,
                     progressColor: Color.fromARGB(255, 114, 96, 248),
                     backgroundColor: Colors.grey[100],
                     barRadius: Radius.circular(10),
@@ -275,13 +279,14 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   member.badSubject = subjects.indexOf(_badSubject!) + 1;
                   member.badDetailSubject = badDetailSubjects.indexOf(_selectedDetailBadSubject!);
                   member.badLevel = _levels.indexOf(_badLevel!);
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpSchool(member),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)),
-                  );
+                  signUpAPI();
+                  // Navigator.push(
+                  //   context,
+                  //   PageRouteBuilder(
+                  //       pageBuilder: (_, __, ___) => SignUpSchool(member),
+                  //       transitionDuration: const Duration(seconds: 0),
+                  //       reverseTransitionDuration: const Duration(seconds: 0)),
+                  // );
                 }
               },
               child: Text(
@@ -308,5 +313,22 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         ),
       ),
     );
+  }
+
+  Future<void> signUpAPI() async {
+    var result = await http.post(
+        Uri.parse('${API.hostConnect}/signup'),
+        body: jsonEncode(member),
+        headers: {'Content-Type': 'application/json'});
+    if (result.statusCode == 200) {
+      var data = jsonDecode(utf8.decode(result.bodyBytes))['data'];
+      FlutterSecureStorage secureStorage = FlutterSecureStorage();
+      secureStorage.write(key: "accessToken", value: data['accessToken']);
+      secureStorage.write(key: "email", value: data['email']);
+      secureStorage.write(key: "nickname", value: data['nickname']);
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    } else {
+      print(result.statusCode);
+    }
   }
 }
