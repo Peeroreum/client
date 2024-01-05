@@ -296,7 +296,7 @@ class _HomeWeduState extends State<HomeWedu> {
                           width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     image: (inroom_datas[index]['imagePath'] != null)?
-                    DecorationImage(image: NetworkImage(inroom_datas[index]['imagePath']))
+                    DecorationImage(image: NetworkImage(inroom_datas[index]['imagePath']), fit: BoxFit.cover)
                         : DecorationImage(image: AssetImage('assets/images/example_logo.png'))
                     )
                   ),
