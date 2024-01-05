@@ -38,10 +38,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
   List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
   late bool is_friend;
-  List<dynamic> badges = ['1', '2', '3', '4'];
+  List<dynamic> badges = [];
   var grade;
   var profileImage;
   var friendNumber;
+  var withPeerDay = "NN";
   Member member = Member();
   final change_nickname_controller = TextEditingController();
 
@@ -171,10 +172,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
     if (friendName.statusCode == 200) {
       //check_friend(nickname_controller.text);
-      Navigator.of(context).pop();
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) =>
-              MyPageProfile(nickname_controller.text, false)));
+      if (nickname_controller.text == nickname) {
+        Fluttertoast.showToast(msg: "자신은 영원한 친구입니다.");
+      } else {
+        Navigator.of(context).pop();
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                MyPageProfile(nickname_controller.text, false)));
+      }
     } else if (friendName.statusCode == 404) {
       Fluttertoast.showToast(msg: "존재하지 않는 회원입니다.");
     } else {
@@ -405,7 +410,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ? (_image != null
                             ? DecorationImage(
                                 image: FileImage(File(_image!.path)),
-                                fit: BoxFit.fill,
+                                fit: BoxFit.cover,
                               )
                             : DecorationImage(
                                 image: NetworkImage(profileImage)))
@@ -746,7 +751,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 height: 1,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Fluttertoast.showToast(msg: "준비중입니다.");
+                },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
                 ),
@@ -911,7 +918,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       decoration: BoxDecoration(
-          //color: PeeroreumColor.gradeColor[dropdownGradeList[index]['grade']]!,
           color: PeeroreumColor.gray[200],
           borderRadius: BorderRadius.all(Radius.circular(16))),
       child: Column(
@@ -934,7 +940,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                   Container(width: 2),
                   Text(
-                    'NN',
+                    withPeerDay,
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 20,
@@ -951,7 +957,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                      width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                      width: 2,
+                      color: grade != null
+                          ? PeeroreumColor.gradeColor[grade]!
+                          : Color.fromARGB(255, 186, 188, 189)),
                 ),
                 child: Container(
                   height: 84,
@@ -975,7 +984,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 height: 8,
               ),
               Text(
-                '$nickname',
+                nickname,
                 style: TextStyle(
                   color: PeeroreumColor.gray[800],
                   fontSize: 20,
@@ -1109,45 +1118,50 @@ class _MyPageProfileState extends State<MyPageProfile> {
         SizedBox(
           width: 8,
         ),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          decoration: BoxDecoration(
-              border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-              borderRadius: BorderRadius.all(Radius.circular(8))),
-          child: Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '배지',
-                    style: TextStyle(
-                      color: PeeroreumColor.gray[800],
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Pretendard',
+        GestureDetector(
+          onTap: () {
+            Fluttertoast.showToast(msg: "준비중 입니다.");
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                borderRadius: BorderRadius.all(Radius.circular(8))),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '배지',
+                      style: TextStyle(
+                        color: PeeroreumColor.gray[800],
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Pretendard',
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    '${badges.length}개 보유',
-                    style: TextStyle(
-                      color: PeeroreumColor.gray[600],
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Pretendard',
+                    SizedBox(
+                      height: 4,
                     ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 15), //left:20 변경
-                height: 52,
-                child: Badge(),
-              )
-            ],
+                    Text(
+                      '${badges.length}개 보유',
+                      style: TextStyle(
+                        color: PeeroreumColor.gray[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Pretendard',
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 15), //left:20 변경
+                  height: 52,
+                  child: Badge(),
+                )
+              ],
+            ),
           ),
         ),
       ],

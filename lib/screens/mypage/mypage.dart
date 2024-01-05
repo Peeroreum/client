@@ -23,9 +23,11 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  int selectedIndex = 4;
   var token;
   var nickname;
+  var profileImage;
+  var grade;
+  var withPeerDay = "NN";
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
   List<dynamic> inviDatas = [];
@@ -35,6 +37,8 @@ class _MyPageState extends State<MyPage> {
   fetchStatus() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
+    profileImage = await FlutterSecureStorage().read(key: "profileImage");
+    grade = await FlutterSecureStorage().read(key: "grade");
   }
 
   @override
@@ -147,7 +151,11 @@ class _MyPageState extends State<MyPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                        width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                      width: 2,
+                      color: grade != null
+                          ? PeeroreumColor.gradeColor[grade]!
+                          : Color.fromARGB(255, 186, 188, 189),
+                    ),
                   ),
                   child: Container(
                     height: 42,
@@ -158,10 +166,12 @@ class _MyPageState extends State<MyPage> {
                         width: 1,
                         color: PeeroreumColor.white,
                       ),
-                      image: DecorationImage(
-                          image: AssetImage(
-                        'assets/images/user.jpg',
-                      )),
+                      image: profileImage != null
+                          ? DecorationImage(image: NetworkImage(profileImage))
+                          : DecorationImage(
+                              image: AssetImage(
+                              'assets/images/user.jpg',
+                            )),
                     ),
                   ),
                 ),
@@ -204,7 +214,7 @@ class _MyPageState extends State<MyPage> {
               ),
             ),
             Container(width: 2),
-            Text('NN',
+            Text(withPeerDay,
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 20,
