@@ -151,11 +151,10 @@ class _MyPageState extends State<MyPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      width: 2,
-                      color: grade != null
-                          ? PeeroreumColor.gradeColor[grade]!
-                          : Color.fromARGB(255, 186, 188, 189),
-                    ),
+                        width: 2,
+                        color: grade != null
+                            ? PeeroreumColor.gradeColor[int.parse(grade)]!
+                            : Color.fromARGB(255, 186, 188, 189)),
                   ),
                   child: Container(
                     height: 42,
