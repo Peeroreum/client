@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, deprecated_member_use, non_constant_identifier_names, avoid_print, sized_box_for_whitespace, must_be_immutable, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
@@ -71,8 +74,26 @@ class _MyPageProfileState extends State<MyPageProfile> {
           ["friendNumber"];
       profileImage = jsonDecode(utf8.decode(profileinfo.bodyBytes))["data"]
           ["profileImage"];
-      print(
-          "프로필정보 grade = $grade, friendNumber = $friendNumber, profileImage = $profileImage");
+    }
+  }
+
+  profileImageAPI(var _image) async {
+    var image = await MultipartFile.fromFile(_image!.path);
+    var imageMap = <String, dynamic>{'profileImage': image};
+    var dio = Dio();
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.headers = {'Authorization': 'Bearer $token'};
+    FormData imageData = FormData.fromMap(imageMap);
+    var profileChange = await dio
+        .put('${API.hostConnect}/member/change/profileImage', data: imageData);
+    if (profileChange.statusCode == 200) {
+      print("프로필이미지 성공 ${profileChange.statusMessage}");
+      var data = profileChange.data['data'];
+      setState(() {
+        profileImage = data;
+      });
+    } else {
+      print("프로필이미지 ${profileChange.statusMessage}");
     }
   }
 
@@ -268,7 +289,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 height: 1,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  profileImage_change(context);
+                },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
                 ),
@@ -301,6 +324,162 @@ class _MyPageProfileState extends State<MyPageProfile> {
           ),
         ),
       ),
+    );
+  }
+
+  profileImage_change(BuildContext context) {
+    XFile? _image;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            backgroundColor: PeeroreumColor.white,
+            surfaceTintColor: Colors.transparent,
+            title: Text("프로필 사진 변경", textAlign: TextAlign.center),
+            titleTextStyle: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: PeeroreumColor.black,
+            ),
+            titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+            content: GestureDetector(
+              onTap: () async {
+                final ImagePicker picker = ImagePicker();
+                final XFile? pickedFile =
+                    await picker.pickImage(source: ImageSource.gallery);
+                if (pickedFile != null) {
+                  setState(() {
+                    _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+                  });
+                }
+              },
+              child: Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                ),
+                child: Container(
+                  height: 84,
+                  width: 84,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      width: 2,
+                      color: PeeroreumColor.white,
+                    ),
+                    image: profileImage != null
+                        ? (_image != null
+                            ? DecorationImage(
+                                image: FileImage(File(_image!.path)),
+                                fit: BoxFit.fill,
+                              )
+                            : DecorationImage(
+                                image: NetworkImage(profileImage)))
+                        : DecorationImage(
+                            image: AssetImage(
+                            'assets/images/user.jpg',
+                          )),
+                  ),
+                  child: Align(
+                    alignment: Alignment(0.3, 1.2),
+                    child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: PeeroreumColor.gray[200],
+                          border: Border.all(
+                            color: PeeroreumColor.gray[100]!,
+                            width: 1,
+                          ),
+                        ),
+                        child: SvgPicture.asset('assets/icons/camera.svg')),
+                  ),
+                ),
+              ),
+            ),
+            contentTextStyle: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: PeeroreumColor.gray[600],
+            ),
+            actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16), // 패딩
+                        shape: RoundedRectangleBorder(
+                          // 모양
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        '닫기',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: PeeroreumColor.gray[600]),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        if (_image != null) {
+                          setState(() {
+                            profileImageAPI(_image);
+                            Navigator.of(context).pop();
+                          });
+                        }
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: _image != null
+                            ? PeeroreumColor.primaryPuple[400]
+                            : PeeroreumColor.gray[300],
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        '적용하기',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: _image != null
+                              ? PeeroreumColor.white
+                              : PeeroreumColor.gray[600],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        });
+      },
     );
   }
 
@@ -555,11 +734,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       width: 2,
                       color: PeeroreumColor.white,
                     ),
-                    image: DecorationImage(
-                        image: profileImage = profileImage ??
-                            AssetImage(
-                              'assets/images/user.jpg',
-                            )),
+                    image: profileImage != null
+                        ? DecorationImage(image: NetworkImage(profileImage))
+                        : DecorationImage(
+                            image: AssetImage(
+                            'assets/images/user.jpg',
+                          )),
                   ),
                 ),
               ),
