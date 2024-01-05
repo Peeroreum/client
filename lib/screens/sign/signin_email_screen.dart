@@ -27,7 +27,7 @@ class EmailSignIn extends StatefulWidget {
 }
 
 class _EmailSignInState extends State<EmailSignIn> {
-  static final storage = FlutterSecureStorage();
+  static final secureStorage = FlutterSecureStorage();
   var socialAccount = "";
 
   MemberInfo memberInfo = MemberInfo();
@@ -276,12 +276,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 if (result.statusCode == 200) {
                                   var data = jsonDecode(
                                       utf8.decode(result.bodyBytes))['data'];
-                                  storage.write(
-                                      key: "memberInfo",
-                                      value: data['accessToken']);
-                                  storage.write(
-                                      key: "memberNickname",
-                                      value: data['nickname']);
+                                  secureStorage.write(key: "accessToken", value: data['accessToken']);
+                                  secureStorage.write(key: "email", value: data['email']);
+                                  secureStorage.write(key: "nickname", value: data['nickname']);
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       PageRouteBuilder(
@@ -514,9 +511,10 @@ class _EmailSignInState extends State<EmailSignIn> {
         headers: {'Content-Type': 'application/json'});
 
     if (result.statusCode == 200) {
-      var accessToken = jsonDecode(result.body)['data'];
-      // storage.write(key: "memberInfo", value: accessToken);
-      // storage.write(key: "memberNickname", value: data['nickname']);
+      var data = jsonDecode(result.body)['data'];
+      secureStorage.write(key: "accessToken", value: data['accessToken']);
+      secureStorage.write(key: "email", value: data['email']);
+      secureStorage.write(key: "nickname", value: data['nickname']);
       Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } else if (result.statusCode == 404) {
       Member member = Member();

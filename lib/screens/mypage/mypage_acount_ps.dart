@@ -451,7 +451,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
   }
 
   Future<void> psChangeAPI() async {
-    token = await FlutterSecureStorage().read(key: "memberInfo");
+    token = await FlutterSecureStorage().read(key: "accessToken");
     var result = await http.put(
         Uri.parse(
             '${API.hostConnect}/member/change/pw?password=${pw2_controller.text}'),
