@@ -46,7 +46,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "memberInfo");
+    token = await FlutterSecureStorage().read(key: "accessToken");
     var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
         headers: {
           'Content-Type': 'application/json',

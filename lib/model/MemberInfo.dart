@@ -1,13 +1,11 @@
 class MemberInfo {
+  String? email;
   String? nickname;
   String? accessToken;
-  String? refreshToken;
-  bool? isRemembered;
 
   MemberInfo({
     this.nickname,
     this.accessToken,
-    this.refreshToken,
-    this.isRemembered
+    this.email
   });
 }

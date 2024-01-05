@@ -38,7 +38,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   }
 
   Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "memberInfo");
+    token = await FlutterSecureStorage().read(key: "accessToken");
     var weduResult = await http.get(
         Uri.parse('${API.hostConnect}/wedu/search/${keyword}'),
         headers: {

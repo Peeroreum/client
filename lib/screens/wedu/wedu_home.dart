@@ -47,7 +47,7 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "memberInfo");
+    token = await FlutterSecureStorage().read(key: "accessToken");
     var weduResult = await http.get(
         Uri.parse('${API
             .hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject'),

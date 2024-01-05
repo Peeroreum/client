@@ -577,7 +577,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
 
   postWeduAndInvitation(weduMap) async {
     var dio = Dio();
-    final token = await const FlutterSecureStorage().read(key: "memberInfo");
+    final token = await const FlutterSecureStorage().read(key: "accessToken");
     bytes = await controller.capture();
     var byteList = bytes?.toList();
     weduMap.addAll({"inviFile": MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")});

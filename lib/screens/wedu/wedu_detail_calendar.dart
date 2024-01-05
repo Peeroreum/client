@@ -98,7 +98,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
 
   Future<void> fetchDatas() async {
     
-    token = await const FlutterSecureStorage().read(key: "memberInfo");
+    token = await const FlutterSecureStorage().read(key: "accessToken");
 
     var weduResult = await http.get(
         Uri.parse( '${API.hostConnect}/wedu/$id'),

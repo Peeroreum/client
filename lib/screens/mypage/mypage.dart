@@ -33,8 +33,8 @@ class _MyPageState extends State<MyPage> {
   List<dynamic> notSuccessList = [];
 
   fetchStatus() async {
-    token = await FlutterSecureStorage().read(key: "memberInfo");
-    nickname = await FlutterSecureStorage().read(key: "memberNickname");
+    token = await FlutterSecureStorage().read(key: "accessToken");
+    nickname = await FlutterSecureStorage().read(key: "nickname");
   }
 
   @override

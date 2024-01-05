@@ -72,7 +72,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                     child: LinearPercentIndicator(
                       animateFromLastPercent: true,
                       lineHeight: 8.0,
-                      percent: 0.25,
+                      percent: 0.33,
                       progressColor: Color.fromARGB(255, 114, 96, 248),
                       backgroundColor: Colors.grey[100],
                       barRadius: Radius.circular(10),

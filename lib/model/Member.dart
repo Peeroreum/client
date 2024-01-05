@@ -31,7 +31,11 @@ class Member {
     'nickname': nickname,
     'grade': grade,
     'goodSubject': goodSubject,
+    'goodDetailSubject': goodDetailSubject,
+    'goodLevel': goodLevel,
     'badSubject': badSubject,
+    'badDetailSubject': badDetailSubject,
+    'badLevel': badLevel,
     'school': school
   };
 }

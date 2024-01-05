@@ -22,7 +22,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
   var myfriends = [];
 
   Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "memberInfo");
+    token = await FlutterSecureStorage().read(key: "accessToken");
     var friend = await http.get(Uri.parse('${API.hostConnect}/member/friend'),
         headers: {
           'Content-Type': 'application/json',
