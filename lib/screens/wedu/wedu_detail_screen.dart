@@ -56,14 +56,12 @@ class _DetailWeduState extends State<DetailWedu> {
   Future<void> fetchDatas() async {
     token = await const FlutterSecureStorage().read(key: "accessToken");
 
-    var weduResult = await http.get(
-        Uri.parse( '${API.hostConnect}/wedu/$id'),
+    var weduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
-        }
-    );
-    if(weduResult.statusCode == 200) {
+        });
+    if (weduResult.statusCode == 200) {
       weduData = await jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
       weduTitle = weduData['title'];
       weduImage = weduData['imageUrl'];
@@ -78,15 +76,18 @@ class _DetailWeduState extends State<DetailWedu> {
     var now = DateTime.now();
     String formatDate = DateFormat('yyyyMMdd').format(now);
     var challengeList = await http.get(
-        Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$formatDate'),
+        Uri.parse('${API.hostConnect}/wedu/$id/challenge/$formatDate'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
-        }
-    );
-    if(challengeList.statusCode == 200) {
-      successList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['successMembers'];
-      notSuccessList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['failMembers'];
+        });
+    if (challengeList.statusCode == 200) {
+      successList =
+          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
+              ['successMembers'];
+      notSuccessList =
+          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
+              ['failMembers'];
     } else {
       print("목록${challengeList.statusCode}");
     }
@@ -101,26 +102,25 @@ class _DetailWeduState extends State<DetailWedu> {
     for (var index = 0; index < successList.length; index++) {
       var successOne = successList[index]['nickname'].toString();
       var result = await http.get(
-          Uri.parse('${API.hostConnect}/wedu/$id/challenge/$successOne/$formatDate'),
+          Uri.parse(
+              '${API.hostConnect}/wedu/$id/challenge/$successOne/$formatDate'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
-          }
-      );
-      if(result.statusCode == 200) {
+          });
+      if (result.statusCode == 200) {
         var body = await jsonDecode(result.body);
         resultImageList.add(body['data']['imageUrls']);
       } else {
         print('이미지 에러 ${result.body}');
       }
-
     }
     challengeImageList = resultImageList;
   }
 
   void takeFromCamera() async {
-    final XFile? image =  await picker.pickImage(source: ImageSource.camera);
-    if(image != null) {
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
       setState(() {
         _images.add(image);
       });
@@ -147,22 +147,19 @@ class _DetailWeduState extends State<DetailWedu> {
     dio.options.contentType = 'multipart/form-data';
     dio.options.headers = {'Authorization': 'Bearer $token'};
 
-    for(var image in _images) {
+    for (var image in _images) {
       var file = await MultipartFile.fromFile(image.path);
       formData.files.add(MapEntry('files', file));
     }
 
-    var response = await dio.post(
-        '${API.hostConnect}/wedu/$id/challenge',
-      data: formData
-    );
+    var response =
+        await dio.post('${API.hostConnect}/wedu/$id/challenge', data: formData);
 
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: '오늘의 챌린지 인증 성공!');
     } else {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시작해 주세요.');
     }
-
   }
 
   @override
@@ -170,210 +167,223 @@ class _DetailWeduState extends State<DetailWedu> {
     return FutureBuilder<void>(
       future: fetchDatas(),
       builder: (context, snapshot) {
-          return Scaffold(
+        return Scaffold(
+          backgroundColor: PeeroreumColor.white,
+          appBar: AppBar(
             backgroundColor: PeeroreumColor.white,
-            appBar: AppBar(
-              backgroundColor: PeeroreumColor.white,
-              elevation: 0,
-              centerTitle: true,
-              leading: IconButton(
-                icon: SvgPicture.asset(
-                  'assets/icons/arrow-left.svg',
-                  color: PeeroreumColor.gray[800],
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+            elevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              icon: SvgPicture.asset(
+                'assets/icons/arrow-left.svg',
+                color: PeeroreumColor.gray[800],
               ),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  weduTitle,
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: PeeroreumColor.black),
+                ),
+                SizedBox(
+                  width: 7,
+                ),
+                // SvgPicture.asset(
+                //   'assets/icons/lock.svg',
+                //   color: PeeroreumColor.gray[400],
+                //   width: 12,
+                //   height: 14,
+                // )
+              ],
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () {},
+                  icon: SvgPicture.asset(
+                    'assets/icons/icon_dots_mono.svg',
+                    color: PeeroreumColor.gray[800],
+                  ))
+            ],
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(20),
+              child: Column(
                 children: [
-                  Text(
-                    weduTitle,
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: PeeroreumColor.black),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '🔥',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: PeeroreumColor.black),
+                      ),
+                      Text(
+                        '+',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: PeeroreumColor.black),
+                      ),
+                      Text(
+                        '10',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: PeeroreumColor.black),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 7,
-                  ),
-                  // SvgPicture.asset(
-                  //   'assets/icons/lock.svg',
-                  //   color: PeeroreumColor.gray[400],
-                  //   width: 12,
-                  //   height: 14,
-                  // )
+                  Divider(
+                    thickness: 1,
+                    color: PeeroreumColor.gray[100],
+                  )
                 ],
               ),
-              actions: [
-                IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/icons/icon_dots_mono.svg',
-                      color: PeeroreumColor.gray[800],
-                    ))
-              ],
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(20),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '🔥',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: PeeroreumColor.black),
-                        ),
-                        Text(
-                          '+',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: PeeroreumColor.black),
-                        ),
-                        Text(
-                          '10',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: PeeroreumColor.black),
-                        )
-                      ],
-                    ),
-                    Divider(
-                      thickness: 1,
-                      color: PeeroreumColor.gray[100],
-                    )
-                  ],
-                ),
-              ),
             ),
-            body: bodyWidget(),
-            bottomNavigationBar: Container(
-              padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-              child: SizedBox(
-                height: 48,
-                child: TextButton(
-                  onPressed: () {
-                    _images.clear();
-                    showModalBottomSheet(context: context, builder: (context) {
-                      return Container(
-                        padding: EdgeInsets.all(20),
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        decoration: BoxDecoration(
-                          color: PeeroreumColor.white, // 여기에 색상 지정
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8.0),
-                            topRight: Radius.circular(8.0),
+          ),
+          body: bodyWidget(),
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            child: SizedBox(
+              height: 48,
+              child: TextButton(
+                onPressed: () {
+                  _images.clear();
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          padding: EdgeInsets.all(20),
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          decoration: BoxDecoration(
+                            color: PeeroreumColor.white, // 여기에 색상 지정
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8.0),
+                              topRight: Radius.circular(8.0),
+                            ),
                           ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              '인증 방식을 선택하세요.',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: PeeroreumColor.gray[800],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                '인증 방식을 선택하세요.',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.gray[800],
+                                ),
                               ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: TextButton(
-                                      onPressed: () {
-                                        takeFromCamera();
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        '카메라',
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: PeeroreumColor.white,
+                              Container(
+                                padding: EdgeInsets.all(20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () {
+                                          takeFromCamera();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          '카메라',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: PeeroreumColor.white,
+                                          ),
                                         ),
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    PeeroreumColor
+                                                        .primaryPuple[400]),
+                                            padding: MaterialStateProperty.all(
+                                                EdgeInsets.all(12)),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ))),
                                       ),
-                                      style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-                                          padding: MaterialStateProperty.all(EdgeInsets.all(12)),
-                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                              ))),
                                     ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: TextButton(
-                                      onPressed: () {
-                                        takeFromGallery();
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        '갤러리',
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: PeeroreumColor.white,
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () {
+                                          takeFromGallery();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          '갤러리',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: PeeroreumColor.white,
+                                          ),
                                         ),
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    PeeroreumColor
+                                                        .primaryPuple[400]),
+                                            padding: MaterialStateProperty.all(
+                                                EdgeInsets.all(12)),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ))),
                                       ),
-                                      style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-                                          padding: MaterialStateProperty.all(EdgeInsets.all(12)),
-                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                              ))),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    );
-                  },
-                  child: Text(
-                    '인증하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.white,
-                    ),
+                            ],
+                          ),
+                        );
+                      });
+                },
+                child: Text(
+                  '인증하기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.white,
                   ),
-                  style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-                      padding:
-                      MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ))),
                 ),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
               ),
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -401,9 +411,9 @@ class _DetailWeduState extends State<DetailWedu> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        width: 2,
-                          color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                      ),
+                          width: 2,
+                          color: PeeroreumColor
+                              .gradeColor[successList[index]['grade']]!),
                       // image: DecorationImage(
                       //     image: AssetImage('assets/images/user.jpg',)
                       // ),
@@ -412,15 +422,18 @@ class _DetailWeduState extends State<DetailWedu> {
                       height: 44,
                       width: 44,
                       decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        width: 1,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          width: 1,
                           color: PeeroreumColor.white,
+                        ),
+                        image: successList[index]["profileImage"] != null
+                            ? DecorationImage(
+                                image: NetworkImage(
+                                    successList[index]["profileImage"]))
+                            : DecorationImage(
+                                image: AssetImage('assets/images/user.jpg')),
                       ),
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/user.jpg',)
-                      ),
-                    ),
                     ),
                   ),
                   onTap: () {
@@ -477,29 +490,32 @@ class _DetailWeduState extends State<DetailWedu> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
+                    shape: BoxShape.circle,
+                    border: Border.all(
                         width: 2,
-                          color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
-                      ),
+                        color: PeeroreumColor
+                            .gradeColor[notSuccessList[index]['grade']]!),
                     // image: DecorationImage(
                     //   image: AssetImage('assets/images/user.jpg')
                     // ),
                   ),
                   child: Container(
-                      height: 44,
-                      width: 44,
-                      decoration: BoxDecoration(
+                    height: 44,
+                    width: 44,
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
                         width: 1,
-                          color: PeeroreumColor.white,
+                        color: PeeroreumColor.white,
                       ),
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/user.jpg',)
-                      ),
+                      image: notSuccessList[index]["profileImage"] != null
+                          ? DecorationImage(
+                              image: NetworkImage(
+                                  notSuccessList[index]["profileImage"]))
+                          : DecorationImage(
+                              image: AssetImage('assets/images/user.jpg')),
                     ),
-                    ),
+                  ),
                 ),
                 SizedBox(
                   height: 8,
@@ -519,7 +535,6 @@ class _DetailWeduState extends State<DetailWedu> {
       ),
     );
   }
-
 
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
@@ -546,16 +561,31 @@ class _DetailWeduState extends State<DetailWedu> {
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(3.5),
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: PeeroreumColor.gradeColor[successOne['grade']]!
-                          ),
-                          image: DecorationImage(
-                              image: AssetImage('assets/images/user.jpg')
+                              width: 2,
+                              color: PeeroreumColor
+                                  .gradeColor[successOne['grade']]!),
+                        ),
+                        child: Container(
+                          height: 44,
+                          width: 44,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 1,
+                              color: PeeroreumColor.white,
+                            ),
+                            image: successOne["profileImage"] != null
+                                ? DecorationImage(
+                                    image: NetworkImage(
+                                        successOne["profileImage"]))
+                                : DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/user.jpg')),
                           ),
                         ),
                       ),
@@ -566,8 +596,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
-                            color: PeeroreumColor.gray[800]
-                        ),
+                            color: PeeroreumColor.gray[800]),
                       )
                     ],
                   ),
@@ -580,51 +609,53 @@ class _DetailWeduState extends State<DetailWedu> {
                   )
                 ],
               ),
-               SizedBox(height: 20),
-               CarouselSlider(
-                  items: challengeImage.map((i) {
-                    var imageUrl = i.toString();
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: double.maxFinite,
-                          height: double.maxFinite,
-                          decoration: BoxDecoration(
+              SizedBox(height: 20),
+              CarouselSlider(
+                items: challengeImage.map((i) {
+                  var imageUrl = i.toString();
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        width: double.maxFinite,
+                        height: double.maxFinite,
+                        decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[100],
-                            image: i != null? DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.fill) : null
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Container(
-                                margin: EdgeInsets.all(12),
-                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Color.fromARGB(100, 0, 0, 0),
-                                ),
-                                child: Text(
-                                  '${challengeImage.indexOf(i)+1} / ${challengeImage.length}',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                      color: PeeroreumColor.white
-                                  ),
-                                )
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                      enableInfiniteScroll: false,
-                    viewportFraction: 1,
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    enlargeCenterPage: true,
-                  ),
+                            image: i != null
+                                ? DecorationImage(
+                                    image: NetworkImage(imageUrl),
+                                    fit: BoxFit.fill)
+                                : null),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                              margin: EdgeInsets.all(12),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color.fromARGB(100, 0, 0, 0),
+                              ),
+                              child: Text(
+                                '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: PeeroreumColor.white),
+                              )),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+                options: CarouselOptions(
+                  enableInfiniteScroll: false,
+                  viewportFraction: 1,
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  enlargeCenterPage: true,
                 ),
+              ),
             ],
           ),
         ),
@@ -646,13 +677,13 @@ class _DetailWeduState extends State<DetailWedu> {
             ),
             style: ButtonStyle(
                 backgroundColor:
-                MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                padding:
-                MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+                    MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 12)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
+                  borderRadius: BorderRadius.circular(8.0),
+                ))),
           ),
         ),
       ),
@@ -691,13 +722,17 @@ class _DetailWeduState extends State<DetailWedu> {
                                               Radius.circular(8)),
                                           side: BorderSide(
                                               color:
-                                              PeeroreumColor.gray[100]!)),
-                                      child: weduImage != null? Image.network(
-                                        weduImage,
-                                        width: 64,
-                                        height: 64,
-                                      ) : Image.asset('assets/images/example_logo.png',
-                                          width: 64, height: 64),
+                                                  PeeroreumColor.gray[100]!)),
+                                      child: weduImage != null
+                                          ? Image.network(
+                                              weduImage,
+                                              width: 64,
+                                              height: 64,
+                                            )
+                                          : Image.asset(
+                                              'assets/images/example_logo.png',
+                                              width: 64,
+                                              height: 64),
                                     ),
                                     SizedBox(
                                       width: 15,
@@ -706,7 +741,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                       height: 64,
                                       child: Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             '목표 달성',
@@ -715,7 +750,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w500,
                                                 color:
-                                                PeeroreumColor.gray[600]),
+                                                    PeeroreumColor.gray[600]),
                                           ),
                                           SizedBox(
                                             height: 5,
@@ -760,20 +795,25 @@ class _DetailWeduState extends State<DetailWedu> {
                                         ],
                                       ),
                                     ),
-                                    
                                   ],
                                 ),
                               ),
                               Align(
-                                    alignment: Alignment.centerRight,
-                                    child: GestureDetector(child: SvgPicture.asset('assets/icons/right.svg',
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  child: SvgPicture.asset(
+                                    'assets/icons/right.svg',
                                     color: PeeroreumColor.gray[500],
-                                    ),
-                                    onTap: (){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailWeduCalendar(id, weduTitle)));
-                                    },
-                                    ),
                                   ),
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DetailWeduCalendar(
+                                                    id, weduTitle)));
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                           Divider(
@@ -847,8 +887,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             contentBackgroundColor: PeeroreumColor.white,
                             titlePadding: EdgeInsets.zero,
                             trailingPadding: EdgeInsets.only(left: 8),
-                            contentPadding:
-                            EdgeInsets.fromLTRB(16, 5, 16, 16)),
+                            contentPadding: EdgeInsets.fromLTRB(16, 5, 16, 16)),
                         trailing: SvgPicture.asset(
                           'assets/icons/down.svg',
                           color: PeeroreumColor.gray[500],
@@ -943,7 +982,8 @@ class _DetailWeduState extends State<DetailWedu> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/ok', arguments: successList);
+                      Navigator.pushNamed(context, '/wedu/challenge/ok',
+                          arguments: successList);
                     },
                     child: Text(
                       '전체보기',
@@ -988,7 +1028,8 @@ class _DetailWeduState extends State<DetailWedu> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/notok', arguments: notSuccessList);
+                      Navigator.pushNamed(context, '/wedu/challenge/notok',
+                          arguments: notSuccessList);
                     },
                     child: Text(
                       '전체보기',
@@ -1008,5 +1049,4 @@ class _DetailWeduState extends State<DetailWedu> {
       ),
     );
   }
-
 }
