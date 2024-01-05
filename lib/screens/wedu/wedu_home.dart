@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'dart:convert';
+import 'dart:ffi';
 
+import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -327,16 +329,18 @@ class _HomeWeduState extends State<HomeWedu> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        inroom_datas[index]["title"]!,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.black),
+                    SizedBox(width: 4,),
+                    Flexible(
+                      child: CustomWidgetMarquee(
+                        child: Text(
+                          inroom_datas[index]["title"]!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.black),
+                        ),
                       ),
                     ),
                   ],
@@ -354,7 +358,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
                     Text('${inroom_datas[index]["attendingPeopleNum"]!}명 참여중',
@@ -364,7 +368,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
                     Text('D-${inroom_datas[index]["dday"]!}',
@@ -644,13 +648,15 @@ class _HomeWeduState extends State<HomeWedu> {
                             SizedBox(
                               width: 4,
                             ),
-                            Text(
-                              datas[index]["title"]!,
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.black),
+                            CustomWidgetMarquee(
+                              child: Text(
+                                datas[index]["title"]!,
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.black),
+                              ),
                             ),
                             SizedBox(width: 4),
                             datas[index]['locked'].toString() == "true"
