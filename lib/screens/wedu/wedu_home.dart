@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
@@ -333,6 +332,9 @@ class _HomeWeduState extends State<HomeWedu> {
                     SizedBox(width: 4,),
                     Flexible(
                       child: CustomWidgetMarquee(
+                        animationDuration: Duration(seconds: 5),
+                        pauseDuration: Duration(seconds: 1),
+                        directionOption: DirectionOption.oneDirection,
                         child: Text(
                           inroom_datas[index]["title"]!,
                           overflow: TextOverflow.ellipsis,
@@ -657,15 +659,14 @@ class _HomeWeduState extends State<HomeWedu> {
                             SizedBox(
                               width: datas[index]['locked'].toString() == "true"
                                   ? MediaQuery.of(context).size.width * 0.48 : MediaQuery.of(context).size.width * 0.52,
-                              child: CustomWidgetMarquee(
-                                child: Text(
-                                  datas[index]["title"]!,
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: PeeroreumColor.black),
-                                ),
+                              child: Text(
+                                datas[index]["title"]!,
+                                style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.black),
                               ),
                             ),
                           ],
@@ -805,6 +806,9 @@ class _HomeWeduState extends State<HomeWedu> {
                                   width: datas[index]['locked'].toString() == "true"
                                       ? MediaQuery.of(context).size.width * 0.45 : MediaQuery.of(context).size.width * 0.5,
                                   child: CustomWidgetMarquee(
+                                    animationDuration: Duration(seconds: 3),
+                                    pauseDuration: Duration(seconds: 1),
+                                    directionOption: DirectionOption.oneDirection,
                                     child: Text(
                                       datas[index]["title"]!,
                                       style: TextStyle(
@@ -946,6 +950,10 @@ class _HomeWeduState extends State<HomeWedu> {
             datas[index]['locked'].toString() == "true"
                 ? insertPassword(index)
                 : enrollWedu(index);
+            fetchDatas();
+            setState(() {
+
+            });
           },
           child: Text(
             '참여하기',
@@ -1081,6 +1089,8 @@ class _HomeWeduState extends State<HomeWedu> {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
       print('에러${enrollResult.statusCode}${enrollResult.body}');
     }
+    setState(() {
+    });
   }
 
   void insertPassword(index) {
