@@ -40,8 +40,8 @@ late List<List<int>> calendarDays;
   int? savedFocusedDay=focusedDay;
   int? focusedMonth;
 
-  var startDate;
-  var finalDate;
+  var startDate = currentDate;
+  var finalDate = currentDate;
 
   bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
   bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
@@ -103,13 +103,13 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     
     token = await const FlutterSecureStorage().read(key: "accessToken");
 
-    var weduResult = await http.get(
-        Uri.parse( '${API.hostConnect}/wedu/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        }
-    );
+    // var weduResult = await http.get(
+    //     Uri.parse( '${API.hostConnect}/wedu/$id'),
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': 'Bearer $token'
+    //     }
+    // );
 
     //DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
     String requestFormatDate2 = DateFormat('yyyyMMdd').format(currentDate);
@@ -403,63 +403,77 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       day >= 1 &&
                       day <= daysInMonth &&
                       day <= progress.length)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          focusedMonth=currentDate.month;
-                          if (focusedDay == day) {
-                            focusedDay = null; // Unfocus if already focused
-                          } else {
-                            focusedDay = day; // Set focused day
-                            savedFocusedDay = focusedDay;
-                          }
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 16),
-                        alignment: Alignment.center,
-                        height: 36,
-                        width: 36,
-                        //decoration: BoxDecoration(
-                        //  border: Border.all(
-                        //    color: Colors.black,
-                        //  ),
-                        //),
-                        child: focusedDay == day
-                            ? Container(
-                                alignment: Alignment.center,
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: PeeroreumColor.primaryPuple[400],
-                                ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 16),
+                      alignment: Alignment.center,
+                      height: 36,
+                      width: 36,
+                      child: (currentDate.month == startDate.month && day < startDate.day) ||
+                      (currentDate.month == finalDate.month && day > finalDate.day)
+                          ? Container(
+                              alignment: Alignment.center,
+                              width: 36,
+                              height: 36,
+                              child: Center(
                                 child: Text(
-                                  '${progress[day - 1]}',
+                                  '$day',
                                   style: TextStyle(
                                     fontFamily: 'pretendard',
-                                    color: PeeroreumColor.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              )
-                            : CustomPaint(
-                                painter: PieChart()
-                                  ..percentage = progress[day - 1].toInt(),
-                                child: Center(
-                                  child: Text(
-                                    '$day',
-                                    style: TextStyle(
-                                      fontFamily: 'pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: PeeroreumColor.gray[500],
-                                    ),
+                                    color: PeeroreumColor.gray[500],
                                   ),
                                 ),
                               ),
-                      ),
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  focusedMonth = currentDate.month;
+                                  if (focusedDay == day) {
+                                    focusedDay = null; // Unfocus if already focused
+                                  } else {
+                                    focusedDay = day; // Set focused day
+                                    savedFocusedDay = focusedDay;
+                                  }
+                                  fetchDatas();
+                                });
+                              },
+                              child: (focusedDay == day
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      width: 36,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: PeeroreumColor.primaryPuple[400],
+                                      ),
+                                      child: Text(
+                                        '${progress[day - 1]}',
+                                        style: TextStyle(
+                                          fontFamily: 'pretendard',
+                                          color: PeeroreumColor.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    )
+                                  : CustomPaint(
+                                      painter: PieChart()
+                                        ..percentage = progress[day - 1].toInt(),
+                                      child: Center(
+                                        child: Text(
+                                          '$day',
+                                          style: TextStyle(
+                                            fontFamily: 'pretendard',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: PeeroreumColor.gray[500],
+                                          ),
+                                        ),
+                                      ),
+                                    )),
+                            ),
                     )
                   else
                     Container(
@@ -467,11 +481,6 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       alignment: Alignment.center,
                       height: 36,
                       width: 36,
-                      //decoration: BoxDecoration(
-                      //  border: Border.all(
-                      //    color: Colors.black,
-                      //  ),
-                      //),
                       child: Text(''),
                     ),
               ],

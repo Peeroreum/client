@@ -9,7 +9,6 @@ import 'package:peeroreum_client/screens/sign/signin_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_list_screen.dart';
-import 'package:peeroreum_client/screens/wedu/encouragement_checklist_screen%20.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_invitation.dart';
 import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
