@@ -420,7 +420,12 @@ class _EmailSignInState extends State<EmailSignIn> {
                           width: 48,
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: PeeroreumColor.gray[100]),
+                              color: PeeroreumColor.gray[100],
+                            image: DecorationImage(
+                                image: AssetImage('assets/images/kakao_logo.png'),
+                                fit: BoxFit.fill
+                            )
+                          ),
                         ),
                         onTap: () {
                           kakaoSignIn();
@@ -434,8 +439,13 @@ class _EmailSignInState extends State<EmailSignIn> {
                             height: 48,
                             width: 48,
                             decoration: BoxDecoration(
+                              border: Border.all(color: PeeroreumColor.gray[200]!),
                                 shape: BoxShape.circle,
-                                color: PeeroreumColor.gray[100])),
+                                color: PeeroreumColor.white,
+                                image: DecorationImage(image: AssetImage('assets/images/google_logo.png'),
+                                )
+                            )
+                        ),
                         onTap: () {
                           googleSignIn();
                         },
