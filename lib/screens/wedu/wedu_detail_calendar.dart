@@ -58,7 +58,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   List<dynamic> notSuccessList = [];
   List<dynamic> challengeImageList = [];
 
-  List<dynamic> progress = [0,0,0,0,0,0,0,0,0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+  List<dynamic> progress = [];
 
  @override
   void initState() {
@@ -96,6 +96,27 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     });
   }
 
+  Future<void> UpdateDatas() async {
+    token = await const FlutterSecureStorage().read(key: "memberInfo");
+    //DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    String requestFormatDate = DateFormat('yyyyMMdd').format(currentDate);
+    var weduProgress = await http.get(
+      Uri.parse( '${API.hostConnect}/wedu/$id/monthly/$requestFormatDate'),
+      //localhost:8080/wedu/2/monthly/20231231
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      }
+    );
+
+    if(weduProgress.statusCode == 200){
+      weduMonthlyData = await jsonDecode(utf8.decode(weduProgress.bodyBytes))['data'];
+      progress = weduMonthlyData['monthlyProgress'];
+    } else{
+      print("에러${weduProgress.statusCode}");
+    }
+  }
+
   Future<void> fetchDatas() async {
     
     token = await const FlutterSecureStorage().read(key: "memberInfo");
@@ -108,10 +129,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         }
     );
 
-    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
-    String requestFormatDate = DateFormat('yyyyMMdd').format(requestDate);
+    //DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    String requestFormatDate2 = DateFormat('yyyyMMdd').format(currentDate);
     var weduProgress = await http.get(
-      Uri.parse( '${API.hostConnect}/wedu/$id/monthly/$requestFormatDate'),
+      Uri.parse( '${API.hostConnect}/wedu/$id/monthly/$requestFormatDate2'),
       //localhost:8080/wedu/2/monthly/20231231
       headers: {
         'Content-Type': 'application/json',
@@ -138,6 +159,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
 
     //var now = DateTime.now();
     //String formatDate = DateFormat('yyyyMMdd').format(now);
+    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    String requestFormatDate = DateFormat('yyyyMMdd').format(requestDate);
     var challengeList = await http.get(
         Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$requestFormatDate'),
         headers: {
@@ -291,10 +314,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               thickness: 8,
             ),
           calendarList(),
-          // Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
-          // Text('${currentDate}'),
-          // Text('$startDate'),
-          // Text('${finalDate}'),
+          Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
+          Text('${currentDate}'),
+          Text('$startDate'),
+          Text('${finalDate}'),
         ],
       ),
     );
@@ -314,6 +337,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       currentDate.month - 1,
                     );
                     _updateCalendar();
+                    UpdateDatas();
                   });
               },
               icon: SvgPicture.asset('assets/icons/left.svg'),
@@ -347,6 +371,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       currentDate.month + 1,
                     );
                     _updateCalendar();
+                    UpdateDatas();
                   });
               },
               icon: SvgPicture.asset('assets/icons/right.svg',
@@ -406,7 +431,6 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                             focusedDay = day; // Set focused day
                             savedFocusedDay = focusedDay;
                           }
-                          fetchDatas();
                         });
                       },
                       child: Container(
