@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
@@ -188,13 +189,17 @@ class _DetailWeduState extends State<DetailWedu> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    weduTitle,
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: PeeroreumColor.black),
+                  Flexible(
+                    child: CustomWidgetMarquee(
+                      child: Text(
+                        weduTitle,
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: PeeroreumColor.black),
+                      ),
+                    ),
                   ),
                   SizedBox(
                     width: 7,
@@ -770,7 +775,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                     color: PeeroreumColor.gray[500],
                                     ),
                                     onTap: (){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailWeduCalendar(id, weduTitle)));
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailWeduCalendar(id, weduTitle.toString())));
                                     },
                                     ),
                                   ),
