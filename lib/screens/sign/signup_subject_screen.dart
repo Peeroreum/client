@@ -49,8 +49,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
       setState(() {
         isEnabled = true;
       });
-    }
-    else{
+    } else {
       setState(() {
         isEnabled = false;
       });
@@ -148,7 +147,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                 goodDetailSubjects = ((member.grade! <= 3)
                                     ? middleSubjects[_goodSubject]
                                     : highSubjects[_goodSubject])!;
-                                _selectedDetailGoodSubject=null;
+                                _selectedDetailGoodSubject = null;
                                 _checkInput();
                               });
                             },
@@ -220,7 +219,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               badDetailSubjects = ((member.grade! <= 3)
                                   ? middleSubjects[_badSubject]
                                   : highSubjects[_badSubject])!;
-                              _selectedDetailBadSubject=null;
+                              _selectedDetailBadSubject = null;
                               _checkInput();
                             });
                           },
@@ -274,10 +273,12 @@ class _SignUpSubjectState extends State<SignUpSubject> {
               onPressed: () {
                 if (isEnabled) {
                   member.goodSubject = subjects.indexOf(_goodSubject!) + 1;
-                  member.goodDetailSubject = goodDetailSubjects.indexOf(_selectedDetailGoodSubject!);
+                  member.goodDetailSubject =
+                      goodDetailSubjects.indexOf(_selectedDetailGoodSubject!);
                   member.goodLevel = _levels.indexOf(_goodLevel!);
                   member.badSubject = subjects.indexOf(_badSubject!) + 1;
-                  member.badDetailSubject = badDetailSubjects.indexOf(_selectedDetailBadSubject!);
+                  member.badDetailSubject =
+                      badDetailSubjects.indexOf(_selectedDetailBadSubject!);
                   member.badLevel = _levels.indexOf(_badLevel!);
                   signUpAPI();
                   // Navigator.push(
@@ -316,8 +317,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await http.post(
-        Uri.parse('${API.hostConnect}/signup'),
+    var result = await http.post(Uri.parse('${API.hostConnect}/signup'),
         body: jsonEncode(member),
         headers: {'Content-Type': 'application/json'});
     if (result.statusCode == 200) {
@@ -326,6 +326,8 @@ class _SignUpSubjectState extends State<SignUpSubject> {
       secureStorage.write(key: "accessToken", value: data['accessToken']);
       secureStorage.write(key: "email", value: data['email']);
       secureStorage.write(key: "nickname", value: data['nickname']);
+      secureStorage.write(key: "profileImage", value: data['profileImage']);
+      secureStorage.write(key: "grade", value: data['grade'].toString());
       Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } else {
       print(result.statusCode);

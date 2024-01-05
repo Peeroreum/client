@@ -11,28 +11,32 @@ import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 
 class MyPageProfileFriend extends StatefulWidget {
-  const MyPageProfileFriend(String s, {super.key});
+  var nickname;
+  MyPageProfileFriend(this.nickname);
 
   @override
-  State<MyPageProfileFriend> createState() => _MyPageProfileFriendState();
+  State<MyPageProfileFriend> createState() =>
+      _MyPageProfileFriendState(nickname);
 }
 
 class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
+  var nickname;
+  _MyPageProfileFriendState(this.nickname);
   var token;
   var myfriends = [];
 
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
-    var friend = await http.get(Uri.parse('${API.hostConnect}/member/friend'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+    var friend = await http
+        .get(Uri.parse('${API.hostConnect}/member/friend/$nickname'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
     if (friend.statusCode == 200) {
       myfriends = jsonDecode(utf8.decode(friend.bodyBytes))['data'];
-      print("친구 성공 ${myfriends[0]["nickname"]}");
+      print("친구 성공");
     } else {
-      print("친구 에러 ${friend.statusCode}");
+      print("친구 에러 ${friend.statusCode}, $nickname");
     }
   }
 
@@ -147,11 +151,14 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                           width: 2,
                           color: PeeroreumColor.white,
                         ),
-                        image: DecorationImage(
-                            image: myfriends[index]["profileImage"] ??
-                                AssetImage(
-                                  'assets/images/user.jpg',
-                                )),
+                        image: myfriends[index]["profileImage"] != null
+                            ? DecorationImage(
+                                image: NetworkImage(
+                                    myfriends[index]["profileImage"]))
+                            : DecorationImage(
+                                image: AssetImage(
+                                'assets/images/user.jpg',
+                              )),
                       ),
                     ),
                   ),
