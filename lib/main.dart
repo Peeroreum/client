@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
@@ -13,14 +14,23 @@ import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final native_app_key = "a17f729816582e161afaae9395c1f1b5";
   KakaoSdk.init(nativeAppKey: native_app_key);
-  runApp(PeeroreumApp());
+  bool isLoggedIn = await checkLogIn();
+  runApp(PeeroreumApp(isLoggedIn));
+}
+
+Future<bool> checkLogIn() async {
+  final secureStorage = FlutterSecureStorage();
+  String? token = await secureStorage.read(key: 'accessToken');
+  return token != null;
 }
 
 class PeeroreumApp extends StatelessWidget {
-  const PeeroreumApp({super.key});
+  bool isLoggedIn;
+  PeeroreumApp(this.isLoggedIn, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -39,7 +49,8 @@ class PeeroreumApp extends StatelessWidget {
           )
       ),
       title: 'Peeroreum',
-      initialRoute: '/signIn/email',
+      home: isLoggedIn? bottomNaviBar() : EmailSignIn(),
+      // initialRoute: isLoggedIn? '/home' : '/signIn/email',
       routes: {
         '/signIn': (context) => SignIn(),
         '/signIn/email': (context) => EmailSignIn(),
