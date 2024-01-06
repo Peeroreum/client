@@ -586,7 +586,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
     dio.options.headers = {'Authorization': 'Bearer $token'};
     var inviResult = await dio.post('${API.hostConnect}/wedu', data: formData);
     if(inviResult.statusCode == 200) {
-      Navigator.pushNamedAndRemoveUntil(context, '/wedu', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } else {
       print("초대장 ${inviResult.statusMessage}");
     }

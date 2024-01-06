@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_acount_ps.dart';
@@ -13,18 +14,32 @@ class MyPageAccount extends StatefulWidget {
 }
 
 class _MyPageAccountState extends State<MyPageAccount> {
+  var token;
+  var email;
+
+  fetchStatus() async {
+    token = await FlutterSecureStorage().read(key: "accessToken");
+    email = await FlutterSecureStorage().read(key: "email");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(),
-      body: bodyWidget(),
+      body: FutureBuilder<void>(
+          future: fetchStatus(),
+          builder: (context, snapshot) {
+            return bodyWidget();
+          }),
     );
   }
 
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
-      elevation: 1,
+      surfaceTintColor: PeeroreumColor.white,
+      shadowColor: PeeroreumColor.white,
+      elevation: 0.2,
       leading: IconButton(
         onPressed: () {
           Navigator.of(context).pop();
@@ -47,7 +62,8 @@ class _MyPageAccountState extends State<MyPageAccount> {
   }
 
   Widget bodyWidget() {
-    return Padding(
+    return Container(
+      color: PeeroreumColor.white,
       padding: const EdgeInsets.all(20.0),
       child: Column(
         children: [
@@ -83,7 +99,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                             height: 4,
                           ),
                           Text(
-                            '12345@mail.com',
+                            email ?? 'error@mail.com',
                             style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 14,

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -23,9 +24,11 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  int selectedIndex = 4;
   var token;
   var nickname;
+  var profileImage;
+  var grade;
+  var withPeerDay = 0;
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
   List<dynamic> inviDatas = [];
@@ -35,6 +38,9 @@ class _MyPageState extends State<MyPage> {
   fetchStatus() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
+    profileImage = await FlutterSecureStorage().read(key: "profileImage");
+    grade = await FlutterSecureStorage().read(key: "grade");
+    withPeerDay = await VisitCount.getVisitCount();
   }
 
   @override
@@ -52,8 +58,9 @@ class _MyPageState extends State<MyPage> {
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
-      elevation: 1,
-      shadowColor: PeeroreumColor.gray[100],
+      surfaceTintColor: PeeroreumColor.white,
+      shadowColor: PeeroreumColor.white,
+      elevation: 0.2,
       title: Text(
         "마이페이지",
         style: TextStyle(
@@ -147,7 +154,10 @@ class _MyPageState extends State<MyPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                        width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                        width: 2,
+                        color: grade != null
+                            ? PeeroreumColor.gradeColor[int.parse(grade)]!
+                            : Color.fromARGB(255, 186, 188, 189)),
                   ),
                   child: Container(
                     height: 42,
@@ -158,10 +168,12 @@ class _MyPageState extends State<MyPage> {
                         width: 1,
                         color: PeeroreumColor.white,
                       ),
-                      image: DecorationImage(
-                          image: AssetImage(
-                        'assets/images/user.jpg',
-                      )),
+                      image: profileImage != null
+                          ? DecorationImage(image: NetworkImage(profileImage), fit: BoxFit.cover)
+                          : DecorationImage(
+                              image: AssetImage(
+                              'assets/images/user.jpg',
+                            )),
                     ),
                   ),
                 ),
@@ -204,7 +216,7 @@ class _MyPageState extends State<MyPage> {
               ),
             ),
             Container(width: 2),
-            Text('NN',
+            Text("$withPeerDay",
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 20,
@@ -222,8 +234,9 @@ class _MyPageState extends State<MyPage> {
       children: [
         TextButton(
           onPressed: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => InWedu()))
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => InWedu()))
+            Fluttertoast.showToast(msg: "준비중 입니다.")
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),

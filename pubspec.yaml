@@ -59,6 +59,7 @@ dependencies:
   flutter_localization: ^0.2.0
   flutter_launcher_icons: ^0.13.1
   dots_indicator: ^3.0.0
+  custom_widget_marquee: ^0.0.1
 
 dev_dependencies:
   flutter_test:

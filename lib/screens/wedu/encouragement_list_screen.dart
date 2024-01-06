@@ -8,13 +8,12 @@ class EncouragementList extends StatefulWidget {
   State<EncouragementList> createState() => _EncouragementListState();
 }
 
-
-
 class _EncouragementListState extends State<EncouragementList> {
   List<dynamic> notSuccessList = [];
   @override
   Widget build(BuildContext context) {
-    notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+    notSuccessList =
+        ModalRoute.of(context)!.settings.arguments as List<dynamic>;
     return Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
@@ -35,20 +34,16 @@ class _EncouragementListState extends State<EncouragementList> {
                 fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w500,
                 fontSize: 20,
-                color: PeeroreumColor.black
-            ),
+                color: PeeroreumColor.black),
           ),
           centerTitle: true,
           actions: [
             IconButton(
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 icon: SvgPicture.asset(
                   'assets/icons/icon_dots_mono.svg',
                   color: PeeroreumColor.gray[800],
-                )
-            )
+                ))
           ],
         ),
         body: SingleChildScrollView(
@@ -130,8 +125,7 @@ class _EncouragementListState extends State<EncouragementList> {
           child: SizedBox(
             height: 48,
             child: TextButton(
-              onPressed: () {
-              },
+              onPressed: () {},
               child: Text(
                 '독려하기',
                 style: TextStyle(
@@ -142,18 +136,17 @@ class _EncouragementListState extends State<EncouragementList> {
                 ),
               ),
               style: ButtonStyle(
-                  backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-                  padding:
-                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+                  backgroundColor: MaterialStateProperty.all(
+                      PeeroreumColor.primaryPuple[400]),
+                  padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(vertical: 12)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ))),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ))),
             ),
           ),
-        )
-    );
+        ));
   }
 
   notOkList() {
@@ -167,16 +160,30 @@ class _EncouragementListState extends State<EncouragementList> {
                 child: Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.all(3.5),
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
-                        ),
-                        image: DecorationImage(
-                            image: AssetImage('assets/images/user.jpg')
+                            width: 2,
+                            color: PeeroreumColor
+                                .gradeColor[notSuccessList[index]['grade']]!),
+                      ),
+                      child: Container(
+                        height: 44,
+                        width: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            width: 1,
+                            color: PeeroreumColor.white,
+                          ),
+                          image: notSuccessList[index]["profileImage"] != null
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      notSuccessList[index]["profileImage"]))
+                              : DecorationImage(
+                                  image: AssetImage('assets/images/user.jpg')),
                         ),
                       ),
                     ),
@@ -196,12 +203,10 @@ class _EncouragementListState extends State<EncouragementList> {
               );
             },
             separatorBuilder: (BuildContext context, int index) => Divider(
-              color: PeeroreumColor.gray[100],
-              thickness: 1,
-              height: 8,
-            ),
-            itemCount: notSuccessList.length
-        )
-    );
+                  color: PeeroreumColor.gray[100],
+                  thickness: 1,
+                  height: 8,
+                ),
+            itemCount: notSuccessList.length));
   }
 }

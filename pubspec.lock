@@ -145,6 +145,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  custom_widget_marquee:
+    dependency: "direct main"
+    description:
+      name: custom_widget_marquee
+      sha256: "6c5ceaf2ed7c76458380da186977def5bef4fde39686120bacb34c96464e3df4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   dio:
     dependency: "direct main"
     description:
@@ -1043,5 +1051,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.2.0-194.0.dev <4.0.0"
+  dart: ">=3.2.0-194.0.dev <3.3.0"
   flutter: ">=3.13.0"

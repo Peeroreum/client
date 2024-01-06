@@ -1016,22 +1016,23 @@ class _CreateWeduState extends State<CreateWedu> {
   }
 
   void fetchWedu() async {
+    var file;
     var weduMap = <String, dynamic> {
       'title': nameValue,
       'subject': subject.indexOf(dropdownSubject),
       'targetDate': '$date'.substring(0, 10),
       'grade': grade.indexOf(dropdownGrade),
       'maximumPeople':dropdownHeadcount,
-      'challenge': dropdownChallenge,
+      'challenge': personalChallenge.isNotEmpty? personalChallenge : dropdownChallenge,
       'isLocked': _isLocked? 1 : 0,
       'password': passwordValue,
-      'hashTags': _tag
+      'hashTags': _tag,
     };
     if(_image != null) {
-      weduMap.addAll({
-        'file': MultipartFile.fromFile(_image!.path)
-      });
+      file = await MultipartFile.fromFile(_image!.path);
+      weduMap.addAll({"file" : file});
     }
+
     Navigator.pushNamed(context, '/wedu/create_invitaion', arguments: weduMap);
   }
 }

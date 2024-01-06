@@ -276,9 +276,19 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 if (result.statusCode == 200) {
                                   var data = jsonDecode(
                                       utf8.decode(result.bodyBytes))['data'];
-                                  secureStorage.write(key: "accessToken", value: data['accessToken']);
-                                  secureStorage.write(key: "email", value: data['email']);
-                                  secureStorage.write(key: "nickname", value: data['nickname']);
+                                  secureStorage.write(
+                                      key: "accessToken",
+                                      value: data['accessToken']);
+                                  secureStorage.write(
+                                      key: "email", value: data['email']);
+                                  secureStorage.write(
+                                      key: "nickname", value: data['nickname']);
+                                  secureStorage.write(
+                                      key: "profileImage",
+                                      value: data['profileImage']);
+                                  secureStorage.write(
+                                      key: "grade",
+                                      value: data['grade'].toString());
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       PageRouteBuilder(
@@ -418,11 +428,10 @@ class _EmailSignInState extends State<EmailSignIn> {
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: PeeroreumColor.gray[100],
-                            image: DecorationImage(
-                                image: AssetImage('assets/images/kakao_logo.png'),
-                                fit: BoxFit.fill
-                            )
-                          ),
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/kakao_logo.png'),
+                                  fit: BoxFit.fill)),
                         ),
                         onTap: () {
                           kakaoSignIn();
@@ -436,13 +445,14 @@ class _EmailSignInState extends State<EmailSignIn> {
                             height: 48,
                             width: 48,
                             decoration: BoxDecoration(
-                              border: Border.all(color: PeeroreumColor.gray[200]!),
+                                border: Border.all(
+                                    color: PeeroreumColor.gray[200]!),
                                 shape: BoxShape.circle,
                                 color: PeeroreumColor.white,
-                                image: DecorationImage(image: AssetImage('assets/images/google_logo.png'),
-                                )
-                            )
-                        ),
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/google_logo.png'),
+                                ))),
                         onTap: () {
                           googleSignIn();
                         },
@@ -515,6 +525,8 @@ class _EmailSignInState extends State<EmailSignIn> {
       secureStorage.write(key: "accessToken", value: data['accessToken']);
       secureStorage.write(key: "email", value: data['email']);
       secureStorage.write(key: "nickname", value: data['nickname']);
+      secureStorage.write(key: "profileImage", value: data['profileImage']);
+      secureStorage.write(key: "grade", value: data['grade'].toString());
       Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } else if (result.statusCode == 404) {
       Member member = Member();
