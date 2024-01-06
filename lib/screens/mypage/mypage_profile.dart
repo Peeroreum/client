@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -216,7 +217,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
-      elevation: 1,
+      surfaceTintColor: PeeroreumColor.white,
+      shadowColor: PeeroreumColor.white,
+      elevation: 0.5,
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
@@ -295,7 +298,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
         ),
       ),
       child: Scaffold(
-        backgroundColor: PeeroreumColor.white,
         body: Container(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -728,7 +730,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
         ),
       ),
       child: Scaffold(
-        backgroundColor: PeeroreumColor.white,
         body: Container(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -921,7 +922,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           color: PeeroreumColor.gray[200],
           borderRadius: BorderRadius.all(Radius.circular(16))),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -972,7 +973,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       color: PeeroreumColor.white,
                     ),
                     image: profileImage != null
-                        ? DecorationImage(image: NetworkImage(profileImage))
+                        ? DecorationImage(image: NetworkImage(profileImage), fit: BoxFit.cover)
                         : DecorationImage(
                             image: AssetImage(
                             'assets/images/user.jpg',
@@ -995,10 +996,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ],
           ),
           SizedBox(
-            height: 104,
+            height: 40,
           ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
               onPressed: () {
                 setState(() {
@@ -1073,6 +1074,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget friends() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         GestureDetector(
           onTap: () {
@@ -1118,49 +1120,53 @@ class _MyPageProfileState extends State<MyPageProfile> {
         SizedBox(
           width: 8,
         ),
-        GestureDetector(
-          onTap: () {
-            Fluttertoast.showToast(msg: "준비중 입니다.");
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '배지',
-                      style: TextStyle(
-                        color: PeeroreumColor.gray[800],
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Pretendard',
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              Fluttertoast.showToast(msg: "준비중 입니다.");
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '배지',
+                        style: TextStyle(
+                          color: PeeroreumColor.gray[800],
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Pretendard',
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      '${badges.length}개 보유',
-                      style: TextStyle(
-                        color: PeeroreumColor.gray[600],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Pretendard',
+                      SizedBox(
+                        height: 4,
                       ),
+                      Text(
+                        '${badges.length}개 보유',
+                        style: TextStyle(
+                          color: PeeroreumColor.gray[600],
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Pretendard',
+                        ),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 15), //left:20 변경
+                      height: 52,
+                      child: Badge(),
                     ),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 15), //left:20 변경
-                  height: 52,
-                  child: Badge(),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -1169,36 +1175,24 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Widget Badge() {
-    return Row(
-      children: [
-        Container(
-          width: 48, //52에서 overflow문제로 변경
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: PeeroreumColor.gray[100],
-          ),
-        ),
-        Container(
-          width: 2,
-        ),
-        Container(
-          width: 48,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: PeeroreumColor.gray[100],
-          ),
-        ),
-        Container(
-          width: 2,
-        ),
-        Container(
-          width: 48,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: PeeroreumColor.gray[100],
-          ),
-        )
-      ],
+    return ListView.separated(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            width: 48, //52에서 overflow문제로 변경
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: PeeroreumColor.gray[100],
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return Container(
+            width: 8,
+          );
+        },
+        itemCount: 4
     );
   }
 
@@ -1266,7 +1260,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       shrinkWrap: true,
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       itemCount: inroom_datas.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(
@@ -1286,16 +1280,20 @@ class _MyPageProfileState extends State<MyPageProfile> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: (inroom_datas[index]['imagePath'] != null)
-                      ? Image.network(inroom_datas[index]['imagePath']!,
-                          width: 48, height: 48)
-                      : Image.asset('assets/images/example_logo.png',
-                          width: 48, height: 48),
-                ),
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 1, color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        image: (inroom_datas[index]['imagePath'] != null)
+                            ? DecorationImage(
+                            image: NetworkImage(
+                                inroom_datas[index]['imagePath']),
+                            fit: BoxFit.cover)
+                            : DecorationImage(
+                            image: AssetImage(
+                                'assets/images/example_logo.png')))),
                 SizedBox(
                   height: 16,
                 ),
@@ -1306,7 +1304,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
                         color: PeeroreumColor.subjectColor[dropdownSubjectList[
-                            inroom_datas[index]['subject']]]?[0],
+                        inroom_datas[index]['subject']]]?[0],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -1319,22 +1317,29 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
                             color: PeeroreumColor.subjectColor[
-                                dropdownSubjectList[inroom_datas[index]
-                                    ['subject']]]?[1],
+                            dropdownSubjectList[inroom_datas[index]
+                            ['subject']]]?[1],
                           ),
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        inroom_datas[index]["title"]!,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.black),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Flexible(
+                      child: CustomWidgetMarquee(
+                        animationDuration: Duration(seconds: 5),
+                        pauseDuration: Duration(seconds: 1),
+                        directionOption: DirectionOption.oneDirection,
+                        child: Text(
+                          inroom_datas[index]["title"]!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.black),
+                        ),
                       ),
                     ),
                   ],
@@ -1352,7 +1357,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
                     Text('${inroom_datas[index]["attendingPeopleNum"]!}명 참여중',
@@ -1362,7 +1367,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
                     Text('D-${inroom_datas[index]["dday"]!}',

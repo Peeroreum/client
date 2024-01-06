@@ -56,8 +56,9 @@ class _MyPageState extends State<MyPage> {
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
-      elevation: 1,
-      shadowColor: PeeroreumColor.gray[100],
+      surfaceTintColor: PeeroreumColor.white,
+      shadowColor: PeeroreumColor.white,
+      elevation: 0.2,
       title: Text(
         "마이페이지",
         style: TextStyle(
@@ -166,7 +167,7 @@ class _MyPageState extends State<MyPage> {
                         color: PeeroreumColor.white,
                       ),
                       image: profileImage != null
-                          ? DecorationImage(image: NetworkImage(profileImage))
+                          ? DecorationImage(image: NetworkImage(profileImage), fit: BoxFit.cover)
                           : DecorationImage(
                               image: AssetImage(
                               'assets/images/user.jpg',
