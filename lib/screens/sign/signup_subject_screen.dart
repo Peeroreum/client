@@ -326,7 +326,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
       secureStorage.write(key: "accessToken", value: data['accessToken']);
       secureStorage.write(key: "email", value: data['email']);
       secureStorage.write(key: "nickname", value: data['nickname']);
-      Navigator.pushNamedAndRemoveUntil(context, 'signUp/Complete', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
     } else {
       print(result.statusCode);
     }
