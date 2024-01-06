@@ -58,6 +58,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   flutter_localization: ^0.2.0
   flutter_launcher_icons: ^0.13.1
+  dots_indicator: ^3.0.0
 
 dev_dependencies:
   flutter_test:
