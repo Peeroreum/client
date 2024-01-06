@@ -1,8 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 
 class OnBoarding extends StatefulWidget {
   const OnBoarding({Key? key}) : super(key: key);
@@ -165,7 +165,7 @@ class _OnBoardingState extends State<OnBoarding> {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => EmailSignIn(),
+                        pageBuilder: (_, __, ___) => EmailSignUp(),
                         transitionDuration: const Duration(seconds: 0),
                         reverseTransitionDuration: const Duration(seconds: 0)),
                   );
