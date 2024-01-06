@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -27,7 +28,7 @@ class _MyPageState extends State<MyPage> {
   var nickname;
   var profileImage;
   var grade;
-  var withPeerDay = "NN";
+  var withPeerDay = 0;
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
   List<dynamic> inviDatas = [];
@@ -39,6 +40,7 @@ class _MyPageState extends State<MyPage> {
     nickname = await FlutterSecureStorage().read(key: "nickname");
     profileImage = await FlutterSecureStorage().read(key: "profileImage");
     grade = await FlutterSecureStorage().read(key: "grade");
+    withPeerDay = await VisitCount.getVisitCount();
   }
 
   @override
@@ -214,7 +216,7 @@ class _MyPageState extends State<MyPage> {
               ),
             ),
             Container(width: 2),
-            Text(withPeerDay,
+            Text("$withPeerDay",
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 20,

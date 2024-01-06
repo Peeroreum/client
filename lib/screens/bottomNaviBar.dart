@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
@@ -25,6 +26,17 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
     Prepare(),
     MyPage(),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    visitCount();
+  }
+
+  void visitCount() async {
+    await VisitCount.incrementVisitCount();
+  }
 
   Widget bottomNavigatorBarWidget() {
     return BottomNavigationBar(

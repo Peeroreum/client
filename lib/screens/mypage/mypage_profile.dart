@@ -11,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
@@ -43,7 +44,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   var grade;
   var profileImage;
   var friendNumber;
-  var withPeerDay = "NN";
+  var withPeerDay = 0;
   Member member = Member();
   final change_nickname_controller = TextEditingController();
 
@@ -56,6 +57,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
 
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
+    withPeerDay = await VisitCount.getVisitCount();
     var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
         headers: {
           'Content-Type': 'application/json',
@@ -941,7 +943,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                   Container(width: 2),
                   Text(
-                    withPeerDay,
+                    "$withPeerDay",
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 20,
