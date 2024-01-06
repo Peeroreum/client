@@ -266,7 +266,7 @@ class _HomeWeduState extends State<HomeWedu> {
   Widget in_room_body() {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
-      shrinkWrap: true,
+      // shrinkWrap: true,
       padding: EdgeInsets.symmetric(horizontal: 20),
       itemCount: inroom_datas.length,
       separatorBuilder: (BuildContext context, int index) {
@@ -667,19 +667,14 @@ class _HomeWeduState extends State<HomeWedu> {
                                   ? MediaQuery.of(context).size.width * 0.45
                                   : MediaQuery.of(context).size.width * 0.48,
                               child: Flexible(
-                                child: CustomWidgetMarquee(
-                                  animationDuration: Duration(seconds: 5),
-                                  pauseDuration: Duration(seconds: 1),
-                                  directionOption: DirectionOption.oneDirection,
-                                  child: Text(
-                                    datas[index]["title"]!,
-                                    style: TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: PeeroreumColor.black),
-                                  ),
+                                child: Text(
+                                  datas[index]["title"]!,
+                                  style: TextStyle(
+                                      overflow: TextOverflow.ellipsis,
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: PeeroreumColor.black),
                                 ),
                               ),
                             ),
@@ -746,8 +741,8 @@ class _HomeWeduState extends State<HomeWedu> {
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
       ),
       child: Scaffold(
@@ -822,9 +817,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                   width: 4,
                                 ),
                                 SizedBox(
-                                  width: datas[index]['locked'].toString() ==
-                                          "true"
-                                      ? MediaQuery.of(context).size.width * 0.42
+                                  width: datas[index]['locked'].toString() == "true" ?
+                                  MediaQuery.of(context).size.width * 0.42
                                       : MediaQuery.of(context).size.width * 0.48,
                                   child: CustomWidgetMarquee(
                                     animationDuration: Duration(seconds: 3),

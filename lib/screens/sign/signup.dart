@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignUp extends StatefulWidget {
   Member member;
@@ -23,7 +24,32 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       body: Container(
         color: PeeroreumColor.white,
-        child: Center(child: Image.asset("assets/images/oreum.png")),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("assets/images/signup_ready.png"),
+              SizedBox(height: 80,),
+              Text(
+                '안녕하세요, 오르미예요!',
+                style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black
+                ),
+              ),
+              SizedBox(height: 16,),
+              Text(
+                '서비스 사용을 위한 설정이 필요해요.',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.gray[700]
+                ),
+              )
+            ]
+        ),
       ),
       bottomSheet: bottomsheetWidget(),
     );
@@ -123,22 +149,24 @@ class _serviceTermsState extends State<serviceTerms> {
   Widget serviceTerms() {
     return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.55 - 26,
+      height: MediaQuery.of(context).size.height * 0.45,
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
       ),
       child: Scaffold(
-        backgroundColor: PeeroreumColor.white,
+        backgroundColor: Colors.transparent,
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.fromLTRB(20, 24, 20, 16),
               child: Text(
                 '피어오름 서비스 약관에 동의해 주세요.',
+                textAlign: TextAlign.start,
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 20,
@@ -149,7 +177,7 @@ class _serviceTermsState extends State<serviceTerms> {
             ),
             Container(
               //약관 전체 동의
-              padding: EdgeInsets.all(20.0),
+              padding: EdgeInsets.all(20),
               child: Row(
                 children: [
                   SizedBox(
@@ -195,7 +223,7 @@ class _serviceTermsState extends State<serviceTerms> {
             ),
             Container(
               //devider
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
               color: PeeroreumColor.gray[200],
               height: 1,
             ),
@@ -244,7 +272,9 @@ class _serviceTermsState extends State<serviceTerms> {
                   ),
                   Spacer(),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      launchUrl(Uri.parse("https://peeroreum.notion.site/1b5a5f1566fe4b51ba76820fbed005ff"));
+                    },
                     icon: SvgPicture.asset(
                       "assets/icons/right.svg",
                       color: PeeroreumColor.gray[600],
@@ -298,7 +328,9 @@ class _serviceTermsState extends State<serviceTerms> {
                   ),
                   Spacer(),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      launchUrl(Uri.parse("https://peeroreum.notion.site/68e35d866d544911ac35ee254e227b6c"));
+                    },
                     icon: SvgPicture.asset(
                       "assets/icons/right.svg",
                       color: PeeroreumColor.gray[600],
@@ -355,7 +387,7 @@ class _serviceTermsState extends State<serviceTerms> {
                     onPressed: () {},
                     icon: SvgPicture.asset(
                       "assets/icons/right.svg",
-                      color: PeeroreumColor.gray[600],
+                      color: PeeroreumColor.white,
                     ),
                   ),
                 ],
