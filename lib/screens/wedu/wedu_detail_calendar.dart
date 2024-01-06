@@ -326,7 +326,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   _updateCalendar();
                 });
             },
-            icon: SvgPicture.asset('assets/icons/left.svg'),
+            icon: SvgPicture.asset('assets/icons/left.svg', color: PeeroreumColor.gray[500],),
           ),
           Text(
             '${currentDate.month}',
@@ -363,6 +363,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             icon: SvgPicture.asset(
               'assets/icons/right.svg',
               width: 24,
+                color: PeeroreumColor.gray[500]
             ),
           )
         ],
@@ -650,7 +651,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     showModalBottomSheet(
                       context: context,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
                       isScrollControlled: true,
                       builder: (context) {
@@ -755,20 +756,21 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
           child: Column(
             children: [
               ButtonBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
                         width: 48,
@@ -844,7 +846,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                                   vertical: 4, horizontal: 8),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                color: Color.fromARGB(100, 0, 0, 0),
+                                color: Color.fromARGB(60, 0, 0, 0),
                               ),
                               child: Text(
                                 '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',

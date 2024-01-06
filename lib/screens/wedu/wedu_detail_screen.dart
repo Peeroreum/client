@@ -713,7 +713,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         borderRadius: BorderRadius.all(Radius.circular(8)),
                         side: BorderSide(color: PeeroreumColor.gray[200]!)),
                     child: Container(
-                      padding: EdgeInsets.fromLTRB(16, 12, 16, 16),
+                      padding: EdgeInsets.all(16),
                       child: Column(
                         children: [
                           Row(
