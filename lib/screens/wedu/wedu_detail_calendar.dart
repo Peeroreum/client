@@ -7,18 +7,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/screens/pie_chart.dart';
 
-
 import '../../api/PeeroreumApi.dart';
-
-
-
-
 
 class DetailWeduCalendar extends StatefulWidget {
   //const DetailWeduCalendar({super.key});
@@ -27,26 +21,28 @@ class DetailWeduCalendar extends StatefulWidget {
   String weduTitle;
 
   @override
-  State<DetailWeduCalendar> createState() => _DetailWeduCalendarState(id, weduTitle);
+  State<DetailWeduCalendar> createState() =>
+      _DetailWeduCalendarState(id, weduTitle);
 }
 
 final days = ['월', '화', '수', '목', '금', '토', '일'];
 late List<List<int>> calendarDays;
- int daysInMonth = 0;
-  DateTime currentDate = DateTime.now();
-  DateTime firstDayOfCurrentMonth = DateTime(currentDate.year, currentDate.month, 1);
-  DateTime lastDayOfCurrentMonth = DateTime(currentDate.year, currentDate.month, DateTime(currentDate.year, currentDate.month+1, 0).day);
+int daysInMonth = 0;
+DateTime currentDate = DateTime.now();
+DateTime firstDayOfCurrentMonth =
+    DateTime(currentDate.year, currentDate.month, 1);
+DateTime lastDayOfCurrentMonth = DateTime(currentDate.year, currentDate.month,
+    DateTime(currentDate.year, currentDate.month + 1, 0).day);
 
-  int? focusedDay; // Added variable to track the focused day
-  int? savedFocusedDay=focusedDay;
-  int? focusedMonth;
+int? focusedDay; // Added variable to track the focused day
+int? savedFocusedDay = focusedDay;
+int? focusedMonth;
 
-  var startDate = currentDate;
-  var finalDate = currentDate;
+var startDate = currentDate;
+var finalDate = currentDate;
 
-  bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
-  bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
-  
+bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
+bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
 
 class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   var token;
@@ -62,46 +58,45 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
 
   List<dynamic> progress = [];
 
- @override
+  @override
   void initState() {
     super.initState();
     currentDate = DateTime.now();
     calendarDays = generateCalendarDays();
-    focusedDay=DateTime.now().day;
-    savedFocusedDay=focusedDay;
-    focusedMonth=currentDate.month;
+    focusedDay = DateTime.now().day;
+    savedFocusedDay = focusedDay;
+    focusedMonth = currentDate.month;
     if (currentDate.isAfter(finalDate)) {
       currentDate = finalDate;
-      focusedMonth=finalDate.month;
-      focusedDay=finalDate.day;
-      savedFocusedDay=focusedDay;
+      focusedMonth = finalDate.month;
+      focusedDay = finalDate.day;
+      savedFocusedDay = focusedDay;
     }
   }
-   void _updateCalendar() {
+
+  void _updateCalendar() {
     setState(() {
       calendarDays = generateCalendarDays();
-      if(focusedMonth==currentDate.month){
-        focusedDay=savedFocusedDay;
+      if (focusedMonth == currentDate.month) {
+        focusedDay = savedFocusedDay;
       }
-      if(currentDate.year==startDate.year && currentDate.month==startDate.month){
-        _isLeftButtonWork=false;
+      if (currentDate.year == startDate.year &&
+          currentDate.month == startDate.month) {
+        _isLeftButtonWork = false;
+      } else {
+        _isLeftButtonWork = true;
       }
-      else{
-        _isLeftButtonWork=true;
-      }
-      if(currentDate.year==finalDate.year && currentDate.month==finalDate.month){
-        _isRightButtonWork=false;
-      }
-      else{
-        _isRightButtonWork=true;
+      if (currentDate.year == finalDate.year &&
+          currentDate.month == finalDate.month) {
+        _isRightButtonWork = false;
+      } else {
+        _isRightButtonWork = true;
       }
     });
     fetchDatas();
   }
 
-
   Future<void> fetchDatas() async {
-    
     token = await const FlutterSecureStorage().read(key: "accessToken");
 
     // var weduResult = await http.get(
@@ -115,23 +110,22 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     //DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
     String requestFormatDate2 = DateFormat('yyyyMMdd').format(currentDate);
     var weduProgress = await http.get(
-      Uri.parse( '${API.hostConnect}/wedu/$id/monthly/$requestFormatDate2'),
-      //localhost:8080/wedu/2/monthly/20231231
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      }
-    );
+        Uri.parse('${API.hostConnect}/wedu/$id/monthly/$requestFormatDate2'),
+        //localhost:8080/wedu/2/monthly/20231231
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
 
-    if(weduProgress.statusCode == 200){
-      weduMonthlyData = await jsonDecode(utf8.decode(weduProgress.bodyBytes))['data'];
+    if (weduProgress.statusCode == 200) {
+      weduMonthlyData =
+          await jsonDecode(utf8.decode(weduProgress.bodyBytes))['data'];
       progress = weduMonthlyData['monthlyProgress'];
       startDate = DateTime.parse(weduMonthlyData['createdDate']);
       finalDate = DateTime.parse(weduMonthlyData['targetDate']);
-    } else{
+    } else {
       print("에러${weduProgress.statusCode}");
     }
-
 
     // if(weduResult.statusCode == 200) {
     //   weduData = await jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
@@ -142,51 +136,54 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
 
     //var now = DateTime.now();
     //String formatDate = DateFormat('yyyyMMdd').format(now);
-    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    DateTime requestDate =
+        DateTime(currentDate.year, focusedMonth!, savedFocusedDay!);
     String requestFormatDate = DateFormat('yyyyMMdd').format(requestDate);
     var challengeList = await http.get(
-        Uri.parse( '${API.hostConnect}/wedu/$id/challenge/$requestFormatDate'),
+        Uri.parse('${API.hostConnect}/wedu/$id/challenge/$requestFormatDate'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
-        }
-    );
-    if(challengeList.statusCode == 200) {
-      successList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['successMembers'];
-      notSuccessList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['failMembers'];
+        });
+    if (challengeList.statusCode == 200) {
+      successList =
+          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
+              ['successMembers'];
+      notSuccessList =
+          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
+              ['failMembers'];
     } else {
       print("목록${challengeList.statusCode}");
     }
 
-    if (successList.isNotEmpty){
+    if (successList.isNotEmpty) {
       await fetchImages(successList);
     }
   }
+
   fetchImages(List<dynamic> successList) async {
-    DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
+    DateTime requestDate =
+        DateTime(currentDate.year, focusedMonth!, savedFocusedDay!);
     String formatDate = DateFormat('yyyyMMdd').format(requestDate);
     List<dynamic> resultImageList = [];
     for (var index = 0; index < successList.length; index++) {
       var successOne = successList[index]['nickname'].toString();
       var result = await http.get(
-          Uri.parse('${API.hostConnect}/wedu/$id/challenge/$successOne/$formatDate'),
+          Uri.parse(
+              '${API.hostConnect}/wedu/$id/challenge/$successOne/$formatDate'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
-          }
-      );
-      if(result.statusCode == 200) {
+          });
+      if (result.statusCode == 200) {
         var body = await jsonDecode(result.body);
         resultImageList.add(body['data']['imageUrls']);
       } else {
         print('이미지 에러 ${result.body}');
       }
-
     }
     challengeImageList = resultImageList;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -203,105 +200,105 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         //   return Center(child: Text('Error: ${snapshot.error}'));
         // } else {
         //   // 데이터 로드 성공 시
-          return Scaffold(
-      backgroundColor: PeeroreumColor.white,
-            appBar: AppBar(
-              backgroundColor: PeeroreumColor.white,
-              elevation: 0,
-              centerTitle: true,
-              leading: IconButton(
-                icon: SvgPicture.asset(
-                  'assets/icons/arrow-left.svg',
-                  color: PeeroreumColor.gray[800],
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+        return Scaffold(
+          backgroundColor: PeeroreumColor.white,
+          appBar: AppBar(
+            backgroundColor: PeeroreumColor.white,
+            elevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              icon: SvgPicture.asset(
+                'assets/icons/arrow-left.svg',
+                color: PeeroreumColor.gray[800],
               ),
-              title: Row(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: CustomWidgetMarquee(
+                    child: Text(
+                      weduTitle,
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          color: PeeroreumColor.black),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 7,
+                ),
+                // SvgPicture.asset(
+                //   'assets/icons/lock.svg',
+                //   color: PeeroreumColor.gray[400],
+                //   width: 12,
+                //   height: 14,
+                // )
+              ],
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () {},
+                  icon: SvgPicture.asset(
+                    'assets/icons/icon_dots_mono.svg',
+                    color: PeeroreumColor.gray[800],
+                  ))
+            ],
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(20),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Flexible(
-                    child: CustomWidgetMarquee(
-                      child: Text(
-                        weduTitle,
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            color: PeeroreumColor.black),
-                      ),
-                    ),
+                  Text(
+                    '🔥',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: PeeroreumColor.black),
                   ),
-                  SizedBox(
-                    width: 7,
+                  Text(
+                    '+',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: PeeroreumColor.black),
                   ),
-                  // SvgPicture.asset(
-                  //   'assets/icons/lock.svg',
-                  //   color: PeeroreumColor.gray[400],
-                  //   width: 12,
-                  //   height: 14,
-                  // )
+                  Text(
+                    '10',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: PeeroreumColor.black),
+                  )
                 ],
               ),
-              actions: [
-                IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/icons/icon_dots_mono.svg',
-                      color: PeeroreumColor.gray[800],
-                    ))
-              ],
-              bottom: const PreferredSize(
-                preferredSize: Size.fromHeight(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '🔥',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: PeeroreumColor.black),
-                    ),
-                    Text(
-                      '+',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: PeeroreumColor.black),
-                    ),
-                    Text(
-                      '10',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: PeeroreumColor.black),
-                    )
-                  ],
-                ),
-              ),
             ),
-            body: bodyWidget(),
-        
-          );
+          ),
+          body: bodyWidget(),
+        );
         //}
       },
     );
   }
-  Widget bodyWidget(){
+
+  Widget bodyWidget() {
     return SingleChildScrollView(
       child: Column(
         children: [
           calendarHeader(),
           calendarBody(),
           Divider(
-              color: PeeroreumColor.gray[50],
-              thickness: 8,
-            ),
+            color: PeeroreumColor.gray[50],
+            thickness: 8,
+          ),
           calendarList(),
           // Text('${currentDate.year}년${focusedMonth}월 ${focusedDay}일 ${savedFocusedDay}'),
           // Text('${currentDate}'),
@@ -311,25 +308,26 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
+
   calendarHeader() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-            IconButton(
-              onPressed: () {
-                if (_isLeftButtonWork)
-                  setState(() {
-                    currentDate = DateTime(
-                      currentDate.year,
-                      currentDate.month - 1,
-                    );
-                    _updateCalendar();
-                  });
-              },
-              icon: SvgPicture.asset('assets/icons/left.svg'),
-            ),
+          IconButton(
+            onPressed: () {
+              if (_isLeftButtonWork)
+                setState(() {
+                  currentDate = DateTime(
+                    currentDate.year,
+                    currentDate.month - 1,
+                  );
+                  _updateCalendar();
+                });
+            },
+            icon: SvgPicture.asset('assets/icons/left.svg'),
+          ),
           Text(
             '${currentDate.month}',
             textAlign: TextAlign.center,
@@ -342,29 +340,31 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
           SizedBox(
             width: 2,
           ),
-          Text('월',
-           textAlign: TextAlign.center,
-          style: const TextStyle(
+          Text(
+            '월',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
               fontFamily: 'pretendard',
               fontSize: 20,
               fontWeight: FontWeight.w600,
-            ),),
-          
-            IconButton(
-              onPressed: () {
-                if (_isRightButtonWork)
-                  setState(() {
-                    currentDate = DateTime(
-                      currentDate.year,
-                      currentDate.month + 1,
-                    );
-                    _updateCalendar();
-                  });
-              },
-              icon: SvgPicture.asset('assets/icons/right.svg',
-              width: 24,),
-            )
-        
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              if (_isRightButtonWork)
+                setState(() {
+                  currentDate = DateTime(
+                    currentDate.year,
+                    currentDate.month + 1,
+                  );
+                  _updateCalendar();
+                });
+            },
+            icon: SvgPicture.asset(
+              'assets/icons/right.svg',
+              width: 24,
+            ),
+          )
         ],
       ),
     );
@@ -413,8 +413,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       alignment: Alignment.center,
                       height: 36,
                       width: 36,
-                      child: (currentDate.month == startDate.month && day < startDate.day) ||
-                      (currentDate.month == finalDate.month && day > finalDate.day)
+                      child: (currentDate.month == startDate.month &&
+                                  day < startDate.day) ||
+                              (currentDate.month == finalDate.month &&
+                                  day > finalDate.day)
                           ? Container(
                               alignment: Alignment.center,
                               width: 36,
@@ -436,7 +438,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                                 setState(() {
                                   focusedMonth = currentDate.month;
                                   if (focusedDay == day) {
-                                    focusedDay = null; // Unfocus if already focused
+                                    focusedDay =
+                                        null; // Unfocus if already focused
                                   } else {
                                     focusedDay = day; // Set focused day
                                     savedFocusedDay = focusedDay;
@@ -465,7 +468,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                                     )
                                   : CustomPaint(
                                       painter: PieChart()
-                                        ..percentage = progress[day - 1].toInt(),
+                                        ..percentage =
+                                            progress[day - 1].toInt(),
                                       child: Center(
                                         child: Text(
                                           '$day',
@@ -494,102 +498,104 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
-  
-  calendarList(){
+
+  calendarList() {
     return Column(
       children: [
         Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        '달성',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        '${successList.length}',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
-                      ),
-                    ],
+                  Text(
+                    '달성',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: PeeroreumColor.gray[800]),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/ok', arguments: successList);
-                    },
-                    child: Text(
-                      '전체보기',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: PeeroreumColor.gray[500]),
-                    ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    '${successList.length}',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: PeeroreumColor.gray[800]),
                   ),
                 ],
               ),
-            ),
-            (successList.length > 0) ? okList() : Container(),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/wedu/challenge/ok',
+                      arguments: successList);
+                },
+                child: Text(
+                  '전체보기',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: PeeroreumColor.gray[500]),
+                ),
+              ),
+            ],
+          ),
+        ),
+        (successList.length > 0) ? okList() : Container(),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        '미달성',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        '${notSuccessList.length}',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
-                      ),
-                    ],
+                  Text(
+                    '미달성',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: PeeroreumColor.gray[800]),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/notok', arguments: notSuccessList);
-                    },
-                    child: Text(
-                      '전체보기',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: PeeroreumColor.gray[500]),
-                    ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    '${notSuccessList.length}',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: PeeroreumColor.gray[800]),
                   ),
                 ],
               ),
-            ),
-            notOkList()
-          ],
-        );
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/wedu/challenge/notok',
+                      arguments: notSuccessList);
+                },
+                child: Text(
+                  '전체보기',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: PeeroreumColor.gray[500]),
+                ),
+              ),
+            ],
+          ),
+        ),
+        notOkList()
+      ],
+    );
   }
 
   okList() {
@@ -615,9 +621,9 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        width: 2,
-                          color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                      ),
+                          width: 2,
+                          color: PeeroreumColor
+                              .gradeColor[successList[index]['grade']]!),
                       // image: DecorationImage(
                       //     image: AssetImage('assets/images/user.jpg',)
                       // ),
@@ -626,15 +632,18 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       height: 44,
                       width: 44,
                       decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        width: 1,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          width: 1,
                           color: PeeroreumColor.white,
+                        ),
+                        image: successList[index]["profileImage"] != null
+                            ? DecorationImage(
+                                image: NetworkImage(
+                                    successList[index]["profileImage"]))
+                            : DecorationImage(
+                                image: AssetImage('assets/images/user.jpg')),
                       ),
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/user.jpg',)
-                      ),
-                    ),
                     ),
                   ),
                   onTap: () {
@@ -691,29 +700,32 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
+                    shape: BoxShape.circle,
+                    border: Border.all(
                         width: 2,
-                        color: PeeroreumColor.gradeColor[notSuccessList[index]['grade']]!
-                      ),
+                        color: PeeroreumColor
+                            .gradeColor[notSuccessList[index]['grade']]!),
                     // image: DecorationImage(
                     //   image: AssetImage('assets/images/user.jpg')
                     // ),
                   ),
                   child: Container(
-                      height: 44,
-                      width: 44,
-                      decoration: BoxDecoration(
+                    height: 44,
+                    width: 44,
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
                         width: 1,
-                          color: PeeroreumColor.white,
+                        color: PeeroreumColor.white,
                       ),
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/user.jpg',)
-                      ),
+                      image: notSuccessList[index]["profileImage"] != null
+                          ? DecorationImage(
+                              image: NetworkImage(
+                                  notSuccessList[index]["profileImage"]))
+                          : DecorationImage(
+                              image: AssetImage('assets/images/user.jpg')),
                     ),
-                    ),
+                  ),
                 ),
                 SizedBox(
                   height: 8,
@@ -733,7 +745,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
-  
+
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
 
@@ -759,16 +771,31 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(3.5),
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: PeeroreumColor.gradeColor[successOne['grade']]!
-                          ),
-                          image: DecorationImage(
-                              image: AssetImage('assets/images/user.jpg')
+                              width: 2,
+                              color: PeeroreumColor
+                                  .gradeColor[successOne['grade']]!),
+                        ),
+                        child: Container(
+                          height: 44,
+                          width: 44,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 1,
+                              color: PeeroreumColor.white,
+                            ),
+                            image: successOne["profileImage"] != null
+                                ? DecorationImage(
+                                    image: NetworkImage(
+                                        successOne["profileImage"]))
+                                : DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/user.jpg')),
                           ),
                         ),
                       ),
@@ -779,8 +806,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
-                            color: PeeroreumColor.gray[800]
-                        ),
+                            color: PeeroreumColor.gray[800]),
                       )
                     ],
                   ),
@@ -793,51 +819,53 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   )
                 ],
               ),
-               SizedBox(height: 20),
+              SizedBox(height: 20),
               CarouselSlider(
-                  items: challengeImage.map((i) {
-                    var imageUrl = i.toString();
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: double.maxFinite,
-                          height: double.maxFinite,
-                          decoration: BoxDecoration(
+                items: challengeImage.map((i) {
+                  var imageUrl = i.toString();
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        width: double.maxFinite,
+                        height: double.maxFinite,
+                        decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[100],
-                            image: i != null? DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.fill) : null
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Container(
-                                margin: EdgeInsets.all(12),
-                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Color.fromARGB(100, 0, 0, 0),
-                                ),
-                                child: Text(
-                                  '${challengeImage.indexOf(i)+1} / ${challengeImage.length}',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                      color: PeeroreumColor.white
-                                  ),
-                                )
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                      enableInfiniteScroll: false,
-                    viewportFraction: 1,
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    enlargeCenterPage: true,
-                  ),
+                            image: i != null
+                                ? DecorationImage(
+                                    image: NetworkImage(imageUrl),
+                                    fit: BoxFit.fill)
+                                : null),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                              margin: EdgeInsets.all(12),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color.fromARGB(100, 0, 0, 0),
+                              ),
+                              child: Text(
+                                '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: PeeroreumColor.white),
+                              )),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+                options: CarouselOptions(
+                  enableInfiniteScroll: false,
+                  viewportFraction: 1,
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  enlargeCenterPage: true,
                 ),
+              ),
             ],
           ),
         ),
@@ -859,53 +887,50 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             ),
             style: ButtonStyle(
                 backgroundColor:
-                MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                padding:
-                MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+                    MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 12)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
+                  borderRadius: BorderRadius.circular(8.0),
+                ))),
           ),
         ),
       ),
     );
   }
-
-
-    
 }
 
 List<List<int>> generateCalendarDays() {
-    focusedDay = null;
-    int currentMonth = currentDate.month;
-    DateTime firstDayOfMonth = DateTime(currentDate.year, currentMonth, 1);
-    int startingDay = (firstDayOfMonth.weekday - 1) % 7;
-    daysInMonth = DateTime(currentDate.year, currentMonth + 1, 0).day;
+  focusedDay = null;
+  int currentMonth = currentDate.month;
+  DateTime firstDayOfMonth = DateTime(currentDate.year, currentMonth, 1);
+  int startingDay = (firstDayOfMonth.weekday - 1) % 7;
+  daysInMonth = DateTime(currentDate.year, currentMonth + 1, 0).day;
 
-    List<List<int>> calendarDays = [];
-    List<int> week = [];
+  List<List<int>> calendarDays = [];
+  List<int> week = [];
 
-    for (int i = 1; i <= daysInMonth + startingDay; i++) {
-      if (i > startingDay) {
-        week.add(i - startingDay);
-      } else {
+  for (int i = 1; i <= daysInMonth + startingDay; i++) {
+    if (i > startingDay) {
+      week.add(i - startingDay);
+    } else {
+      week.add(0);
+    }
+
+    if (i % 7 == 0 || i == daysInMonth + startingDay) {
+      while (week.length < 7) {
         week.add(0);
       }
 
-      if (i % 7 == 0 || i == daysInMonth + startingDay) {
-        while (week.length < 7) {
-          week.add(0);
-        }
-
-        calendarDays.add(List.from(week));
-        week.clear();
-      }
-    }
-
-    if (week.isNotEmpty) {
       calendarDays.add(List.from(week));
+      week.clear();
     }
-
-    return calendarDays;
   }
+
+  if (week.isNotEmpty) {
+    calendarDays.add(List.from(week));
+  }
+
+  return calendarDays;
+}
