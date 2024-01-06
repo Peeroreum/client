@@ -1,79 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 
 
-class SignUpComplete extends StatelessWidget {
-  var username= '오름이';
+class SignUpComplete extends StatefulWidget {
+  @override
+  State<SignUpComplete> createState() => _SignUpCompleteState();
+}
 
+class _SignUpCompleteState extends State<SignUpComplete> {
+  var nickname= '';
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getNickname();
+  }
+  
+  Future<void> getNickname() async {
+    nickname = (await FlutterSecureStorage().read(key: "nickname"))!;
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: PeeroreumColor.white,
-      body: Center(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 40),
-                width: 320,
-                height: 320,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/signup_complete.png')
+    return FutureBuilder<void> (
+      future: getNickname(),
+      builder: (context, snapshot) {
+        return Scaffold(
+          backgroundColor: PeeroreumColor.white,
+          body: Center(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 40),
+                    width: 320,
+                    height: 320,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/signup_complete.png')
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(height: 79,),
-              Text('${username}님, 가입을 환영해요!',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: PeeroreumColor.black,
-              ),),
-              Text('피어오름 사용을 위한 준비가 완료되었어요.',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-                color: PeeroreumColor.gray[700]
-              ),
-              ),
-          ],
-          ),
-      ),
-      
-      bottomNavigationBar: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 30),
-              width: double.maxFinite,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-                },
-                child: Text(
-                  '피어오름 사용하러 가기',
+                  SizedBox(height: 79,),
+                  Text('${nickname}님, 가입을 환영해요!',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.white,
+                    color: PeeroreumColor.black,
+                  ),),
+                  Text('피어오름 사용을 위한 준비가 완료되었어요.',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[700]
                   ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-                  padding:
-                      MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                  ),
+              ],
+              ),
+          ),
+
+          bottomNavigationBar: Container(
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 30),
+                  width: double.maxFinite,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                    },
+                    child: Text(
+                      '피어오름 사용하러 가기',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: PeeroreumColor.white,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
+                      padding:
+                          MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+        );
+      }
     );
   }
 }
