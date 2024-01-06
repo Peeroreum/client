@@ -4,6 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
+import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
+import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signin_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
@@ -64,6 +66,8 @@ class PeeroreumApp extends StatelessWidget {
         '/wedu/challenge/notok': (context) => EncouragementList(),
         'wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
         //'wedu/challdenge/notok/encourgaement':(context) => EncouragementCheckList(),
+        'signUp/onBoarding':(context) => OnBoarding(),
+        'signUp/Complete':(context) => SignUpComplete(),
       },
       debugShowCheckedModeBanner: false,
     );

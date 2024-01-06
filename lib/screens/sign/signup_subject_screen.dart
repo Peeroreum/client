@@ -328,7 +328,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);
       secureStorage.write(key: "grade", value: data['grade'].toString());
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, 'signUp/Complete', (route) => false);
     } else {
       print(result.statusCode);
     }
