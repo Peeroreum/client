@@ -142,12 +142,13 @@ class _HomeWeduState extends State<HomeWedu> {
           padding: const EdgeInsets.only(right: 20),
           child: Row(
             children: [
-              IconButton(
-                padding: EdgeInsets.only(right: 4),
-                constraints: BoxConstraints(),
-                icon: SvgPicture.asset('assets/icons/plus_square.svg',
-                    color: PeeroreumColor.gray[800]),
-                onPressed: () {
+              GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.only(right: 8),
+                    child: SvgPicture.asset('assets/icons/plus_square.svg',
+                        color: PeeroreumColor.gray[800])
+                ),
+                onTap: () {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
@@ -157,14 +158,12 @@ class _HomeWeduState extends State<HomeWedu> {
                   );
                 },
               ),
-              IconButton(
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(),
-                icon: SvgPicture.asset(
+              GestureDetector(
+                child: SvgPicture.asset(
                   'assets/icons/bell_none.svg',
                   color: PeeroreumColor.gray[800],
                 ),
-                onPressed: () {},
+                onTap: () {},
               )
             ],
           ),
@@ -825,8 +824,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                 SizedBox(
                                   width: datas[index]['locked'].toString() ==
                                           "true"
-                                      ? MediaQuery.of(context).size.width * 0.45
-                                      : MediaQuery.of(context).size.width * 0.5,
+                                      ? MediaQuery.of(context).size.width * 0.42
+                                      : MediaQuery.of(context).size.width * 0.48,
                                   child: CustomWidgetMarquee(
                                     animationDuration: Duration(seconds: 3),
                                     pauseDuration: Duration(seconds: 1),
@@ -884,7 +883,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(left: 4),
+                    padding: EdgeInsets.all(2),
                     decoration: BoxDecoration(
                         color: PeeroreumColor.gray[100],
                         borderRadius: BorderRadius.circular(8)),

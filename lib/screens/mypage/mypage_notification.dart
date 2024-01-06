@@ -41,7 +41,9 @@ class _MyPageNotificationState extends State<MyPageNotification> {
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
-      elevation: 1,
+      surfaceTintColor: PeeroreumColor.white,
+      shadowColor: PeeroreumColor.white,
+      elevation: 0.2,
       leading: IconButton(
         onPressed: () {
           Navigator.of(context).pop();

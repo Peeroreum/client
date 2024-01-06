@@ -55,7 +55,9 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
-      elevation: 0,
+      surfaceTintColor: PeeroreumColor.white,
+      shadowColor: PeeroreumColor.white,
+      elevation: 0.2,
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/x.svg',
