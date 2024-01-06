@@ -369,11 +369,12 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               context: context,
                               builder: (context) {
                                 return Dialog(
+                                  backgroundColor: PeeroreumColor.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0), // 테두리의 둥근 정도 조절
                                     ),
                                   child: Padding(
-                                      padding: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(15),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
@@ -382,6 +383,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                             MainAxisAlignment.center,
                                         children: [
                                           ColorPicker(
+                                            pickerAreaHeightPercent: 0.7,
+                                            pickerAreaBorderRadius: BorderRadius.circular(10),
                                             showLabel: false,
                                             enableAlpha: false,
                                             pickerColor: _backgroundColor,
@@ -399,7 +402,6 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                               });
                                             },
                                           ),
-
                                           TextButton(
                                             onPressed: () {
                                               Navigator.pop(context);
@@ -527,8 +529,12 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               context: context,
                               builder: (context) {
                                 return Dialog(
+                                  backgroundColor: PeeroreumColor.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0), // 테두리의 둥근 정도 조절
+                                    ),
                                   child: Padding(
-                                      padding: const EdgeInsets.all(8),
+                                      padding: const EdgeInsets.all(15),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
@@ -537,6 +543,10 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                             MainAxisAlignment.center,
                                         children: [
                                           ColorPicker(
+                                            pickerAreaHeightPercent: 0.7,
+                                            pickerAreaBorderRadius: BorderRadius.circular(10),
+                                            showLabel: false,
+                                            enableAlpha: false,
                                             pickerColor: _fontColor,
                                             onColorChanged: (Color color) {
                                               setState(() {
@@ -548,7 +558,12 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: const Text('확인'),
+                                            child: const Text('확인',
+                                            style: TextStyle(
+                                              color: PeeroreumColor.black,
+                                              fontFamily: 'Pretendard'
+                                            ),
+                                            ),
                                           )
                                         ],
                                       )),
