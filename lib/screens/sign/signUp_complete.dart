@@ -4,7 +4,7 @@ import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 
 
 class SignUpComplete extends StatelessWidget {
-  const SignUpComplete({super.key});
+  var username= '오름이';
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +26,21 @@ class SignUpComplete extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 79,),
-              Text('가입이 완료되었어요!',
+              Text('${username}님, 가입을 환영해요!',
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: PeeroreumColor.black,
               ),),
-              //Text(),
+              Text('피어오름 사용을 위한 준비가 완료되었어요.',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+                color: PeeroreumColor.gray[700]
+              ),
+              ),
           ],
           ),
       ),
@@ -46,7 +53,7 @@ class SignUpComplete extends StatelessWidget {
                   Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                 },
                 child: Text(
-                  '다음',
+                  '피어오름 사용하러 가기',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 16,

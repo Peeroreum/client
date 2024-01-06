@@ -41,7 +41,7 @@ class _OnBoardingState extends State<OnBoarding> {
                 ),
                 buildCarouselItem(
                   '“중요한 건 꾸준히 하는 마음!”',
-                  '공부 시간, 질문 답변 수, 목표 달성률에 따라\n''실시간으로 달라지는 내 순위를 확인해 보세요.',
+                  '공부 시간, 질문 답변 수, 목표 달성률에 따라\n''달라지는 내 순위를 확인해 보세요.',
                   'assets/images/onBoarding3.png',
                 ),
               ],
