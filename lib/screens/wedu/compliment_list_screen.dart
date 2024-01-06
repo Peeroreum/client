@@ -6,8 +6,9 @@ class ComplimentList extends StatefulWidget {
   @override
   State<ComplimentList> createState() => _ComplimentListState();
 }
+
 class _ComplimentListState extends State<ComplimentList> {
-  List<dynamic> successList =[];
+  List<dynamic> successList = [];
   @override
   Widget build(BuildContext context) {
     successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
@@ -41,8 +42,7 @@ class _ComplimentListState extends State<ComplimentList> {
                 icon: SvgPicture.asset(
                   'assets/icons/icon_dots_mono.svg',
                   color: PeeroreumColor.gray[800],
-                )
-            )
+                ))
           ],
         ),
         body: SingleChildScrollView(
@@ -91,7 +91,7 @@ class _ComplimentListState extends State<ComplimentList> {
                       TextButton.icon(
                         onPressed: () {},
                         icon: SvgPicture.asset(
-                            'assets/icons/check.svg',
+                          'assets/icons/check.svg',
                           color: PeeroreumColor.gray[500],
                         ),
                         style: TextButton.styleFrom(
@@ -135,8 +135,8 @@ class _ComplimentListState extends State<ComplimentList> {
                 ),
               ),
               style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
+                  backgroundColor: MaterialStateProperty.all(
+                      PeeroreumColor.primaryPuple[400]),
                   padding: MaterialStateProperty.all(
                       EdgeInsets.symmetric(vertical: 12)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -150,50 +150,62 @@ class _ComplimentListState extends State<ComplimentList> {
 
   okList() {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: double.maxFinite,
-      child: ListView.separated(
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(3.5),
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          color: PeeroreumColor.gradeColor[successList[index]['grade']]!
+        width: MediaQuery.of(context).size.width,
+        height: double.maxFinite,
+        child: ListView.separated(
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: 2,
+                            color: PeeroreumColor
+                                .gradeColor[successList[index]['grade']]!),
                       ),
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/user.jpg')
+                      child: Container(
+                        height: 44,
+                        width: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            width: 1,
+                            color: PeeroreumColor.white,
+                          ),
+                          image: successList[index]["profileImage"] != null
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      successList[index]["profileImage"]))
+                              : DecorationImage(
+                                  image: AssetImage('assets/images/user.jpg')),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    successList[index]['nickname'],
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[800]),
-                  )
-                ],
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) => Divider(
-            color: PeeroreumColor.gray[100],
-            thickness: 1,
-            height: 8,
-          ),
-          itemCount: successList.length
-      )
-    );
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      successList[index]['nickname'],
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[800]),
+                    )
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) => Divider(
+                  color: PeeroreumColor.gray[100],
+                  thickness: 1,
+                  height: 8,
+                ),
+            itemCount: successList.length));
   }
 }
