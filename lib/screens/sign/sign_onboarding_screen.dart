@@ -162,13 +162,7 @@ class _OnBoardingState extends State<OnBoarding> {
               width: double.maxFinite,
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => EmailSignUp(),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)),
-                  );
+                  Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
                 },
                 child: Text(
                   '확인',
