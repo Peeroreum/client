@@ -27,6 +27,8 @@ class DetailWedu extends StatefulWidget {
   @override
   State<DetailWedu> createState() => _DetailWeduState(id);
 }
+double stackWidth=0;
+double leftPosition=0;
 
 class _DetailWeduState extends State<DetailWedu> {
   int id;
@@ -70,6 +72,13 @@ class _DetailWeduState extends State<DetailWedu> {
       weduProgress = weduData['progress'].toString();
       weduChallenge = weduData['challenge'];
       percent = double.parse(weduProgress) / 100;
+      if (weduProgress == '0') {
+        leftPosition = 0; // percent가 0일 때의 처리
+      } else if (weduProgress == '100') {
+        leftPosition = stackWidth * percent - 42; // percent가 1일 때의 처리
+      } else {
+        leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
+      }
     } else {
       print("에러${weduResult.statusCode}");
     }
@@ -125,6 +134,9 @@ class _DetailWeduState extends State<DetailWedu> {
       setState(() {
         _images.add(image);
       });
+    }else {
+      // 이미지 선택이 취소되었을 때의 처리
+      print('Image selection cancelled');
     }
   }
 
@@ -152,7 +164,6 @@ class _DetailWeduState extends State<DetailWedu> {
       var file = await MultipartFile.fromFile(image.path);
       formData.files.add(MapEntry('files', file));
     }
-
     var response =
         await dio.post('${API.hostConnect}/wedu/$id/challenge', data: formData);
 
@@ -825,34 +836,79 @@ class _DetailWeduState extends State<DetailWedu> {
                             thickness: 1,
                             color: PeeroreumColor.gray[100],
                           ),
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
-                            padding: EdgeInsets.all(4),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: PeeroreumColor.primaryPuple[400],
+                          // Container(
+                          //   margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
+                          //   padding: EdgeInsets.all(4),
+                          //   alignment: Alignment.center,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(8),
+                          //     color: PeeroreumColor.primaryPuple[400],
+                          //   ),
+                          //   width: 42,
+                          //   child: Text(
+                          //     '${weduProgress}%',
+                          //     style: TextStyle(
+                          //         fontFamily: 'Pretendard',
+                          //         fontWeight: FontWeight.w600,
+                          //         fontSize: 12,
+                          //         color: PeeroreumColor.white),
+                          //   ),
+                          // ),
+                          Stack(
+                            children: [
+                              LayoutBuilder(
+                                builder: (BuildContext context, BoxConstraints constraints) {
+                                  stackWidth = constraints.maxWidth;
+                                  // if (weduProgress == '0') {
+                                  //   leftPosition = 0; // percent가 0일 때의 처리
+                                  // } else if (weduProgress == '100') {
+                                  //   leftPosition = stackWidth * percent - 42; // percent가 1일 때의 처리
+                                  // } else {
+                                  //   leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
+                                  // }
+                                  return Container(
+                                    margin: EdgeInsets.only(top: 30),
+                                    child: SizedBox(
+                                      height: 24,
+                                      child: LinearPercentIndicator(
+                                        padding: EdgeInsets.all(0),
+                                        lineHeight: 8,
+                                        animationDuration: 2000,
+                                        percent: percent,
+                                        backgroundColor: PeeroreumColor.gray[200],
+                                        linearGradient: LinearGradient(colors: [
+                                          PeeroreumColor.primaryPuple[400]!,
+                                          Color(0xffada5fc)
+                                        ]),
+                                        barRadius: Radius.circular(8),
+                                                                ),
+                                    ),
+                                  );
+                                }
+                              ),
+                              Positioned(
+                                top: 0,
+                                left: leftPosition,
+                                child: Container(
+                                margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
+                                padding: EdgeInsets.all(4),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: PeeroreumColor.primaryPuple[400],
+                                ),
+                                width: 42,
+                                child: Text(
+                                  '${weduProgress}%',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                      color: PeeroreumColor.white),
+                                ),
+                              ),
                             ),
-                            width: 42,
-                            child: Text(
-                              '${weduProgress}%',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                  color: PeeroreumColor.white),
-                            ),
-                          ),
-                          LinearPercentIndicator(
-                            padding: EdgeInsets.all(0),
-                            lineHeight: 8,
-                            percent: percent,
-                            backgroundColor: PeeroreumColor.gray[200],
-                            linearGradient: LinearGradient(colors: [
-                              PeeroreumColor.primaryPuple[400]!,
-                              Color(0xffada5fc)
-                            ]),
-                            barRadius: Radius.circular(8),
+                            ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
