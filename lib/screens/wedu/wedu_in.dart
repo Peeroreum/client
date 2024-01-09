@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -291,6 +292,10 @@ class _InWeduState extends State<InWedu> {
       },
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailWedu(ing_group[index]["id"])));
+          },
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
