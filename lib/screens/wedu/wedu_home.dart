@@ -15,6 +15,8 @@ import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:uni_links/uni_links.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -45,8 +47,40 @@ class _HomeWeduState extends State<HomeWedu> {
   void initState() {
     super.initState();
     fetchDatas();
+    _initDeepLinkListener();
   }
 
+  Future<void> _initDeepLinkListener() async {
+    // 앱이 처음 실행될 때의 딥 링크를 가져오기
+    var initialLink = await getInitialLink();
+    _handleDeepLink(initialLink);
+
+    // 딥 링크의 변경을 수신하는 스트림 리스너 등록
+    linkStream.listen((String? link) {
+      _handleDeepLink(link);
+    });
+  }
+
+  void _handleDeepLink(String? link) {
+    if (link != null && link.isNotEmpty) {
+      // 딥 링크를 처리하는 로직 추가
+      // 예: 네비게이션, 데이터 로딩 등
+      print('Handling deep link: $link');
+    }
+  }
+
+  String generateDeepLink() {
+    // 딥 링크를 생성하는 로직 추가
+    // 예: 'peeroreum://example.com'
+    return 'peeroreum://wedu.com';
+  }
+
+  void shareDeepLink() {
+    String deepLink = generateDeepLink();
+    // 딥 링크를 공유하는 로직 추가
+    // 예: share 패키지를 사용하여 딥 링크 공유
+    Share.share(deepLink);
+  }
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
@@ -723,6 +757,7 @@ class _HomeWeduState extends State<HomeWedu> {
           ),
           onTap: () {
             showModalBottomSheet(
+              backgroundColor: Colors.transparent,
               context: context,
               isScrollControlled: true,
               builder: (context) {
@@ -885,7 +920,9 @@ class _HomeWeduState extends State<HomeWedu> {
                         color: PeeroreumColor.gray[100],
                         borderRadius: BorderRadius.circular(8)),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        shareDeepLink();
+                      },
                       icon: SvgPicture.asset(
                         'assets/icons/share.svg',
                       ),
