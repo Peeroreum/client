@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -248,17 +249,17 @@ class _HomeWeduState extends State<HomeWedu> {
                 ),
               ],
             ),
-            // TextButton(
-            //     onPressed: () {
-            //       Navigator.of(context)
-            //           .push(MaterialPageRoute(builder: (context) => InWedu()));
-            //     },
-            //     child: Text('전체 보기',
-            //         style: TextStyle(
-            //             fontFamily: 'Pretendard',
-            //             fontWeight: FontWeight.w600,
-            //             fontSize: 14,
-            //             color: PeeroreumColor.gray[500])))
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => InWedu()));
+                },
+                child: Text('전체 보기',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: PeeroreumColor.gray[500])))
           ],
         ),
       ),
