@@ -58,7 +58,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     withPeerDay = await VisitCount.getVisitCount();
-    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
+    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'

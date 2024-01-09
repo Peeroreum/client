@@ -23,7 +23,7 @@ class HomeWedu extends StatefulWidget {
 }
 
 class _HomeWeduState extends State<HomeWedu> {
-  var token;
+  var token, nickname;
   int selectedIndex = 1;
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
@@ -48,6 +48,8 @@ class _HomeWeduState extends State<HomeWedu> {
 
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
+    nickname = await FlutterSecureStorage().read(key: "nickname");
+
     var weduResult = await http.get(
         Uri.parse(
             '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject'),
@@ -60,7 +62,7 @@ class _HomeWeduState extends State<HomeWedu> {
     } else {
       print("에러${weduResult.statusCode}");
     }
-    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
+    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
