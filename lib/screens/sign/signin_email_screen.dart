@@ -13,6 +13,7 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
+import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
@@ -63,20 +64,13 @@ class _EmailSignInState extends State<EmailSignIn> {
       },
       child: Scaffold(
         // resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
+        backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: PeeroreumColor.white,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
           elevation: 0.0,
           automaticallyImplyLeading: false,
-          // leading: IconButton(
-          //   icon: Icon(
-          //     Icons.arrow_back,
-          //     color: Colors.grey[800],
-          //   ),
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
         ),
         body: ListView(children: [
           Container(
@@ -195,9 +189,6 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   : SizedBox(
                                       width: 0,
                                     ),
-                              SizedBox(
-                                width: 12,
-                              ),
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -205,7 +196,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   });
                                 },
                                 child: SvgPicture.asset(
-                                  pw_visible
+                                  !pw_visible
                                       ? "assets/icons/eye_on.svg"
                                       : "assets/icons/eye_off.svg",
                                   color: PeeroreumColor.gray[600],
@@ -526,7 +517,7 @@ class _EmailSignInState extends State<EmailSignIn> {
       Navigator.push(
         context,
         PageRouteBuilder(
-            pageBuilder: (_, __, ___) => SignUpNickname(member),
+            pageBuilder: (_, __, ___) => SignUp(member),
             transitionDuration: const Duration(seconds: 0),
             reverseTransitionDuration: const Duration(seconds: 0)),
       );

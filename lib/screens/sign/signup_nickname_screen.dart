@@ -50,10 +50,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.grey[800],
-            ),
+            icon: SvgPicture.asset('assets/icons/arrow-left.svg', color: PeeroreumColor.gray[800]),
             onPressed: () {
               Navigator.pop(context);
             },

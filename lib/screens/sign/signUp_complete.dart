@@ -18,7 +18,11 @@ class _SignUpCompleteState extends State<SignUpComplete> {
   }
   
   Future<void> getNickname() async {
-    nickname = (await FlutterSecureStorage().read(key: "nickname"))!;
+    var storageNickname = await const FlutterSecureStorage().read(key: "nickname");
+    setState(() {
+      nickname = storageNickname!;
+    });
+
   }
   
   @override

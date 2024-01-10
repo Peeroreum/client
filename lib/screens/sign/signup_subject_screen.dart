@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
@@ -27,7 +28,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
 
-  final _levels = ['상', '중', '하'];
+  final _levels = ['처음 보는 문제여도 어려움 없이 풀 수 있어요.', '활용 문제를 풀 수 있지만 시간이 필요해요.', '기본 문제는 풀 수 있지만, 활용 문제는 풀기 어려워요.', '기본 문제를 풀 수 있어요.', '기본 개념을 이해하지 못했어요.'];
   List<String> goodDetailSubjects = [];
   List<String> badDetailSubjects = [];
   String? _goodSubject;
@@ -69,10 +70,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.grey[800],
-            ),
+            icon: SvgPicture.asset('assets/icons/arrow-left.svg', color: PeeroreumColor.gray[800]),
             onPressed: () {
               Navigator.pop(context);
             },
