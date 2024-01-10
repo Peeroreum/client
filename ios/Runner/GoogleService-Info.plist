@@ -6,9 +6,31 @@
 	<string>984740225939-02sqnjvc9hr1lierr8mgrgrhph7cu8l9.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.984740225939-02sqnjvc9hr1lierr8mgrgrhph7cu8l9</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>984740225939-l27n8l5q2icrj1fudm4f3jhi479tm6tu.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDIF_Z4E72oosJ73yg2U6u6tBrk3p8zZ8E</string>
+	<key>GCM_SENDER_ID</key>
+	<string>984740225939</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.peeroreumClient</string>
+	<key>PROJECT_ID</key>
+	<string>peeroreum-409506</string>
+	<key>STORAGE_BUCKET</key>
+	<string>peeroreum-409506.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:984740225939:ios:98facff641d2ee65e3be66</string>
 </dict>
 </plist>
