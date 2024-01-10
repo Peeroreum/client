@@ -101,13 +101,15 @@ class _EmailSignUpState extends State<EmailSignUp> {
                       child: TextFormField(
                           controller: id_controller,
                           onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              id_showClearbutton = true;
-                            } else {
-                              id_showClearbutton = false;
-                            }
-                            _checkInput();
-                            validateEmail();
+                            setState(() {
+                              if (value.isNotEmpty) {
+                                id_showClearbutton = true;
+                              } else {
+                                id_showClearbutton = false;
+                              }
+                              _checkInput();
+                              validateEmail();
+                            });
                           },
                           decoration: InputDecoration(
                             hintText: 'peer@mail.com',
@@ -247,7 +249,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                           if (RegExp(
                                   r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
                               .hasMatch(pw_controller.text)) {
-                            pw_check = true;
+                            setState(() {
+                              pw_check = true;
+                            });
                           } else{
                             setState(() {
                               pw_check = false;
@@ -262,7 +266,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                               fontSize: 14,
                               color: PeeroreumColor.gray[600]),
                           errorText:
-                              pw_controller.text.length >= 12 && !pw_check
+                              pw_controller.text.length >= 2 && !pw_check
                                   ? "영문, 숫자, 특수문자 포함 8자~12자"
                                   : null,
                           errorBorder: OutlineInputBorder(
@@ -289,8 +293,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                             setState(() {
                                               pw_showClearbutton = false;
                                               pw_check = false;
-                                              _checkInput();
                                             });
+                                            _checkInput();
                                           },
                                           icon: SvgPicture.asset(
                                             "assets/icons/x_circle.svg",
@@ -409,11 +413,11 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             fontWeight: FontWeight.w400,
                             fontSize: 12,
                             color: PeeroreumColor.primaryPuple[400]),
-                        errorText: !pw2_check && pw2_controller.text.length >= 8
+                        errorText: !pw2_check && pw2_controller.text.length >= 2
                             ? "비밀번호가 일치하지 않습니다."
                             : null,
                         errorStyle:
-                            !pw2_check && pw2_controller.text.length >= 8
+                            !pw2_check && pw2_controller.text.length >= 2
                                 ? TextStyle(
                                     fontFamily: "Pretendard",
                                     fontWeight: FontWeight.w400,
@@ -443,8 +447,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                         setState(() {
                                           pw2_showClearbutton = false;
                                           pw2_check = false;
-                                          _checkInput();
                                         });
+                                        _checkInput();
                                       },
                                       icon: SvgPicture.asset(
                                         "assets/icons/x_circle.svg",
@@ -525,13 +529,15 @@ class _EmailSignUpState extends State<EmailSignUp> {
 
   validateEmail() async {
     id_duplicate = await isDuplicatedEmail();
-    if (RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-            .hasMatch(id_controller.text) &&
-        !id_duplicate) {
-      id_check = true;
-    } else {
-      id_check = false;
-    }
+    setState(() {
+      if (RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+          .hasMatch(id_controller.text) &&
+          !id_duplicate) {
+        id_check = true;
+      } else {
+        id_check = false;
+      }
+    });
   }
 
   isDuplicatedEmail() async {
@@ -582,7 +588,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
             color: PeeroreumColor.primaryPuple[400],
           ));
     }
-    if (pw_controller.text.length >= 12 && !pw_check) {
+    if (pw_controller.text.length >= 2 && !pw_check) {
       return Container(
           padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
@@ -615,7 +621,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
             color: PeeroreumColor.primaryPuple[400],
           ));
     }
-    if (pw2_controller.text.length >= 8 && !pw2_check) {
+    if (pw2_controller.text.length >= 2 && !pw2_check) {
       return Container(
           padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
