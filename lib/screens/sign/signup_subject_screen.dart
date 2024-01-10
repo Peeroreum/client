@@ -28,7 +28,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
 
-  final _levels = ['상', '중', '하'];
+  final _levels = ['처음 보는 문제여도 어려움 없이 풀 수 있어요.', '활용 문제를 풀 수 있지만 시간이 필요해요.', '기본 문제는 풀 수 있지만, 활용 문제는 풀기 어려워요.', '기본 문제를 풀 수 있어요.', '기본 개념을 이해하지 못했어요.'];
   List<String> goodDetailSubjects = [];
   List<String> badDetailSubjects = [];
   String? _goodSubject;
