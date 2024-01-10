@@ -1179,7 +1179,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget Badge() {
     return ListView.separated(
         scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
+        // shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return Container(
             width: 48, //52에서 overflow문제로 변경
@@ -1261,7 +1261,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget in_room_body() {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
-      shrinkWrap: true,
+      // shrinkWrap: true,
       padding: EdgeInsets.symmetric(horizontal: 20),
       itemCount: inroom_datas.length,
       separatorBuilder: (BuildContext context, int index) {
