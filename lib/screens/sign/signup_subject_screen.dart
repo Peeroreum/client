@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
@@ -69,10 +70,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.grey[800],
-            ),
+            icon: SvgPicture.asset('assets/icons/arrow-left.svg', color: PeeroreumColor.gray[800]),
             onPressed: () {
               Navigator.pop(context);
             },

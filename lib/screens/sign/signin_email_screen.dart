@@ -63,20 +63,13 @@ class _EmailSignInState extends State<EmailSignIn> {
       },
       child: Scaffold(
         // resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
+        backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: PeeroreumColor.white,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
           elevation: 0.0,
           automaticallyImplyLeading: false,
-          // leading: IconButton(
-          //   icon: Icon(
-          //     Icons.arrow_back,
-          //     color: Colors.grey[800],
-          //   ),
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
         ),
         body: ListView(children: [
           Container(
