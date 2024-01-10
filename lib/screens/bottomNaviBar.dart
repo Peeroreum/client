@@ -1,22 +1,31 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/model/FirebaseToken.dart';
 import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
 import 'package:peeroreum_client/screens/prepare.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
+import 'package:http/http.dart' as http;
+
+import '../api/PeeroreumApi.dart';
 
 class bottomNaviBar extends StatefulWidget {
-  const bottomNaviBar({super.key});
+  String firebaseToken;
+  bottomNaviBar(this.firebaseToken, {super.key});
 
   @override
-  State<bottomNaviBar> createState() => _bottomNaviBarState();
+  State<bottomNaviBar> createState() => _bottomNaviBarState(firebaseToken);
 }
 
 class _bottomNaviBarState extends State<bottomNaviBar> {
+  String firebaseToken;
   var selectedIndex = 1;
 
   List _pages = [
@@ -27,15 +36,36 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
     MyPage(),
   ];
 
+  _bottomNaviBarState(this.firebaseToken);
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    postFirebaseToken();
     visitCount();
   }
 
   void visitCount() async {
     await VisitCount.incrementVisitCount();
+  }
+
+  postFirebaseToken() async {
+    var token = await const FlutterSecureStorage().read(key: 'accessToken');
+    var result = await http.post(
+        Uri.parse('${API.hostConnect}/member/firebasetoken'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(FirebaseToken(firebaseToken: firebaseToken))
+    );
+
+    if(result.statusCode == 200) {
+      print("firebaseToken post 성공");
+    } else {
+      print("firebaseToken post 실패 ${result.statusCode}");
+    }
   }
 
   Widget bottomNavigatorBarWidget() {

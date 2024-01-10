@@ -67,6 +67,7 @@ class _EmailSignInState extends State<EmailSignIn> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0.0,
+          automaticallyImplyLeading: false,
           // leading: IconButton(
           //   icon: Icon(
           //     Icons.arrow_back,
@@ -289,16 +290,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   secureStorage.write(
                                       key: "grade",
                                       value: data['grade'].toString());
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      PageRouteBuilder(
-                                          pageBuilder: (_, __, ___) =>
-                                              bottomNaviBar(),
-                                          transitionDuration:
-                                              const Duration(seconds: 0),
-                                          reverseTransitionDuration:
-                                              const Duration(seconds: 0)),
-                                      (route) => false);
+                                  Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                                 } else if (result.statusCode == 404 ||
                                     result.statusCode == 401) {
                                   Fluttertoast.showToast(

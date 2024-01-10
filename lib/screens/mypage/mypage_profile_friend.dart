@@ -116,7 +116,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
 
   Widget friends() {
     return ListView.separated(
-        shrinkWrap: true,
+        // shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return ElevatedButton(
             onPressed: () {
