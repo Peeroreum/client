@@ -15,8 +15,8 @@ import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:uni_links/uni_links.dart';
-import 'package:share_plus/share_plus.dart';
+// import 'package:uni_links/uni_links.dart';
+// import 'package:share_plus/share_plus.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -52,13 +52,13 @@ class _HomeWeduState extends State<HomeWedu> {
 
   Future<void> _initDeepLinkListener() async {
     // 앱이 처음 실행될 때의 딥 링크를 가져오기
-    var initialLink = await getInitialLink();
-    _handleDeepLink(initialLink);
-
-    // 딥 링크의 변경을 수신하는 스트림 리스너 등록
-    linkStream.listen((String? link) {
-      _handleDeepLink(link);
-    });
+    // var initialLink = await getInitialLink();
+    // _handleDeepLink(initialLink);
+    //
+    // // 딥 링크의 변경을 수신하는 스트림 리스너 등록
+    // linkStream.listen((String? link) {
+    //   _handleDeepLink(link);
+    // });
   }
 
   void _handleDeepLink(String? link) {
@@ -79,7 +79,7 @@ class _HomeWeduState extends State<HomeWedu> {
     String deepLink = generateDeepLink();
     // 딥 링크를 공유하는 로직 추가
     // 예: share 패키지를 사용하여 딥 링크 공유
-    Share.share(deepLink);
+    // Share.share(deepLink);
   }
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");

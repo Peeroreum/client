@@ -189,9 +189,6 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   : SizedBox(
                                       width: 0,
                                     ),
-                              SizedBox(
-                                width: 12,
-                              ),
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -199,7 +196,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   });
                                 },
                                 child: SvgPicture.asset(
-                                  pw_visible
+                                  !pw_visible
                                       ? "assets/icons/eye_on.svg"
                                       : "assets/icons/eye_off.svg",
                                   color: PeeroreumColor.gray[600],
