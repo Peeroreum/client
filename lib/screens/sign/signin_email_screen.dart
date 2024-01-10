@@ -13,6 +13,7 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
+import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
@@ -519,7 +520,7 @@ class _EmailSignInState extends State<EmailSignIn> {
       Navigator.push(
         context,
         PageRouteBuilder(
-            pageBuilder: (_, __, ___) => SignUpNickname(member),
+            pageBuilder: (_, __, ___) => SignUp(member),
             transitionDuration: const Duration(seconds: 0),
             reverseTransitionDuration: const Duration(seconds: 0)),
       );
