@@ -67,6 +67,7 @@ class _EmailSignInState extends State<EmailSignIn> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0.0,
+          automaticallyImplyLeading: false,
           // leading: IconButton(
           //   icon: Icon(
           //     Icons.arrow_back,
