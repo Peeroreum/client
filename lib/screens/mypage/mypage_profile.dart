@@ -77,11 +77,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
           'Authorization': 'Bearer $token'
         });
     if (profileinfo.statusCode == 200) {
-      grade = jsonDecode(utf8.decode(profileinfo.bodyBytes))["data"]["grade"];
-      friendNumber = jsonDecode(utf8.decode(profileinfo.bodyBytes))["data"]
-          ["friendNumber"];
-      profileImage = jsonDecode(utf8.decode(profileinfo.bodyBytes))["data"]
-          ["profileImage"];
+      var data = jsonDecode(utf8.decode(profileinfo.bodyBytes))['data'];
+      grade = data["grade"];
+      friendNumber = data["friendNumber"];
+      profileImage = data["profileImage"];
+      is_friend = data['following'];
     }
   }
 
