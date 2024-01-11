@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,8 +16,9 @@ import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
-// import 'package:uni_links/uni_links.dart';
+import 'package:uni_links/uni_links.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -49,8 +49,8 @@ class _HomeWeduState extends State<HomeWedu> {
   void initState() {
     super.initState();
     fetchDatas();
-    //_initDeepLinkListener();
   }
+
   Future<String> getShortLink(String screenName, String id) async {
   String dynamicLinkPrefix = 'https://peeroreum.page.link';
   final dynamicLinkParams = DynamicLinkParameters(
@@ -71,7 +71,7 @@ class _HomeWeduState extends State<HomeWedu> {
 
   return dynamicLink.shortUrl.toString();
   }
-  
+
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
@@ -860,35 +860,6 @@ class _HomeWeduState extends State<HomeWedu> {
                                         color: PeeroreumColor.black),
                                   ),
                                 ),
-                                Text('D-${datas[index]["dday"]!}',
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: PeeroreumColor.gray[600])),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                        color: PeeroreumColor.gray[100],
-                        borderRadius: BorderRadius.circular(8)),
-                    child: IconButton(
-                      onPressed: () async{
-                        Share.share(
-                          await getShortLink(
-                            '/home',
-                            '$index',
-                          )
-                        );
-                      },
-                      icon: SvgPicture.asset(
-                        'assets/icons/share.svg',
                               ),
                             ],
                           ),
@@ -937,8 +908,13 @@ class _HomeWeduState extends State<HomeWedu> {
                       color: PeeroreumColor.gray[100],
                       borderRadius: BorderRadius.circular(8)),
                   child: IconButton(
-                    onPressed: () {
-                      shareDeepLink();
+                    onPressed: () async{
+                      Share.share(
+                          await getShortLink(
+                            '/home',
+                            '$index',
+                          )
+                        );
                     },
                     icon: SvgPicture.asset(
                       'assets/icons/share.svg',
