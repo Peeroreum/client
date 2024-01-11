@@ -27,8 +27,9 @@ class DetailWedu extends StatefulWidget {
   @override
   State<DetailWedu> createState() => _DetailWeduState(id);
 }
-double stackWidth=0;
-double leftPosition=0;
+
+double stackWidth = 0;
+double leftPosition = 0;
 
 class _DetailWeduState extends State<DetailWedu> {
   int id;
@@ -134,7 +135,7 @@ class _DetailWeduState extends State<DetailWedu> {
       setState(() {
         _images.add(image);
       });
-    }else {
+    } else {
       // 이미지 선택이 취소되었을 때의 처리
       print('Image selection cancelled');
     }
@@ -557,23 +558,23 @@ class _DetailWeduState extends State<DetailWedu> {
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
 
-    return Container(
-      width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.7,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+    return Flexible(
+      child: Container(
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: PeeroreumColor.white, // 여기에 색상 지정
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          padding: EdgeInsets.all(20),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               ButtonBar(
+                buttonPadding: EdgeInsets.all(0),
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
@@ -635,14 +636,13 @@ class _DetailWeduState extends State<DetailWedu> {
                     builder: (BuildContext context) {
                       return Container(
                         width: double.maxFinite,
-                        height: double.maxFinite,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[100],
                             image: i != null
                                 ? DecorationImage(
                                     image: NetworkImage(imageUrl),
-                                    fit: BoxFit.fill)
+                                    fit: BoxFit.cover)
                                 : null),
                         child: Align(
                           alignment: Alignment.bottomRight,
@@ -670,38 +670,44 @@ class _DetailWeduState extends State<DetailWedu> {
                 options: CarouselOptions(
                   enableInfiniteScroll: false,
                   viewportFraction: 1,
-                  height: MediaQuery.of(context).size.height * 0.45,
+                  height: 380,
                   enlargeCenterPage: true,
                 ),
               ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 28),
-          width: double.maxFinite,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              '닫기',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: PeeroreumColor.gray[600],
+              SizedBox(
+                height: 20,
               ),
-            ),
-            style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 12)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ))),
+              Container(
+                height: 48,
+                margin: EdgeInsets.symmetric(
+                  vertical: 8,
+                ),
+                width: double.maxFinite,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    '닫기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.gray[600],
+                    ),
+                  ),
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(vertical: 12)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ))),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -856,58 +862,57 @@ class _DetailWeduState extends State<DetailWedu> {
                           // ),
                           Stack(
                             children: [
-                              LayoutBuilder(
-                                builder: (BuildContext context, BoxConstraints constraints) {
-                                  stackWidth = constraints.maxWidth;
-                                  // if (weduProgress == '0') {
-                                  //   leftPosition = 0; // percent가 0일 때의 처리
-                                  // } else if (weduProgress == '100') {
-                                  //   leftPosition = stackWidth * percent - 42; // percent가 1일 때의 처리
-                                  // } else {
-                                  //   leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
-                                  // }
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    child: SizedBox(
-                                      height: 24,
-                                      child: LinearPercentIndicator(
-                                        padding: EdgeInsets.all(0),
-                                        lineHeight: 8,
-                                        animationDuration: 2000,
-                                        percent: percent,
-                                        backgroundColor: PeeroreumColor.gray[200],
-                                        linearGradient: LinearGradient(colors: [
-                                          PeeroreumColor.primaryPuple[400]!,
-                                          Color(0xffada5fc)
-                                        ]),
-                                        barRadius: Radius.circular(8),
-                                                                ),
+                              LayoutBuilder(builder: (BuildContext context,
+                                  BoxConstraints constraints) {
+                                stackWidth = constraints.maxWidth;
+                                // if (weduProgress == '0') {
+                                //   leftPosition = 0; // percent가 0일 때의 처리
+                                // } else if (weduProgress == '100') {
+                                //   leftPosition = stackWidth * percent - 42; // percent가 1일 때의 처리
+                                // } else {
+                                //   leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
+                                // }
+                                return Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: SizedBox(
+                                    height: 24,
+                                    child: LinearPercentIndicator(
+                                      padding: EdgeInsets.all(0),
+                                      lineHeight: 8,
+                                      animationDuration: 2000,
+                                      percent: percent,
+                                      backgroundColor: PeeroreumColor.gray[200],
+                                      linearGradient: LinearGradient(colors: [
+                                        PeeroreumColor.primaryPuple[400]!,
+                                        Color(0xffada5fc)
+                                      ]),
+                                      barRadius: Radius.circular(8),
                                     ),
-                                  );
-                                }
-                              ),
+                                  ),
+                                );
+                              }),
                               Positioned(
                                 top: 0,
                                 left: leftPosition,
                                 child: Container(
-                                margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
-                                padding: EdgeInsets.all(4),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: PeeroreumColor.primaryPuple[400],
-                                ),
-                                width: 42,
-                                child: Text(
-                                  '${weduProgress}%',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                      color: PeeroreumColor.white),
+                                  margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
+                                  padding: EdgeInsets.all(4),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: PeeroreumColor.primaryPuple[400],
+                                  ),
+                                  width: 42,
+                                  child: Text(
+                                    '${weduProgress}%',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                        color: PeeroreumColor.white),
+                                  ),
                                 ),
                               ),
-                            ),
                             ],
                           ),
                           Row(
