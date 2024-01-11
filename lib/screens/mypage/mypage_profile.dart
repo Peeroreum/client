@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
@@ -43,6 +42,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   List<dynamic> badges = [];
   var grade;
   var profileImage;
+  var backgroundImage;
   var friendNumber;
   var withPeerDay = 0;
   Member member = Member();
@@ -82,6 +82,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       grade = data["grade"];
       friendNumber = data["friendNumber"];
       profileImage = data["profileImage"];
+      backgroundImage = data["backgroundImage"];
       is_friend = data['following'];
     }
   }
@@ -103,6 +104,27 @@ class _MyPageProfileState extends State<MyPageProfile> {
       });
     } else {
       print("프로필이미지 ${profileChange.statusMessage}");
+    }
+  }
+
+  backgroundImageAPI(var _image1) async {
+    var image1 = await MultipartFile.fromFile(_image1!.path);
+    var imageMap1 = <String, dynamic>{'profileImage': image1};
+    var dio = Dio();
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.headers = {'Authorization': 'Bearer $token'};
+    FormData imageData = FormData.fromMap(imageMap1);
+    var backgroundChange = await dio.put(
+        '${API.hostConnect}/member/change/backgroundImage',
+        data: imageData);
+    if (backgroundChange.statusCode == 200) {
+      print("배경이미지 성공 ${backgroundChange.statusMessage}");
+      var data = backgroundChange.data['data'];
+      setState(() {
+        backgroundImage = data;
+      });
+    } else {
+      print("배경이미지 ${backgroundChange.statusMessage}");
     }
   }
 
@@ -292,94 +314,113 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Widget changeMe() {
-    return Container(
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.0),
-          topRight: Radius.circular(16.0),
-        ),
-      ),
+    return Flexible(
       child: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 16, top: 4),
-              child: Text(
-                '프로필 관리',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: PeeroreumColor.black,
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: PeeroreumColor.white, // 여기에 색상 지정
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 16, top: 4),
+                child: Text(
+                  '프로필 관리',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black,
+                  ),
                 ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                profileImage_change(context);
-              },
-              style: TextButton.styleFrom(
-                minimumSize: Size.fromHeight(40),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all(0),
-              ),
-              child: Text(
-                '프로필 사진 변경',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.black,
+              TextButton(
+                onPressed: () {
+                  profileImage_change(context);
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: Size.fromHeight(40),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(0),
+                ),
+                child: Text(
+                  '프로필 사진 변경',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.black,
+                  ),
                 ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                nickname_change();
-              },
-              style: TextButton.styleFrom(
-                minimumSize: Size.fromHeight(40),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all(0),
-              ),
-              child: Text(
-                '닉네임 변경',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.black,
+              TextButton(
+                onPressed: () {
+                  nickname_change();
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: Size.fromHeight(40),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(0),
+                ),
+                child: Text(
+                  '닉네임 변경',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.black,
+                  ),
                 ),
               ),
-            ),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                minimumSize: Size.fromHeight(40),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all(0),
-              ),
-              child: Text(
-                '배경 사진 변경',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.black,
+              TextButton(
+                onPressed: () async {
+                  XFile? _image1;
+                  final ImagePicker picker1 = ImagePicker();
+                  final XFile? pickedFile1 =
+                      await picker1.pickImage(source: ImageSource.gallery);
+                  if (pickedFile1 != null) {
+                    setState(() {
+                      _image1 = XFile(pickedFile1.path);
+                      if (_image1 != null) {
+                        setState(() {
+                          backgroundImageAPI(_image1);
+                          Navigator.of(context).pop();
+                        });
+                      }
+                    });
+                  }
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: Size.fromHeight(40),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(0),
+                ),
+                child: Text(
+                  '배경 사진 변경',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.black,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  ///프로필 사진 변경///
   profileImage_change(BuildContext context) {
     XFile? _image;
 
@@ -417,7 +458,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                      width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                      width: 2,
+                      color: grade != null
+                          ? PeeroreumColor.gradeColor[grade]!
+                          : Color.fromARGB(255, 186, 188, 189)),
                 ),
                 child: Container(
                   height: 84,
@@ -435,7 +479,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 fit: BoxFit.cover,
                               )
                             : DecorationImage(
-                                image: NetworkImage(profileImage)))
+                                image: NetworkImage(profileImage),
+                                fit: BoxFit.cover,
+                              ))
                         : DecorationImage(
                             image: AssetImage(
                             'assets/images/user.jpg',
@@ -537,7 +583,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   ///////////////////닉네임 변경///////////////////
-
   bool checkNickname = false;
   bool isDuplicateNickname = false;
 
@@ -738,6 +783,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
   }
 
+  ///유저 신고하기
   Widget reportUser() {
     return Container(
       width: double.maxFinite,
@@ -938,9 +984,18 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget myinfo() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-      decoration: BoxDecoration(
-          color: PeeroreumColor.gray[200],
-          borderRadius: BorderRadius.all(Radius.circular(16))),
+      decoration: backgroundImage != null
+          ? BoxDecoration(
+              image: DecorationImage(
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.2), BlendMode.darken),
+                image: NetworkImage(backgroundImage),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(16)))
+          : BoxDecoration(
+              color: PeeroreumColor.gray[200],
+              borderRadius: BorderRadius.all(Radius.circular(16))),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1072,7 +1127,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     width: 10,
                   ),
                   Text(
-                    am_i ? '프로필 공유' : (is_friend ? '친구 끊기' : '친구신청'),
+                    am_i ? '프로필 공유' : (is_friend ? '친구 끊기' : '친구 추가'),
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 16,
@@ -1110,8 +1165,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 borderRadius: BorderRadius.all(Radius.circular(8))),
             child: SizedBox(
               height: 52,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
                 children: [
                   Text(
                     '친구',
@@ -1123,7 +1177,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     ),
                   ),
                   SizedBox(
-                    height: 4,
+                    width: 4,
                   ),
                   Text(
                     '$friendNumber',
@@ -1155,8 +1209,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
                       Text(
                         '배지',
@@ -1168,10 +1221,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        width: 4,
                       ),
                       Text(
-                        '${badges.length}개 보유',
+                        '${badges.length}개',
                         style: TextStyle(
                           color: PeeroreumColor.gray[600],
                           fontSize: 14,
@@ -1183,7 +1236,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                   Flexible(
                     child: Container(
-                      padding: EdgeInsets.only(left: 15), //left:20 변경
+                      padding: EdgeInsets.only(left: 20),
                       height: 52,
                       child: Badge(),
                     ),
@@ -1203,7 +1256,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         // shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-            width: 48, //52에서 overflow문제로 변경
+            width: 52,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: PeeroreumColor.gray[100],
@@ -1215,7 +1268,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             width: 8,
           );
         },
-        itemCount: 4);
+        itemCount: 2);
   }
 
   Widget myWedu() {
@@ -1257,21 +1310,21 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ],
             ),
-            // TextButton(
-            //   onPressed: () {
-            //     Navigator.of(context)
-            //         .push(MaterialPageRoute(builder: (context) => InWedu()));
-            //   },
-            //   child: Text(
-            //     '전체 보기',
-            //     style: TextStyle(
-            //       fontFamily: 'Pretendard',
-            //       fontWeight: FontWeight.w600,
-            //       fontSize: 14,
-            //       color: PeeroreumColor.gray[500],
-            //     ),
-            //   ),
-            // )
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => InWedu()));
+              },
+              child: Text(
+                '전체 보기',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500],
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -1282,7 +1335,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       // shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
       itemCount: inroom_datas.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(
@@ -1415,8 +1468,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(inroom_datas[index]["id"])));
+            if (am_i == true) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DetailWedu(inroom_datas[index]["id"])));
+            }
           },
         );
       },

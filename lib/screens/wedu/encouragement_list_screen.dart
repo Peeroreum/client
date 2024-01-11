@@ -181,7 +181,8 @@ class _EncouragementListState extends State<EncouragementList> {
                           image: notSuccessList[index]["profileImage"] != null
                               ? DecorationImage(
                                   image: NetworkImage(
-                                      notSuccessList[index]["profileImage"]))
+                                      notSuccessList[index]["profileImage"]),
+                                  fit: BoxFit.cover)
                               : DecorationImage(
                                   image: AssetImage('assets/images/user.jpg')),
                         ),

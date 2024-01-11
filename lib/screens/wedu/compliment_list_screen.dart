@@ -180,7 +180,8 @@ class _ComplimentListState extends State<ComplimentList> {
                           image: successList[index]["profileImage"] != null
                               ? DecorationImage(
                                   image: NetworkImage(
-                                      successList[index]["profileImage"]))
+                                      successList[index]["profileImage"]),
+                                  fit: BoxFit.cover)
                               : DecorationImage(
                                   image: AssetImage('assets/images/user.jpg')),
                         ),
