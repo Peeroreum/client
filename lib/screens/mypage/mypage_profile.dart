@@ -82,6 +82,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       grade = data["grade"];
       friendNumber = data["friendNumber"];
       profileImage = data["profileImage"];
+      backgroundImage = data["backgroundImage"];
       is_friend = data['following'];
     }
   }
@@ -106,13 +107,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
     }
   }
 
-  backgroundImageAPI(var _image) async {
-    var image = await MultipartFile.fromFile(_image!.path);
-    var imageMap = <String, dynamic>{'backgroundImage': image};
+  backgroundImageAPI(var _image1) async {
+    var image1 = await MultipartFile.fromFile(_image1!.path);
+    var imageMap1 = <String, dynamic>{'profileImage': image1};
     var dio = Dio();
     dio.options.contentType = 'multipart/form-data';
     dio.options.headers = {'Authorization': 'Bearer $token'};
-    FormData imageData = FormData.fromMap(imageMap);
+    FormData imageData = FormData.fromMap(imageMap1);
     var backgroundChange = await dio.put(
         '${API.hostConnect}/member/change/backgroundImage',
         data: imageData);
@@ -120,7 +121,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       print("배경이미지 성공 ${backgroundChange.statusMessage}");
       var data = backgroundChange.data['data'];
       setState(() {
-        profileImage = data;
+        backgroundImage = data;
       });
     } else {
       print("배경이미지 ${backgroundChange.statusMessage}");
@@ -381,16 +382,16 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () async {
-                  XFile? _image;
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? pickedFile =
-                      await picker.pickImage(source: ImageSource.gallery);
-                  if (pickedFile != null) {
+                  XFile? _image1;
+                  final ImagePicker picker1 = ImagePicker();
+                  final XFile? pickedFile1 =
+                      await picker1.pickImage(source: ImageSource.gallery);
+                  if (pickedFile1 != null) {
                     setState(() {
-                      _image = XFile(pickedFile.path);
-                      if (_image != null) {
+                      _image1 = XFile(pickedFile1.path);
+                      if (_image1 != null) {
                         setState(() {
-                          backgroundImageAPI(_image);
+                          backgroundImageAPI(_image1);
                           Navigator.of(context).pop();
                         });
                       }
@@ -478,7 +479,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 fit: BoxFit.cover,
                               )
                             : DecorationImage(
-                                image: NetworkImage(profileImage)))
+                                image: NetworkImage(profileImage),
+                                fit: BoxFit.cover,
+                              ))
                         : DecorationImage(
                             image: AssetImage(
                             'assets/images/user.jpg',
