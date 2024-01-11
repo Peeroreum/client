@@ -31,7 +31,7 @@ class _HomeWeduState extends State<HomeWedu> {
   int selectedIndex = 1;
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
-  Map<dynamic,dynamic> inviDatas = {};
+  Map<dynamic, dynamic> inviDatas = {};
   Map<dynamic, List<dynamic>> hashTags = {};
   List<Map<String, String>> searchData = [];
   List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
@@ -118,8 +118,8 @@ class _HomeWeduState extends State<HomeWedu> {
     var inviData;
     for (var data in datas) {
       inviData = await fetchInvitation(data['id']);
-      inviDatas.addAll({data['id']:inviData});
-      hashTags.addAll({data['id']:inviData['hashTags']});
+      inviDatas.addAll({data['id']: inviData});
+      hashTags.addAll({data['id']: inviData['hashTags']});
     }
   }
 
@@ -135,43 +135,42 @@ class _HomeWeduState extends State<HomeWedu> {
       title: Padding(
         padding: EdgeInsets.fromLTRB(20, 20, 0, 12),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
               fit: FlexFit.loose,
-              child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => searchWedu()));
-                  },
-                  style: TextButton.styleFrom(
-                      backgroundColor: PeeroreumColor.gray[100],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(37.0))),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/search.svg',
-                          color: PeeroreumColor.gray[600],
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => searchWedu()));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: PeeroreumColor.gray[100],
+                      borderRadius: BorderRadius.circular(37.0)),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/search.svg',
+                        color: PeeroreumColor.gray[600],
+                      ),
+                      SizedBox(width: 8.0),
+                      SizedBox(
+                        child: Text(
+                          '같이방에서 함께 공부해요!',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: PeeroreumColor.gray[600]),
                         ),
-                        SizedBox(width: 8.0),
-                        SizedBox(
-                          child: Text(
-                            '같이방에서 함께 공부해요!',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: PeeroreumColor.gray[600]),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             SizedBox(
               width: 12,
@@ -180,8 +179,9 @@ class _HomeWeduState extends State<HomeWedu> {
         ),
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
+        Container(
+          margin: const EdgeInsets.only(right: 20),
+          padding: EdgeInsets.only(top: 8),
           child: Row(
             children: [
               GestureDetector(
@@ -204,7 +204,9 @@ class _HomeWeduState extends State<HomeWedu> {
                   'assets/icons/bell_none.svg',
                   color: PeeroreumColor.gray[800],
                 ),
-                onTap: () {},
+                onTap: () {
+                  Fluttertoast.showToast(msg: "준비중입니다.");
+                },
               )
             ],
           ),
@@ -227,12 +229,13 @@ class _HomeWeduState extends State<HomeWedu> {
               : SizedBox(
                   height: 0,
                 ),
-          (inroom_datas.isNotEmpty)?
-          SizedBox(
-            height: 20,
-          ) : SizedBox(
-            height: 0,
-          ),
+          (inroom_datas.isNotEmpty)
+              ? SizedBox(
+                  height: 20,
+                )
+              : SizedBox(
+                  height: 0,
+                ),
           Container(
             height: 8,
             color: PeeroreumColor.gray[50],
@@ -666,7 +669,9 @@ class _HomeWeduState extends State<HomeWedu> {
                               image: AssetImage(
                                   'assets/images/example_logo.png'))),
                 ),
-                SizedBox(width: 16,),
+                SizedBox(
+                  width: 16,
+                ),
                 Flexible(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -806,8 +811,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                       'assets/images/example_logo.png')),
                           border: Border.all(
                               width: 1, color: PeeroreumColor.gray[200]!),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(5.0))),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     ),
                     Container(
                       height: 72,
@@ -855,13 +859,11 @@ class _HomeWeduState extends State<HomeWedu> {
                                 width: datas[index]['locked'].toString() ==
                                         "true"
                                     ? MediaQuery.of(context).size.width * 0.42
-                                    : MediaQuery.of(context).size.width *
-                                        0.48,
+                                    : MediaQuery.of(context).size.width * 0.48,
                                 child: CustomWidgetMarquee(
                                   animationDuration: Duration(seconds: 3),
                                   pauseDuration: Duration(seconds: 1),
-                                  directionOption:
-                                      DirectionOption.oneDirection,
+                                  directionOption: DirectionOption.oneDirection,
                                   child: Text(
                                     datas[index]["title"]!,
                                     style: TextStyle(
@@ -935,8 +937,7 @@ class _HomeWeduState extends State<HomeWedu> {
             ),
             Container(
               width: double.infinity,
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
                 inviDatas[datas[index]['id']]['challenge'],
                 style: TextStyle(
@@ -955,7 +956,8 @@ class _HomeWeduState extends State<HomeWedu> {
               height: 162,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: NetworkImage(inviDatas[datas[index]['id']]['invitationUrl']),
+                      image: NetworkImage(
+                          inviDatas[datas[index]['id']]['invitationUrl']),
                       fit: BoxFit.cover),
                   color: PeeroreumColor.primaryPuple[400],
                   borderRadius: BorderRadius.circular(8)),
@@ -981,8 +983,8 @@ class _HomeWeduState extends State<HomeWedu> {
                         ),
                       ),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            PeeroreumColor.gray[300]),
+                        backgroundColor:
+                            MaterialStateProperty.all(PeeroreumColor.gray[300]),
                         padding: MaterialStateProperty.all(
                             EdgeInsets.symmetric(vertical: 12)),
                         shape:
@@ -1089,8 +1091,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 width: 4,
               );
             },
-            itemCount: hashTags[datas[roomIndex]['id']]!.length
-        ),
+            itemCount: hashTags[datas[roomIndex]['id']]!.length),
       ),
     );
   }
