@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "984740225939",
+    "project_id": "peeroreum-409506",
+    "storage_bucket": "peeroreum-409506.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984740225939:android:610c533956029c8ae3be66",
+        "android_client_info": {
+          "package_name": "com.example.peeroreum_client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984740225939-l27n8l5q2icrj1fudm4f3jhi479tm6tu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.peeroreum_client",
+            "certificate_hash": "58848f10c9447c6232bd24f0f266f10aae5d4a89"
+          }
+        },
+        {
+          "client_id": "984740225939-p4561ncf9cn9pjascllebdrfapggiqvl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.peeroreum_client",
+            "certificate_hash": "aa8d4c089631a90c92add5e76e9c9865506194ef"
+          }
+        },
+        {
+          "client_id": "984740225939-ssp3ted0c191il815d4l1b1764jlhhur.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.peeroreum_client",
+            "certificate_hash": "08fe0fb813be270f1926648a84efa367fa54fb4c"
+          }
+        },
+        {
+          "client_id": "984740225939-90rmjde1dta2gjir2lpc9ae7ini6e6so.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xay-u3aox_CvIpJSNF7woWwLi3bVjlY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984740225939-90rmjde1dta2gjir2lpc9ae7ini6e6so.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "984740225939-02sqnjvc9hr1lierr8mgrgrhph7cu8l9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.peeroreumClient"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
