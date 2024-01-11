@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
@@ -17,9 +18,38 @@ import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:uni_links/uni_links.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Check if you received the link via `getInitialLink` first
+  final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+
+  if (initialLink != null) {
+    final Uri deepLink = initialLink.link;
+    // Example of using the dynamic link to push the user to a different screen
+    //Navigator.pushNamed(context, deepLink.path);
+  }
+
+  FirebaseDynamicLinks.instance.onLink.listen(
+        (pendingDynamicLinkData) {
+          // Set up the `onLink` event listener next as it may be received here
+          if (pendingDynamicLinkData != null) {
+            final Uri deepLink = pendingDynamicLinkData.link;
+            // Example of using the dynamic link to push the user to a different screen
+            //Navigator.pushNamed(context, deepLink.path);
+          }
+        },
+      );
+  //await DynamicLink().setup();
   const nativeAppKey = "a17f729816582e161afaae9395c1f1b5";
   KakaoSdk.init(nativeAppKey: nativeAppKey);
   bool isLoggedIn = await checkLogIn();
@@ -76,5 +106,3 @@ class PeeroreumApp extends StatelessWidget {
     );
   }
 }
-
-
