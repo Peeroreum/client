@@ -58,7 +58,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     withPeerDay = await VisitCount.getVisitCount();
-    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
+    var inWeduResult = await http.get(
+        Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -267,6 +268,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           //'나'일 경우 프로필 수정
                           context: context,
                           isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
                           builder: (context) {
                             return changeMe();
                           },
@@ -275,6 +277,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           //다른 사람일 경우 신고하기
                           context: context,
                           isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
                           builder: (context) {
                             return reportUser();
                           },
@@ -289,25 +292,26 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Widget changeMe() {
-    return Container(
-      width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.30 - 26,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+    return Flexible(
+      child: Container(
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: PeeroreumColor.white, // 여기에 색상 지정
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
         ),
-      ),
-      child: Scaffold(
-        body: Container(
+        child: Container(
           padding: EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.only(bottom: 16),
+                padding: EdgeInsets.only(bottom: 16, top: 4),
                 child: Text(
-                  '프로필 수정',
+                  '프로필 관리',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 20,
@@ -316,25 +320,22 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                color: PeeroreumColor.gray[200],
-                height: 1,
-              ),
               TextButton(
                 onPressed: () {
                   profileImage_change(context);
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(0),
                 ),
                 child: Text(
-                  '프로필 사진 변경하기',
+                  '프로필 사진 변경',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: PeeroreumColor.gray[600],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.black,
                   ),
                 ),
               ),
@@ -344,14 +345,33 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(0),
                 ),
                 child: Text(
-                  '닉네임 변경하기',
+                  '닉네임 변경',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: PeeroreumColor.gray[600],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.black,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  minimumSize: Size.fromHeight(40),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(0),
+                ),
+                child: Text(
+                  '배경 사진 변경',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.black,
                   ),
                 ),
               ),
@@ -975,7 +995,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       color: PeeroreumColor.white,
                     ),
                     image: profileImage != null
-                        ? DecorationImage(image: NetworkImage(profileImage), fit: BoxFit.cover)
+                        ? DecorationImage(
+                            image: NetworkImage(profileImage),
+                            fit: BoxFit.cover)
                         : DecorationImage(
                             image: AssetImage(
                             'assets/images/user.jpg',
@@ -1130,7 +1152,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                  border:
+                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Row(
                 children: [
@@ -1194,8 +1217,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             width: 8,
           );
         },
-        itemCount: 4
-    );
+        itemCount: 4);
   }
 
   Widget myWedu() {
@@ -1290,12 +1312,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         image: (inroom_datas[index]['imagePath'] != null)
                             ? DecorationImage(
-                            image: NetworkImage(
-                                inroom_datas[index]['imagePath']),
-                            fit: BoxFit.cover)
+                                image: NetworkImage(
+                                    inroom_datas[index]['imagePath']),
+                                fit: BoxFit.cover)
                             : DecorationImage(
-                            image: AssetImage(
-                                'assets/images/example_logo.png')))),
+                                image: AssetImage(
+                                    'assets/images/example_logo.png')))),
                 SizedBox(
                   height: 16,
                 ),
@@ -1306,7 +1328,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
                         color: PeeroreumColor.subjectColor[dropdownSubjectList[
-                        inroom_datas[index]['subject']]]?[0],
+                            inroom_datas[index]['subject']]]?[0],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -1319,8 +1341,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
                             color: PeeroreumColor.subjectColor[
-                            dropdownSubjectList[inroom_datas[index]
-                            ['subject']]]?[1],
+                                dropdownSubjectList[inroom_datas[index]
+                                    ['subject']]]?[1],
                           ),
                         ),
                       ),
