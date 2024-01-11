@@ -33,6 +33,8 @@ double leftPosition = 0;
 
 class _DetailWeduState extends State<DetailWedu> {
   int id;
+
+  bool isExpanded = true;
   _DetailWeduState(this.id);
   var token;
 
@@ -945,70 +947,87 @@ class _DetailWeduState extends State<DetailWedu> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
                         side: BorderSide(color: PeeroreumColor.gray[200]!)),
-                    child: ExpandedTile(
-                        contentseparator: 0,
-                        theme: ExpandedTileThemeData(
-                            headerColor: PeeroreumColor.white,
-                            contentBackgroundColor: PeeroreumColor.white,
-                            titlePadding: EdgeInsets.zero,
-                            trailingPadding: EdgeInsets.only(left: 8),
-                            contentPadding: EdgeInsets.fromLTRB(16, 5, 16, 16)),
-                        trailing: SvgPicture.asset(
-                          'assets/icons/down.svg',
-                          color: PeeroreumColor.gray[500],
-                        ),
-                        trailingRotation: 180,
-                        title: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                  color: PeeroreumColor.primaryPuple[50],
-                                  borderRadius: BorderRadius.circular(16)),
-                              child: Text(
-                                '오늘의 미션',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: PeeroreumColor.primaryPuple[400],
+                    child: Theme(
+                      data: ThemeData(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent)
+                          .copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                          trailing: SvgPicture.asset(
+                            isExpanded
+                                ? 'assets/icons/up.svg'
+                                : 'assets/icons/down.svg',
+                            color: PeeroreumColor.gray[500],
+                          ),
+                          title: Container(
+                            color: PeeroreumColor.white,
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 12),
+                                  decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[50],
+                                      borderRadius: BorderRadius.circular(16)),
+                                  child: Text(
+                                    '오늘의 미션',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: PeeroreumColor.primaryPuple[400],
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    isExpanded ? weduChallenge : "",
+                                    style: TextStyle(
+                                        overflow: TextOverflow.ellipsis,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18,
+                                        color: PeeroreumColor.gray[800]),
+                                  ),
+                                ),
+                              ],
                             ),
-                            // SizedBox(width: 8,),
-                            // Text(
-                            //   weduChallenge,
-                            //   style: TextStyle(
-                            //       fontFamily: 'Pretendard',
-                            //       fontWeight: FontWeight.w500,
-                            //       fontSize: 18,
-                            //       color: PeeroreumColor.gray[800]),
-                            // ),
-                          ],
-                        ),
-                        content: Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                          onExpansionChanged: (value) {
+                            setState(() {
+                              isExpanded = !isExpanded;
+                            });
+                          },
                           children: [
                             Container(
-                              width: 180,
-                              child: Text(
-                                weduChallenge,
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18,
-                                    color: PeeroreumColor.gray[800]),
+                              color: PeeroreumColor.white,
+                              padding: EdgeInsets.fromLTRB(16, 5, 16, 16),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 180,
+                                    child: Text(
+                                      weduChallenge,
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 18,
+                                          color: PeeroreumColor.gray[800]),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Image.asset('assets/images/wedu_mission.png')
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Image.asset('assets/images/wedu_mission.png')
-                          ],
-                        ),
-                        controller: ExpandedTileController(isExpanded: true)),
+                          ]),
+                    ),
                   ),
                 ],
               ),
