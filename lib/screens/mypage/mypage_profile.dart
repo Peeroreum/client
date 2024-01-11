@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
@@ -43,6 +42,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   List<dynamic> badges = [];
   var grade;
   var profileImage;
+  var backgroundImage;
   var friendNumber;
   var withPeerDay = 0;
   Member member = Member();
@@ -103,6 +103,27 @@ class _MyPageProfileState extends State<MyPageProfile> {
       });
     } else {
       print("프로필이미지 ${profileChange.statusMessage}");
+    }
+  }
+
+  backgroundImageAPI(var _image) async {
+    var image = await MultipartFile.fromFile(_image!.path);
+    var imageMap = <String, dynamic>{'backgroundImage': image};
+    var dio = Dio();
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.headers = {'Authorization': 'Bearer $token'};
+    FormData imageData = FormData.fromMap(imageMap);
+    var backgroundChange = await dio.put(
+        '${API.hostConnect}/member/change/backgroundImage',
+        data: imageData);
+    if (backgroundChange.statusCode == 200) {
+      print("배경이미지 성공 ${backgroundChange.statusMessage}");
+      var data = backgroundChange.data['data'];
+      setState(() {
+        profileImage = data;
+      });
+    } else {
+      print("배경이미지 ${backgroundChange.statusMessage}");
     }
   }
 
@@ -359,7 +380,23 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  XFile? _image;
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? pickedFile =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  if (pickedFile != null) {
+                    setState(() {
+                      _image = XFile(pickedFile.path);
+                      if (_image != null) {
+                        setState(() {
+                          backgroundImageAPI(_image);
+                          Navigator.of(context).pop();
+                        });
+                      }
+                    });
+                  }
+                },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
                   alignment: Alignment.centerLeft,
@@ -382,6 +419,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     );
   }
 
+  ///프로필 사진 변경///
   profileImage_change(BuildContext context) {
     XFile? _image;
 
@@ -419,7 +457,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                      width: 2, color: Color.fromARGB(255, 186, 188, 189)),
+                      width: 2,
+                      color: grade != null
+                          ? PeeroreumColor.gradeColor[grade]!
+                          : Color.fromARGB(255, 186, 188, 189)),
                 ),
                 child: Container(
                   height: 84,
@@ -539,7 +580,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   ///////////////////닉네임 변경///////////////////
-
   bool checkNickname = false;
   bool isDuplicateNickname = false;
 
@@ -740,6 +780,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
   }
 
+  ///유저 신고하기
   Widget reportUser() {
     return Container(
       width: double.maxFinite,
@@ -940,9 +981,18 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget myinfo() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-      decoration: BoxDecoration(
-          color: PeeroreumColor.gray[200],
-          borderRadius: BorderRadius.all(Radius.circular(16))),
+      decoration: backgroundImage != null
+          ? BoxDecoration(
+              image: DecorationImage(
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.2), BlendMode.darken),
+                image: NetworkImage(backgroundImage),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(16)))
+          : BoxDecoration(
+              color: PeeroreumColor.gray[200],
+              borderRadius: BorderRadius.all(Radius.circular(16))),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1257,21 +1307,21 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ],
             ),
-            // TextButton(
-            //   onPressed: () {
-            //     Navigator.of(context)
-            //         .push(MaterialPageRoute(builder: (context) => InWedu()));
-            //   },
-            //   child: Text(
-            //     '전체 보기',
-            //     style: TextStyle(
-            //       fontFamily: 'Pretendard',
-            //       fontWeight: FontWeight.w600,
-            //       fontSize: 14,
-            //       color: PeeroreumColor.gray[500],
-            //     ),
-            //   ),
-            // )
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => InWedu()));
+              },
+              child: Text(
+                '전체 보기',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500],
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -1282,7 +1332,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       // shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
       itemCount: inroom_datas.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(
@@ -1415,8 +1465,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(inroom_datas[index]["id"])));
+            if (am_i == true) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DetailWedu(inroom_datas[index]["id"])));
+            }
           },
         );
       },
