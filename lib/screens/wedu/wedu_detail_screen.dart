@@ -49,6 +49,7 @@ class _DetailWeduState extends State<DetailWedu> {
   dynamic weduDday = '';
   dynamic weduProgress = '';
   dynamic weduChallenge = '';
+  dynamic weduFire = '';
   double percent = 0.0;
 
   @override
@@ -72,6 +73,7 @@ class _DetailWeduState extends State<DetailWedu> {
       weduDday = weduData['dday'];
       weduProgress = weduData['progress'].toString();
       weduChallenge = weduData['challenge'];
+      weduFire = weduData['continuousDate'];
       percent = double.parse(weduProgress) / 100;
       if (weduProgress == '0') {
         leftPosition = 0; // percent가 0일 때의 처리
@@ -249,8 +251,9 @@ class _DetailWeduState extends State<DetailWedu> {
                             fontSize: 16,
                             color: PeeroreumColor.black),
                       ),
+                      SizedBox(width: 2,),
                       Text(
-                        '10',
+                        '$weduFire',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
