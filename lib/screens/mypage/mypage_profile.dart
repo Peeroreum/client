@@ -1074,7 +1074,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     width: 10,
                   ),
                   Text(
-                    am_i ? '프로필 공유' : (is_friend ? '친구 끊기' : '친구신청'),
+                    am_i ? '프로필 공유' : (is_friend ? '친구 끊기' : '친구 추가'),
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 16,
@@ -1112,8 +1112,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 borderRadius: BorderRadius.all(Radius.circular(8))),
             child: SizedBox(
               height: 52,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
                 children: [
                   Text(
                     '친구',
@@ -1125,7 +1124,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     ),
                   ),
                   SizedBox(
-                    height: 4,
+                    width: 4,
                   ),
                   Text(
                     '$friendNumber',
@@ -1157,8 +1156,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
                       Text(
                         '배지',
@@ -1170,10 +1168,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ),
                       ),
                       SizedBox(
-                        height: 4,
+                        width: 4,
                       ),
                       Text(
-                        '${badges.length}개 보유',
+                        '${badges.length}개',
                         style: TextStyle(
                           color: PeeroreumColor.gray[600],
                           fontSize: 14,
@@ -1185,7 +1183,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                   Flexible(
                     child: Container(
-                      padding: EdgeInsets.only(left: 15), //left:20 변경
+                      padding: EdgeInsets.only(left: 20),
                       height: 52,
                       child: Badge(),
                     ),
@@ -1205,7 +1203,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         // shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-            width: 48, //52에서 overflow문제로 변경
+            width: 52,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: PeeroreumColor.gray[100],
@@ -1217,7 +1215,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             width: 8,
           );
         },
-        itemCount: 4);
+        itemCount: 2);
   }
 
   Widget myWedu() {
