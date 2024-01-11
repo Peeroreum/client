@@ -478,11 +478,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ? (_image != null
                             ? DecorationImage(
                                 image: FileImage(File(_image!.path)),
-                                fit: BoxFit.cover,
+                                //fit: BoxFit.cover,
                               )
                             : DecorationImage(
                                 image: NetworkImage(profileImage),
-                                fit: BoxFit.cover,
+                                //fit: BoxFit.cover,
                               ))
                         : DecorationImage(
                             image: AssetImage(

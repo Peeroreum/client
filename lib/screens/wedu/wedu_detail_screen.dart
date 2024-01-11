@@ -953,6 +953,8 @@ class _DetailWeduState extends State<DetailWedu> {
                               highlightColor: Colors.transparent)
                           .copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
+                          backgroundColor: PeeroreumColor.white,
+                          collapsedBackgroundColor: PeeroreumColor.white,
                           trailing: SvgPicture.asset(
                             isExpanded
                                 ? 'assets/icons/up.svg'

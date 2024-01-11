@@ -27,7 +27,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
 
   List<Map<String, String>> _searchHistory = [];
   List<dynamic> datas = [];
-  Map<dynamic,dynamic> inviDatas = {};
+  Map<dynamic, dynamic> inviDatas = {};
   Map<dynamic, List<dynamic>> hashTags = {};
   List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
@@ -40,12 +40,11 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
 
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
-    var weduResult = await http.get(
-        Uri.parse('${API.hostConnect}/wedu/search/${keyword}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+    var weduResult = await http
+        .get(Uri.parse('${API.hostConnect}/wedu/search/${keyword}'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
     if (weduResult.statusCode == 200) {
       datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
       print("데이터 fetch 완료 \n $datas");
@@ -58,20 +57,19 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
 
   fetchImage(datas) async {
     var inviData;
-    for(var data in datas) {
+    for (var data in datas) {
       inviData = await fetchInvitation(data['id']);
-      inviDatas.addAll({data['id']:inviData});
-      hashTags.addAll({data['id']:inviData['hashTags']});
+      inviDatas.addAll({data['id']: inviData});
+      hashTags.addAll({data['id']: inviData['hashTags']});
     }
   }
 
   fetchInvitation(id) async {
-    var inviResult = await http.get(
-        Uri.parse('${API.hostConnect}/wedu/$id/invitation'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+    var inviResult = await http
+        .get(Uri.parse('${API.hostConnect}/wedu/$id/invitation'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
 
     if (inviResult.statusCode == 200) {
       return await jsonDecode(utf8.decode(inviResult.bodyBytes))['data'];
@@ -100,112 +98,109 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: PeeroreumColor.white,
-        appBar: AppBar(
-            backgroundColor: PeeroreumColor.white,
-            shadowColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: SvgPicture.asset(
-                'assets/icons/arrow-left.svg',
-                color: PeeroreumColor.gray[800],
+          backgroundColor: PeeroreumColor.white,
+          appBar: AppBar(
+              backgroundColor: PeeroreumColor.white,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: SvgPicture.asset(
+                  'assets/icons/arrow-left.svg',
+                  color: PeeroreumColor.gray[800],
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(_searchHistory);
+                },
               ),
-              onPressed: () {
-                Navigator.of(context).pop(_searchHistory);
-              },
-            ),
-            titleSpacing: 0,
-            title: Padding(
-              padding: EdgeInsets.fromLTRB(0, 12, 20, 12),
-              child: SearchBar(
-                // padding: MaterialStateProperty.all(
-                //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
-                controller: textEditingController,
-                backgroundColor:
-                MaterialStateProperty.all(PeeroreumColor.gray[100]),
-                elevation: MaterialStateProperty.all(0),
-                // shape: MaterialStateProperty.all(ContinuousRectangleBorder(
-                //     borderRadius: BorderRadius.all(Radius.circular(37.0)))),
-                constraints: BoxConstraints(maxHeight: 40),
-                hintText: '같이방에서 함께 공부해요!',
-                hintStyle: MaterialStateProperty.all(TextStyle(
-                    color: PeeroreumColor.gray[600],
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400)),
-                trailing: [
-                  GestureDetector(
-                      onTap: () {
-                        textEditingController.clear();
-                      } ,
-                      child: SvgPicture.asset(
-                        'assets/icons/x_circle.svg',
-                        color: PeeroreumColor.gray[600],
-                      )
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        keyword = textEditingController.text;
-                        fetchDatas();
-                        _saveSearchHistory(keyword);
-                      });
-                    },
-                    icon: SvgPicture.asset(
-                      'assets/icons/search.svg',
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            )
-        ),
-        body: FutureBuilder<void>(
-          future: fetchDatas(),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            if(snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if(snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Text(
-                            '검색된 같이방',
-                            style: TextStyle(
-                                color: PeeroreumColor.gray[800],
-                                fontFamily: 'Pretendard',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600
-                            ),
-                          ),
-                          const SizedBox(width: 4,),
-                          Text(
-                            '${datas.length}',
-                            style: TextStyle(
-                                color: PeeroreumColor.gray[800],
-                                fontFamily: 'Pretendard',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600
-                            ),
-                          )
-                        ],
+              titleSpacing: 0,
+              title: Padding(
+                padding: EdgeInsets.fromLTRB(0, 12, 20, 12),
+                child: SearchBar(
+                  // padding: MaterialStateProperty.all(
+                  //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
+                  controller: textEditingController,
+                  backgroundColor:
+                      MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                  elevation: MaterialStateProperty.all(0),
+                  // shape: MaterialStateProperty.all(ContinuousRectangleBorder(
+                  //     borderRadius: BorderRadius.all(Radius.circular(37.0)))),
+                  constraints: BoxConstraints(maxHeight: 40),
+                  hintText: '같이방에서 함께 공부해요!',
+                  hintStyle: MaterialStateProperty.all(TextStyle(
+                      color: PeeroreumColor.gray[600],
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400)),
+                  trailing: [
+                    GestureDetector(
+                        onTap: () {
+                          textEditingController.clear();
+                        },
+                        child: SvgPicture.asset(
+                          'assets/icons/x_circle.svg',
+                          color: PeeroreumColor.gray[600],
+                        )),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          keyword = textEditingController.text;
+                          fetchDatas();
+                          _saveSearchHistory(keyword);
+                        });
+                      },
+                      icon: SvgPicture.asset(
+                        'assets/icons/search.svg',
+                        color: Colors.grey[600],
                       ),
                     ),
-                    listview_body()
                   ],
                 ),
-              );
-            }
-          },
-        )
-      ),
+              )),
+          body: FutureBuilder<void>(
+            future: fetchDatas(),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Text(
+                              '검색된 같이방',
+                              style: TextStyle(
+                                  color: PeeroreumColor.gray[800],
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              '${datas.length}',
+                              style: TextStyle(
+                                  color: PeeroreumColor.gray[800],
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                      ),
+                      listview_body()
+                    ],
+                  ),
+                );
+              }
+            },
+          )),
     );
   }
 
@@ -232,16 +227,21 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                      border: Border.all(
+                          width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      image: (datas[index]["imagePath"] != null)?
-                      DecorationImage(image: NetworkImage(datas[index]["imagePath"]), fit: BoxFit.cover)
-                          : DecorationImage(image: AssetImage('assets/images/example_logo.png'))
-                  ),
+                      image: (datas[index]["imagePath"] != null)
+                          ? DecorationImage(
+                              image: NetworkImage(datas[index]["imagePath"]),
+                              fit: BoxFit.cover)
+                          : DecorationImage(
+                              image: AssetImage(
+                                  'assets/images/example_logo.png'))),
                 ),
-                Container(
-                  height: 44,
-                  padding: EdgeInsets.only(left: 16),
+                SizedBox(
+                  width: 16,
+                ),
+                Flexible(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -250,10 +250,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(4)),
+                                    BorderRadius.all(Radius.circular(4)),
                                 color: PeeroreumColor.subjectColor[
-                                subjectList[datas[index]
-                                ['subject']]]?[0],
+                                    subjectList[datas[index]['subject']]]?[0],
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -265,8 +264,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                     fontWeight: FontWeight.w600,
                                     fontSize: 10,
                                     color: PeeroreumColor.subjectColor[
-                                    subjectList[datas[index]
-                                    ['subject']]]?[1],
+                                        subjectList[datas[index]
+                                            ['subject']]]?[1],
                                   ),
                                 ),
                               ),
@@ -276,12 +275,10 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             ),
                             datas[index]['locked'].toString() == "true"
                                 ? SvgPicture.asset('assets/icons/lock.svg',
-                                color: PeeroreumColor.gray[400], width: 12)
+                                    color: PeeroreumColor.gray[400], width: 12)
                                 : Container(),
                             SizedBox(width: 4),
-                            SizedBox(
-                              width: datas[index]['locked'].toString() == "true"
-                                  ? MediaQuery.of(context).size.width * 0.48 : MediaQuery.of(context).size.width * 0.52,
+                            Flexible(
                               child: Text(
                                 datas[index]["title"]!,
                                 style: TextStyle(
@@ -373,16 +370,15 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                       decoration: BoxDecoration(
                           image: (datas[index]['imagePath'] != null)
                               ? DecorationImage(
-                              image:
-                              NetworkImage(datas[index]['imagePath']),
-                              fit: BoxFit.cover)
+                                  image:
+                                      NetworkImage(datas[index]['imagePath']),
+                                  fit: BoxFit.cover)
                               : DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/example_logo.png')),
+                                  image: AssetImage(
+                                      'assets/images/example_logo.png')),
                           border: Border.all(
                               width: 1, color: PeeroreumColor.gray[200]!),
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(5.0))),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     ),
                     Container(
                       height: 72,
@@ -393,10 +389,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                           DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(4)),
+                                  BorderRadius.all(Radius.circular(4)),
                               color: PeeroreumColor.subjectColor[
-                              subjectList[datas[index]
-                              ['subject']]]?[0],
+                                  subjectList[datas[index]['subject']]]?[0],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -407,8 +402,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     color: PeeroreumColor.subjectColor[
-                                    subjectList[datas[index]
-                                    ['subject']]]?[1],
+                                        subjectList[datas[index]
+                                            ['subject']]]?[1],
                                     fontWeight: FontWeight.w600,
                                     fontSize: 10),
                               ),
@@ -421,22 +416,20 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             children: [
                               datas[index]['locked'].toString() == "true"
                                   ? SvgPicture.asset('assets/icons/lock.svg',
-                                  color: PeeroreumColor.gray[400])
+                                      color: PeeroreumColor.gray[400])
                                   : Container(),
                               SizedBox(
                                 width: 4,
                               ),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
-                                    "true"
+                                        "true"
                                     ? MediaQuery.of(context).size.width * 0.42
-                                    : MediaQuery.of(context).size.width *
-                                    0.48,
+                                    : MediaQuery.of(context).size.width * 0.48,
                                 child: CustomWidgetMarquee(
                                   animationDuration: Duration(seconds: 3),
                                   pauseDuration: Duration(seconds: 1),
-                                  directionOption:
-                                  DirectionOption.oneDirection,
+                                  directionOption: DirectionOption.oneDirection,
                                   child: Text(
                                     datas[index]["title"]!,
                                     style: TextStyle(
@@ -510,8 +503,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
             ),
             Container(
               width: double.infinity,
-              padding:
-              const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
                 inviDatas[datas[index]['id']]['challenge'],
                 style: TextStyle(
@@ -530,7 +522,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               height: 162,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: NetworkImage(inviDatas[datas[index]['id']]['invitationUrl']),
+                      image: NetworkImage(
+                          inviDatas[datas[index]['id']]['invitationUrl']),
                       fit: BoxFit.cover),
                   color: PeeroreumColor.primaryPuple[400],
                   borderRadius: BorderRadius.circular(8)),
@@ -556,12 +549,12 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                         ),
                       ),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            PeeroreumColor.gray[300]),
+                        backgroundColor:
+                            MaterialStateProperty.all(PeeroreumColor.gray[300]),
                         padding: MaterialStateProperty.all(
                             EdgeInsets.symmetric(vertical: 12)),
                         shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -597,7 +590,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                         padding: MaterialStateProperty.all(
                             EdgeInsets.symmetric(vertical: 12)),
                         shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -664,8 +657,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                 width: 4,
               );
             },
-            itemCount: hashTags[datas[roomIndex]['id']]!.length
-        ),
+            itemCount: hashTags[datas[roomIndex]['id']]!.length),
       ),
     );
   }
@@ -677,11 +669,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     });
-    if(enrollResult.statusCode == 200) {
-      Fluttertoast.showToast(
-          msg: "같이방 참여 완료!"
-      );
-    } else if(enrollResult.statusCode == 409) {
+    if (enrollResult.statusCode == 200) {
+      Fluttertoast.showToast(msg: "같이방 참여 완료!");
+    } else if (enrollResult.statusCode == 409) {
       Fluttertoast.showToast(msg: '이미 참여 중인 같이방입니다.');
     } else {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
@@ -691,105 +681,104 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
 
   void insertPassword(index) {
     TextEditingController passwordController = TextEditingController();
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        backgroundColor: PeeroreumColor.white,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-            "비밀번호",
-            textAlign: TextAlign.center
-        ),
-        titleTextStyle: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          fontFamily: 'Pretendard',
-          color: PeeroreumColor.black,
-        ),
-        titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-        content: Container(
-          color: PeeroreumColor.white,
-          width: MediaQuery.of(context).size.width * 0.8,
-          height: 48,
-          child: TextFormField(
-            controller: passwordController,
-            decoration: InputDecoration(
-              hintText: '비밀번호를 입력하세요.',
-              hintStyle: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.gray[600]
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: PeeroreumColor.gray[200]!),
-                  borderRadius: BorderRadius.all(Radius.circular(8))
-              ),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: PeeroreumColor.gray[200]!),
-                  borderRadius: BorderRadius.all(Radius.circular(8))
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            backgroundColor: PeeroreumColor.white,
+            surfaceTintColor: Colors.transparent,
+            title: Text("비밀번호", textAlign: TextAlign.center),
+            titleTextStyle: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Pretendard',
+              color: PeeroreumColor.black,
+            ),
+            titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+            content: Container(
+              color: PeeroreumColor.white,
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: 48,
+              child: TextFormField(
+                controller: passwordController,
+                decoration: InputDecoration(
+                  hintText: '비밀번호를 입력하세요.',
+                  hintStyle: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: PeeroreumColor.gray[600]),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                ),
+                cursorColor: PeeroreumColor.gray[600],
               ),
             ),
-            cursorColor: PeeroreumColor.gray[600],
-          ),
-        ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () { Navigator.pop(context); },
-                  child: Text(
-                    '취소',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: PeeroreumColor.gray[600]
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        '취소',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: PeeroreumColor.gray[600]),
+                      ),
+                      style: TextButton.styleFrom(
+                        backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16), // 패딩
+                        shape: RoundedRectangleBorder(
+                          // 모양
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16), // 패딩
-                    shape: RoundedRectangleBorder( // 모양
-                      borderRadius: BorderRadius.circular(8),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        passwordController.text == datas[index]['password']
+                            ? enrollWedu(index)
+                            : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        '확인',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: PeeroreumColor.white),
+                      ),
+                      style: TextButton.styleFrom(
+                        backgroundColor: PeeroreumColor.primaryPuple[400],
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    passwordController.text == datas[index]['password'] ?
-                    enrollWedu(index) : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    '확인',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: PeeroreumColor.white
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: PeeroreumColor.primaryPuple[400],
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
+                ],
+              )
             ],
-          )
-        ],
-      );
-    });
+          );
+        });
   }
 }
