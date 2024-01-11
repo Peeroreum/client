@@ -7,6 +7,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
@@ -31,8 +32,8 @@ class _HomeWeduState extends State<HomeWedu> {
   int selectedIndex = 1;
   List<dynamic> datas = [];
   List<dynamic> inroom_datas = [];
-  List<dynamic> inviDatas = [];
-  List<dynamic> hashTags = [];
+  Map<dynamic,dynamic> inviDatas = {};
+  Map<dynamic, List<dynamic>> hashTags = {};
   List<Map<String, String>> searchData = [];
   List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
@@ -70,7 +71,7 @@ class _HomeWeduState extends State<HomeWedu> {
 
   return dynamicLink.shortUrl.toString();
   }
-
+  
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
@@ -87,7 +88,8 @@ class _HomeWeduState extends State<HomeWedu> {
     } else {
       print("에러${weduResult.statusCode}");
     }
-    var inWeduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
+    var inWeduResult = await http.get(
+        Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -105,14 +107,16 @@ class _HomeWeduState extends State<HomeWedu> {
     var inviData;
     for (var data in datas) {
       inviData = await fetchInvitation(data['id']);
-      inviDatas.add(inviData);
-      hashTags.add(inviData['hashTags']);
+      inviDatas.addAll({data['id']:inviData});
+      hashTags.addAll({data['id']:inviData['hashTags']});
     }
   }
 
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       titleSpacing: 0,
       automaticallyImplyLeading: false,
@@ -171,10 +175,9 @@ class _HomeWeduState extends State<HomeWedu> {
             children: [
               GestureDetector(
                 child: Container(
-                  padding: EdgeInsets.only(right: 8),
+                    padding: EdgeInsets.only(right: 8),
                     child: SvgPicture.asset('assets/icons/plus_square.svg',
-                        color: PeeroreumColor.gray[800])
-                ),
+                        color: PeeroreumColor.gray[800])),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -213,8 +216,11 @@ class _HomeWeduState extends State<HomeWedu> {
               : SizedBox(
                   height: 0,
                 ),
+          (inroom_datas.isNotEmpty)?
           SizedBox(
             height: 20,
+          ) : SizedBox(
+            height: 0,
           ),
           Container(
             height: 8,
@@ -649,9 +655,8 @@ class _HomeWeduState extends State<HomeWedu> {
                               image: AssetImage(
                                   'assets/images/example_logo.png'))),
                 ),
-                Container(
-                  height: 44,
-                  padding: EdgeInsets.only(left: 16),
+                SizedBox(width: 16,),
+                Flexible(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -689,20 +694,15 @@ class _HomeWeduState extends State<HomeWedu> {
                                     color: PeeroreumColor.gray[400], width: 12)
                                 : Container(),
                             SizedBox(width: 4),
-                            SizedBox(
-                              width: datas[index]['locked'].toString() == "true"
-                                  ? MediaQuery.of(context).size.width * 0.45
-                                  : MediaQuery.of(context).size.width * 0.48,
-                              child: Flexible(
-                                child: Text(
-                                  datas[index]["title"]!,
-                                  style: TextStyle(
-                                      overflow: TextOverflow.ellipsis,
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: PeeroreumColor.black),
-                                ),
+                            Flexible(
+                              child: Text(
+                                datas[index]["title"]!,
+                                style: TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.black),
                               ),
                             ),
                           ],
@@ -763,9 +763,6 @@ class _HomeWeduState extends State<HomeWedu> {
   Widget roominfo(index) {
     return Container(
       width: double.maxFinite,
-      height: hashTags[index].length == 0
-          ? MediaQuery.of(context).size.height * 0.55 - 26
-          : MediaQuery.of(context).size.height * 0.55,
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
@@ -773,123 +770,95 @@ class _HomeWeduState extends State<HomeWedu> {
           topRight: Radius.circular(16.0),
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                            image: (datas[index]['imagePath'] != null)
-                                ? DecorationImage(
-                                    image:
-                                        NetworkImage(datas[index]['imagePath']),
-                                    fit: BoxFit.cover)
-                                : DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/example_logo.png')),
-                            border: Border.all(
-                                width: 1, color: PeeroreumColor.gray[200]!),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                      ),
-                      Container(
-                        height: 72,
-                        padding: EdgeInsets.only(left: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                                color: PeeroreumColor.subjectColor[
-                                    dropdownSubjectList[datas[index]
-                                        ['subject']]]?[0],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 2, horizontal: 8),
-                                child: Text(
-                                  dropdownSubjectList[datas[index]["subject"]],
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      color: PeeroreumColor.subjectColor[
-                                          dropdownSubjectList[datas[index]
-                                              ['subject']]]?[1],
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 10),
-                                ),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                          image: (datas[index]['imagePath'] != null)
+                              ? DecorationImage(
+                                  image:
+                                      NetworkImage(datas[index]['imagePath']),
+                                  fit: BoxFit.cover)
+                              : DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/example_logo.png')),
+                          border: Border.all(
+                              width: 1, color: PeeroreumColor.gray[200]!),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(5.0))),
+                    ),
+                    Container(
+                      height: 72,
+                      padding: EdgeInsets.only(left: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4)),
+                              color: PeeroreumColor.subjectColor[
+                                  dropdownSubjectList[datas[index]
+                                      ['subject']]]?[0],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              child: Text(
+                                dropdownSubjectList[datas[index]["subject"]],
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    color: PeeroreumColor.subjectColor[
+                                        dropdownSubjectList[datas[index]
+                                            ['subject']]]?[1],
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10),
                               ),
                             ),
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Row(
-                              children: [
-                                datas[index]['locked'].toString() == "true"
-                                    ? SvgPicture.asset('assets/icons/lock.svg',
-                                        color: PeeroreumColor.gray[400])
-                                    : Container(),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                SizedBox(
-                                  width: datas[index]['locked'].toString() == "true" ?
-                                  MediaQuery.of(context).size.width * 0.42
-                                      : MediaQuery.of(context).size.width * 0.48,
-                                  child: CustomWidgetMarquee(
-                                    animationDuration: Duration(seconds: 3),
-                                    pauseDuration: Duration(seconds: 1),
-                                    directionOption:
-                                        DirectionOption.oneDirection,
-                                    child: Text(
-                                      datas[index]["title"]!,
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                          color: PeeroreumColor.black),
-                                    ),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Row(
+                            children: [
+                              datas[index]['locked'].toString() == "true"
+                                  ? SvgPicture.asset('assets/icons/lock.svg',
+                                      color: PeeroreumColor.gray[400])
+                                  : Container(),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              SizedBox(
+                                width: datas[index]['locked'].toString() ==
+                                        "true"
+                                    ? MediaQuery.of(context).size.width * 0.42
+                                    : MediaQuery.of(context).size.width *
+                                        0.48,
+                                child: CustomWidgetMarquee(
+                                  animationDuration: Duration(seconds: 3),
+                                  pauseDuration: Duration(seconds: 1),
+                                  directionOption:
+                                      DirectionOption.oneDirection,
+                                  child: Text(
+                                    datas[index]["title"]!,
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: PeeroreumColor.black),
                                   ),
-                                ),
-                              ],
-                            ),
-                            // SizedBox(
-                            //   height: 4,
-                            // ),
-                            Row(
-                              children: [
-                                Text(dropdownGradeList[datas[index]["grade"]],
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: PeeroreumColor.gray[600])),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 2),
-                                  child: Text('⋅'),
-                                ),
-                                Text(
-                                    '${datas[index]["attendingPeopleNum"]!}명 참여중',
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: PeeroreumColor.gray[600])),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 2),
-                                  child: Text('⋅'),
                                 ),
                                 Text('D-${datas[index]["dday"]!}',
                                     style: TextStyle(
@@ -920,122 +889,176 @@ class _HomeWeduState extends State<HomeWedu> {
                       },
                       icon: SvgPicture.asset(
                         'assets/icons/share.svg',
+                              ),
+                            ],
+                          ),
+                          // SizedBox(
+                          //   height: 4,
+                          // ),
+                          Row(
+                            children: [
+                              Text(dropdownGradeList[datas[index]["grade"]],
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 2),
+                                child: Text('⋅'),
+                              ),
+                              Text(
+                                  '${datas[index]["attendingPeopleNum"]!}명 참여중',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 2),
+                                child: Text('⋅'),
+                              ),
+                              Text('D-${datas[index]["dday"]!}',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                            ],
+                          )
+                        ],
                       ),
                     ),
-                  )
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                      color: PeeroreumColor.gray[100],
+                      borderRadius: BorderRadius.circular(8)),
+                  child: IconButton(
+                    onPressed: () {
+                      shareDeepLink();
+                    },
+                    icon: SvgPicture.asset(
+                      'assets/icons/share.svg',
+                    ),
+                  ),
+                )
+              ],
+            ),
+            roominfo_tag(index),
+            SizedBox(
+              height: 8,
+            ),
+            Container(
+              width: double.infinity,
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(
+                inviDatas[datas[index]['id']]['challenge'],
+                style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
+              ),
+              decoration: BoxDecoration(
+                  color: PeeroreumColor.gray[50],
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Container(
+              height: 162,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage(inviDatas[datas[index]['id']]['invitationUrl']),
+                      fit: BoxFit.cover),
+                  color: PeeroreumColor.primaryPuple[400],
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 8, 0, 32),
+              width: double.maxFinite,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        '닫기',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.gray[600],
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            PeeroreumColor.gray[300]),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 12)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        datas[index]['locked'].toString() == "true"
+                            ? insertPassword(index)
+                            : enrollWedu(index);
+                        fetchDatas();
+                        setState(() {});
+                      },
+                      child: Text(
+                        '참여하기',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.white,
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400]),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 12)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              roominfo_tag(index),
-              SizedBox(
-                height: 8,
-              ),
-              Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: Text(
-                  inviDatas[index]['challenge'],
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
-                ),
-                decoration: BoxDecoration(
-                    color: PeeroreumColor.gray[50],
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Container(
-                height: 162,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(inviDatas[index]['invitationUrl']),
-                        fit: BoxFit.cover),
-                    color: PeeroreumColor.primaryPuple[400],
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 32),
-          width: double.maxFinite,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    '닫기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.gray[600],
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    datas[index]['locked'].toString() == "true"
-                        ? insertPassword(index)
-                        : enrollWedu(index);
-                    fetchDatas();
-                    setState(() {});
-                  },
-                  child: Text(
-                    '참여하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.white,
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget roominfo_tag(roomIndex) {
-    if (hashTags[roomIndex].length == 0) {
+    if (hashTags[datas[roomIndex]['id']]!.isEmpty) {
       return Container();
     }
     return Padding(
@@ -1068,7 +1091,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       width: 2,
                     ),
                     Text(
-                      hashTags[roomIndex][index],
+                      hashTags[datas[roomIndex]['id']]![index],
                       style: TextStyle(
                         color: PeeroreumColor.primaryPuple[400],
                         fontSize: 12,
@@ -1084,7 +1107,8 @@ class _HomeWeduState extends State<HomeWedu> {
                 width: 4,
               );
             },
-            itemCount: hashTags[roomIndex].length),
+            itemCount: hashTags[datas[roomIndex]['id']]!.length
+        ),
       ),
     );
   }

@@ -9,7 +9,7 @@ class SignUpComplete extends StatefulWidget {
 }
 
 class _SignUpCompleteState extends State<SignUpComplete> {
-  var nickname= '';
+  var nickname;
   @override
   void initState() {
     // TODO: implement initState
@@ -48,7 +48,7 @@ class _SignUpCompleteState extends State<SignUpComplete> {
                     ),
                   ),
                   SizedBox(height: 79,),
-                  Text('${nickname}님, 가입을 환영해요!',
+                  Text('$nickname님, 가입을 환영해요!',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 20,
@@ -70,6 +70,7 @@ class _SignUpCompleteState extends State<SignUpComplete> {
           bottomNavigationBar: Container(
                   margin: EdgeInsets.fromLTRB(20, 0, 20, 30),
                   width: double.maxFinite,
+                  height: 48,
                   child: TextButton(
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);

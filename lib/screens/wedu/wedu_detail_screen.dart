@@ -27,8 +27,9 @@ class DetailWedu extends StatefulWidget {
   @override
   State<DetailWedu> createState() => _DetailWeduState(id);
 }
-double stackWidth=0;
-double leftPosition=0;
+
+double stackWidth = 0;
+double leftPosition = 0;
 
 class _DetailWeduState extends State<DetailWedu> {
   int id;
@@ -48,6 +49,7 @@ class _DetailWeduState extends State<DetailWedu> {
   dynamic weduDday = '';
   dynamic weduProgress = '';
   dynamic weduChallenge = '';
+  dynamic weduFire = '';
   double percent = 0.0;
 
   @override
@@ -71,6 +73,7 @@ class _DetailWeduState extends State<DetailWedu> {
       weduDday = weduData['dday'];
       weduProgress = weduData['progress'].toString();
       weduChallenge = weduData['challenge'];
+      weduFire = weduData['continuousDate'];
       percent = double.parse(weduProgress) / 100;
       if (weduProgress == '0') {
         leftPosition = 0; // percent가 0일 때의 처리
@@ -134,7 +137,7 @@ class _DetailWeduState extends State<DetailWedu> {
       setState(() {
         _images.add(image);
       });
-    }else {
+    } else {
       // 이미지 선택이 취소되었을 때의 처리
       print('Image selection cancelled');
     }
@@ -185,6 +188,8 @@ class _DetailWeduState extends State<DetailWedu> {
           backgroundColor: PeeroreumColor.white,
           appBar: AppBar(
             backgroundColor: PeeroreumColor.white,
+            shadowColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
             leading: IconButton(
@@ -231,20 +236,13 @@ class _DetailWeduState extends State<DetailWedu> {
                   ))
             ],
             bottom: PreferredSize(
-              preferredSize: Size.fromHeight(20),
+              preferredSize: Size.fromHeight(40),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '🔥',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: PeeroreumColor.black),
-                      ),
+                      SvgPicture.asset('assets/icons/fire.svg'),
                       Text(
                         '+',
                         style: TextStyle(
@@ -253,8 +251,9 @@ class _DetailWeduState extends State<DetailWedu> {
                             fontSize: 16,
                             color: PeeroreumColor.black),
                       ),
+                      SizedBox(width: 2,),
                       Text(
-                        '10',
+                        '$weduFire',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
@@ -289,8 +288,8 @@ class _DetailWeduState extends State<DetailWedu> {
                           decoration: BoxDecoration(
                             color: PeeroreumColor.white, // 여기에 색상 지정
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8.0),
-                              topRight: Radius.circular(8.0),
+                              topLeft: Radius.circular(16.0),
+                              topRight: Radius.circular(16.0),
                             ),
                           ),
                           child: Column(
@@ -559,150 +558,153 @@ class _DetailWeduState extends State<DetailWedu> {
 
     return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.7,
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              ButtonBar(
-                alignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ButtonBar(
+              buttonPadding: EdgeInsets.all(0),
+              alignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: 2,
+                            color: PeeroreumColor
+                                .gradeColor[successOne['grade']]!),
+                      ),
+                      child: Container(
+                        height: 44,
+                        width: 44,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              width: 2,
-                              color: PeeroreumColor
-                                  .gradeColor[successOne['grade']]!),
-                        ),
-                        child: Container(
-                          height: 44,
-                          width: 44,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1,
-                              color: PeeroreumColor.white,
-                            ),
-                            image: successOne["profileImage"] != null
-                                ? DecorationImage(
-                                    image: NetworkImage(
-                                        successOne["profileImage"]))
-                                : DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/user.jpg')),
+                            width: 1,
+                            color: PeeroreumColor.white,
                           ),
+                          image: successOne["profileImage"] != null
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      successOne["profileImage"]))
+                              : DecorationImage(
+                                  image:
+                                      AssetImage('assets/images/user.jpg')),
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        successOne["nickname"].toString(),
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: PeeroreumColor.gray[800]),
-                      )
-                    ],
-                  ),
-                  GestureDetector(
-                    child: SvgPicture.asset(
-                      'assets/icons/icon_dots_mono.svg',
-                      color: PeeroreumColor.gray[800],
                     ),
-                    onTap: () {},
-                  )
-                ],
-              ),
-              SizedBox(height: 20),
-              CarouselSlider(
-                items: challengeImage.map((i) {
-                  var imageUrl = i.toString();
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        width: double.maxFinite,
-                        height: double.maxFinite,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: PeeroreumColor.gray[100],
-                            image: i != null
-                                ? DecorationImage(
-                                    image: NetworkImage(imageUrl),
-                                    fit: BoxFit.fill)
-                                : null),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Container(
-                              margin: EdgeInsets.all(12),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color.fromARGB(100, 0, 0, 0),
-                              ),
-                              child: Text(
-                                '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                    color: PeeroreumColor.white),
-                              )),
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-                options: CarouselOptions(
-                  enableInfiniteScroll: false,
-                  viewportFraction: 1,
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  enlargeCenterPage: true,
+                    SizedBox(width: 8),
+                    Text(
+                      successOne["nickname"].toString(),
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[800]),
+                    )
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 28),
-          width: double.maxFinite,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              '닫기',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: PeeroreumColor.gray[600],
+                GestureDetector(
+                  child: SvgPicture.asset(
+                    'assets/icons/icon_dots_mono.svg',
+                    color: PeeroreumColor.gray[800],
+                  ),
+                  onTap: () {},
+                )
+              ],
+            ),
+            SizedBox(height: 20),
+            CarouselSlider(
+              items: challengeImage.map((i) {
+                var imageUrl = i.toString();
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: PeeroreumColor.gray[100],
+                          image: i != null
+                              ? DecorationImage(
+                                  image: NetworkImage(imageUrl),
+                                  fit: BoxFit.cover)
+                              : null),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                            margin: EdgeInsets.all(12),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Color.fromARGB(100, 0, 0, 0),
+                            ),
+                            child: Text(
+                              '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: PeeroreumColor.white),
+                            )),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+              options: CarouselOptions(
+                enableInfiniteScroll: false,
+                viewportFraction: 1,
+                height: 380,
+                enlargeCenterPage: true,
               ),
             ),
-            style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 12)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ))),
-          ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 48,
+              margin: EdgeInsets.symmetric(
+                vertical: 8,
+              ),
+              width: double.maxFinite,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  '닫기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -856,58 +858,57 @@ class _DetailWeduState extends State<DetailWedu> {
                           // ),
                           Stack(
                             children: [
-                              LayoutBuilder(
-                                builder: (BuildContext context, BoxConstraints constraints) {
-                                  stackWidth = constraints.maxWidth;
-                                  // if (weduProgress == '0') {
-                                  //   leftPosition = 0; // percent가 0일 때의 처리
-                                  // } else if (weduProgress == '100') {
-                                  //   leftPosition = stackWidth * percent - 42; // percent가 1일 때의 처리
-                                  // } else {
-                                  //   leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
-                                  // }
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    child: SizedBox(
-                                      height: 24,
-                                      child: LinearPercentIndicator(
-                                        padding: EdgeInsets.all(0),
-                                        lineHeight: 8,
-                                        animationDuration: 2000,
-                                        percent: percent,
-                                        backgroundColor: PeeroreumColor.gray[200],
-                                        linearGradient: LinearGradient(colors: [
-                                          PeeroreumColor.primaryPuple[400]!,
-                                          Color(0xffada5fc)
-                                        ]),
-                                        barRadius: Radius.circular(8),
-                                                                ),
+                              LayoutBuilder(builder: (BuildContext context,
+                                  BoxConstraints constraints) {
+                                stackWidth = constraints.maxWidth;
+                                // if (weduProgress == '0') {
+                                //   leftPosition = 0; // percent가 0일 때의 처리
+                                // } else if (weduProgress == '100') {
+                                //   leftPosition = stackWidth * percent - 42; // percent가 1일 때의 처리
+                                // } else {
+                                //   leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
+                                // }
+                                return Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: SizedBox(
+                                    height: 24,
+                                    child: LinearPercentIndicator(
+                                      padding: EdgeInsets.all(0),
+                                      lineHeight: 8,
+                                      animationDuration: 2000,
+                                      percent: percent,
+                                      backgroundColor: PeeroreumColor.gray[200],
+                                      linearGradient: LinearGradient(colors: [
+                                        PeeroreumColor.primaryPuple[400]!,
+                                        Color(0xffada5fc)
+                                      ]),
+                                      barRadius: Radius.circular(8),
                                     ),
-                                  );
-                                }
-                              ),
+                                  ),
+                                );
+                              }),
                               Positioned(
                                 top: 0,
                                 left: leftPosition,
                                 child: Container(
-                                margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
-                                padding: EdgeInsets.all(4),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: PeeroreumColor.primaryPuple[400],
-                                ),
-                                width: 42,
-                                child: Text(
-                                  '${weduProgress}%',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                      color: PeeroreumColor.white),
+                                  margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
+                                  padding: EdgeInsets.all(4),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: PeeroreumColor.primaryPuple[400],
+                                  ),
+                                  width: 42,
+                                  child: Text(
+                                    '${weduProgress}%',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                        color: PeeroreumColor.white),
+                                  ),
                                 ),
                               ),
-                            ),
                             ],
                           ),
                           Row(

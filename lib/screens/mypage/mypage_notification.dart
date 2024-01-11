@@ -115,18 +115,6 @@ class _MyPageNotificationState extends State<MyPageNotification> {
                 color: PeeroreumColor.black,
               ),
             ),
-            SizedBox(
-              height: 8,
-            ),
-            Text(
-              '잠금시 비밀번호를 아는 친구만 함께할 수 있어요.',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: PeeroreumColor.gray[600],
-              ),
-            ),
           ],
         ),
         SizedBox(
@@ -173,7 +161,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
               height: 8,
             ),
             Text(
-              '잠금시 비밀번호를 아는 친구만 함께할 수 있어요.',
+              '챌린지 달성, 독려하기, 칭찬하기 등',
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 12,
@@ -225,7 +213,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
               height: 8,
             ),
             Text(
-              '잠금시 비밀번호를 아는 친구만 함께할 수 있어요.',
+              '댓글 등록, 채택 등',
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 12,
@@ -277,7 +265,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
               height: 8,
             ),
             Text(
-              '잠금시 비밀번호를 아는 친구만 함께할 수 있어요.',
+              '순위 변동, 일간 순위 공지 등',
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 12,
