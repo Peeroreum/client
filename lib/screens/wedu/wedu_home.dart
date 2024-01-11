@@ -322,6 +322,7 @@ class _HomeWeduState extends State<HomeWedu> {
         );
       },
       itemBuilder: (BuildContext context, int index) {
+        int rindex = inroom_datas.length - 1 - index;
         return GestureDetector(
           child: Container(
             width: 150,
@@ -340,10 +341,10 @@ class _HomeWeduState extends State<HomeWedu> {
                         border: Border.all(
                             width: 1, color: PeeroreumColor.gray[200]!),
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        image: (inroom_datas[index]['imagePath'] != null)
+                        image: (inroom_datas[rindex]['imagePath'] != null)
                             ? DecorationImage(
                                 image: NetworkImage(
-                                    inroom_datas[index]['imagePath']),
+                                    inroom_datas[rindex]['imagePath']),
                                 fit: BoxFit.cover)
                             : DecorationImage(
                                 image: AssetImage(
@@ -358,20 +359,20 @@ class _HomeWeduState extends State<HomeWedu> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
                         color: PeeroreumColor.subjectColor[dropdownSubjectList[
-                            inroom_datas[index]['subject']]]?[0],
+                            inroom_datas[rindex]['subject']]]?[0],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 8),
                         child: Text(
-                          dropdownSubjectList[inroom_datas[index]['subject']],
+                          dropdownSubjectList[inroom_datas[rindex]['subject']],
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
                             color: PeeroreumColor.subjectColor[
-                                dropdownSubjectList[inroom_datas[index]
+                                dropdownSubjectList[inroom_datas[rindex]
                                     ['subject']]]?[1],
                           ),
                         ),
@@ -386,7 +387,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         pauseDuration: Duration(seconds: 1),
                         directionOption: DirectionOption.oneDirection,
                         child: Text(
-                          inroom_datas[index]["title"]!,
+                          inroom_datas[rindex]["title"]!,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -404,7 +405,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(dropdownGradeList[inroom_datas[index]["grade"]],
+                    Text(dropdownGradeList[inroom_datas[rindex]["grade"]],
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -414,7 +415,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
-                    Text('${inroom_datas[index]["attendingPeopleNum"]!}명 참여중',
+                    Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명 참여중',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -424,7 +425,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
-                    Text('D-${inroom_datas[index]["dday"]!}',
+                    Text('D-${inroom_datas[rindex]["dday"]!}',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -436,7 +437,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   height: 8,
                 ),
                 Text(
-                  '${inroom_datas[index]["progress"]}% 달성', //이후 퍼센티지 수정
+                  '${inroom_datas[rindex]["progress"]}% 달성', //이후 퍼센티지 수정
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 14,
@@ -448,7 +449,7 @@ class _HomeWeduState extends State<HomeWedu> {
           ),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(inroom_datas[index]["id"])));
+                builder: (context) => DetailWedu(inroom_datas[rindex]["id"])));
           },
         );
       },
