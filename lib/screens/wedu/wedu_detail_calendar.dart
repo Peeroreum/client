@@ -641,7 +641,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                         image: successList[index]["profileImage"] != null
                             ? DecorationImage(
                                 image: NetworkImage(
-                                    successList[index]["profileImage"]))
+                                    successList[index]["profileImage"]),
+                                fit: BoxFit.cover)
                             : DecorationImage(
                                 image: AssetImage('assets/images/user.jpg')),
                       ),
@@ -722,7 +723,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       image: notSuccessList[index]["profileImage"] != null
                           ? DecorationImage(
                               image: NetworkImage(
-                                  notSuccessList[index]["profileImage"]))
+                                  notSuccessList[index]["profileImage"]),
+                              fit: BoxFit.cover)
                           : DecorationImage(
                               image: AssetImage('assets/images/user.jpg')),
                     ),
@@ -766,10 +768,11 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ButtonBar(
+                buttonPadding: EdgeInsets.all(0),
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    //mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
                         width: 48,
@@ -793,7 +796,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                             image: successOne["profileImage"] != null
                                 ? DecorationImage(
                                     image: NetworkImage(
-                                        successOne["profileImage"]))
+                                        successOne["profileImage"]),
+                                    fit: BoxFit.cover)
                                 : DecorationImage(
                                     image:
                                         AssetImage('assets/images/user.jpg')),

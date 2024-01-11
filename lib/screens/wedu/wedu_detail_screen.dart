@@ -134,6 +134,7 @@ class _DetailWeduState extends State<DetailWedu> {
     if (image != null) {
       setState(() {
         _images.add(image);
+        postImages();
       });
     } else {
       // 이미지 선택이 취소되었을 때의 처리
@@ -148,10 +149,9 @@ class _DetailWeduState extends State<DetailWedu> {
       setState(() {
         print("리스트에 이미지 저장");
         _images.addAll(selectedImages);
+        postImages();
       });
     }
-
-    postImages();
   }
 
   Future<void> postImages() async {
@@ -282,101 +282,109 @@ class _DetailWeduState extends State<DetailWedu> {
                   _images.clear();
                   showModalBottomSheet(
                       context: context,
+                      backgroundColor: Colors.transparent,
                       builder: (context) {
-                        return Container(
-                          padding: EdgeInsets.all(20),
-                          alignment: Alignment.center,
-                          height: MediaQuery.of(context).size.height * 0.2,
-                          decoration: BoxDecoration(
-                            color: PeeroreumColor.white, // 여기에 색상 지정
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8.0),
-                              topRight: Radius.circular(8.0),
+                        return Flexible(
+                          child: Container(
+                            width: double.maxFinite,
+                            decoration: BoxDecoration(
+                              color: PeeroreumColor.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16.0),
+                                topRight: Radius.circular(16.0),
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                '인증 방식을 선택하세요.',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.gray[800],
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(20),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          takeFromCamera();
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          '카메라',
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: PeeroreumColor.white,
+                            child: Container(
+                              padding: EdgeInsets.all(20),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '인증 방식을 선택하세요.',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: PeeroreumColor.gray[800],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(20),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              takeFromCamera();
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              '카메라',
+                                              style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: PeeroreumColor.white,
+                                              ),
+                                            ),
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        PeeroreumColor
+                                                            .primaryPuple[400]),
+                                                padding:
+                                                    MaterialStateProperty.all(
+                                                        EdgeInsets.all(12)),
+                                                shape: MaterialStateProperty.all<
+                                                        RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ))),
                                           ),
                                         ),
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    PeeroreumColor
-                                                        .primaryPuple[400]),
-                                            padding: MaterialStateProperty.all(
-                                                EdgeInsets.all(12)),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ))),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          takeFromGallery();
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          '갤러리',
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: PeeroreumColor.white,
+                                        SizedBox(width: 8),
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              takeFromGallery();
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              '갤러리',
+                                              style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: PeeroreumColor.white,
+                                              ),
+                                            ),
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        PeeroreumColor
+                                                            .primaryPuple[400]),
+                                                padding:
+                                                    MaterialStateProperty.all(
+                                                        EdgeInsets.all(12)),
+                                                shape: MaterialStateProperty.all<
+                                                        RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ))),
                                           ),
                                         ),
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    PeeroreumColor
-                                                        .primaryPuple[400]),
-                                            padding: MaterialStateProperty.all(
-                                                EdgeInsets.all(12)),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ))),
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       });
@@ -449,7 +457,8 @@ class _DetailWeduState extends State<DetailWedu> {
                         image: successList[index]["profileImage"] != null
                             ? DecorationImage(
                                 image: NetworkImage(
-                                    successList[index]["profileImage"]))
+                                    successList[index]["profileImage"]),
+                                fit: BoxFit.cover)
                             : DecorationImage(
                                 image: AssetImage('assets/images/user.jpg')),
                       ),
@@ -530,7 +539,8 @@ class _DetailWeduState extends State<DetailWedu> {
                       image: notSuccessList[index]["profileImage"] != null
                           ? DecorationImage(
                               image: NetworkImage(
-                                  notSuccessList[index]["profileImage"]))
+                                  notSuccessList[index]["profileImage"]),
+                              fit: BoxFit.cover)
                           : DecorationImage(
                               image: AssetImage('assets/images/user.jpg')),
                     ),
@@ -601,7 +611,8 @@ class _DetailWeduState extends State<DetailWedu> {
                             image: successOne["profileImage"] != null
                                 ? DecorationImage(
                                     image: NetworkImage(
-                                        successOne["profileImage"]))
+                                        successOne["profileImage"]),
+                                    fit: BoxFit.cover)
                                 : DecorationImage(
                                     image:
                                         AssetImage('assets/images/user.jpg')),
