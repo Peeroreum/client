@@ -644,7 +644,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                         image: successList[index]["profileImage"] != null
                             ? DecorationImage(
                                 image: NetworkImage(
-                                    successList[index]["profileImage"]))
+                                    successList[index]["profileImage"]),
+                                fit: BoxFit.cover)
                             : DecorationImage(
                                 image: AssetImage('assets/images/user.jpg')),
                       ),
@@ -725,7 +726,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       image: notSuccessList[index]["profileImage"] != null
                           ? DecorationImage(
                               image: NetworkImage(
-                                  notSuccessList[index]["profileImage"]))
+                                  notSuccessList[index]["profileImage"]),
+                              fit: BoxFit.cover)
                           : DecorationImage(
                               image: AssetImage('assets/images/user.jpg')),
                     ),
@@ -794,11 +796,11 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                           ),
                           image: successOne["profileImage"] != null
                               ? DecorationImage(
-                                  image: NetworkImage(
-                                      successOne["profileImage"]))
-                              : DecorationImage(
                                   image:
-                                      AssetImage('assets/images/user.jpg')),
+                                      NetworkImage(successOne["profileImage"]),
+                                  fit: BoxFit.cover)
+                              : DecorationImage(
+                                  image: AssetImage('assets/images/user.jpg')),
                         ),
                       ),
                     ),

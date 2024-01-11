@@ -13,6 +13,7 @@ import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile_friend.dart';
@@ -251,7 +252,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          Navigator.of(context).pop();
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => MyPage()));
         },
       ),
       title: Text(
@@ -988,7 +990,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           ? BoxDecoration(
               image: DecorationImage(
                 colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.2), BlendMode.darken),
+                    Colors.white.withOpacity(0.2), BlendMode.lighten),
                 image: NetworkImage(backgroundImage),
                 fit: BoxFit.cover,
               ),

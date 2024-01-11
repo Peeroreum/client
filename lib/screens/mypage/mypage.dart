@@ -169,7 +169,9 @@ class _MyPageState extends State<MyPage> {
                         color: PeeroreumColor.white,
                       ),
                       image: profileImage != null
-                          ? DecorationImage(image: NetworkImage(profileImage), fit: BoxFit.cover)
+                          ? DecorationImage(
+                              image: NetworkImage(profileImage),
+                              fit: BoxFit.cover)
                           : DecorationImage(
                               image: AssetImage(
                               'assets/images/user.jpg',
@@ -234,9 +236,8 @@ class _MyPageState extends State<MyPage> {
       children: [
         TextButton(
           onPressed: () => {
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => InWedu()))
-            Fluttertoast.showToast(msg: "준비중 입니다.")
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => InWedu()))
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
