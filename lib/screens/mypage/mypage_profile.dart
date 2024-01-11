@@ -292,91 +292,89 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Widget changeMe() {
-    return Flexible(
-      child: Container(
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: PeeroreumColor.white, // 여기에 색상 지정
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
-          ),
+    return Container(
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 16, top: 4),
-                child: Text(
-                  '프로필 관리',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.black,
-                  ),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.only(bottom: 16, top: 4),
+              child: Text(
+                '프로필 관리',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: PeeroreumColor.black,
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  profileImage_change(context);
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.fromHeight(40),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.all(0),
-                ),
-                child: Text(
-                  '프로필 사진 변경',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                    color: PeeroreumColor.black,
-                  ),
+            ),
+            TextButton(
+              onPressed: () {
+                profileImage_change(context);
+              },
+              style: TextButton.styleFrom(
+                minimumSize: Size.fromHeight(40),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+              ),
+              child: Text(
+                '프로필 사진 변경',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.black,
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  nickname_change();
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.fromHeight(40),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.all(0),
-                ),
-                child: Text(
-                  '닉네임 변경',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                    color: PeeroreumColor.black,
-                  ),
+            ),
+            TextButton(
+              onPressed: () {
+                nickname_change();
+              },
+              style: TextButton.styleFrom(
+                minimumSize: Size.fromHeight(40),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+              ),
+              child: Text(
+                '닉네임 변경',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.black,
                 ),
               ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  minimumSize: Size.fromHeight(40),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.all(0),
-                ),
-                child: Text(
-                  '배경 사진 변경',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                    color: PeeroreumColor.black,
-                  ),
+            ),
+            TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                minimumSize: Size.fromHeight(40),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+              ),
+              child: Text(
+                '배경 사진 변경',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.black,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
