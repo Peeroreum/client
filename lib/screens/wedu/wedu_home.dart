@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,7 +17,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 // import 'package:uni_links/uni_links.dart';
-// import 'package:share_plus/share_plus.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -47,40 +48,29 @@ class _HomeWeduState extends State<HomeWedu> {
   void initState() {
     super.initState();
     fetchDatas();
-    _initDeepLinkListener();
+    //_initDeepLinkListener();
+  }
+  Future<String> getShortLink(String screenName, String id) async {
+  String dynamicLinkPrefix = 'https://peeroreum.page.link';
+  final dynamicLinkParams = DynamicLinkParameters(
+    uriPrefix: dynamicLinkPrefix,
+    link: Uri.parse('$dynamicLinkPrefix/home'),
+    androidParameters: const AndroidParameters(
+      packageName: 'com.example.peeroreum_client',
+      minimumVersion: 0,
+    ),
+    iosParameters: const IOSParameters(
+      bundleId: 'com.example.peeroreumClient',
+
+      minimumVersion: '0',
+    ),
+  );
+  final dynamicLink =
+      await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
+
+  return dynamicLink.shortUrl.toString();
   }
 
-  Future<void> _initDeepLinkListener() async {
-    // 앱이 처음 실행될 때의 딥 링크를 가져오기
-    // var initialLink = await getInitialLink();
-    // _handleDeepLink(initialLink);
-    //
-    // // 딥 링크의 변경을 수신하는 스트림 리스너 등록
-    // linkStream.listen((String? link) {
-    //   _handleDeepLink(link);
-    // });
-  }
-
-  void _handleDeepLink(String? link) {
-    if (link != null && link.isNotEmpty) {
-      // 딥 링크를 처리하는 로직 추가
-      // 예: 네비게이션, 데이터 로딩 등
-      print('Handling deep link: $link');
-    }
-  }
-
-  String generateDeepLink() {
-    // 딥 링크를 생성하는 로직 추가
-    // 예: 'peeroreum://example.com'
-    return 'peeroreum://wedu.com';
-  }
-
-  void shareDeepLink() {
-    String deepLink = generateDeepLink();
-    // 딥 링크를 공유하는 로직 추가
-    // 예: share 패키지를 사용하여 딥 링크 공유
-    // Share.share(deepLink);
-  }
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
@@ -920,8 +910,13 @@ class _HomeWeduState extends State<HomeWedu> {
                         color: PeeroreumColor.gray[100],
                         borderRadius: BorderRadius.circular(8)),
                     child: IconButton(
-                      onPressed: () {
-                        shareDeepLink();
+                      onPressed: () async{
+                        Share.share(
+                          await getShortLink(
+                            '/home',
+                            '$index',
+                          )
+                        );
                       },
                       icon: SvgPicture.asset(
                         'assets/icons/share.svg',
