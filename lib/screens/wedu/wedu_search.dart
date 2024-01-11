@@ -46,7 +46,9 @@ class _searchWeduState extends State<searchWedu> {
 
   PreferredSizeWidget appbarWidget() {
     return AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: PeeroreumColor.white,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         // leadingWidth: 36,
         leading: IconButton(

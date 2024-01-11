@@ -16,8 +16,7 @@ const List<String> subject = <String>['전체', '국어', '영어', '수학', '�
 const List<String> grade = <String>['중1', '중2', '중3', '고1', '고2', '고3'];
 const List<int> headcount = <int>[10, 30, 50, 70, 100];
 //const List<String> gender = <String>['전체', '여자', '남자'];
-List<String> challenge = <String>['문제 30개 풀기', '공부 2시간', '기타'];
-List<String> _tag = [];
+List<String> challenge = <String>['문제 30개 풀기', '공부 2시간' ,'기타'];
 
 class CreateWedu extends StatefulWidget {
   CreateWedu({super.key});
@@ -28,6 +27,8 @@ class CreateWedu extends StatefulWidget {
 
 class _CreateWeduState extends State<CreateWedu> {
   Wedu wedu = Wedu();
+  List<String> _tag = [];
+
   String dropdownSubject = subject.first;
   String dropdownGrade = grade.first;
   int dropdownHeadcount = headcount.first;

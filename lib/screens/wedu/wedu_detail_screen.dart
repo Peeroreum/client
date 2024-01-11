@@ -49,6 +49,7 @@ class _DetailWeduState extends State<DetailWedu> {
   dynamic weduDday = '';
   dynamic weduProgress = '';
   dynamic weduChallenge = '';
+  dynamic weduFire = '';
   double percent = 0.0;
 
   @override
@@ -72,6 +73,7 @@ class _DetailWeduState extends State<DetailWedu> {
       weduDday = weduData['dday'];
       weduProgress = weduData['progress'].toString();
       weduChallenge = weduData['challenge'];
+      weduFire = weduData['continuousDate'];
       percent = double.parse(weduProgress) / 100;
       if (weduProgress == '0') {
         leftPosition = 0; // percent가 0일 때의 처리
@@ -134,7 +136,6 @@ class _DetailWeduState extends State<DetailWedu> {
     if (image != null) {
       setState(() {
         _images.add(image);
-        postImages();
       });
     } else {
       // 이미지 선택이 취소되었을 때의 처리
@@ -149,9 +150,10 @@ class _DetailWeduState extends State<DetailWedu> {
       setState(() {
         print("리스트에 이미지 저장");
         _images.addAll(selectedImages);
-        postImages();
       });
     }
+
+    postImages();
   }
 
   Future<void> postImages() async {
@@ -186,6 +188,8 @@ class _DetailWeduState extends State<DetailWedu> {
           backgroundColor: PeeroreumColor.white,
           appBar: AppBar(
             backgroundColor: PeeroreumColor.white,
+            shadowColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
             leading: IconButton(
@@ -232,20 +236,13 @@ class _DetailWeduState extends State<DetailWedu> {
                   ))
             ],
             bottom: PreferredSize(
-              preferredSize: Size.fromHeight(20),
+              preferredSize: Size.fromHeight(40),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '🔥',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: PeeroreumColor.black),
-                      ),
+                      SvgPicture.asset('assets/icons/fire.svg'),
                       Text(
                         '+',
                         style: TextStyle(
@@ -254,8 +251,9 @@ class _DetailWeduState extends State<DetailWedu> {
                             fontSize: 16,
                             color: PeeroreumColor.black),
                       ),
+                      SizedBox(width: 2,),
                       Text(
-                        '10',
+                        '$weduFire',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
@@ -282,109 +280,101 @@ class _DetailWeduState extends State<DetailWedu> {
                   _images.clear();
                   showModalBottomSheet(
                       context: context,
-                      backgroundColor: Colors.transparent,
                       builder: (context) {
-                        return Flexible(
-                          child: Container(
-                            width: double.maxFinite,
-                            decoration: BoxDecoration(
-                              color: PeeroreumColor.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16.0),
-                                topRight: Radius.circular(16.0),
-                              ),
+                        return Container(
+                          padding: EdgeInsets.all(20),
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          decoration: BoxDecoration(
+                            color: PeeroreumColor.white, // 여기에 색상 지정
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16.0),
+                              topRight: Radius.circular(16.0),
                             ),
-                            child: Container(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    '인증 방식을 선택하세요.',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: PeeroreumColor.gray[800],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: TextButton(
-                                            onPressed: () {
-                                              takeFromCamera();
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              '카메라',
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: PeeroreumColor.white,
-                                              ),
-                                            ),
-                                            style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all(
-                                                        PeeroreumColor
-                                                            .primaryPuple[400]),
-                                                padding:
-                                                    MaterialStateProperty.all(
-                                                        EdgeInsets.all(12)),
-                                                shape: MaterialStateProperty.all<
-                                                        RoundedRectangleBorder>(
-                                                    RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                ))),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                '인증 방식을 선택하세요.',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.gray[800],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () {
+                                          takeFromCamera();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          '카메라',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: PeeroreumColor.white,
                                           ),
                                         ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: TextButton(
-                                            onPressed: () {
-                                              takeFromGallery();
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              '갤러리',
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: PeeroreumColor.white,
-                                              ),
-                                            ),
-                                            style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all(
-                                                        PeeroreumColor
-                                                            .primaryPuple[400]),
-                                                padding:
-                                                    MaterialStateProperty.all(
-                                                        EdgeInsets.all(12)),
-                                                shape: MaterialStateProperty.all<
-                                                        RoundedRectangleBorder>(
-                                                    RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                ))),
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    PeeroreumColor
+                                                        .primaryPuple[400]),
+                                            padding: MaterialStateProperty.all(
+                                                EdgeInsets.all(12)),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ))),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () {
+                                          takeFromGallery();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          '갤러리',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: PeeroreumColor.white,
                                           ),
                                         ),
-                                      ],
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    PeeroreumColor
+                                                        .primaryPuple[400]),
+                                            padding: MaterialStateProperty.all(
+                                                EdgeInsets.all(12)),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ))),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         );
                       });
@@ -457,8 +447,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         image: successList[index]["profileImage"] != null
                             ? DecorationImage(
                                 image: NetworkImage(
-                                    successList[index]["profileImage"]),
-                                fit: BoxFit.cover)
+                                    successList[index]["profileImage"]))
                             : DecorationImage(
                                 image: AssetImage('assets/images/user.jpg')),
                       ),
@@ -539,8 +528,7 @@ class _DetailWeduState extends State<DetailWedu> {
                       image: notSuccessList[index]["profileImage"] != null
                           ? DecorationImage(
                               image: NetworkImage(
-                                  notSuccessList[index]["profileImage"]),
-                              fit: BoxFit.cover)
+                                  notSuccessList[index]["profileImage"]))
                           : DecorationImage(
                               image: AssetImage('assets/images/user.jpg')),
                     ),
@@ -568,158 +556,155 @@ class _DetailWeduState extends State<DetailWedu> {
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
 
-    return Flexible(
-      child: Container(
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: PeeroreumColor.white, // 여기에 색상 지정
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
-          ),
+    return Container(
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
-        child: Container(
-          padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ButtonBar(
-                buttonPadding: EdgeInsets.all(0),
-                alignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
+      ),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ButtonBar(
+              buttonPadding: EdgeInsets.all(0),
+              alignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: 2,
+                            color: PeeroreumColor
+                                .gradeColor[successOne['grade']]!),
+                      ),
+                      child: Container(
+                        height: 44,
+                        width: 44,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              width: 2,
-                              color: PeeroreumColor
-                                  .gradeColor[successOne['grade']]!),
-                        ),
-                        child: Container(
-                          height: 44,
-                          width: 44,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1,
-                              color: PeeroreumColor.white,
-                            ),
-                            image: successOne["profileImage"] != null
-                                ? DecorationImage(
-                                    image: NetworkImage(
-                                        successOne["profileImage"]),
-                                    fit: BoxFit.cover)
-                                : DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/user.jpg')),
+                            width: 1,
+                            color: PeeroreumColor.white,
                           ),
+                          image: successOne["profileImage"] != null
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      successOne["profileImage"]))
+                              : DecorationImage(
+                                  image:
+                                      AssetImage('assets/images/user.jpg')),
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        successOne["nickname"].toString(),
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: PeeroreumColor.gray[800]),
-                      )
-                    ],
-                  ),
-                  GestureDetector(
-                    child: SvgPicture.asset(
-                      'assets/icons/icon_dots_mono.svg',
-                      color: PeeroreumColor.gray[800],
                     ),
-                    onTap: () {},
-                  )
-                ],
-              ),
-              SizedBox(height: 20),
-              CarouselSlider(
-                items: challengeImage.map((i) {
-                  var imageUrl = i.toString();
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: PeeroreumColor.gray[100],
-                            image: i != null
-                                ? DecorationImage(
-                                    image: NetworkImage(imageUrl),
-                                    fit: BoxFit.cover)
-                                : null),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Container(
-                              margin: EdgeInsets.all(12),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color.fromARGB(100, 0, 0, 0),
-                              ),
-                              child: Text(
-                                '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                    color: PeeroreumColor.white),
-                              )),
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-                options: CarouselOptions(
-                  enableInfiniteScroll: false,
-                  viewportFraction: 1,
-                  height: 380,
-                  enlargeCenterPage: true,
+                    SizedBox(width: 8),
+                    Text(
+                      successOne["nickname"].toString(),
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[800]),
+                    )
+                  ],
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                height: 48,
-                margin: EdgeInsets.symmetric(
-                  vertical: 8,
-                ),
-                width: double.maxFinite,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
+                GestureDetector(
+                  child: SvgPicture.asset(
+                    'assets/icons/icon_dots_mono.svg',
+                    color: PeeroreumColor.gray[800],
+                  ),
+                  onTap: () {},
+                )
+              ],
+            ),
+            SizedBox(height: 20),
+            CarouselSlider(
+              items: challengeImage.map((i) {
+                var imageUrl = i.toString();
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: PeeroreumColor.gray[100],
+                          image: i != null
+                              ? DecorationImage(
+                                  image: NetworkImage(imageUrl),
+                                  fit: BoxFit.cover)
+                              : null),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                            margin: EdgeInsets.all(12),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Color.fromARGB(100, 0, 0, 0),
+                            ),
+                            child: Text(
+                              '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: PeeroreumColor.white),
+                            )),
+                      ),
+                    );
                   },
-                  child: Text(
-                    '닫기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.gray[600],
-                    ),
-                  ),
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(vertical: 12)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ))),
-                ),
+                );
+              }).toList(),
+              options: CarouselOptions(
+                enableInfiniteScroll: false,
+                viewportFraction: 1,
+                height: 380,
+                enlargeCenterPage: true,
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 48,
+              margin: EdgeInsets.symmetric(
+                vertical: 8,
+              ),
+              width: double.maxFinite,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  '닫기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+              ),
+            ),
+          ],
         ),
       ),
     );
