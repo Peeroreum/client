@@ -149,7 +149,6 @@ class _serviceTermsState extends State<serviceTerms> {
   Widget serviceTerms() {
     return Flexible(
       child: Container(
-        // color: Colors.transparent,
         width: double.maxFinite,
         decoration: BoxDecoration(
           color: PeeroreumColor.white, // 여기에 색상 지정
