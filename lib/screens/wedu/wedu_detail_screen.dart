@@ -251,7 +251,9 @@ class _DetailWeduState extends State<DetailWedu> {
                             fontSize: 16,
                             color: PeeroreumColor.black),
                       ),
-                      SizedBox(width: 2,),
+                      SizedBox(
+                        width: 2,
+                      ),
                       Text(
                         '$weduFire',
                         style: TextStyle(
@@ -447,7 +449,8 @@ class _DetailWeduState extends State<DetailWedu> {
                         image: successList[index]["profileImage"] != null
                             ? DecorationImage(
                                 image: NetworkImage(
-                                    successList[index]["profileImage"]))
+                                    successList[index]["profileImage"]),
+                                fit: BoxFit.cover)
                             : DecorationImage(
                                 image: AssetImage('assets/images/user.jpg')),
                       ),
@@ -528,7 +531,8 @@ class _DetailWeduState extends State<DetailWedu> {
                       image: notSuccessList[index]["profileImage"] != null
                           ? DecorationImage(
                               image: NetworkImage(
-                                  notSuccessList[index]["profileImage"]))
+                                  notSuccessList[index]["profileImage"]),
+                              fit: BoxFit.cover)
                           : DecorationImage(
                               image: AssetImage('assets/images/user.jpg')),
                     ),
@@ -597,11 +601,11 @@ class _DetailWeduState extends State<DetailWedu> {
                           ),
                           image: successOne["profileImage"] != null
                               ? DecorationImage(
-                                  image: NetworkImage(
-                                      successOne["profileImage"]))
-                              : DecorationImage(
                                   image:
-                                      AssetImage('assets/images/user.jpg')),
+                                      NetworkImage(successOne["profileImage"]),
+                                  fit: BoxFit.cover)
+                              : DecorationImage(
+                                  image: AssetImage('assets/images/user.jpg')),
                         ),
                       ),
                     ),
