@@ -1005,7 +1005,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             SizedBox(
                               width: 8,
                             ),
-                            Image.asset('assets/images/oreum.png')
+                            Image.asset('assets/images/wedu_mission.png')
                           ],
                         ),
                         controller: ExpandedTileController(isExpanded: true)),
