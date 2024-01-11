@@ -326,7 +326,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   _updateCalendar();
                 });
             },
-            icon: SvgPicture.asset('assets/icons/left.svg', color: PeeroreumColor.gray[500],),
+            icon: SvgPicture.asset(
+              'assets/icons/left.svg',
+              color: PeeroreumColor.gray[500],
+            ),
           ),
           Text(
             '${currentDate.month}',
@@ -360,11 +363,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   _updateCalendar();
                 });
             },
-            icon: SvgPicture.asset(
-              'assets/icons/right.svg',
-              width: 24,
-                color: PeeroreumColor.gray[500]
-            ),
+            icon: SvgPicture.asset('assets/icons/right.svg',
+                width: 24, color: PeeroreumColor.gray[500]),
           )
         ],
       ),
@@ -750,21 +750,20 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
 
-    return Container(
-      width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.7,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.0),
-          topRight: Radius.circular(16.0),
+    return Flexible(
+      child: Container(
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: PeeroreumColor.white, // 여기에 색상 지정
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
+        child: Container(
           padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               ButtonBar(
                 alignment: MainAxisAlignment.spaceBetween,
@@ -829,14 +828,13 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     builder: (BuildContext context) {
                       return Container(
                         width: double.maxFinite,
-                        height: double.maxFinite,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[100],
                             image: i != null
                                 ? DecorationImage(
                                     image: NetworkImage(imageUrl),
-                                    fit: BoxFit.fill)
+                                    fit: BoxFit.cover)
                                 : null),
                         child: Align(
                           alignment: Alignment.bottomRight,
@@ -864,38 +862,44 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 options: CarouselOptions(
                   enableInfiniteScroll: false,
                   viewportFraction: 1,
-                  height: MediaQuery.of(context).size.height * 0.45,
+                  height: 380,
                   enlargeCenterPage: true,
                 ),
               ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 28),
-          width: double.maxFinite,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              '닫기',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: PeeroreumColor.gray[600],
+              SizedBox(
+                height: 20,
               ),
-            ),
-            style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 12)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ))),
+              Container(
+                height: 48,
+                margin: EdgeInsets.symmetric(
+                  vertical: 8,
+                ),
+                width: double.maxFinite,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    '닫기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.gray[600],
+                    ),
+                  ),
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(vertical: 12)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ))),
+                ),
+              ),
+            ],
           ),
         ),
       ),
