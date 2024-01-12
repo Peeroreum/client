@@ -29,7 +29,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
               color: PeeroreumColor.gray[800],
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop();
             },
           ),
           title: Text(
@@ -149,12 +149,6 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                         print(notSuccessList[i]['nickname']);
                       });
                     }
-                    else{
-                      null;
-                    }
-                  }
-                  else{
-                    null;
                   }
                 }
               },
@@ -182,7 +176,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
   }
 
   notOkList() {
-    return Container(
+    return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: double.maxFinite,
         child: ListView.separated(
@@ -201,6 +195,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
+                                width: 2,
                                   color: PeeroreumColor
                                       .gradeColor[notSuccessList[index]['grade']]!),
                             ),
@@ -251,7 +246,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                         height: 24,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.grey,
+                            color: PeeroreumColor.gray[200]!,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),

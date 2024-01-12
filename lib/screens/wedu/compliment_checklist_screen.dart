@@ -52,87 +52,85 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
           ],
         ),
         body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '전체',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[500]),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            '${successList.length}',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[500]),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            '명',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[500]),
-                          ),
-                        ],
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          for (int i = 0; i < isCheckedList.length; i++) {
-                            if (isActiveList[i] == true){
-                              if (isCheckedList[i]==false) {
-                                setState(() {
-                                  isCheckedList[i] = true;
-                                });
-                              }
-                            }
-                          }
-                        },
-                        icon: SvgPicture.asset(
-                            'assets/icons/check.svg',
-                          color: PeeroreumColor.gray[500],
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.only(right: 0),
-                        ),
-                        label: Text(
-                          '전체선택',
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '전체',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
                               color: PeeroreumColor.gray[500]),
                         ),
-                      )
-                    ],
-                  ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          '${successList.length}',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: PeeroreumColor.gray[500]),
+                        ),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text(
+                          '명',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: PeeroreumColor.gray[500]),
+                        ),
+                      ],
+                    ),
+                    TextButton.icon(
+                      onPressed: () {
+                        for (int i = 0; i < isCheckedList.length; i++) {
+                          if (isActiveList[i] == true){
+                            if (isCheckedList[i]==false) {
+                              setState(() {
+                                isCheckedList[i] = true;
+                              });
+                            }
+                          }
+                        }
+                      },
+                      icon: SvgPicture.asset(
+                          'assets/icons/check.svg',
+                        color: PeeroreumColor.gray[500],
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.only(right: 0),
+                      ),
+                      label: Text(
+                        '전체선택',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[500]),
+                      ),
+                    )
+                  ],
                 ),
-                Divider(
-                  color: PeeroreumColor.gray[100],
-                  thickness: 1,
-                  height: 8,
-                ),
-                okList()
-              ],
-            ),
+              ),
+              Divider(
+                color: PeeroreumColor.gray[100],
+                thickness: 1,
+                height: 8,
+              ),
+              okList()
+            ],
           ),
         ),
         bottomNavigationBar: Container(
@@ -196,16 +194,32 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(3.5),
+                          //padding: EdgeInsets.all(3.5),
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                                color: PeeroreumColor.gradeColor[successList[index]['grade']]!
-                            ),
-                            image: DecorationImage(
-                                image: AssetImage('assets/images/user.jpg')
+                                width: 2,
+                                color: PeeroreumColor
+                                    .gradeColor[successList[index]['grade']]!),
+                          ),
+                          child: Container(
+                            height: 44,
+                            width: 44,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 1,
+                                color: PeeroreumColor.white,
+                              ),
+                              image: successList[index]["profileImage"] != null
+                                  ? DecorationImage(
+                                  image: NetworkImage(
+                                      successList[index]["profileImage"]),
+                                  fit: BoxFit.cover)
+                                  : DecorationImage(
+                                  image: AssetImage('assets/images/user.jpg')),
                             ),
                           ),
                         ),
@@ -236,7 +250,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                         height: 24,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.grey,
+                            color: PeeroreumColor.gray[200]!,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),
