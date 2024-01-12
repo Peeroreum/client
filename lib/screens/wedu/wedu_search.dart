@@ -62,50 +62,95 @@ class _searchWeduState extends State<searchWedu> {
           },
         ),
         titleSpacing: 0,
-        title: Padding(
-          padding: EdgeInsets.fromLTRB(0, 12, 20, 12),
-          child: SearchBar(
-            // padding: MaterialStateProperty.all(
-            //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
-            controller: _searchController,
-            backgroundColor:
-                MaterialStateProperty.all(PeeroreumColor.gray[100]),
-            elevation: MaterialStateProperty.all(0),
-            // shape: MaterialStateProperty.all(ContinuousRectangleBorder(
-            //     borderRadius: BorderRadius.all(Radius.circular(37.0)))),
-            constraints: BoxConstraints(maxHeight: 40),
-            hintText: '같이방에서 함께 공부해요!',
-            hintStyle: MaterialStateProperty.all(TextStyle(
-                color: PeeroreumColor.gray[600],
-                fontFamily: 'Pretendard',
-                fontSize: 14,
-                fontWeight: FontWeight.w400)),
-            trailing: [
-              GestureDetector(
-                onTap: () => _searchController.clear(),
-                child: SvgPicture.asset(
-                  'assets/icons/x_circle.svg',
-                  color: PeeroreumColor.gray[600],
-                )
-              ),
-              IconButton(
-                onPressed: () {
-                  if(_searchController.text.isNotEmpty) {
-                    _saveSearchHistory(_searchController.text);
-                    goToSearchResult(_searchController.text);
-                  }
-                  else {
-                    Fluttertoast.showToast(msg: '검색어를 입력하세요.');
-                  }
+      title: Padding(
+        padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+        child: Row(
+          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              fit: FlexFit.loose,
+              child: GestureDetector(
+                onTap: () {
                 },
-                icon: SvgPicture.asset(
-                  'assets/icons/search.svg',
-                  color: Colors.grey[600],
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: PeeroreumColor.gray[100],
+                      borderRadius: BorderRadius.circular(37.0)),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/search.svg',
+                        color: PeeroreumColor.gray[600],
+                      ),
+                      SizedBox(width: 8.0),
+                      SizedBox(
+                        child: Text(
+                          '같이방에서 함께 공부해요!',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: PeeroreumColor.gray[600]),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
-        ));
+            ),
+            SizedBox(
+              width: 12,
+            ),
+          ],
+        ),
+      ),
+        // title: Padding(
+        //   padding: EdgeInsets.fromLTRB(0, 12, 20, 12),
+        //   child: SearchBar(
+        //     // padding: MaterialStateProperty.all(
+        //     //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
+        //     controller: _searchController,
+        //     backgroundColor:
+        //         MaterialStateProperty.all(PeeroreumColor.gray[100]),
+        //     elevation: MaterialStateProperty.all(0),
+        //     // shape: MaterialStateProperty.all(ContinuousRectangleBorder(
+        //     //     borderRadius: BorderRadius.all(Radius.circular(37.0)))),
+        //     constraints: BoxConstraints(maxHeight: 40),
+        //     hintText: '같이방에서 함께 공부해요!',
+        //     hintStyle: MaterialStateProperty.all(TextStyle(
+        //         color: PeeroreumColor.gray[600],
+        //         fontFamily: 'Pretendard',
+        //         fontSize: 14,
+        //         fontWeight: FontWeight.w400)),
+        //     trailing: [
+        //       GestureDetector(
+        //         onTap: () => _searchController.clear(),
+        //         child: SvgPicture.asset(
+        //           'assets/icons/x_circle.svg',
+        //           color: PeeroreumColor.gray[600],
+        //         )
+        //       ),
+        //       IconButton(
+        //         onPressed: () {
+        //           if(_searchController.text.isNotEmpty) {
+        //             _saveSearchHistory(_searchController.text);
+        //             goToSearchResult(_searchController.text);
+        //           }
+        //           else {
+        //             Fluttertoast.showToast(msg: '검색어를 입력하세요.');
+        //           }
+        //         },
+        //         icon: SvgPicture.asset(
+        //           'assets/icons/search.svg',
+        //           color: Colors.grey[600],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // )
+    );
   }
 
   Widget bodyWidget() {

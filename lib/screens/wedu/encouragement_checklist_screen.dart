@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../api/NotificationApi.dart';
+import '../../data/NotificationSetting.dart';
 import '../../designs/PeeroreumColor.dart';
 
 class EncouragementCheckList extends StatefulWidget {
@@ -10,9 +13,26 @@ class EncouragementCheckList extends StatefulWidget {
 
 class _EncouragementCheckListState extends State<EncouragementCheckList> {
   List<dynamic> notSuccessList = [];
+  List<String> receiverList = [];
   late List<bool> isCheckedList = List.generate(notSuccessList.length, (index) => false);
   late List<bool> isActiveList = List.generate(notSuccessList.length, (index) => true);
-  
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    receiverList =[];
+  }
+
+  sendNotification() async {
+    const FlutterSecureStorage storage = FlutterSecureStorage();
+    var sender = await storage.read(key: "nickname");
+    for(String receiver in receiverList) {
+      NotificationApi.sendEncouragement(sender!, receiver);
+      print("$receiver 님에게 알림 전송");
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -29,7 +49,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
               color: PeeroreumColor.gray[800],
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop();
             },
           ),
           title: Text(
@@ -146,17 +166,12 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                       setState(() {
                         // _isChecked 값이 true인 경우에만 isActive를 false로 설정
                         isActiveList[i] = false;
-                        print(notSuccessList[i]['nickname']);
+                        receiverList.add(notSuccessList[i]['nickname']);
                       });
                     }
-                    else{
-                      null;
-                    }
-                  }
-                  else{
-                    null;
                   }
                 }
+                sendNotification();
               },
               child: Text(
                 '독려하기',
@@ -182,7 +197,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
   }
 
   notOkList() {
-    return Container(
+    return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: double.maxFinite,
         child: ListView.separated(
@@ -201,6 +216,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
+                                width: 2,
                                   color: PeeroreumColor
                                       .gradeColor[notSuccessList[index]['grade']]!),
                             ),
@@ -251,7 +267,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                         height: 24,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.grey,
+                            color: PeeroreumColor.gray[200]!,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),

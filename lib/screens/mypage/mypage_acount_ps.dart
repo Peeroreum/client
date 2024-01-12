@@ -145,7 +145,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                   fontWeight: FontWeight.w400,
                   fontSize: 14,
                   color: PeeroreumColor.gray[600]),
-              errorText: pw_controller.text.length >= 12 && !pw_check
+              errorText: pw_controller.text.length >= 2 && !pw_check
                   ? "영문, 숫자, 특수문자 포함 8자~12자"
                   : null,
               errorBorder: OutlineInputBorder(
@@ -291,10 +291,10 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 fontWeight: FontWeight.w400,
                 fontSize: 12,
                 color: PeeroreumColor.primaryPuple[400]),
-            errorText: !pw2_check && pw2_controller.text.length >= 8
+            errorText: !pw2_check && pw2_controller.text.length >= 2
                 ? "비밀번호가 일치하지 않습니다."
                 : null,
-            errorStyle: !pw2_check && pw2_controller.text.length >= 8
+            errorStyle: !pw2_check && pw2_controller.text.length >= 2
                 ? TextStyle(
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w400,
@@ -351,7 +351,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
             color: PeeroreumColor.primaryPuple[400],
           ));
     }
-    if (pw_controller.text.length >= 12 && !pw_check) {
+    if (pw_controller.text.length >= 2 && !pw_check) {
       return Container(
           padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
@@ -384,7 +384,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
             color: PeeroreumColor.primaryPuple[400],
           ));
     }
-    if (pw2_controller.text.length >= 8 && !pw2_check) {
+    if (pw2_controller.text.length >= 2 && !pw2_check) {
       return Container(
           padding: EdgeInsets.fromLTRB(12, 0, 16, 0),
           child: SvgPicture.asset(

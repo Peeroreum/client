@@ -460,6 +460,7 @@ class _DetailWeduState extends State<DetailWedu> {
                   ),
                   onTap: () {
                     showModalBottomSheet(
+                      enableDrag: false,
                       context: context,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
@@ -966,8 +967,8 @@ class _DetailWeduState extends State<DetailWedu> {
                             child: Row(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 12),
+                                  height: 28,
+                                  padding: EdgeInsets.fromLTRB(12, 4, 12, 0),
                                   decoration: BoxDecoration(
                                       color: PeeroreumColor.primaryPuple[50],
                                       borderRadius: BorderRadius.circular(16)),
@@ -979,6 +980,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                       fontSize: 14,
                                       color: PeeroreumColor.primaryPuple[400],
                                     ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                                 SizedBox(
@@ -1062,7 +1064,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
+                            color: PeeroreumColor.gray[600]),
                       ),
                     ],
                   ),
@@ -1108,7 +1110,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
+                            color: PeeroreumColor.gray[600]),
                       ),
                     ],
                   ),

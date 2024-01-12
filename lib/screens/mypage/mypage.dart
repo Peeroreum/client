@@ -77,7 +77,7 @@ class _MyPageState extends State<MyPage> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: SingleChildScrollView(
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
@@ -93,7 +93,6 @@ class _MyPageState extends State<MyPage> {
                 height: 16,
               ),
               Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       border: Border.all(
@@ -104,7 +103,6 @@ class _MyPageState extends State<MyPage> {
                 height: 16,
               ),
               Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       border: Border.all(
@@ -115,7 +113,6 @@ class _MyPageState extends State<MyPage> {
                 height: 16,
               ),
               Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       border: Border.all(
@@ -190,7 +187,7 @@ class _MyPageState extends State<MyPage> {
                   ),
                 ),
               ])),
-              SvgPicture.asset('assets/icons/right.svg'),
+              SvgPicture.asset('assets/icons/right.svg', height: 24, color: PeeroreumColor.gray[600],),
             ],
           ),
         ),
@@ -207,7 +204,7 @@ class _MyPageState extends State<MyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset('assets/images/color_logo.png'),
+            Image.asset('assets/images/color_logo.png', height: 24,),
             Container(width: 4),
             Text(
               '+',
@@ -241,6 +238,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+            padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -261,6 +259,7 @@ class _MyPageState extends State<MyPage> {
           onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -281,6 +280,7 @@ class _MyPageState extends State<MyPage> {
           onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -312,6 +312,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -335,6 +336,8 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
+
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -355,6 +358,8 @@ class _MyPageState extends State<MyPage> {
           onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
+
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -386,6 +391,8 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
+
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -408,6 +415,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,

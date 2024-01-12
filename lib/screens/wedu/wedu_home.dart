@@ -138,7 +138,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   decoration: BoxDecoration(
                       color: PeeroreumColor.gray[100],
                       borderRadius: BorderRadius.circular(37.0)),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
                   child: Row(
                     children: [
                       SvgPicture.asset(
@@ -177,7 +177,9 @@ class _HomeWeduState extends State<HomeWedu> {
                 child: Container(
                     padding: EdgeInsets.only(right: 8),
                     child: SvgPicture.asset('assets/icons/plus_square.svg',
-                        color: PeeroreumColor.gray[800])),
+                        color: PeeroreumColor.gray[800],
+                    width: 24,),
+                ),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -278,16 +280,18 @@ class _HomeWeduState extends State<HomeWedu> {
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 18,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.gray[600]
+                  ),
                 ),
               ],
             ),
-            TextButton(
-                onPressed: () {
+            GestureDetector(
+                onTap: () {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (context) => InWedu()));
                 },
-                child: Text('전체 보기',
+                child: Text('전체보기',
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w600,
@@ -404,7 +408,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       padding: EdgeInsets.symmetric(horizontal: 1),
                       child: Text('⋅'),
                     ),
-                    Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명 참여중',
+                    Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -457,7 +461,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 DecoratedBox(
                   decoration: BoxDecoration(
                       border: Border.all(
-                          color: PeeroreumColor.gray[100]!, width: 1),
+                          color: PeeroreumColor.gray[200]!, width: 1),
                       borderRadius: BorderRadius.circular(8)),
                   child: SizedBox(
                     width: 75,
@@ -698,8 +702,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             datas[index]['locked'].toString() == "true"
                                 ? SvgPicture.asset('assets/icons/lock.svg',
                                     color: PeeroreumColor.gray[400], width: 12)
-                                : Container(),
-                            SizedBox(width: 4),
+                                : SizedBox(),
                             Flexible(
                               child: Text(
                                 datas[index]["title"]!,
@@ -728,7 +731,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               padding: EdgeInsets.symmetric(horizontal: 2),
                               child: Text('⋅'),
                             ),
-                            Text('${datas[index]["attendingPeopleNum"]!}명 참여중',
+                            Text('${datas[index]["attendingPeopleNum"]!}명',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -824,12 +827,14 @@ class _HomeWeduState extends State<HomeWedu> {
                                 dropdownSubjectList[datas[index]["subject"]],
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
+                                  height: 1.6,
                                     fontFamily: 'Pretendard',
                                     color: PeeroreumColor.subjectColor[
                                         dropdownSubjectList[datas[index]
                                             ['subject']]]?[1],
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 10),
+                                    fontSize: 10
+                                ),
                               ),
                             ),
                           ),
@@ -841,10 +846,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               datas[index]['locked'].toString() == "true"
                                   ? SvgPicture.asset('assets/icons/lock.svg',
                                       color: PeeroreumColor.gray[400])
-                                  : Container(),
-                              SizedBox(
-                                width: 4,
-                              ),
+                                  : SizedBox(),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
                                         "true"
@@ -882,7 +884,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 child: Text('⋅'),
                               ),
                               Text(
-                                  '${datas[index]["attendingPeopleNum"]!}명 참여중',
+                                  '${datas[index]["attendingPeopleNum"]!}명',
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 14,

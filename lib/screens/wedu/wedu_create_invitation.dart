@@ -62,8 +62,15 @@ class _CreateInvitationState extends State<CreateInvitation> {
       child: Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
-          elevation: 0.7,
+          shape: Border(
+            bottom: BorderSide(
+              color: PeeroreumColor.gray[100]!,
+              width: 1,
+            ),
+          ),
           backgroundColor: PeeroreumColor.white,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
           leading: IconButton(
             color: PeeroreumColor.black,
             icon: const Icon(Icons.arrow_back_rounded),
@@ -370,11 +377,13 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               builder: (context) {
                                 return Dialog(
                                   backgroundColor: PeeroreumColor.white,
+                                  shadowColor: Colors.transparent,
+                                  surfaceTintColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0), // 테두리의 둥근 정도 조절
                                     ),
                                   child: Padding(
-                                      padding: const EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(20),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
@@ -390,6 +399,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                             pickerColor: _backgroundColor,
                                             onColorChanged: (Color color) {
                                               setState(() {
+                                                _image = null;
                                                 _backgroundColor = color;
                                                 int red = color.red;
                                                 int blue = color.blue;
