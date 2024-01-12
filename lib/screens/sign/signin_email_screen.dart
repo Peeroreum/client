@@ -77,7 +77,7 @@ class _EmailSignInState extends State<EmailSignIn> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                SizedBox(height: 60),
                 Image.asset(
                   'assets/images/splash_logo.png',
                   height: 236.0,
@@ -208,46 +208,6 @@ class _EmailSignInState extends State<EmailSignIn> {
                         // suffixIconConstraints: BoxConstraints(maxHeight: 18)
                       ),
                     ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                    // Row(
-                    //   children: [
-                    //     SizedBox(
-                    //       width: 24,
-                    //       height: 24,
-                    //       child: Checkbox(
-                    //         value: is_checked,
-                    //         materialTapTargetSize:
-                    //             MaterialTapTargetSize.shrinkWrap,
-                    //         splashRadius: 24,
-                    //         onChanged: (value) {
-                    //           setState(() {
-                    //             is_checked = value!;
-                    //           });
-                    //           activate();
-                    //         },
-                    //         side: BorderSide(
-                    //             width: 2, color: PeeroreumColor.gray[200]!),
-                    //         checkColor: PeeroreumColor.white,
-                    //         activeColor: PeeroreumColor.primaryPuple[400],
-                    //         shape: RoundedRectangleBorder(
-                    //             borderRadius: BorderRadius.circular(4)),
-                    //       ),
-                    //     ),
-                    //     SizedBox(
-                    //       width: 8,
-                    //     ),
-                    //     Text(
-                    //       '로그인 상태 유지',
-                    //       style: TextStyle(
-                    //           fontFamily: 'Pretendard',
-                    //           fontSize: 14,
-                    //           fontWeight: FontWeight.w400,
-                    //           color: PeeroreumColor.gray[600]),
-                    //     )
-                    //   ],
-                    // ),
                     SizedBox(
                       height: 20.0, //40.0
                     ),

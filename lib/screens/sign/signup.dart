@@ -223,7 +223,7 @@ class _serviceTermsState extends State<serviceTerms> {
             ),
             Container(
               //devider
-              margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+              // margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
               color: PeeroreumColor.gray[200],
               height: 1,
             ),
@@ -286,7 +286,7 @@ class _serviceTermsState extends State<serviceTerms> {
             ),
             Container(
               //개인정보 수집 및 이용 동의
-              //padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(vertical: 12),
               child: Row(
                 children: [
                   Row(
@@ -390,7 +390,7 @@ class _serviceTermsState extends State<serviceTerms> {
             ),
             Container(
               color: PeeroreumColor.white,
-              margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
+              margin: EdgeInsets.fromLTRB(0, 28, 0, 8),
               width: MediaQuery.of(context).size.width,
               child: SizedBox(
                 height: 48,
