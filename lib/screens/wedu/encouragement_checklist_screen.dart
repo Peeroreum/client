@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:flutter_svg/svg.dart';
 
-class ComplimentCheckList extends StatefulWidget {
+import '../../designs/PeeroreumColor.dart';
+
+class EncouragementCheckList extends StatefulWidget {
   @override
-  State<ComplimentCheckList> createState() => _ComplimentCheckListState();
+  State<EncouragementCheckList> createState() => _EncouragementCheckListState();
 }
 
-
-class _ComplimentCheckListState extends State<ComplimentCheckList> {
-
-  List<dynamic> successList = [];
-  late List<bool> isCheckedList = List.generate(successList.length, (index) => false);
-  late List<bool> isActiveList = List.generate(successList.length, (index) => true);
+class _EncouragementCheckListState extends State<EncouragementCheckList> {
+  List<dynamic> notSuccessList = [];
+  late List<bool> isCheckedList = List.generate(notSuccessList.length, (index) => false);
+  late List<bool> isActiveList = List.generate(notSuccessList.length, (index) => true);
+  
   
   @override
   Widget build(BuildContext context) {
-    successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+    notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
 
     return Scaffold(
         backgroundColor: PeeroreumColor.white,
@@ -33,7 +33,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
             },
           ),
           title: Text(
-            '달성',
+            '미달성',
             style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w500,
@@ -47,8 +47,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 icon: SvgPicture.asset(
                   'assets/icons/icon_dots_mono.svg',
                   color: PeeroreumColor.gray[800],
-                )
-            )
+                ))
           ],
         ),
         body: SingleChildScrollView(
@@ -74,7 +73,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             width: 4,
                           ),
                           Text(
-                            '${successList.length}',
+                            '${notSuccessList.length}',
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w500,
@@ -107,7 +106,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                           }
                         },
                         icon: SvgPicture.asset(
-                            'assets/icons/check.svg',
+                          'assets/icons/check.svg',
                           color: PeeroreumColor.gray[500],
                         ),
                         style: TextButton.styleFrom(
@@ -130,7 +129,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                   thickness: 1,
                   height: 8,
                 ),
-                okList()
+                notOkList()
               ],
             ),
           ),
@@ -147,7 +146,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                       setState(() {
                         // _isChecked 값이 true인 경우에만 isActive를 false로 설정
                         isActiveList[i] = false;
-                        print(successList[i]['nickname']);
+                        print(notSuccessList[i]['nickname']);
                       });
                     }
                     else{
@@ -160,7 +159,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 }
               },
               child: Text(
-                '칭찬하기',
+                '독려하기',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 16,
@@ -169,8 +168,8 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 ),
               ),
               style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
+                  backgroundColor: MaterialStateProperty.all(
+                      PeeroreumColor.primaryPuple[400]),
                   padding: MaterialStateProperty.all(
                       EdgeInsets.symmetric(vertical: 12)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -182,47 +181,63 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
         ));
   }
 
-  okList() {
+  notOkList() {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: double.maxFinite,
-      child: ListView.separated(
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(3.5),
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: PeeroreumColor.gradeColor[successList[index]['grade']]!
+        width: MediaQuery.of(context).size.width,
+        height: double.maxFinite,
+        child: ListView.separated(
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            //padding: EdgeInsets.all(3.5),
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: PeeroreumColor
+                                      .gradeColor[notSuccessList[index]['grade']]!),
                             ),
-                            image: DecorationImage(
-                                image: AssetImage('assets/images/user.jpg')
+                            child: Container(
+                              height: 44,
+                              width: 44,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  width: 1,
+                                  color: PeeroreumColor.white,
+                                ),
+                                image: notSuccessList[index]["profileImage"] != null
+                                    ? DecorationImage(
+                                        image: NetworkImage(
+                                            notSuccessList[index]["profileImage"]),
+                                        fit: BoxFit.cover)
+                                    : DecorationImage(
+                                        image: AssetImage('assets/images/user.jpg')),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          successList[index]['nickname'],
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: PeeroreumColor.gray[800]),
-                        )
-                      ],
+                       
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        notSuccessList[index]['nickname'],
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[800]),
+                      ),
+                       ],
+                      ),
                     ),
-                  ),
                     InkWell(
                       onTap: () {
                         if (isActiveList[index]){
@@ -257,20 +272,15 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             : null,
                       ),
                     ),
-
-
-                  
-                ],
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) => Divider(
-            color: PeeroreumColor.gray[100],
-            thickness: 1,
-            height: 8,
-          ),
-          itemCount: successList.length
-      )
-    );
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) => Divider(
+                  color: PeeroreumColor.gray[100],
+                  thickness: 1,
+                  height: 8,
+                ),
+            itemCount: notSuccessList.length));
   }
 }
