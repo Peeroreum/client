@@ -165,38 +165,36 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Text(
-                              '검색된 같이방',
-                              style: TextStyle(
-                                  color: PeeroreumColor.gray[800],
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              '${datas.length}',
-                              style: TextStyle(
-                                  color: PeeroreumColor.gray[800],
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
+                return Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Text(
+                            '검색된 같이방',
+                            style: TextStyle(
+                                color: PeeroreumColor.gray[800],
+                                fontFamily: 'Pretendard',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            '${datas.length}',
+                            style: TextStyle(
+                                color: PeeroreumColor.gray[800],
+                                fontFamily: 'Pretendard',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600),
+                          )
+                        ],
                       ),
-                      listview_body()
-                    ],
-                  ),
+                    ),
+                    Expanded(child: listview_body())
+                  ],
                 );
               }
             },

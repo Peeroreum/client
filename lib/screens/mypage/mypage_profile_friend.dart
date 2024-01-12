@@ -57,7 +57,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
       backgroundColor: PeeroreumColor.white,
       surfaceTintColor: PeeroreumColor.white,
       shadowColor: PeeroreumColor.white,
-      elevation: 0.2,
+      elevation: 0,
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/x.svg',
@@ -116,7 +116,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
 
   Widget friends() {
     return ListView.separated(
-        // shrinkWrap: true,
+        shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return ElevatedButton(
             onPressed: () {
@@ -156,7 +156,8 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                         image: myfriends[index]["profileImage"] != null
                             ? DecorationImage(
                                 image: NetworkImage(
-                                    myfriends[index]["profileImage"]))
+                                    myfriends[index]["profileImage"]),
+                                fit: BoxFit.cover)
                             : DecorationImage(
                                 image: AssetImage(
                                 'assets/images/user.jpg',

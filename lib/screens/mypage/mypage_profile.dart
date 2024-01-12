@@ -103,6 +103,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         profileImage = data;
       });
+      Fluttertoast.showToast(msg: "프로필 이미지가 성공적으로 변경되었습니다.");
     } else {
       print("프로필이미지 ${profileChange.statusMessage}");
     }
@@ -124,6 +125,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         backgroundImage = data;
       });
+      Fluttertoast.showToast(msg: "배경이미지가 성공적으로 변경되었습니다.");
     } else {
       print("배경이미지 ${backgroundChange.statusMessage}");
     }
@@ -159,6 +161,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
     if (friendName.statusCode == 200) {
       is_friend = true;
+      Fluttertoast.showToast(msg: "성공적으로 팔로우했습니다!");
     } else if (friendName.statusCode == 404) {
       Fluttertoast.showToast(msg: "존재하지 않는 회원입니다.");
     } else if (friendName.statusCode == 400) {
@@ -252,8 +255,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => MyPage()));
+          Navigator.of(context).pop();
         },
       ),
       title: Text(
@@ -484,10 +486,15 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 image: NetworkImage(profileImage),
                                 //fit: BoxFit.cover,
                               ))
-                        : DecorationImage(
-                            image: AssetImage(
-                            'assets/images/user.jpg',
-                          )),
+                        : (_image != null
+                            ? DecorationImage(
+                                image: FileImage(File(_image!.path)),
+                                //fit: BoxFit.cover,
+                              )
+                            : DecorationImage(
+                                image: AssetImage(
+                                'assets/images/user.jpg',
+                              ))),
                   ),
                   child: Align(
                     alignment: Alignment(0.3, 1.2),
@@ -548,6 +555,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         if (_image != null) {
                           setState(() {
                             profileImageAPI(_image);
+                            Navigator.of(context).pop();
                             Navigator.of(context).pop();
                           });
                         }
@@ -990,7 +998,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           ? BoxDecoration(
               image: DecorationImage(
                 colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.2), BlendMode.lighten),
+                    Colors.white.withOpacity(0.5), BlendMode.lighten),
                 image: NetworkImage(backgroundImage),
                 fit: BoxFit.cover,
               ),
@@ -1084,8 +1092,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 setState(() {
                   if ((is_friend == true) && (am_i == false)) {
                     unfollow();
+                    print('친구 언팔로우 프린트 메세지입니다');
                   } else if ((is_friend == false) && (am_i == false)) {
                     follow();
+                    print('친구 팔로우 프린트 메세지 입니다');
                   } else if ((is_friend == false) && (am_i == true)) {
                     print('프로필 공유');
                     Fluttertoast.showToast(msg: "복사되었습니다");
@@ -1314,11 +1324,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => InWedu()));
+                if (am_i == true) {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => InWedu()));
+                }
               },
               child: Text(
-                '전체 보기',
+                am_i ? '전체 보기' : "",
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w600,
