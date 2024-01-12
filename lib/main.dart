@@ -14,6 +14,7 @@ import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_list_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_invitation.dart';
+import 'package:peeroreum_client/screens/wedu/encouragement_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -97,8 +98,8 @@ class PeeroreumApp extends StatelessWidget {
         'wedu/my': (context) => InWedu(),
         '/wedu/challenge/ok': (context) => ComplimentList(),
         '/wedu/challenge/notok': (context) => EncouragementList(),
-        'wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
-        //'wedu/challdenge/notok/encourgaement':(context) => EncouragementCheckList(),
+        '/wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
+        '/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
         'signUp/onBoarding':(context) => OnBoarding(),
         'signUp/Complete':(context) => SignUpComplete(),
       },
