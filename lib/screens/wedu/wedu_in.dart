@@ -98,6 +98,12 @@ class _InWeduState extends State<InWedu> {
                 indicatorSize: TabBarIndicatorSize.label,
                 labelColor: PeeroreumColor.primaryPuple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
+                unselectedLabelStyle: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                ),
                 labelStyle: TextStyle(
                   color: PeeroreumColor.primaryPuple[400],
                   fontFamily: 'Pretendard',

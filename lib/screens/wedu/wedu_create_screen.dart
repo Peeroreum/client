@@ -128,8 +128,15 @@ class _CreateWeduState extends State<CreateWedu> {
       child: Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
-          elevation: 0.7,
+          shape: Border(
+            bottom: BorderSide(
+              color: PeeroreumColor.gray[100]!,
+              width: 1,
+            ),
+          ),
           backgroundColor: PeeroreumColor.white,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
           leading: IconButton(
             color: PeeroreumColor.black,
             icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
@@ -198,6 +205,9 @@ class _CreateWeduState extends State<CreateWedu> {
                           color: PeeroreumColor.gray[100]!,
                           width: 1,
                         ),
+                  image: DecorationImage(
+                      image: AssetImage('assets/images/wedu_default_image.png',)
+                  )
                       ),
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
@@ -389,9 +399,10 @@ class _CreateWeduState extends State<CreateWedu> {
                               SizedBox(
                                 height: 8,
                               ),
-                              SizedBox(
+                              Container(
                                 width: 152,
                                 height: 40,
+                                color: PeeroreumColor.white,
                                 child: InkWell(
                                   onTap: () async {
                                     final selectedDate = await showDatePicker(
@@ -406,6 +417,25 @@ class _CreateWeduState extends State<CreateWedu> {
                                       lastDate: DateTime.now()
                                           .add(Duration(days: 1 * 365)),
                                       helpText: '',
+                                      builder: (context, child) {
+                                        return Theme(
+                                          data: Theme.of(context).copyWith(
+                                            dividerColor: PeeroreumColor.gray[200],
+                                            colorScheme: ColorScheme.light(
+                                              primary: PeeroreumColor.primaryPuple[100]!, // header background color
+                                              onPrimary: Colors.black, // header text color
+                                              onSurface: Colors.black,
+                                              surfaceTint: PeeroreumColor.white// body text color
+                                            ),
+                                            textButtonTheme: TextButtonThemeData(
+                                              style: TextButton.styleFrom(
+                                                foregroundColor: Colors.black, // button text color
+                                              ),
+                                            ),
+                                          ),
+                                          child: child!,
+                                        );
+                                      },
                                     );
 
                                     if (selectedDate != null) {
@@ -911,13 +941,23 @@ class _CreateWeduState extends State<CreateWedu> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('같이방 잠금 여부'),
                                   const Text(
+                                      '같이방 잠금 여부',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14,
+                                        color: PeeroreumColor.black
+                                    ),
+                                  ),
+                                  SizedBox(height: 8,),
+                                  Text(
                                     '잠금시 비밀번호를 아는 친구만 함께 할 수 있어요.',
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w400,
                                       fontSize: 12,
+                                      color: PeeroreumColor.gray[600]
                                     ),
                                   )
                                 ],
