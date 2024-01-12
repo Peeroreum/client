@@ -3,6 +3,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:peeroreum_client/data/NotificationSetting.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 class MyPageNotification extends StatefulWidget {
@@ -31,6 +33,30 @@ class _MyPageNotificationState extends State<MyPageNotification> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getNotificationSetting();
+  }
+
+  getNotificationSetting() async {
+    List<String>? setTypes = await NotificationSetting.getNotificationType();
+    setTypes ??= ["false", "false", "false", "false"];
+
+    setState(() {
+      _allChecked = setTypes![0] == "true";
+      _weduChecked = setTypes![1] == "true";
+      _iduChecked = setTypes![2] == "true";
+      _rankChecked = setTypes![3] == "true";
+    });
+  }
+
+  setNotificationSetting() {
+    List<String> setTypes = [_allChecked.toString(), _weduChecked.toString(), _iduChecked.toString(), _rankChecked.toString()];
+    NotificationSetting.setNotificationType(setTypes);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(),
@@ -46,6 +72,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
       elevation: 0.2,
       leading: IconButton(
         onPressed: () {
+          setNotificationSetting();
           Navigator.of(context).pop();
         },
         icon: SvgPicture.asset(
