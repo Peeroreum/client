@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:peeroreum_client/api/NotificationApi.dart';
+import 'package:peeroreum_client/data/NotificationSetting.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 class ComplimentCheckList extends StatefulWidget {
@@ -11,8 +14,24 @@ class ComplimentCheckList extends StatefulWidget {
 class _ComplimentCheckListState extends State<ComplimentCheckList> {
 
   List<dynamic> successList = [];
+  List<String> receiverList = [];
   late List<bool> isCheckedList = List.generate(successList.length, (index) => false);
   late List<bool> isActiveList = List.generate(successList.length, (index) => true);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    receiverList =[];
+  }
+
+  sendNotification() async {
+    const FlutterSecureStorage storage = FlutterSecureStorage();
+    var sender = await storage.read(key: "nickname");
+    for(String receiver in receiverList) {
+      NotificationApi.sendCompliment(sender!, receiver);
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -145,17 +164,12 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                       setState(() {
                         // _isChecked 값이 true인 경우에만 isActive를 false로 설정
                         isActiveList[i] = false;
-                        print(successList[i]['nickname']);
+                        receiverList.add(successList[i]['nickname']);
                       });
                     }
-                    else{
-                      null;
-                    }
-                  }
-                  else{
-                    null;
                   }
                 }
+                sendNotification();
               },
               child: Text(
                 '칭찬하기',
