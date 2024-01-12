@@ -103,6 +103,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         profileImage = data;
       });
+      Fluttertoast.showToast(msg: "프로필 이미지가 성공적으로 변경되었습니다.");
     } else {
       print("프로필이미지 ${profileChange.statusMessage}");
     }
@@ -485,10 +486,15 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 image: NetworkImage(profileImage),
                                 //fit: BoxFit.cover,
                               ))
-                        : DecorationImage(
-                            image: AssetImage(
-                            'assets/images/user.jpg',
-                          )),
+                        : (_image != null
+                            ? DecorationImage(
+                                image: FileImage(File(_image!.path)),
+                                //fit: BoxFit.cover,
+                              )
+                            : DecorationImage(
+                                image: AssetImage(
+                                'assets/images/user.jpg',
+                              ))),
                   ),
                   child: Align(
                     alignment: Alignment(0.3, 1.2),
@@ -549,6 +555,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         if (_image != null) {
                           setState(() {
                             profileImageAPI(_image);
+                            Navigator.of(context).pop();
                             Navigator.of(context).pop();
                           });
                         }
