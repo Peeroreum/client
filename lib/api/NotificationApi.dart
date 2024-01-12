@@ -12,7 +12,7 @@ class NotificationApi {
     NotificationRequest notificationRequest = NotificationRequest(
         nickname: receiver,
         title: "마이페이지",
-        body: "$sender 님이 회원님을 친구로 추가했어요"
+        body: "$sender 님이 $receiver 님을 친구로 추가했어요!"
     );
 
     postApi(notificationRequest);
@@ -22,7 +22,7 @@ class NotificationApi {
     NotificationRequest notificationRequest = NotificationRequest(
       nickname: receiver,
       title: "같이해냄",
-      body: "$sender 님이 칭찬을 보냈어요"
+      body: "$sender 님이 칭찬을 보냈어요!"
     );
 
     postApi(notificationRequest);
@@ -32,7 +32,7 @@ class NotificationApi {
     NotificationRequest notificationRequest = NotificationRequest(
         nickname: receiver,
         title: "같이해냄",
-        body: "$sender 님이 챌린지 인증을 기다려요"
+        body: "$sender 님이 챌린지 인증을 기다려요!"
     );
 
     postApi(notificationRequest);
