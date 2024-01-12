@@ -11,13 +11,22 @@ class ComplimentCheckList extends StatefulWidget {
 class _ComplimentCheckListState extends State<ComplimentCheckList> {
 
   List<dynamic> successList = [];
-  late List<bool> isCheckedList = List.generate(successList.length, (index) => false);
-  late List<bool> isActiveList = List.generate(successList.length, (index) => true);
+  //late List<bool> isCheckedList = List.generate(successList.length, (index) => false);
+  //late List<bool> isActiveList = List.generate(successList.length, (index) => true);
+  late Map<String, bool> isCheckedList={};
+  late Map<String, bool> isActiveList={};
   
   @override
   Widget build(BuildContext context) {
+    void initState() {
+    super.initState();
     successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
-
+    for (int i=0; i<successList.length; i++){
+      isCheckedList[successList[i]["nickname"]] = false;
+      isActiveList[successList[i]["nickname"]] = true;
+    }
+    }
+    
     return Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
@@ -97,10 +106,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                       TextButton.icon(
                         onPressed: () {
                           for (int i = 0; i < isCheckedList.length; i++) {
-                            if (isActiveList[i] == true){
-                              if (isCheckedList[i]==false) {
+                            if (isActiveList[successList[i]["nickname"]] == true){
+                              if (isCheckedList[successList[i]["nickname"]] ==false) {
                                 setState(() {
-                                  isCheckedList[i] = true;
+                                  isCheckedList[successList[i]["nickname"]] = true;
+                                  print('${successList[i]["nickname"]}, ${isCheckedList[successList[i]["nickname"]]}');
                                 });
                               }
                             }
@@ -142,11 +152,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
             child: TextButton(
               onPressed: () {
                 for (int i = 0; i < isCheckedList.length; i++) {
-                  if (isActiveList[i] = true){
-                    if (isCheckedList[i]) {
+                  if (isActiveList[successList[i]["nickname"]] = true){
+                    if (isCheckedList[successList[i]["nickname"]] == true) {
                       setState(() {
                         // _isChecked 값이 true인 경우에만 isActive를 false로 설정
-                        isActiveList[i] = false;
+                        isActiveList[successList[i]["nickname"]] = false;
                       });
                     }
                   }
@@ -218,9 +228,9 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                   ),
                     InkWell(
                       onTap: () {
-                        if (isActiveList[index]){
+                        if (isActiveList[successList[index]['nickname']]!){
                           setState(() {
-                            isCheckedList[index] = !isCheckedList[index];
+                            isCheckedList[successList[index]['nickname']] = !isCheckedList[successList[index]['nickname']]!;
                           });
                         }
                       },
@@ -233,13 +243,13 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),
-                          color: isActiveList[index]
-                          ? (isCheckedList[index]
+                          color: isActiveList[successList[index]['nickname']]!
+                          ? (isCheckedList[successList[index]['nickname']]!
                               ? PeeroreumColor.primaryPuple[400]!
                               : PeeroreumColor.white)
                           : PeeroreumColor.gray[300]!,
                         ),
-                        child: isCheckedList[index]
+                        child: isCheckedList[successList[index]['nickname']]!
                             ? Center(
                                 child: Icon(
                                   Icons.check,
