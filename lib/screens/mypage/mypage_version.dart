@@ -106,7 +106,11 @@ class _MyPageVersionState extends State<MyPageVersion> {
             Container(
               height: 48,
               width: 48,
-              color: PeeroreumColor.gray[100],
+              // color: PeeroreumColor.gray[100],
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14.4),
+                image: DecorationImage(image: AssetImage('assets/images/peeroreum_logo.png'))
+              ),
             ),
             SizedBox(
               width: 16,

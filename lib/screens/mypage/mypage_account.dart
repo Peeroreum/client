@@ -128,12 +128,12 @@ class _MyPageAccountState extends State<MyPageAccount> {
                           color: PeeroreumColor.gray[800],
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
+                      GestureDetector(
+                        onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => MyPageAccountPS()));
                         },
-                        style: TextButton.styleFrom(minimumSize: Size(24, 24)),
+                        // style: TextButton.styleFrom(minimumSize: Size(24, 24)),
                         child: Text(
                           '변경',
                           style: TextStyle(

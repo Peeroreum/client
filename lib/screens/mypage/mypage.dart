@@ -77,7 +77,7 @@ class _MyPageState extends State<MyPage> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: SingleChildScrollView(
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
@@ -190,7 +190,7 @@ class _MyPageState extends State<MyPage> {
                   ),
                 ),
               ])),
-              SvgPicture.asset('assets/icons/right.svg'),
+              SvgPicture.asset('assets/icons/right.svg', height: 24, color: PeeroreumColor.gray[600],),
             ],
           ),
         ),
