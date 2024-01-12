@@ -1068,7 +1068,7 @@ class _DetailWeduState extends State<DetailWedu> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/ok',
+                      Navigator.pushNamed(context, '/wedu/challenge/ok/compliment',
                           arguments: successList);
                     },
                     child: Text(
@@ -1114,7 +1114,7 @@ class _DetailWeduState extends State<DetailWedu> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/notok',
+                      Navigator.pushNamed(context, '/wedu/challenge/notok/encouragement',
                           arguments: notSuccessList);
                     },
                     child: Text(

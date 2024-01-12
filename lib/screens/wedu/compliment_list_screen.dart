@@ -50,7 +50,7 @@ class _ComplimentListState extends State<ComplimentList> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(vertical:13, horizontal:20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -88,24 +88,6 @@ class _ComplimentListState extends State<ComplimentList> {
                           ),
                         ],
                       ),
-                      TextButton.icon(
-                        onPressed: () {},
-                        icon: SvgPicture.asset(
-                          'assets/icons/check.svg',
-                          color: PeeroreumColor.gray[500],
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.only(right: 0),
-                        ),
-                        label: Text(
-                          '전체선택',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: PeeroreumColor.gray[500]),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -119,33 +101,7 @@ class _ComplimentListState extends State<ComplimentList> {
             ),
           ),
         ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-          child: SizedBox(
-            height: 48,
-            child: TextButton(
-              onPressed: () {},
-              child: Text(
-                '칭찬하기',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: PeeroreumColor.white,
-                ),
-              ),
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      PeeroreumColor.primaryPuple[400]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ))),
-            ),
-          ),
-        ));
+        );
   }
 
   okList() {
