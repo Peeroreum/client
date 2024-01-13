@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -20,6 +21,12 @@ class CreateInvitation extends StatefulWidget {
 class _CreateInvitationState extends State<CreateInvitation> {
   final maxContext = 30;
   String contextValue = "";
+  bool isImagePickerActive = false;
+  List<bool> isBackgroundSelected = [false, false, false, false, false, false, false];
+  List<bool> isFontColorSelected = [false, false, false];
+  List<dynamic> backgroundColorSelect = [PeeroreumColor.primaryPuple[400], PeeroreumColor.primaryPuple[200], PeeroreumColor.primaryPuple[50], PeeroreumColor.white, PeeroreumColor.black, Color(0xffCACACA), Color(0xffCACACA)];
+  List<dynamic> fontColorSelect = [PeeroreumColor.white, PeeroreumColor.black, Color(0xffCACACA)];
+
 
   Color _backgroundColor = PeeroreumColor.primaryPuple[400]!;
   Color _fontColor = PeeroreumColor.white;
@@ -35,6 +42,37 @@ class _CreateInvitationState extends State<CreateInvitation> {
     '★': '♡',
   };
 
+  checkColors(){
+    if(_backgroundColor == PeeroreumColor.primaryPuple[400]){
+      isBackgroundSelected = [true, false, false, false, false, false, false];
+    } else if(_backgroundColor == PeeroreumColor.primaryPuple[200]){
+      isBackgroundSelected = [false, true, false, false, false, false, false];
+    } else if(_backgroundColor == PeeroreumColor.primaryPuple[50]){
+      isBackgroundSelected = [false, false, true, false, false, false, false];
+    } else if(_backgroundColor == PeeroreumColor.white){
+      isBackgroundSelected = [false, false, false, true, false, false, false];
+    } else if(_backgroundColor == PeeroreumColor.black){
+      isBackgroundSelected = [false, false, false, false, true, false, false];
+    } else {
+      isBackgroundSelected = [false, false, false, false, false, false, false];
+    }
+    if(_fontColor == PeeroreumColor.white){
+      isFontColorSelected = [true, false, false];
+    }
+    else if(_fontColor == PeeroreumColor.black){
+      isFontColorSelected = [false, true, false];
+    }
+    else{
+      isFontColorSelected = [false, false, false];
+    }
+  }
+
+  updateColor(){
+    setState(() {
+      checkColors();
+    });
+  }
+
   Color? pickerColor;
   void changeColor(Color color) {
     setState(() => pickerColor = color);
@@ -43,13 +81,25 @@ class _CreateInvitationState extends State<CreateInvitation> {
   XFile? _image; //이미지를 담을 변수 선언
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
   Future getImage(ImageSource imageSource) async {
+    if (isImagePickerActive) {
+    return; // 이미지 피커가 이미 열려 있는 경우, 다시 열지 않음
+    }
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
+    isImagePickerActive = true;
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
       setState(() {
         _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
       });
     }
+    isImagePickerActive = false;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkColors();
   }
 
   @override
@@ -234,145 +284,23 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     const SizedBox(
                       height: 8,
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              _backgroundColor =
-                                  PeeroreumColor.primaryPuple[400]!;
-                              _fontColor = PeeroreumColor.white;
-                              _image = null;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.primaryPuple[400],
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              _backgroundColor =
-                                  PeeroreumColor.primaryPuple[200]!;
-                              _fontColor = PeeroreumColor.white;
-                              _image = null;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.primaryPuple[200],
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              _backgroundColor =
-                                  PeeroreumColor.primaryPuple[50]!;
-                              _fontColor = PeeroreumColor.black;
-                              _image = null;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.primaryPuple[50],
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              _backgroundColor = PeeroreumColor.white;
-                              _fontColor = PeeroreumColor.black;
-                              _image = null;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.white,
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              _backgroundColor = PeeroreumColor.black;
-                              _fontColor = PeeroreumColor.white;
-                              _image = null;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.black,
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () async {
-                            final selectedColor = await showDialog(
+                    Container(
+                    height: 32,
+                    child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 7,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () async{
+                                  setState(() {
+                                    for (int i = 0; i < isBackgroundSelected.length; i++) {
+                                      isBackgroundSelected[i] = i == index;
+                                    }
+                                  });
+                                  if (index == 5) {
+                                    isFontColorSelected = [false, false, false];
+                                    showDialog(
+                                      barrierDismissible: false,
                               context: context,
                               builder: (context) {
                                 return Dialog(
@@ -409,59 +337,118 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                     255 - green,
                                                     255 - blue,
                                                     1);
+                                                checkColors();
                                               });
                                             },
                                           ),
                                           TextButton(
                                             onPressed: () {
                                               Navigator.pop(context);
+                                              updateColor();
                                             },
                                             child: const Text('확인',
                                             style: TextStyle(
                                               color: PeeroreumColor.black,
                                               fontFamily: 'Pretendard'
-                                            ),),
+                                            ),
+                                            ),
                                           )
                                         ],
                                       )),
                                 );
+                                
                               },
                             );
-                            if (selectedColor != null) {
-                              changeColor(selectedColor);
-                            }
-                          },
-                          child: const Image(image: AssetImage('assets/icons/color_picker.png')),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            getImage(ImageSource.gallery);
-                            _fontColor = PeeroreumColor.white;
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xffCACACA),
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
+              } else if (index == 6) {
+                // Handle image picker button tap
+                await getImage(ImageSource.gallery);
+                if (_image != null){
+                  _fontColor = PeeroreumColor.white;
+                  isFontColorSelected = [true, false, false];
+                } else {
+                  setState(() {
+                    checkColors();
+                  });
+                }
+              } else {
+                // Handle color selection
+                setState(() {
+                  // Update the selected color based on the index
+                  switch (index) {
+                    case 0:
+                      _backgroundColor = PeeroreumColor.primaryPuple[400]!;
+                      _fontColor = PeeroreumColor.white;
+                      _image = null;
+                      isFontColorSelected = [true, false, false];
+                      break;
+                    case 1:
+                      _backgroundColor = PeeroreumColor.primaryPuple[200]!;
+                      _fontColor = PeeroreumColor.white;
+                      _image = null;
+                      isFontColorSelected = [true, false, false];
+                      break;
+                    case 2:
+                      _backgroundColor = PeeroreumColor.primaryPuple[50]!;
+                      _fontColor = PeeroreumColor.black;
+                      _image = null;
+                      isFontColorSelected = [false, true, false];
+                      break;
+                    case 3:
+                      _backgroundColor = PeeroreumColor.white;
+                      _fontColor = PeeroreumColor.black;
+                      _image = null;
+                      isFontColorSelected = [false, true, false];
+                      break;
+                    case 4:
+                      _backgroundColor = PeeroreumColor.black;
+                      _fontColor = PeeroreumColor.white;
+                      _image = null;
+                      isFontColorSelected = [true, false, false];
+                      break;
+                  }
+                });
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 8),
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: backgroundColorSelect[index],
+                border: Border.all(
+                  color: Colors.grey[100]!,
+                  width: 2,
+                ),
+                image: index == 5
+                  ? DecorationImage(
+                      image: AssetImage('assets/icons/color_picker.png'),
+                    )
+                  : null,
+              ),
+              child: index==5 || index==6
+              ? (index==6
+                ?Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: SvgPicture.asset(
+                  'assets/icons/camera.svg',
+                  color: PeeroreumColor.white,
                               ),
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt_outlined,
-                              color: PeeroreumColor.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                )
+                : null)
+              :(isBackgroundSelected[index] 
+                              ? SvgPicture.asset(
+                                  'assets/icons/check2.svg',
+                                  color: ((index==2 || index==3)
+                                    ?PeeroreumColor.gray[600]
+                                    : PeeroreumColor.white),
+                                              ) 
+                              : null),
+            ),
+          );
+        },
+      ),
+                ),
                   ],
                 ),
                 const SizedBox(
@@ -482,112 +469,117 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     const SizedBox(
                       height: 8,
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              _fontColor = PeeroreumColor.white;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.white,
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
+                    Container(
+                  height: 32,
+                  child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                for (int i = 0; i < isFontColorSelected.length; i++) {
+                  isFontColorSelected[i] = i == index;
+                }
+              });
+
+              if (index ==2) {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      backgroundColor: PeeroreumColor.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0), // 테두리의 둥근 정도 조절
+                        ),
+                      child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment:
+                                MainAxisAlignment.center,
+                            children: [
+                              ColorPicker(
+                                pickerAreaHeightPercent: 0.7,
+                                pickerAreaBorderRadius: BorderRadius.circular(10),
+                                showLabel: false,
+                                enableAlpha: false,
+                                pickerColor: _fontColor,
+                                onColorChanged: (Color color) {
+                                  setState(() {
+                                    _fontColor = color;
+                                    checkColors();
+                                  });
+                                },
                               ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            setState(() {
-                              _fontColor = PeeroreumColor.black;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.black,
-                              border: Border.all(
-                                color: PeeroreumColor.gray[100]!,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () async {
-                            final selectedColor = await showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                  backgroundColor: PeeroreumColor.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0), // 테두리의 둥근 정도 조절
-                                    ),
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          ColorPicker(
-                                            pickerAreaHeightPercent: 0.7,
-                                            pickerAreaBorderRadius: BorderRadius.circular(10),
-                                            showLabel: false,
-                                            enableAlpha: false,
-                                            pickerColor: _fontColor,
-                                            onColorChanged: (Color color) {
-                                              setState(() {
-                                                _fontColor = color;
-                                              });
-                                            },
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text('확인',
-                                            style: TextStyle(
-                                              color: PeeroreumColor.black,
-                                              fontFamily: 'Pretendard'
-                                            ),
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                );
-                              },
-                            );
-                            if (selectedColor != null) {
-                              changeColor(selectedColor);
-                            }
-                          },
-                          child: const Image(image: AssetImage('assets/icons/color_picker.png')),
-                        ),
-                      ],
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  updateColor();
+                                },
+                                child: const Text('확인',
+                                style: TextStyle(
+                                  color: PeeroreumColor.black,
+                                  fontFamily: 'Pretendard'
+                                ),
+                                ),
+                              )
+                            ],
+                          )),
+                    );
+                  },
+                );
+              } else {
+                // Handle color selection
+                setState(() {
+                  // Update the selected color based on the index
+                  switch (index) {
+                    case 0:
+                      _fontColor = PeeroreumColor.white;
+                      break;
+                    case 1:
+                      _fontColor = PeeroreumColor.black;
+                      break;
+                  }
+                });
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 8),
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: fontColorSelect[index],
+                border: Border.all(
+                  color: Colors.grey[100]!,
+                  width: 2,
+                ),
+                image: index == 2
+                  ? DecorationImage(
+                      image: AssetImage('assets/icons/color_picker.png'),
+                      
                     )
+                  : null,
+              ),
+              child: index==2
+              ? null
+              :(isFontColorSelected[index] 
+                              ? SvgPicture.asset(
+                                  'assets/icons/check2.svg',
+                                  color: ((index==0)
+                                    ?PeeroreumColor.gray[600]
+                                    : PeeroreumColor.white),
+                                              ) 
+                              : null),
+            ),
+          );
+        },
+      ),
+                ),
                   ],
                 ),
                   ],
