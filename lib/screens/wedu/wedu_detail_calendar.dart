@@ -417,9 +417,11 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       alignment: Alignment.center,
                       height: 36,
                       width: 36,
-                      child: (currentDate.month == startDate.month &&
+                      child: (currentDate.year == startDate.year &&
+                        currentDate.month == startDate.month &&
                                   day < startDate.day) ||
-                              (currentDate.month == finalDate.month &&
+                              (currentDate.year == finalDate.year &&
+                                currentDate.month == finalDate.month &&
                                   day > finalDate.day)
                           ? Container(
                               alignment: Alignment.center,
