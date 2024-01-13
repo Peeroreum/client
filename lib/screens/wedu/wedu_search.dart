@@ -44,6 +44,8 @@ class _searchWeduState extends State<searchWedu> {
     _loadSearchHistory();
   }
 
+  bool search_clear = false;
+
   PreferredSizeWidget appbarWidget() {
     return AppBar(
         backgroundColor: PeeroreumColor.white,
@@ -62,95 +64,75 @@ class _searchWeduState extends State<searchWedu> {
           },
         ),
         titleSpacing: 0,
-      title: Padding(
-        padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-        child: Row(
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //mainAxisSize: MainAxisSize.max,
-          children: [
-            Flexible(
-              fit: FlexFit.loose,
-              child: GestureDetector(
-                onTap: () {
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: PeeroreumColor.gray[100],
-                      borderRadius: BorderRadius.circular(37.0)),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/search.svg',
+        title: Container(
+          margin: EdgeInsets.fromLTRB(0, 12, 20, 12),
+          child: SearchBar(
+            controller: _searchController,
+            onTap: () {
+              if (_searchController.text.length > 0) {
+                setState(() {
+                  search_clear = true;
+                });
+              }
+            },
+            onChanged: (value) {
+              if (value.length > 0) {
+                setState(() {
+                  search_clear = true;
+                });
+              } else {
+                setState(() {
+                  search_clear = false;
+                });
+              }
+            },
+            backgroundColor:
+                MaterialStateProperty.all(PeeroreumColor.gray[100]),
+            elevation: MaterialStateProperty.all(0),
+            constraints: BoxConstraints(minHeight: 40),
+            hintText: '같이방에서 함께 공부해요!',
+            hintStyle: MaterialStateProperty.all(TextStyle(
+                color: PeeroreumColor.gray[600],
+                fontFamily: 'Pretendard',
+                fontSize: 14,
+                fontWeight: FontWeight.w400)),
+            trailing: [
+              search_clear
+                  ? GestureDetector(
+                      onTap: () {
+                        _searchController.clear();
+                        setState(() {
+                          search_clear = false;
+                        });
+                      },
+                      child: SvgPicture.asset(
+                        'assets/icons/x_circle.svg',
                         color: PeeroreumColor.gray[600],
-                      ),
-                      SizedBox(width: 8.0),
-                      SizedBox(
-                        child: Text(
-                          '같이방에서 함께 공부해요!',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: PeeroreumColor.gray[600]),
-                        ),
-                      ),
-                    ],
-                  ),
+                      ))
+                  : Container(),
+              SizedBox(
+                width: 12,
+              ),
+              GestureDetector(
+                onTap: () {
+                  if (_searchController.text.isNotEmpty) {
+                    _saveSearchHistory(_searchController.text);
+                    goToSearchResult(_searchController.text);
+                  } else {
+                    Fluttertoast.showToast(msg: '검색어를 입력하세요.');
+                  }
+                },
+                child: SvgPicture.asset(
+                  'assets/icons/search.svg',
+                  color: Colors.grey[600],
                 ),
               ),
-            ),
-            SizedBox(
-              width: 12,
-            ),
-          ],
-        ),
-      ),
-        // title: Padding(
-        //   padding: EdgeInsets.fromLTRB(0, 12, 20, 12),
-        //   child: SearchBar(
-        //     // padding: MaterialStateProperty.all(
-        //     //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
-        //     controller: _searchController,
-        //     backgroundColor:
-        //         MaterialStateProperty.all(PeeroreumColor.gray[100]),
-        //     elevation: MaterialStateProperty.all(0),
-        //     // shape: MaterialStateProperty.all(ContinuousRectangleBorder(
-        //     //     borderRadius: BorderRadius.all(Radius.circular(37.0)))),
-        //     constraints: BoxConstraints(maxHeight: 40),
-        //     hintText: '같이방에서 함께 공부해요!',
-        //     hintStyle: MaterialStateProperty.all(TextStyle(
-        //         color: PeeroreumColor.gray[600],
-        //         fontFamily: 'Pretendard',
-        //         fontSize: 14,
-        //         fontWeight: FontWeight.w400)),
-        //     trailing: [
-        //       GestureDetector(
-        //         onTap: () => _searchController.clear(),
-        //         child: SvgPicture.asset(
-        //           'assets/icons/x_circle.svg',
-        //           color: PeeroreumColor.gray[600],
-        //         )
-        //       ),
-        //       IconButton(
-        //         onPressed: () {
-        //           if(_searchController.text.isNotEmpty) {
-        //             _saveSearchHistory(_searchController.text);
-        //             goToSearchResult(_searchController.text);
-        //           }
-        //           else {
-        //             Fluttertoast.showToast(msg: '검색어를 입력하세요.');
-        //           }
-        //         },
-        //         icon: SvgPicture.asset(
-        //           'assets/icons/search.svg',
-        //           color: Colors.grey[600],
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // )
-    );
+              SizedBox(
+                width: 8,
+              )
+            ],
+          ),
+        ));
   }
 
   Widget bodyWidget() {
@@ -250,7 +232,7 @@ class _searchWeduState extends State<searchWedu> {
                     fontSize: 18,
                     fontWeight: FontWeight.w600),
               ),
-              TextButton(
+              GestureDetector(
                 child: Text(
                   '전체삭제',
                   style: TextStyle(
@@ -259,9 +241,9 @@ class _searchWeduState extends State<searchWedu> {
                       fontWeight: FontWeight.w600,
                       color: PeeroreumColor.gray[500]),
                 ),
-                onPressed: () {
+                onTap: () {
                   _deleteAllSearchHistory();
-                  setState(() { });
+                  setState(() {});
                 },
               )
             ],
@@ -269,71 +251,77 @@ class _searchWeduState extends State<searchWedu> {
         ),
         Expanded(
           child: ListView.separated(
-              shrinkWrap: true,
-              itemCount: _searchHistory.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => SearchResultWedu(_searchHistory[index]['keyword'].toString()),
-                                    transitionDuration: const Duration(seconds: 0),
-                                    reverseTransitionDuration: const Duration(seconds: 0)),
-                              );
-                            },
-                            child: Text(
-                              '${_searchHistory[index]['keyword']}',
+            shrinkWrap: true,
+            itemCount: _searchHistory.length,
+            itemBuilder: (context, index) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => SearchResultWedu(
+                                      _searchHistory[index]['keyword']
+                                          .toString()),
+                                  transitionDuration:
+                                      const Duration(seconds: 0),
+                                  reverseTransitionDuration:
+                                      const Duration(seconds: 0)),
+                            );
+                          },
+                          child: Text(
+                            '${_searchHistory[index]['keyword']}',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Pretendard',
+                                color: PeeroreumColor.gray[600]),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              '${_searchHistory[index]['date']}',
                               style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
                                   fontFamily: 'Pretendard',
-                                  color: PeeroreumColor.gray[600]),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: PeeroreumColor.gray[400]),
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '${_searchHistory[index]['date']}',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: PeeroreumColor.gray[400]),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                _deleteSearchHistory(_searchHistory[index]
+                                        ['keyword']
+                                    .toString());
+                                setState(() {});
+                              },
+                              child: SvgPicture.asset(
+                                'assets/icons/x.svg',
+                                color: PeeroreumColor.gray[800],
                               ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  _deleteSearchHistory(_searchHistory[index]['keyword'].toString());
-                                  setState(() {});
-                                },
-                                child: SvgPicture.asset(
-                                  'assets/icons/x.svg',
-                                  color: PeeroreumColor.gray[800],
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                );
-              },
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              );
+            },
             separatorBuilder: (BuildContext context, int index) {
-                return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Divider(color: PeeroreumColor.gray[100]));
-                },
+              return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Divider(color: PeeroreumColor.gray[100]));
+            },
           ),
         )
       ],
@@ -342,9 +330,17 @@ class _searchWeduState extends State<searchWedu> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appbarWidget(),
-      body: bodyWidget(),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        setState(() {
+          search_clear = false;
+        });
+      },
+      child: Scaffold(
+        appBar: appbarWidget(),
+        body: bodyWidget(),
+      ),
     );
   }
 
@@ -354,11 +350,10 @@ class _searchWeduState extends State<searchWedu> {
       PageRouteBuilder(
           pageBuilder: (_, __, ___) => SearchResultWedu(_searchController.text),
           transitionDuration: const Duration(seconds: 0),
-          reverseTransitionDuration: const Duration(seconds: 0)
-      ),
+          reverseTransitionDuration: const Duration(seconds: 0)),
     );
 
-    if(result != null) {
+    if (result != null) {
       _loadSearchHistory();
     }
   }

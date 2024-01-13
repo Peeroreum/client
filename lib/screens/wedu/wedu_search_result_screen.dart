@@ -88,14 +88,20 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     _loadSearchHistory();
   }
 
+  bool search_clear = false;
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController textEditingController = TextEditingController();
     textEditingController.text = keyword;
+    //keyword = textEditingController.text;
 
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
+        setState(() {
+          search_clear = false;
+        });
       },
       child: Scaffold(
           backgroundColor: PeeroreumColor.white,
@@ -117,15 +123,14 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               title: Padding(
                 padding: EdgeInsets.fromLTRB(0, 12, 20, 12),
                 child: SearchBar(
-                  // padding: MaterialStateProperty.all(
-                  //     EdgeInsets.symmetric(vertical: 8, horizontal: 12)),
                   controller: textEditingController,
+                  onTap: () {
+                    Navigator.of(context).pop(_searchHistory);
+                  },
                   backgroundColor:
                       MaterialStateProperty.all(PeeroreumColor.gray[100]),
                   elevation: MaterialStateProperty.all(0),
-                  // shape: MaterialStateProperty.all(ContinuousRectangleBorder(
-                  //     borderRadius: BorderRadius.all(Radius.circular(37.0)))),
-                  constraints: BoxConstraints(maxHeight: 40),
+                  constraints: BoxConstraints(minHeight: 40),
                   hintText: '같이방에서 함께 공부해요!',
                   hintStyle: MaterialStateProperty.all(TextStyle(
                       color: PeeroreumColor.gray[600],
@@ -133,26 +138,39 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                       fontSize: 14,
                       fontWeight: FontWeight.w400)),
                   trailing: [
+                    search_clear
+                        ? GestureDetector(
+                            onTap: () {
+                              textEditingController.clear();
+                              setState(() {
+                                search_clear = false;
+                              });
+                            },
+                            child: SvgPicture.asset(
+                              'assets/icons/x_circle.svg',
+                              color: PeeroreumColor.gray[600],
+                            ))
+                        : Container(),
+                    SizedBox(
+                      width: 12,
+                    ),
                     GestureDetector(
-                        onTap: () {
-                          textEditingController.clear();
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/x_circle.svg',
-                          color: PeeroreumColor.gray[600],
-                        )),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          keyword = textEditingController.text;
-                          fetchDatas();
-                          _saveSearchHistory(keyword);
-                        });
+                      onTap: () {
+                        if ((textEditingController.text.isNotEmpty)) {
+                          setState(() {
+                            keyword = textEditingController.text;
+                            fetchDatas();
+                            _saveSearchHistory(keyword);
+                          });
+                        }
                       },
-                      icon: SvgPicture.asset(
+                      child: SvgPicture.asset(
                         'assets/icons/search.svg',
                         color: Colors.grey[600],
                       ),
+                    ),
+                    SizedBox(
+                      width: 8,
                     ),
                   ],
                 ),
@@ -275,7 +293,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                 ? SvgPicture.asset('assets/icons/lock.svg',
                                     color: PeeroreumColor.gray[400], width: 12)
                                 : Container(),
-                            SizedBox(width: 4),
+                            // SizedBox(width: 4),
                             Flexible(
                               child: Text(
                                 datas[index]["title"]!,
@@ -415,10 +433,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               datas[index]['locked'].toString() == "true"
                                   ? SvgPicture.asset('assets/icons/lock.svg',
                                       color: PeeroreumColor.gray[400])
-                                  : Container(),
-                              SizedBox(
-                                width: 4,
-                              ),
+                                  : SizedBox(),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
                                         "true"
