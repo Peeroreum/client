@@ -61,6 +61,10 @@ class _EmailSignInState extends State<EmailSignIn> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
+        setState(() {
+          id_showClearbutton = false;
+          pw_showClearbutton = false;
+        });
       },
       child: Scaffold(
         // resizeToAvoidBottomInset: false,
@@ -88,6 +92,13 @@ class _EmailSignInState extends State<EmailSignIn> {
                   children: [
                     TextFormField(
                       controller: id_controller,
+                      onTap: () {
+                        if (id_controller.text.length > 0) {
+                          setState(() {
+                            id_showClearbutton = true;
+                          });
+                        }
+                      },
                       onChanged: (value) {
                         _checkInput();
                         if (value.length > 0) {
@@ -135,6 +146,13 @@ class _EmailSignInState extends State<EmailSignIn> {
                     ),
                     TextFormField(
                       controller: pw_controller,
+                      onTap: () {
+                        if (pw_controller.text.length > 0) {
+                          setState(() {
+                            pw_showClearbutton = true;
+                          });
+                        }
+                      },
                       onChanged: (value) {
                         _checkInput();
                         if (value.length > 0) {
@@ -171,24 +189,25 @@ class _EmailSignInState extends State<EmailSignIn> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               pw_showClearbutton
-                                  ? IconButton(
-                                      onPressed: () {
+                                  ? GestureDetector(
+                                      onTap: () {
                                         pw_controller.clear();
                                         setState(() {
                                           pw_showClearbutton = false;
                                           _checkInput();
                                         });
                                       },
-                                      icon: SvgPicture.asset(
+                                      child: SvgPicture.asset(
                                         "assets/icons/x_circle.svg",
                                         color: PeeroreumColor.gray[200],
                                       ),
-                                      constraints: BoxConstraints(),
-                                      padding: EdgeInsets.zero,
                                     )
                                   : SizedBox(
                                       width: 0,
                                     ),
+                              SizedBox(
+                                width: 12,
+                              ),
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -241,7 +260,8 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   secureStorage.write(
                                       key: "grade",
                                       value: data['grade'].toString());
-                                  Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, '/home', (route) => false);
                                 } else if (result.statusCode == 404 ||
                                     result.statusCode == 401) {
                                   Fluttertoast.showToast(
