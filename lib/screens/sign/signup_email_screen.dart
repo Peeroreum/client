@@ -44,6 +44,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
   bool pw_showClearbutton = false;
   bool pw2_showClearbutton = false;
 
+  bool id_focus = false;
+  bool pw_focus = false;
+  bool pw2_focus = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -53,6 +57,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
           id_showClearbutton = false;
           pw_showClearbutton = false;
           pw2_showClearbutton = false;
+          id_focus = false;
+          pw_focus = false;
+          pw2_focus = false;
         });
       },
       child: Scaffold(
@@ -116,6 +123,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             setState(() {
                               pw_showClearbutton = false;
                               pw2_showClearbutton = false;
+                              id_focus = true;
+                              pw_focus = false;
+                              pw2_focus = false;
                             });
                           },
                           onChanged: (value) {
@@ -136,13 +146,13 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14,
                                 color: PeeroreumColor.gray[600]),
-                            errorText: id_duplicate ? "이미 사용 중인 이메일입니다." : null,
+                            errorText: id_focus
+                                ? (id_duplicate ? "이미 사용 중인 이메일입니다." : null)
+                                : null,
                             errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: PeeroreumColor.error,
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    color: PeeroreumColor.gray[200]!)),
                             focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
@@ -197,7 +207,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                         : SizedBox())
                               ],
                             ),
-                            helperText: emailHelperText(),
+                            helperText: id_focus ? emailHelperText() : null,
                             helperStyle: emailHelperTextStyle(),
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 12, horizontal: 16),
@@ -214,18 +224,15 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                       color: PeeroreumColor.black,
                                     ),
                                   ),
-                            enabledBorder: id_check
-                                ? OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                        color:
-                                            PeeroreumColor.primaryPuple[400]!),
-                                  )
-                                : OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                      color: PeeroreumColor.gray[200]!,
-                                    )),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                  color: id_focus
+                                      ? (id_check
+                                          ? PeeroreumColor.primaryPuple[400]!
+                                          : PeeroreumColor.gray[200]!)
+                                      : PeeroreumColor.gray[200]!),
+                            ),
                           ),
                           cursorColor: PeeroreumColor.gray[600]),
                     )
@@ -260,6 +267,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                           setState(() {
                             id_showClearbutton = false;
                             pw2_showClearbutton = false;
+                            id_focus = false;
+                            pw_focus = true;
+                            pw2_focus = false;
                           });
                         },
                         onChanged: (value) {
@@ -297,13 +307,15 @@ class _EmailSignUpState extends State<EmailSignUp> {
                               fontWeight: FontWeight.w400,
                               fontSize: 14,
                               color: PeeroreumColor.gray[600]),
-                          errorText: pw_controller.text.length >= 2 && !pw_check
-                              ? "영문, 숫자, 특수문자 포함 8자~12자"
+                          errorText: pw_focus
+                              ? (pw_controller.text.length >= 2 && !pw_check
+                                  ? "영문, 숫자, 특수문자 포함 8자~12자"
+                                  : null)
                               : null,
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
-                              color: PeeroreumColor.error,
+                              color: PeeroreumColor.gray[200]!,
                             ),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
@@ -339,7 +351,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             ],
                           ),
                           helperText: pw_check
-                              ? "사용 가능한 비밀번호입니다."
+                              ? (pw_focus ? "사용 가능한 비밀번호입니다." : null)
                               : "영문, 숫자, 특수문자 포함 8자~12자",
                           helperStyle: pw_check
                               ? TextStyle(
@@ -366,17 +378,15 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                     color: PeeroreumColor.black,
                                   ),
                                 ),
-                          enabledBorder: pw_check
-                              ? OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                      color: PeeroreumColor.primaryPuple[400]!),
-                                )
-                              : OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: PeeroreumColor.gray[200]!,
-                                  )),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                                color: pw_focus
+                                    ? (pw_check
+                                        ? PeeroreumColor.primaryPuple[400]!
+                                        : PeeroreumColor.gray[200]!)
+                                    : PeeroreumColor.gray[200]!),
+                          ),
                         ),
                         showCursor: false,
                         obscureText: pw_hide,
@@ -413,6 +423,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         setState(() {
                           id_showClearbutton = false;
                           pw_showClearbutton = false;
+                          id_focus = false;
+                          pw_focus = false;
+                          pw2_focus = true;
                         });
                       },
                       onChanged: (value) {
@@ -438,8 +451,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
-                                color: pw2_check
-                                    ? PeeroreumColor.primaryPuple[400]!
+                                color: pw2_focus
+                                    ? (pw2_check
+                                        ? PeeroreumColor.primaryPuple[400]!
+                                        : PeeroreumColor.gray[200]!)
                                     : PeeroreumColor.gray[200]!)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -453,14 +468,18 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: PeeroreumColor.gray[600]),
-                        helperText: pw2_check ? "비밀번호가 일치합니다." : "",
+                        helperText: pw2_focus
+                            ? (pw2_check ? "비밀번호가 일치합니다." : "")
+                            : null,
                         helperStyle: TextStyle(
                             fontFamily: "Pretendard",
                             fontWeight: FontWeight.w400,
                             fontSize: 12,
                             color: PeeroreumColor.primaryPuple[400]),
-                        errorText: !pw2_check && pw2_controller.text.length >= 2
-                            ? "비밀번호가 일치하지 않습니다."
+                        errorText: pw2_focus
+                            ? (!pw2_check && pw2_controller.text.length >= 2
+                                ? "비밀번호가 일치하지 않습니다."
+                                : null)
                             : null,
                         errorStyle:
                             !pw2_check && pw2_controller.text.length >= 2
@@ -473,7 +492,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide:
-                                BorderSide(color: PeeroreumColor.error)),
+                                BorderSide(color: PeeroreumColor.gray[200]!)),
                         focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide:
