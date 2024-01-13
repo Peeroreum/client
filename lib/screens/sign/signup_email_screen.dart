@@ -67,6 +67,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
           elevation: 0.0,
           title: Text(
             '회원가입',
