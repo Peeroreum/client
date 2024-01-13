@@ -49,6 +49,11 @@ class _EmailSignUpState extends State<EmailSignUp> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
+        setState(() {
+          id_showClearbutton = false;
+          pw_showClearbutton = false;
+          pw2_showClearbutton = false;
+        });
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -77,6 +82,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
         ),
         body: SingleChildScrollView(
           reverse: true,
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom * 0.3),
           child: Container(
             padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
             child: Column(
@@ -100,6 +107,17 @@ class _EmailSignUpState extends State<EmailSignUp> {
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
                           controller: id_controller,
+                          onTap: () {
+                            if (id_controller.text.length > 0) {
+                              setState(() {
+                                id_showClearbutton = true;
+                              });
+                            }
+                            setState(() {
+                              pw_showClearbutton = false;
+                              pw2_showClearbutton = false;
+                            });
+                          },
                           onChanged: (value) {
                             setState(() {
                               if (value.isNotEmpty) {
@@ -137,8 +155,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                 Container(
                                     padding: EdgeInsets.only(left: 12),
                                     child: id_showClearbutton
-                                        ? IconButton(
-                                            onPressed: () {
+                                        ? GestureDetector(
+                                            onTap: () {
                                               id_controller.clear();
                                               setState(() {
                                                 id_showClearbutton = false;
@@ -147,11 +165,14 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                                 _checkInput();
                                               });
                                             },
-                                            icon: SvgPicture.asset(
+                                            child: SvgPicture.asset(
                                               "assets/icons/x_circle.svg",
                                               color: PeeroreumColor.gray[200],
                                             ))
                                         : null),
+                                SizedBox(
+                                  width: 12,
+                                ),
                                 Container(
                                   padding: id_check
                                       ? EdgeInsets.fromLTRB(0, 0, 16, 0)
@@ -230,10 +251,21 @@ class _EmailSignUpState extends State<EmailSignUp> {
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
                         controller: pw_controller,
+                        onTap: () {
+                          if (pw_controller.text.length > 0) {
+                            setState(() {
+                              pw_showClearbutton = true;
+                            });
+                          }
+                          setState(() {
+                            id_showClearbutton = false;
+                            pw2_showClearbutton = false;
+                          });
+                        },
                         onChanged: (value) {
                           if (value.isNotEmpty) {
                             pw_showClearbutton = true;
-                            if(pw_controller.text == pw2_controller.text) {
+                            if (pw_controller.text == pw2_controller.text) {
                               setState(() {
                                 pw2_check = true;
                               });
@@ -252,7 +284,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             setState(() {
                               pw_check = true;
                             });
-                          } else{
+                          } else {
                             setState(() {
                               pw_check = false;
                             });
@@ -265,10 +297,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                               fontWeight: FontWeight.w400,
                               fontSize: 14,
                               color: PeeroreumColor.gray[600]),
-                          errorText:
-                              pw_controller.text.length >= 2 && !pw_check
-                                  ? "영문, 숫자, 특수문자 포함 8자~12자"
-                                  : null,
+                          errorText: pw_controller.text.length >= 2 && !pw_check
+                              ? "영문, 숫자, 특수문자 포함 8자~12자"
+                              : null,
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
@@ -287,8 +318,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
                               Container(
                                   padding: EdgeInsets.only(left: 12),
                                   child: pw_showClearbutton
-                                      ? IconButton(
-                                          onPressed: () {
+                                      ? GestureDetector(
+                                          onTap: () {
                                             pw_controller.clear();
                                             setState(() {
                                               pw_showClearbutton = false;
@@ -296,11 +327,14 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                             });
                                             _checkInput();
                                           },
-                                          icon: SvgPicture.asset(
+                                          child: SvgPicture.asset(
                                             "assets/icons/x_circle.svg",
                                             color: PeeroreumColor.gray[200],
                                           ))
                                       : null),
+                              SizedBox(
+                                width: 12,
+                              ),
                               pw_suffix()
                             ],
                           ),
@@ -369,6 +403,18 @@ class _EmailSignUpState extends State<EmailSignUp> {
                     ),
                     TextField(
                       controller: pw2_controller,
+                      scrollPadding: EdgeInsets.only(bottom: 140),
+                      onTap: () {
+                        if (pw2_controller.text.length > 0) {
+                          setState(() {
+                            pw2_showClearbutton = true;
+                          });
+                        }
+                        setState(() {
+                          id_showClearbutton = false;
+                          pw_showClearbutton = false;
+                        });
+                      },
                       onChanged: (value) {
                         if (value.isNotEmpty) {
                           pw2_showClearbutton = true;
@@ -441,8 +487,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               pw2_showClearbutton
-                                  ? IconButton(
-                                      onPressed: () {
+                                  ? GestureDetector(
+                                      onTap: () {
                                         pw2_controller.clear();
                                         setState(() {
                                           pw2_showClearbutton = false;
@@ -450,14 +496,15 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                         });
                                         _checkInput();
                                       },
-                                      icon: SvgPicture.asset(
+                                      child: SvgPicture.asset(
                                         "assets/icons/x_circle.svg",
                                         color: PeeroreumColor.gray[200],
                                       ),
-                                      constraints: BoxConstraints(),
-                                      padding: EdgeInsets.zero,
                                     )
                                   : SizedBox(),
+                              SizedBox(
+                                width: 12,
+                              ),
                               pw2_suffix()
                             ],
                           ),
@@ -531,7 +578,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
     id_duplicate = await isDuplicatedEmail();
     setState(() {
       if (RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-          .hasMatch(id_controller.text) &&
+              .hasMatch(id_controller.text) &&
           !id_duplicate) {
         id_check = true;
       } else {

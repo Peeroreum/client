@@ -98,6 +98,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                             id_showClearbutton = true;
                           });
                         }
+                        setState(() {
+                          pw_showClearbutton = false;
+                        });
                       },
                       onChanged: (value) {
                         _checkInput();
@@ -152,6 +155,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                             pw_showClearbutton = true;
                           });
                         }
+                        setState(() {
+                          id_showClearbutton = false;
+                        });
                       },
                       onChanged: (value) {
                         _checkInput();
