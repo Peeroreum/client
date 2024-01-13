@@ -36,7 +36,7 @@ class _DetailWeduState extends State<DetailWedu> {
 
   bool isExpanded = true;
   _DetailWeduState(this.id);
-  var token;
+  var token, email, nickname;
 
   final ImagePicker picker = ImagePicker();
   final List<XFile> _images = [];
@@ -64,7 +64,10 @@ class _DetailWeduState extends State<DetailWedu> {
   }
 
   Future<void> fetchDatas() async {
-    token = await const FlutterSecureStorage().read(key: "accessToken");
+    FlutterSecureStorage storage = const FlutterSecureStorage();
+    token = await storage.read(key: "accessToken");
+    email = await storage.read(key: "email");
+    nickname = await storage.read(key: "nickname");
 
     var weduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/$id'),
         headers: {
@@ -80,6 +83,8 @@ class _DetailWeduState extends State<DetailWedu> {
       weduChallenge = weduData['challenge'];
       weduFire = weduData['continuousDate'];
       percent = double.parse(weduProgress) / 100;
+
+      isCreator = email == weduData['hostMail'];
       if (weduProgress == '0') {
         leftPosition = 0; // percent가 0일 때의 처리
       } else if (weduProgress == '100') {
@@ -234,8 +239,8 @@ class _DetailWeduState extends State<DetailWedu> {
             ),
             actions: [
               IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
+                  onPressed: () async {
+                    await showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
@@ -640,14 +645,15 @@ class _DetailWeduState extends State<DetailWedu> {
                     'assets/icons/icon_dots_mono.svg',
                     color: PeeroreumColor.gray[800],
                   ),
-                  onTap: () {
-                    showModalBottomSheet(
+                  onTap: () async {
+                    await showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         builder: (context) {
-                          return aboutImageWedu();
+                          return aboutImageWedu(successOne["nickname"]);
                         });
+                    Navigator.pop(context);
                   },
                 )
               ],
@@ -1006,7 +1012,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                 SizedBox(
                                   width: 8,
                                 ),
-                                Flexible(
+                                Expanded(
                                   child: Text(
                                     isExpanded ? weduChallenge : "",
                                     style: TextStyle(
@@ -1160,105 +1166,106 @@ class _DetailWeduState extends State<DetailWedu> {
       ),
     );
   }
+
   Widget changeDetailWedu() {
-    return Flexible(
-      child: Container(
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: PeeroreumColor.white, // 여기에 색상 지정
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
-          ),
+    return Container(
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
-        child: isCreator
-        ? Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 16, top: 4),
-                child: Text(
-                  '같이방 관리',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.black,
-                  ),
+      ),
+      child: isCreator
+      ? Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.only(bottom: 16, top: 4),
+              child: Text(
+                '같이방 관리',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: PeeroreumColor.black,
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  //wedu_change(context);
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.fromHeight(40),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.all(0),
-                ),
-                child: Text(
-                  '같이방 수정',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                    color: PeeroreumColor.black,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  //wedu_del();
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.fromHeight(40),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.all(0),
-                ),
-                child: Text(
-                  '같이방 삭제',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                    color: PeeroreumColor.error,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-        : GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          // 같이방 나가기 로직~~
-        },
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(0,16,0,41),
-          height: 56,
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20,),
-          child: const Align(
-            alignment: Alignment.centerLeft,
-            child: Text('나가기',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: PeeroreumColor.error,
-              
             ),
+            TextButton(
+              onPressed: () {
+                //wedu_change(context);
+              },
+              style: TextButton.styleFrom(
+                minimumSize: Size.fromHeight(40),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+              ),
+              child: Text(
+                '같이방 수정',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.black,
+                ),
+              ),
             ),
-          )
+            TextButton(
+              onPressed: () async {
+                await confirmWeduDeleteMessage();
+              },
+              style: TextButton.styleFrom(
+                minimumSize: Size.fromHeight(40),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+              ),
+              child: Text(
+                '같이방 삭제',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.error,
+                ),
+              ),
+            ),
+          ],
         ),
       )
+      : GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () async {
+        await confirmOutWeduMessage();
+      },
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(0,16,0,41),
+        height: 56,
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20,),
+        child: const Align(
+          alignment: Alignment.centerLeft,
+          child: Text('나가기',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
+            color: PeeroreumColor.error,
+
+          ),
+          ),
+        )
       ),
+    )
     );
   }
-  aboutImageWedu(){
+
+  aboutImageWedu(String successOneNickname){
+    isMyImage = nickname == successOneNickname;
     return Container(
       decoration: BoxDecoration(
           color: PeeroreumColor.white, // 여기에 색상 지정
@@ -1270,8 +1277,9 @@ class _DetailWeduState extends State<DetailWedu> {
       child: isMyImage
       ? GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
-          confirmMessage();
+        onTap: () async {
+          await confirmChallengeDeleteMessage();
+          Navigator.pop(context);
         },
         child: Container(
           margin: const EdgeInsets.fromLTRB(0,16,0,41),
@@ -1310,7 +1318,186 @@ class _DetailWeduState extends State<DetailWedu> {
       ),
     );
   }
-  confirmMessage(){
+
+  confirmWeduDeleteMessage() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
+          title: Text("같이방 삭제", textAlign: TextAlign.center),
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Pretendard',
+            color: PeeroreumColor.black,
+          ),
+          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          content: Text(
+            "정말 삭제하시겠습니까?",
+            textAlign: TextAlign.center,
+          ),
+          contentTextStyle: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: PeeroreumColor.gray[600],
+          ),
+          actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16), // 패딩
+                      shape: RoundedRectangleBorder(
+                        // 모양
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      '취소',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.gray[600]),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      deleteWedu();
+                      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.error,
+                      padding:
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      '삭제',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.white),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  confirmOutWeduMessage() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
+          title: Text("나가기", textAlign: TextAlign.center),
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Pretendard',
+            color: PeeroreumColor.black,
+          ),
+          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          content: Text(
+            "정말 나가시겠습니까?",
+            textAlign: TextAlign.center,
+          ),
+          contentTextStyle: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: PeeroreumColor.gray[600],
+          ),
+          actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16), // 패딩
+                      shape: RoundedRectangleBorder(
+                        // 모양
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      '취소',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.gray[600]),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      outWedu();
+                      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: PeeroreumColor.error,
+                      padding:
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      '나가기',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.white),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  confirmChallengeDeleteMessage(){
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -1370,8 +1557,8 @@ class _DetailWeduState extends State<DetailWedu> {
                 Expanded(
                   child: TextButton(
                     onPressed: () {
-                      //삭제로직~~
-                      Navigator.pop(context);
+                      Navigator.of(context).pop();
+                      deleteChallenge();
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: PeeroreumColor.error,
@@ -1397,5 +1584,48 @@ class _DetailWeduState extends State<DetailWedu> {
         );
       },
     );
+  }
+
+  void deleteChallenge() async {
+    var result = await http.delete(Uri.parse('${API.hostConnect}/wedu/$id/challenge'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+
+    if(result.statusCode == 200) {
+      print("챌린지 인증 삭제 성공");
+      setState(() {
+        fetchDatas();
+      });
+    } else {
+      print("챌린지 인증 삭제 실패 ${result.statusCode}");
+    }
+  }
+
+  void outWedu() async {
+    var result = await http.delete(Uri.parse('${API.hostConnect}/wedu/$id/out'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if(result.statusCode == 200) {
+      print("같이방 나가기 성공");
+    } else {
+      print("같이방 나가기 실패 ${result.statusCode}");
+    }
+  }
+
+  void deleteWedu() async {
+    var result = await http.delete(Uri.parse('${API.hostConnect}/wedu/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if(result.statusCode == 200) {
+      print("같이방 삭제 성공");
+    } else {
+      print("같이방 삭제 실패 ${result.statusCode}");
+    }
   }
 }
