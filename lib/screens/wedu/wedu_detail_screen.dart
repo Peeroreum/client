@@ -36,7 +36,7 @@ class _DetailWeduState extends State<DetailWedu> {
 
   bool isExpanded = true;
   _DetailWeduState(this.id);
-  var token;
+  var token, email, nickname;
 
   final ImagePicker picker = ImagePicker();
   final List<XFile> _images = [];
@@ -64,7 +64,10 @@ class _DetailWeduState extends State<DetailWedu> {
   }
 
   Future<void> fetchDatas() async {
-    token = await const FlutterSecureStorage().read(key: "accessToken");
+    FlutterSecureStorage storage = const FlutterSecureStorage();
+    token = await storage.read(key: "accessToken");
+    email = await storage.read(key: "email");
+    nickname = await storage.read(key: "nickname");
 
     var weduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/$id'),
         headers: {
@@ -80,6 +83,8 @@ class _DetailWeduState extends State<DetailWedu> {
       weduChallenge = weduData['challenge'];
       weduFire = weduData['continuousDate'];
       percent = double.parse(weduProgress) / 100;
+
+      isCreator = email == weduData['hostMail'];
       if (weduProgress == '0') {
         leftPosition = 0; // percent가 0일 때의 처리
       } else if (weduProgress == '100') {
@@ -640,14 +645,15 @@ class _DetailWeduState extends State<DetailWedu> {
                     'assets/icons/icon_dots_mono.svg',
                     color: PeeroreumColor.gray[800],
                   ),
-                  onTap: () {
-                    showModalBottomSheet(
+                  onTap: () async {
+                    await showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         builder: (context) {
-                          return aboutImageWedu();
+                          return aboutImageWedu(successOne["nickname"]);
                         });
+                    Navigator.pop(context);
                   },
                 )
               ],
@@ -1258,7 +1264,9 @@ class _DetailWeduState extends State<DetailWedu> {
       ),
     );
   }
-  aboutImageWedu(){
+
+  aboutImageWedu(String successOneNickname){
+    isMyImage = nickname == successOneNickname;
     return Container(
       decoration: BoxDecoration(
           color: PeeroreumColor.white, // 여기에 색상 지정
@@ -1270,8 +1278,9 @@ class _DetailWeduState extends State<DetailWedu> {
       child: isMyImage
       ? GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
-          confirmMessage();
+        onTap: () async {
+          await confirmMessage();
+          Navigator.pop(context);
         },
         child: Container(
           margin: const EdgeInsets.fromLTRB(0,16,0,41),
@@ -1370,8 +1379,8 @@ class _DetailWeduState extends State<DetailWedu> {
                 Expanded(
                   child: TextButton(
                     onPressed: () {
-                      //삭제로직~~
-                      Navigator.pop(context);
+                      Navigator.of(context).pop();
+                      deleteChallenge();
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: PeeroreumColor.error,
@@ -1397,5 +1406,22 @@ class _DetailWeduState extends State<DetailWedu> {
         );
       },
     );
+  }
+
+  void deleteChallenge() async {
+    var result = await http.delete(Uri.parse('${API.hostConnect}/wedu/$id/challenge'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+
+    if(result.statusCode == 200) {
+      print("챌린지 인증 삭제 성공");
+      setState(() {
+        fetchDatas();
+      });
+    } else {
+      print("챌린지 인증 삭제 실패 ${result.statusCode}");
+    }
   }
 }
