@@ -226,15 +226,6 @@ class _DetailWeduState extends State<DetailWedu> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 7,
-                ),
-                // SvgPicture.asset(
-                //   'assets/icons/lock.svg',
-                //   color: PeeroreumColor.gray[400],
-                //   width: 12,
-                //   height: 14,
-                // )
               ],
             ),
             actions: [
@@ -299,12 +290,11 @@ class _DetailWeduState extends State<DetailWedu> {
                 onPressed: () {
                   _images.clear();
                   showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
                       context: context,
                       builder: (context) {
                         return Container(
                           padding: EdgeInsets.all(20),
-                          alignment: Alignment.center,
-                          height: MediaQuery.of(context).size.height * 0.2,
                           decoration: BoxDecoration(
                             color: PeeroreumColor.white, // 여기에 색상 지정
                             borderRadius: BorderRadius.only(
@@ -313,6 +303,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             ),
                           ),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -745,424 +736,368 @@ class _DetailWeduState extends State<DetailWedu> {
 
   bodyWidget() {
     return SingleChildScrollView(
-      child: Container(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Card(
-                    color: Colors.transparent,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        side: BorderSide(color: PeeroreumColor.gray[200]!)),
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 64,
-                                      height: 64,
-                                      decoration: BoxDecoration(
-                                        image: weduImage != null
-                                            ? DecorationImage(
-                                                image: NetworkImage(weduImage),
-                                                fit: BoxFit.cover)
-                                            : DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/example_logo.png')),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            width: 1,
-                                            color: PeeroreumColor.gray[100]!),
-                                      ),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Card(
+                  color: Colors.transparent,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      side: BorderSide(color: PeeroreumColor.gray[200]!)),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 64,
+                                    height: 64,
+                                    decoration: BoxDecoration(
+                                      image: weduImage != null
+                                          ? DecorationImage(
+                                              image: NetworkImage(weduImage),
+                                              fit: BoxFit.cover)
+                                          : DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/images/example_logo.png')),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          width: 1,
+                                          color: PeeroreumColor.gray[100]!),
                                     ),
-                                    SizedBox(
-                                      width: 15,
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Container(
+                                    height: 64,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '목표 달성',
+                                          style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color:
+                                                  PeeroreumColor.gray[600]),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'DAY',
+                                              style: TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18,
+                                                  color: PeeroreumColor
+                                                      .gray[800]),
+                                            ),
+                                            SizedBox(
+                                              width: 4,
+                                            ),
+                                            Text(
+                                              '-',
+                                              style: TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18,
+                                                  color: PeeroreumColor
+                                                      .gray[800]),
+                                            ),
+                                            SizedBox(
+                                              width: 4,
+                                            ),
+                                            Text(
+                                              '${weduDday}',
+                                              style: TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18,
+                                                  color: PeeroreumColor
+                                                      .gray[800]),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    Container(
-                                      height: 64,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '목표 달성',
-                                            style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color:
-                                                    PeeroreumColor.gray[600]),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'DAY',
-                                                style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 18,
-                                                    color: PeeroreumColor
-                                                        .gray[800]),
-                                              ),
-                                              SizedBox(
-                                                width: 4,
-                                              ),
-                                              Text(
-                                                '-',
-                                                style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 18,
-                                                    color: PeeroreumColor
-                                                        .gray[800]),
-                                              ),
-                                              SizedBox(
-                                                width: 4,
-                                              ),
-                                              Text(
-                                                '${weduDday}',
-                                                style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 18,
-                                                    color: PeeroreumColor
-                                                        .gray[800]),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: GestureDetector(
-                                  child: SvgPicture.asset(
-                                    'assets/icons/right.svg',
-                                    color: PeeroreumColor.gray[500],
-                                  ),
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DetailWeduCalendar(
-                                                    id, weduTitle.toString())));
-                                  },
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                child: SvgPicture.asset(
+                                  'assets/icons/right.svg',
+                                  color: PeeroreumColor.gray[500],
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailWeduCalendar(
+                                                  id, weduTitle.toString())));
+                                },
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          height: 16,
+                          thickness: 1,
+                          color: PeeroreumColor.gray[100],
+                        ),
+                        Container(
+                          child: SizedBox(
+                            child: LinearPercentIndicator(
+                              padding: EdgeInsets.all(0),
+                              lineHeight: 8,
+                              animationDuration: 2000,
+                              percent: percent,
+                              backgroundColor: PeeroreumColor.gray[200],
+                              linearGradient: LinearGradient(colors: [
+                                PeeroreumColor.primaryPuple[400]!,
+                                Color(0xffada5fc)
+                              ]),
+                              barRadius: Radius.circular(8),
+                            ),
                           ),
-                          Divider(
-                            height: 8,
-                            thickness: 1,
-                            color: PeeroreumColor.gray[100],
-                          ),
-                          // Container(
-                          //   margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
-                          //   padding: EdgeInsets.all(4),
-                          //   alignment: Alignment.center,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(8),
-                          //     color: PeeroreumColor.primaryPuple[400],
-                          //   ),
-                          //   width: 42,
-                          //   child: Text(
-                          //     '${weduProgress}%',
-                          //     style: TextStyle(
-                          //         fontFamily: 'Pretendard',
-                          //         fontWeight: FontWeight.w600,
-                          //         fontSize: 12,
-                          //         color: PeeroreumColor.white),
-                          //   ),
-                          // ),
-                          Stack(
-                            children: [
-                              LayoutBuilder(builder: (BuildContext context,
-                                  BoxConstraints constraints) {
-                                stackWidth = constraints.maxWidth;
-                                // if (weduProgress == '0') {
-                                //   leftPosition = 0; // percent가 0일 때의 처리
-                                // } else if (weduProgress == '100') {
-                                //   leftPosition = stackWidth * percent - 42; // percent가 1일 때의 처리
-                                // } else {
-                                //   leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
-                                // }
-                                return Container(
-                                  margin: EdgeInsets.only(top: 30),
-                                  child: SizedBox(
-                                    height: 24,
-                                    child: LinearPercentIndicator(
-                                      padding: EdgeInsets.all(0),
-                                      lineHeight: 8,
-                                      animationDuration: 2000,
-                                      percent: percent,
-                                      backgroundColor: PeeroreumColor.gray[200],
-                                      linearGradient: LinearGradient(colors: [
-                                        PeeroreumColor.primaryPuple[400]!,
-                                        Color(0xffada5fc)
-                                      ]),
-                                      barRadius: Radius.circular(8),
-                                    ),
-                                  ),
-                                );
-                              }),
-                              Positioned(
-                                top: 0,
-                                left: leftPosition,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(0, 6, 0, 10),
-                                  padding: EdgeInsets.all(4),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: PeeroreumColor.primaryPuple[400],
-                                  ),
-                                  width: 42,
-                                  child: Text(
-                                    '${weduProgress}%',
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                        color: PeeroreumColor.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '0',
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: Text(
+                                '${weduProgress} % 달성',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400,
-                                    color: PeeroreumColor.gray[600]),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.primaryPuple[400]),
                               ),
-                              Text(
-                                '100',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400,
-                                    color: PeeroreumColor.gray[600]),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                            Text(
+                              '100',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w400,
+                                  color: PeeroreumColor.gray[600]),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        side: BorderSide(color: PeeroreumColor.gray[200]!)),
-                    child: Theme(
-                      data: ThemeData(
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent)
-                          .copyWith(dividerColor: Colors.transparent),
-                      child: ExpansionTile(
-                          backgroundColor: PeeroreumColor.white,
-                          collapsedBackgroundColor: PeeroreumColor.white,
-                          trailing: SvgPicture.asset(
-                            isExpanded
-                                ? 'assets/icons/up.svg'
-                                : 'assets/icons/down.svg',
-                            color: PeeroreumColor.gray[500],
+                ),
+                Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      side: BorderSide(color: PeeroreumColor.gray[200]!)),
+                  child: Theme(
+                    data: ThemeData(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent)
+                        .copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                        backgroundColor: PeeroreumColor.white,
+                        collapsedBackgroundColor: PeeroreumColor.white,
+                        trailing: SvgPicture.asset(
+                          isExpanded
+                              ? 'assets/icons/up.svg'
+                              : 'assets/icons/down.svg',
+                          color: PeeroreumColor.gray[500],
+                        ),
+                        title: Container(
+                          color: PeeroreumColor.white,
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 28,
+                                padding: EdgeInsets.fromLTRB(12, 4, 12, 0),
+                                decoration: BoxDecoration(
+                                    color: PeeroreumColor.primaryPuple[50],
+                                    borderRadius: BorderRadius.circular(16)),
+                                child: Text(
+                                  '오늘의 미션',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.primaryPuple[400],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  isExpanded ? weduChallenge : "",
+                                  style: TextStyle(
+                                      overflow: TextOverflow.ellipsis,
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18,
+                                      color: PeeroreumColor.gray[800]),
+                                ),
+                              ),
+                            ],
                           ),
-                          title: Container(
+                        ),
+                        onExpansionChanged: (value) {
+                          setState(() {
+                            isExpanded = !isExpanded;
+                          });
+                        },
+                        children: [
+                          Container(
                             color: PeeroreumColor.white,
+                            padding: EdgeInsets.fromLTRB(16, 5, 16, 16),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  height: 28,
-                                  padding: EdgeInsets.fromLTRB(12, 4, 12, 0),
-                                  decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[50],
-                                      borderRadius: BorderRadius.circular(16)),
+                                  width: 180,
                                   child: Text(
-                                    '오늘의 미션',
+                                    weduChallenge,
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                      color: PeeroreumColor.primaryPuple[400],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    isExpanded ? weduChallenge : "",
-                                    style: TextStyle(
-                                        overflow: TextOverflow.ellipsis,
                                         fontFamily: 'Pretendard',
                                         fontWeight: FontWeight.w500,
                                         fontSize: 18,
                                         color: PeeroreumColor.gray[800]),
                                   ),
                                 ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Image.asset('assets/images/wedu_mission.png'),
+                                  )
                               ],
                             ),
                           ),
-                          onExpansionChanged: (value) {
-                            setState(() {
-                              isExpanded = !isExpanded;
-                            });
-                          },
-                          children: [
-                            Container(
-                              color: PeeroreumColor.white,
-                              padding: EdgeInsets.fromLTRB(16, 5, 16, 16),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 180,
-                                    child: Text(
-                                      weduChallenge,
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18,
-                                          color: PeeroreumColor.gray[800]),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Image.asset('assets/images/wedu_mission.png'),
-                                    )
-                                ],
-                              ),
-                            ),
-                          ]),
-                    ),
+                        ]),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Divider(
-              color: PeeroreumColor.gray[50],
-              thickness: 8,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '달성',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        '${successList.length}',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[600]),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/ok/compliment',
-                          arguments: successList);
-                    },
-                    child: Text(
-                      '전체보기',
+          ),
+          Divider(
+            color: PeeroreumColor.gray[50],
+            thickness: 8,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '달성',
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: PeeroreumColor.gray[500]),
+                          fontSize: 18,
+                          color: PeeroreumColor.gray[800]),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            (successList.isNotEmpty) ? okList() : Container(),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '미달성',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[800]),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        '${notSuccessList.length}',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: PeeroreumColor.gray[600]),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/wedu/challenge/notok/encouragement',
-                          arguments: notSuccessList);
-                    },
-                    child: Text(
-                      '전체보기',
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      '${successList.length}',
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: PeeroreumColor.gray[500]),
+                          fontSize: 18,
+                          color: PeeroreumColor.gray[600]),
                     ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/wedu/challenge/ok/compliment',
+                        arguments: successList);
+                  },
+                  child: Text(
+                    '전체보기',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: PeeroreumColor.gray[500]),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            notOkList()
-          ],
-        ),
+          ),
+          (successList.isNotEmpty) ? okList() : Container(),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '미달성',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: PeeroreumColor.gray[800]),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      '${notSuccessList.length}',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: PeeroreumColor.gray[600]),
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/wedu/challenge/notok/encouragement',
+                        arguments: notSuccessList);
+                  },
+                  child: Text(
+                    '전체보기',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: PeeroreumColor.gray[500]),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          notOkList()
+        ],
       ),
     );
   }
