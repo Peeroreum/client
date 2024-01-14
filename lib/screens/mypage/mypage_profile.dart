@@ -1483,8 +1483,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
                         style: TextStyle(
@@ -1493,8 +1493,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('D-${inroom_datas[rindex]["dday"]!}',
                         style: TextStyle(
@@ -1519,8 +1519,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(inroom_datas[rindex]["id"])));
+            am_i? Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailWedu(inroom_datas[rindex]["id"]))) : null;
           },
         );
       },
