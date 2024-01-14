@@ -703,6 +703,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                 ? SvgPicture.asset('assets/icons/lock.svg',
                                     color: PeeroreumColor.gray[400], width: 12)
                                 : SizedBox(),
+                            datas[index]['locked'].toString() == "true"
+                                ? SizedBox(width: 4,) : SizedBox(),
                             Flexible(
                               child: Text(
                                 datas[index]["title"]!,
@@ -847,6 +849,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                   ? SvgPicture.asset('assets/icons/lock.svg',
                                       color: PeeroreumColor.gray[400])
                                   : SizedBox(),
+                              datas[index]['locked'].toString() == "true"
+                                  ? SizedBox(width: 4,) : SizedBox(),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
                                         "true"
@@ -943,7 +947,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     fontWeight: FontWeight.w600),
               ),
               decoration: BoxDecoration(
-                  color: PeeroreumColor.gray[50],
+                  color: PeeroreumColor.gray[100],
                   borderRadius: BorderRadius.circular(8)),
             ),
             SizedBox(
