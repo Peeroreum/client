@@ -43,6 +43,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: PeeroreumColor.white,
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
           future: fetchDatas(),
@@ -80,88 +81,102 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
   }
 
   Widget bodyWidget() {
-    return Scaffold(
-      backgroundColor: PeeroreumColor.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 20,
-            ),
-            child: Text(
-              '전체 ${myfriends.length} 명',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: PeeroreumColor.gray[500],
-              ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical:13, horizontal:20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '전체',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[500]),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      '${myfriends.length}',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[500]),
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      '명',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[500]),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          Container(
-            height: 1,
+          Divider(
             color: PeeroreumColor.gray[100],
+            thickness: 1,
+            height: 8,
           ),
           friends(),
-          Container(
-            height: 1,
-            color: PeeroreumColor.gray[200],
-          )
+          Divider(
+            color: PeeroreumColor.gray[100],
+            thickness: 1,
+            height: 8,
+          ),
         ],
       ),
     );
   }
 
   Widget friends() {
-    return ListView.separated(
-        shrinkWrap: true,
-        itemBuilder: (BuildContext context, int index) {
-          return ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      MyPageProfile(myfriends[index]["nickname"], false)));
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              backgroundColor: PeeroreumColor.white,
-              elevation: 0,
-              padding: EdgeInsets.all(0),
-            ),
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: double.maxFinite,
+      child: ListView.separated(
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
                           width: 2,
-                          color: PeeroreumColor
-                              .gradeColor[myfriends[index]["grade"]]!),
+                          color: PeeroreumColor.gradeColor[myfriends[index]['grade']]!),
                     ),
                     child: Container(
-                      height: 36,
-                      width: 36,
+                      height: 44,
+                      width: 44,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          width: 2,
+                          width: 1,
                           color: PeeroreumColor.white,
                         ),
                         image: myfriends[index]["profileImage"] != null
                             ? DecorationImage(
-                                image: NetworkImage(
-                                    myfriends[index]["profileImage"]),
-                                fit: BoxFit.cover)
+                            image: NetworkImage(
+                                myfriends[index]["profileImage"]),
+                            fit: BoxFit.cover)
                             : DecorationImage(
-                                image: AssetImage(
-                                'assets/images/user.jpg',
-                              )),
+                            image: AssetImage('assets/images/user.jpg')),
                       ),
                     ),
                   ),
@@ -169,25 +184,97 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                     width: 8,
                   ),
                   Text(
-                    myfriends[index]["nickname"],
+                    myfriends[index]['nickname'],
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: PeeroreumColor.gray[800],
-                    ),
-                  ),
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: PeeroreumColor.gray[800]),
+                  )
                 ],
               ),
-            ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return Container(
-            height: 1,
-            color: PeeroreumColor.gray[200],
-          );
-        },
-        itemCount: myfriends.length);
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) => Divider(
+            color: PeeroreumColor.gray[100],
+            thickness: 1,
+            height: 8,
+          ),
+          itemCount: myfriends.length),
+    );
+    // return ListView.separated(
+    //     shrinkWrap: true,
+    //     itemBuilder: (BuildContext context, int index) {
+    //       return ElevatedButton(
+    //         onPressed: () {
+    //           Navigator.of(context).push(MaterialPageRoute(
+    //               builder: (context) =>
+    //                   MyPageProfile(myfriends[index]["nickname"], false)));
+    //         },
+    //         style: ElevatedButton.styleFrom(
+    //           minimumSize: Size.fromHeight(56),
+    //           backgroundColor: PeeroreumColor.white,
+    //           elevation: 0,
+    //           padding: EdgeInsets.all(0),
+    //         ),
+    //         child: Container(
+    //           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+    //           child: Row(
+    //             children: [
+    //               Container(
+    //                 width: 40,
+    //                 height: 40,
+    //                 decoration: BoxDecoration(
+    //                   shape: BoxShape.circle,
+    //                   border: Border.all(
+    //                       width: 2,
+    //                       color: PeeroreumColor
+    //                           .gradeColor[myfriends[index]["grade"]]!),
+    //                 ),
+    //                 child: Container(
+    //                   height: 36,
+    //                   width: 36,
+    //                   decoration: BoxDecoration(
+    //                     shape: BoxShape.circle,
+    //                     border: Border.all(
+    //                       width: 2,
+    //                       color: PeeroreumColor.white,
+    //                     ),
+    //                     image: myfriends[index]["profileImage"] != null
+    //                         ? DecorationImage(
+    //                             image: NetworkImage(
+    //                                 myfriends[index]["profileImage"]),
+    //                             fit: BoxFit.cover)
+    //                         : DecorationImage(
+    //                             image: AssetImage(
+    //                             'assets/images/user.jpg',
+    //                           )),
+    //                   ),
+    //                 ),
+    //               ),
+    //               SizedBox(
+    //                 width: 8,
+    //               ),
+    //               Text(
+    //                 myfriends[index]["nickname"],
+    //                 style: TextStyle(
+    //                   fontFamily: 'Pretendard',
+    //                   fontSize: 14,
+    //                   fontWeight: FontWeight.w500,
+    //                   color: PeeroreumColor.gray[800],
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //     separatorBuilder: (BuildContext context, int index) {
+    //       return Container(
+    //         height: 1,
+    //         color: PeeroreumColor.gray[200],
+    //       );
+    //     },
+    //     itemCount: myfriends.length);
   }
 }
