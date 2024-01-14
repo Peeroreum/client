@@ -113,31 +113,19 @@ class _serviceTermsState extends State<serviceTerms> {
 
   bool button = false; //다음 button
 
-  bool _allChecked = false; // 약관 전체 동의
-  bool _useChecked = false; // 이용약관 동의
-  bool _infoChecked = false; // 개인정보 동의
-  bool _eventChecked = false; // 이벤트마케팅동의 (선택)
+  List<bool> isCheckedList = [false, false, false, false];
+  // 약관 전체 동의 // 이용약관 동의 // 개인정보 동의 // 이벤트마케팅동의 (선택)
 
   void Check() {
-    if (_useChecked || _infoChecked || _eventChecked) {
-      setState(() {
-        _allChecked = false;
-      });
+    if(isCheckedList[1] == isCheckedList[2] &&  isCheckedList[2] == isCheckedList[3]){
+      isCheckedList[0] =isCheckedList[1];
+    } else{
+      isCheckedList[0] = false;
     }
-    if (_useChecked && _infoChecked && _eventChecked) {
-      setState(() {
-        _allChecked = true;
-        button = true;
-      });
-    }
-    if (_useChecked && _infoChecked) {
-      setState(() {
-        button = true;
-      });
-    } else {
-      setState(() {
-        button = false;
-      });
+    if(isCheckedList[1] == true && isCheckedList[2] == true){
+      button = true;
+    } else{
+      button = false;
     }
   }
 
@@ -180,30 +168,45 @@ class _serviceTermsState extends State<serviceTerms> {
               padding: EdgeInsets.symmetric(vertical: 20),
               child: Row(
                 children: [
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: Checkbox(
-                      value: _allChecked,
-                      onChanged: (value) {
+                  InkWell(
+                      onTap: () {
+                        // 전체 동의 로직
                         setState(() {
-                          _allChecked = value!;
-                          _useChecked = value;
-                          _infoChecked = value;
-                          _eventChecked = value;
-                          button = value;
+                          isCheckedList[0] = !isCheckedList[0];
+                          if(isCheckedList[0]){
+                            isCheckedList = [true, true, true, true];
+                          } else if(isCheckedList[0] == false){
+                            isCheckedList = [false, false, false, false];
+                          }
+                          Check();
                         });
                       },
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      splashRadius: 4,
-                      side: BorderSide(
-                          width: 2, color: PeeroreumColor.gray[200]!),
-                      checkColor: PeeroreumColor.white,
-                      activeColor: PeeroreumColor.primaryPuple[400],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: PeeroreumColor.gray[200]!,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: 
+                           isCheckedList[0]
+                              ? PeeroreumColor.primaryPuple[400]!
+                              : PeeroreumColor.white
+                          
+                        ),
+                        child: isCheckedList[0]
+                            ? Center(
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              )
+                            : null,
+                      ),
                     ),
-                  ),
                   SizedBox(
                     width: 8,
                   ),
@@ -213,7 +216,7 @@ class _serviceTermsState extends State<serviceTerms> {
                       fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: _allChecked
+                      color: button
                           ? PeeroreumColor.black
                           : PeeroreumColor.gray[600],
                     ),
@@ -234,28 +237,37 @@ class _serviceTermsState extends State<serviceTerms> {
                 children: [
                   Row(
                     children: [
-                      SizedBox(
+                     InkWell(
+                      onTap: () {
+                        setState(() {
+                          isCheckedList[1] = !isCheckedList[1];
+                          Check();
+                        });
+                      },
+                      child: Container(
                         width: 24,
                         height: 24,
-                        child: Checkbox(
-                          value: _useChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              _useChecked = value!;
-                              Check();
-                            });
-                          },
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          splashRadius: 24,
-                          side: BorderSide(
-                              width: 2, color: PeeroreumColor.gray[200]!),
-                          checkColor: PeeroreumColor.white,
-                          activeColor: PeeroreumColor.primaryPuple[400],
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4)),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: PeeroreumColor.gray[200]!,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: 
+                           isCheckedList[1]
+                              ? PeeroreumColor.primaryPuple[400]!
+                              : PeeroreumColor.white
+                          
                         ),
+                        child: Center(
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
                       ),
+                    ),
                       SizedBox(
                         width: 8,
                       ),
@@ -291,28 +303,37 @@ class _serviceTermsState extends State<serviceTerms> {
                 children: [
                   Row(
                     children: [
-                      SizedBox(
+                      InkWell(
+                      onTap: () {
+                        setState(() {
+                          isCheckedList[2] = !isCheckedList[2];
+                          Check();
+                        });
+                      },
+                      child: Container(
                         width: 24,
                         height: 24,
-                        child: Checkbox(
-                          value: _infoChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              _infoChecked = value!;
-                              Check();
-                            });
-                          },
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          splashRadius: 24,
-                          side: BorderSide(
-                              width: 2, color: PeeroreumColor.gray[200]!),
-                          checkColor: PeeroreumColor.white,
-                          activeColor: PeeroreumColor.primaryPuple[400],
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4)),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: PeeroreumColor.gray[200]!,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: 
+                           isCheckedList[2]
+                              ? PeeroreumColor.primaryPuple[400]!
+                              : PeeroreumColor.white
+                          
                         ),
+                        child: Center(
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              )
                       ),
+                    ),
                       SizedBox(
                         width: 8,
                       ),
@@ -348,28 +369,38 @@ class _serviceTermsState extends State<serviceTerms> {
                 children: [
                   Row(
                     children: [
-                      SizedBox(
+                      InkWell(
+                      onTap: () {
+                        // 전체 동의 로직
+                        setState(() {
+                          isCheckedList[3] = !isCheckedList[3];
+                          Check();
+                        });
+                      },
+                      child: Container(
                         width: 24,
                         height: 24,
-                        child: Checkbox(
-                          value: _eventChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              _eventChecked = value!;
-                              Check();
-                            });
-                          },
-                          // materialTapTargetSize:
-                          //     MaterialTapTargetSize.shrinkWrap,
-                          splashRadius: 24,
-                          side: BorderSide(
-                              width: 2, color: PeeroreumColor.gray[200]!),
-                          checkColor: PeeroreumColor.white,
-                          activeColor: PeeroreumColor.primaryPuple[400],
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4)),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: PeeroreumColor.gray[200]!,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: 
+                           isCheckedList[3]
+                              ? PeeroreumColor.primaryPuple[400]!
+                              : PeeroreumColor.white
+                          
                         ),
+                        child: Center(
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              )
                       ),
+                    ),
                       SizedBox(
                         width: 8,
                       ),
