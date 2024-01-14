@@ -209,6 +209,7 @@ class _InWeduState extends State<InWedu> {
                           //     : Container()
                         ],
                       ),
+                      SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -223,11 +224,11 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text(
-                                '${complete_group[index]["attendingPeopleNum"]!}명 참여중',
+                                '${complete_group[index]["attendingPeopleNum"]!}명',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -235,8 +236,8 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text(
                                 'D-${complete_group[index]["dday"]!}',
@@ -249,7 +250,7 @@ class _InWeduState extends State<InWedu> {
                             ],
                           ),
                           SizedBox(
-                            width: 10,
+                            width: 8,
                           ),
                           Text(
                             "${complete_group[index]["progress"]}% 달성",
@@ -372,6 +373,7 @@ class _InWeduState extends State<InWedu> {
                           //     : Container()
                         ],
                       ),
+                      SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -386,8 +388,8 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text(
                                 '${ing_group[index]["attendingPeopleNum"]!}명 참여중',
@@ -398,8 +400,8 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text(
                                 'D-${ing_group[index]["dday"]!}',
@@ -412,7 +414,7 @@ class _InWeduState extends State<InWedu> {
                             ],
                           ),
                           SizedBox(
-                            width: 10,
+                            width: 8,
                           ),
                           Text(
                             "${ing_group[index]["progress"]}% 달성",

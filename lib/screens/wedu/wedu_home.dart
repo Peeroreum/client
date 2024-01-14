@@ -405,8 +405,8 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
                         style: TextStyle(
@@ -415,8 +415,8 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('D-${inroom_datas[rindex]["dday"]!}',
                         style: TextStyle(
@@ -730,8 +730,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                     fontWeight: FontWeight.w500,
                                     color: PeeroreumColor.gray[600])),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2),
-                              child: Text('⋅'),
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                             ),
                             Text('${datas[index]["attendingPeopleNum"]!}명',
                                 style: TextStyle(
@@ -740,8 +740,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                     fontWeight: FontWeight.w500,
                                     color: PeeroreumColor.gray[600])),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2),
-                              child: Text('⋅'),
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                             ),
                             Text('D-${datas[index]["dday"]!}',
                                 style: TextStyle(
@@ -884,8 +884,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                       fontWeight: FontWeight.w500,
                                       color: PeeroreumColor.gray[600])),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text(
                                   '${datas[index]["attendingPeopleNum"]!}명',
@@ -895,8 +895,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                       fontWeight: FontWeight.w500,
                                       color: PeeroreumColor.gray[600])),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text('D-${datas[index]["dday"]!}',
                                   style: TextStyle(
@@ -912,9 +912,12 @@ class _HomeWeduState extends State<HomeWedu> {
                   ],
                 ),
                 Container(
+                  width: 48,
+                  height: 48,
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                      color: PeeroreumColor.gray[100],
+                    border: Border.all(color: PeeroreumColor.gray[200]!),
+                      color: PeeroreumColor.white,
                       borderRadius: BorderRadius.circular(8)),
                   child: IconButton(
                     onPressed: () async{
