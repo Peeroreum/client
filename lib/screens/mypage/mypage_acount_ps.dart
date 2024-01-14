@@ -34,6 +34,9 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
   bool pw_showClearbutton = false;
   bool pw2_showClearbutton = false;
 
+  bool pw_focus = false;
+  bool pw2_focus = false;
+
   void _checkInput() {
     if (pw_check && pw2_check) {
       setState(() {
@@ -51,6 +54,10 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
+        pw_showClearbutton = false;
+        pw2_showClearbutton = false;
+        pw_focus = false;
+        pw2_focus = false;
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -125,18 +132,39 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           width: MediaQuery.of(context).size.width,
           child: TextFormField(
             controller: pw_controller,
+            onTap: () {
+              setState(() {
+                pw_focus = true;
+                pw2_showClearbutton = false;
+                pw2_focus = false;
+              });
+              if (pw_controller.text.length > 0) {
+                setState(() {
+                  pw_showClearbutton = true;
+                });
+              }
+            },
             onChanged: (value) {
-              if (value.isNotEmpty) {
-                pw_showClearbutton = true;
-              } else {
-                pw_showClearbutton = false;
-              }
               _checkInput();
-              if (RegExp(
-                      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
-                  .hasMatch(pw_controller.text)) {
-                pw_check = true;
-              }
+              setState(() {
+                if (value.isNotEmpty) {
+                  pw_showClearbutton = true;
+                  if (pw_controller.text == pw2_controller.text) {
+                    pw2_check = true;
+                  } else {
+                    pw2_check = false;
+                  }
+                } else {
+                  pw_showClearbutton = false;
+                }
+                if (RegExp(
+                        r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
+                    .hasMatch(pw_controller.text)) {
+                  pw_check = true;
+                } else {
+                  pw_check = false;
+                }
+              });
             },
             decoration: InputDecoration(
               hintText: '비밀번호를 입력하세요',
@@ -166,25 +194,29 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                   Container(
                       padding: EdgeInsets.only(left: 12),
                       child: pw_showClearbutton
-                          ? IconButton(
-                              onPressed: () {
+                          ? GestureDetector(
+                              onTap: () {
                                 pw_controller.clear();
                                 setState(() {
                                   pw_showClearbutton = false;
                                   pw_check = false;
-                                  _checkInput();
                                 });
+                                _checkInput();
                               },
-                              icon: SvgPicture.asset(
+                              child: SvgPicture.asset(
                                 "assets/icons/x_circle.svg",
                                 color: PeeroreumColor.gray[200],
                               ))
                           : null),
+                  SizedBox(
+                    width: 12,
+                  ),
                   pw_suffix()
                 ],
               ),
-              helperText:
-                  pw_check ? "사용 가능한 비밀번호입니다." : "영문, 숫자, 특수문자 포함 8자~12자",
+              helperText: pw_check
+                  ? (pw_focus ? "사용 가능한 비밀번호입니다." : null)
+                  : "영문, 숫자, 특수문자 포함 8자~12자",
               helperStyle: pw_check
                   ? TextStyle(
                       fontFamily: "Pretendard",
@@ -210,17 +242,15 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                         color: PeeroreumColor.black,
                       ),
                     ),
-              enabledBorder: pw_check
-                  ? OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide:
-                          BorderSide(color: PeeroreumColor.primaryPuple[400]!),
-                    )
-                  : OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: PeeroreumColor.gray[200]!,
-                      )),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                    color: (pw_focus
+                        ? (pw_check
+                            ? PeeroreumColor.primaryPuple[400]!
+                            : PeeroreumColor.gray[200]!)
+                        : PeeroreumColor.gray[200]!)),
+              ),
             ),
             showCursor: false,
             obscureText: pw_hide,
@@ -247,22 +277,32 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
         ),
         TextField(
           controller: pw2_controller,
+          onTap: () {
+            setState(() {
+              pw2_focus = true;
+              pw_focus = false;
+              pw_showClearbutton = false;
+            });
+            if (pw2_controller.text.length > 0) {
+              setState(() {
+                pw2_showClearbutton = true;
+              });
+            }
+          },
           onChanged: (value) {
-            if (value.isNotEmpty) {
-              pw2_showClearbutton = true;
-            } else {
-              pw2_showClearbutton = false;
-            }
-            if (pw_controller.text == pw2_controller.text) {
-              setState(() {
-                pw2_check = true;
-              });
-            } else {
-              setState(() {
-                pw2_check = false;
-              });
-            }
             _checkInput();
+            setState(() {
+              if (value.isNotEmpty) {
+                pw2_showClearbutton = true;
+              } else {
+                pw2_showClearbutton = false;
+              }
+              if (pw_controller.text == pw2_controller.text) {
+                pw2_check = true;
+              } else {
+                pw2_check = false;
+              }
+            });
           },
           obscureText: pw2_hide,
           obscuringCharacter: '●',
@@ -271,7 +311,9 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
                     color: pw2_check
-                        ? PeeroreumColor.primaryPuple[400]!
+                        ? (pw2_focus
+                            ? PeeroreumColor.primaryPuple[400]!
+                            : PeeroreumColor.gray[200]!)
                         : PeeroreumColor.gray[200]!)),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -285,7 +327,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: PeeroreumColor.gray[600]),
-            helperText: pw2_check ? "비밀번호가 일치합니다." : "",
+            helperText: pw2_focus ? (pw2_check ? "비밀번호가 일치합니다." : null) : null,
             helperStyle: TextStyle(
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w400,
@@ -308,33 +350,31 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: PeeroreumColor.error)),
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            suffixIcon: Padding(
-              padding: EdgeInsets.only(left: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  pw2_showClearbutton
-                      ? IconButton(
-                          onPressed: () {
-                            pw2_controller.clear();
-                            setState(() {
-                              pw2_showClearbutton = false;
-                              pw2_check = false;
-                              _checkInput();
-                            });
-                          },
-                          icon: SvgPicture.asset(
-                            "assets/icons/x_circle.svg",
-                            color: PeeroreumColor.gray[200],
-                          ),
-                          constraints: BoxConstraints(),
-                          padding: EdgeInsets.zero,
-                        )
-                      : SizedBox(),
-                  pw2_suffix()
-                ],
-              ),
+            suffixIcon: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                pw2_showClearbutton
+                    ? GestureDetector(
+                        onTap: () {
+                          pw2_controller.clear();
+                          setState(() {
+                            pw2_showClearbutton = false;
+                            pw2_check = false;
+                            _checkInput();
+                          });
+                        },
+                        child: SvgPicture.asset(
+                          "assets/icons/x_circle.svg",
+                          color: PeeroreumColor.gray[200],
+                        ),
+                      )
+                    : SizedBox(),
+                SizedBox(
+                  width: 12,
+                ),
+                pw2_suffix()
+              ],
             ),
           ),
         ),
@@ -378,7 +418,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
   pw2_suffix() {
     if (pw2_check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(12, 0, 16, 0),
+          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
             color: PeeroreumColor.primaryPuple[400],
@@ -386,7 +426,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     }
     if (pw2_controller.text.length >= 2 && !pw2_check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(12, 0, 16, 0),
+          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
             color: PeeroreumColor.error,
@@ -419,7 +459,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
         child: SizedBox(
           height: 48,
           child: TextButton(
-            onPressed: is_Enabled
+            onPressed: (pw_check && pw2_check)
                 ? () async {
                     member.password = pw_controller.text;
                     psChangeAPI();
@@ -434,7 +474,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                   color: PeeroreumColor.white),
             ),
             style: ButtonStyle(
-                backgroundColor: is_Enabled
+                backgroundColor: (pw_check && pw2_check)
                     ? MaterialStateProperty.all(
                         PeeroreumColor.primaryPuple[400])
                     : MaterialStateProperty.all(PeeroreumColor.gray[300]),
