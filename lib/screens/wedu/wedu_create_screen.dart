@@ -255,13 +255,14 @@ class _CreateWeduState extends State<CreateWedu> {
                           height: 8,
                         ),
                         SizedBox(
-                          width: 350,
+                          width: double.infinity,
                           child: TextFormField(
                             decoration: InputDecoration(
-                                isDense: true,
+                                //isDense: true,
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 12, horizontal: 16),
                                 focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(
                                     color: PeeroreumColor.black,
                                   ),
@@ -738,12 +739,14 @@ class _CreateWeduState extends State<CreateWedu> {
                                   ),
                                   SizedBox(
                                     width: double.infinity,
+                                    height: 48,
                                     child: TextFormField(
                                       decoration: InputDecoration(
-                                          isDense: true,
+                                          //isDense: true,
                                           contentPadding: EdgeInsets.symmetric(
                                               vertical: 12, horizontal: 16),
                                           focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8),
                                             borderSide: BorderSide(
                                               color: PeeroreumColor.black,
                                             ),
@@ -789,7 +792,8 @@ class _CreateWeduState extends State<CreateWedu> {
                                 height: 8,
                               ),
                               SizedBox(
-                                width: 350,
+                                height: 70,
+                                width: double.infinity,
                                 child: TextFieldTags(
                                   textfieldTagsController: _controller,
                                   initialTags: null,
@@ -806,6 +810,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                       onChanged, onSubmitted) {
                                     return ((context, sc, tags, onTagDelete) {
                                       return TextField(
+                                        //scrollPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                         controller: tec,
                                         focusNode: fn,
                                         decoration: InputDecoration(
@@ -819,13 +824,15 @@ class _CreateWeduState extends State<CreateWedu> {
                                             ),
                                           ),
                                           focusedBorder:
-                                              const OutlineInputBorder(
+                                              OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8),
                                             borderSide: BorderSide(
                                               color: PeeroreumColor.black,
                                               width: 1.0,
                                             ),
                                           ),
                                           errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8),
                                             borderSide: BorderSide(
                                               color: PeeroreumColor.error,
                                             ),
@@ -848,76 +855,89 @@ class _CreateWeduState extends State<CreateWedu> {
                                               maxWidth: 350 * 0.8),
                                           prefixIcon: tags.isNotEmpty
                                               ? SingleChildScrollView(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
                                                   controller: sc,
                                                   scrollDirection:
                                                       Axis.horizontal,
-                                                  child: Row(
-                                                      children: tags
-                                                          .map((String tag) {
-                                                    return Container(
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: PeeroreumColor
-                                                                    .primaryPuple[
-                                                                400]!),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                          Radius.circular(20.0),
-                                                        ),
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                      margin: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 5.0),
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10.0,
-                                                          vertical: 5.0),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          InkWell(
-                                                            child: Text(
-                                                              '# $tag',
-                                                              style: TextStyle(
-                                                                  fontFamily:
-                                                                      'Pretendard',
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: PeeroreumColor
-                                                                          .primaryPuple[
-                                                                      400]),
-                                                            ),
-                                                            onTap: () {
-                                                              print(
-                                                                  "$tag selected");
-                                                            },
+                                                    child: Row(
+                                                        children: tags
+                                                            .map((String tag) {
+                                                      return Container(
+                                                        decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              color: PeeroreumColor
+                                                                      .primaryPuple[
+                                                                  400]!),
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                            Radius.circular(20.0),
                                                           ),
-                                                          const SizedBox(
-                                                              width: 4.0),
-                                                          InkWell(
-                                                            child: Icon(
-                                                              Icons.cancel,
-                                                              size: 16.0,
-                                                              color:
-                                                                  PeeroreumColor
-                                                                          .gray[
-                                                                      200]!,
+                                                          color:
+                                                              Colors.transparent,
+                                                        ),
+                                                        margin: const EdgeInsets
+                                                            .only(
+                                                            right: 5.0),
+                                                        padding: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 7.0,
+                                                            vertical: 4.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            InkWell(
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text: '#',
+                                                                      style: TextStyle(
+                                                                        fontFamily: 'Pretendard',
+                                                                        fontSize: 12,
+                                                                        fontWeight: FontWeight.w500,
+                                                                        color: PeeroreumColor.primaryPuple[200], // 여기에 적절한 색상을 선택합니다.
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text: ' $tag',
+                                                                      style: TextStyle(
+                                                                        fontFamily: 'Pretendard',
+                                                                        fontSize: 12,
+                                                                        fontWeight: FontWeight.w500,
+                                                                        color: PeeroreumColor.primaryPuple[400],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              onTap: () {
+                                                                print(
+                                                                    "$tag selected");
+                                                              },
                                                             ),
-                                                            onTap: () {
-                                                              onTagDelete(tag);
-                                                              _tag.remove(tag);
-                                                            },
-                                                          )
-                                                        ],
-                                                      ),
-                                                    );
-                                                  }).toList()),
+                                                            const SizedBox(
+                                                                width: 4.0),
+                                                            InkWell(
+                                                              child: Icon(
+                                                                Icons.cancel,
+                                                                size: 16.0,
+                                                                color:
+                                                                    PeeroreumColor
+                                                                            .gray[
+                                                                        200]!,
+                                                              ),
+                                                              onTap: () {
+                                                                onTagDelete(tag);
+                                                                _tag.remove(tag);
+                                                              },
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    }).toList()),
+                                                  
                                                 )
                                               : null,
                                         ),
