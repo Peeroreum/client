@@ -877,18 +877,41 @@ class _DetailWeduState extends State<DetailWedu> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 6),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: Text(
-                                '${weduProgress} % 달성',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: PeeroreumColor.primaryPuple[400]),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '${weduProgress}',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: PeeroreumColor.primaryPuple[400]),
+                                  ),
+                                  SizedBox(width: 2,),
+                                  Text(
+                                    '%',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: PeeroreumColor.primaryPuple[400]),
+                                  ),
+                                  SizedBox(width: 2,),
+                                  Text(
+                                    '달성',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: PeeroreumColor.primaryPuple[400]),
+                                  ),
+                                ],
                               ),
                             ),
                             Text(
@@ -1239,7 +1262,9 @@ class _DetailWeduState extends State<DetailWedu> {
       )
       : GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: (){},
+        onTap: (){
+          Fluttertoast.showToast(msg: '준비 중입니다.');
+        },
         child: Container(
           margin: const EdgeInsets.fromLTRB(0,16,0,41),
           height: 56,
@@ -1339,8 +1364,8 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
-                          deleteChallenge();
+                          deleteWedu();
+                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
@@ -1452,8 +1477,8 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
-                          deleteChallenge();
+                          outWedu();
+                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
@@ -1464,7 +1489,7 @@ class _DetailWeduState extends State<DetailWedu> {
                           ),
                         ),
                         child: Text(
-                          '삭제',
+                          '나가기',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w600,
