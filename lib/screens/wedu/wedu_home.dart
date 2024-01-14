@@ -16,6 +16,7 @@ import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_skeleton.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -52,24 +53,23 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Future<String> getShortLink(String screenName, String id) async {
-  String dynamicLinkPrefix = 'https://peeroreum.page.link';
-  final dynamicLinkParams = DynamicLinkParameters(
-    uriPrefix: dynamicLinkPrefix,
-    link: Uri.parse('$dynamicLinkPrefix/home'),
-    androidParameters: const AndroidParameters(
-      packageName: 'com.example.peeroreum_client',
-      minimumVersion: 0,
-    ),
-    iosParameters: const IOSParameters(
-      bundleId: 'com.example.peeroreumClient',
+    String dynamicLinkPrefix = 'https://peeroreum.page.link';
+    final dynamicLinkParams = DynamicLinkParameters(
+      uriPrefix: dynamicLinkPrefix,
+      link: Uri.parse('$dynamicLinkPrefix/home'),
+      androidParameters: const AndroidParameters(
+        packageName: 'com.example.peeroreum_client',
+        minimumVersion: 0,
+      ),
+      iosParameters: const IOSParameters(
+        bundleId: 'com.example.peeroreumClient',
+        minimumVersion: '0',
+      ),
+    );
+    final dynamicLink =
+        await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
 
-      minimumVersion: '0',
-    ),
-  );
-  final dynamicLink =
-      await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
-
-  return dynamicLink.shortUrl.toString();
+    return dynamicLink.shortUrl.toString();
   }
 
   Future<void> fetchDatas() async {
@@ -175,10 +175,12 @@ class _HomeWeduState extends State<HomeWedu> {
             children: [
               GestureDetector(
                 child: Container(
-                    padding: EdgeInsets.only(right: 8),
-                    child: SvgPicture.asset('assets/icons/plus_square.svg',
-                        color: PeeroreumColor.gray[800],
-                    width: 24,),
+                  padding: EdgeInsets.only(right: 8),
+                  child: SvgPicture.asset(
+                    'assets/icons/plus_square.svg',
+                    color: PeeroreumColor.gray[800],
+                    width: 24,
+                  ),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -281,8 +283,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.gray[600]
-                  ),
+                      color: PeeroreumColor.gray[600]),
                 ),
               ],
             ),
@@ -827,14 +828,13 @@ class _HomeWeduState extends State<HomeWedu> {
                                 dropdownSubjectList[datas[index]["subject"]],
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  height: 1.6,
+                                    height: 1.6,
                                     fontFamily: 'Pretendard',
                                     color: PeeroreumColor.subjectColor[
                                         dropdownSubjectList[datas[index]
                                             ['subject']]]?[1],
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 10
-                                ),
+                                    fontSize: 10),
                               ),
                             ),
                           ),
@@ -883,8 +883,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 padding: EdgeInsets.symmetric(horizontal: 2),
                                 child: Text('⋅'),
                               ),
-                              Text(
-                                  '${datas[index]["attendingPeopleNum"]!}명',
+                              Text('${datas[index]["attendingPeopleNum"]!}명',
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 14,
@@ -913,13 +912,11 @@ class _HomeWeduState extends State<HomeWedu> {
                       color: PeeroreumColor.gray[100],
                       borderRadius: BorderRadius.circular(8)),
                   child: IconButton(
-                    onPressed: () async{
-                      Share.share(
-                          await getShortLink(
-                            '/home',
-                            '$index',
-                          )
-                        );
+                    onPressed: () async {
+                      Share.share(await getShortLink(
+                        '/home',
+                        '$index',
+                      ));
                     },
                     icon: SvgPicture.asset(
                       'assets/icons/share.svg',
@@ -1101,7 +1098,7 @@ class _HomeWeduState extends State<HomeWedu> {
           future: fetchDatas(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return bodyWidget();
+              return SkeletonWedu();
             } else if (snapshot.hasError) {
               // 에러 발생 시
               return Center(child: Text('Error: ${snapshot.error}'));
