@@ -33,7 +33,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   String nickname;
   bool am_i;
   _MyPageProfileState(this.nickname, this.am_i);
-
+  FlutterSecureStorage storage = FlutterSecureStorage();
   var token;
   final nickname_controller = TextEditingController();
   List<dynamic> inroom_datas = [];
@@ -57,7 +57,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
+    token = await storage.read(key: "accessToken");
     withPeerDay = await VisitCount.getVisitCount();
     var inWeduResult = await http.get(
         Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
@@ -103,6 +103,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         profileImage = data;
       });
+      if(am_i) {
+        await storage.write(key: 'profileImage', value: profileImage);
+      }
       Fluttertoast.showToast(msg: "프로필 이미지가 성공적으로 변경되었습니다.");
     } else {
       print("프로필이미지 ${profileChange.statusMessage}");
@@ -144,8 +147,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         nickname = data;
       });
-      Fluttertoast.showToast(msg: "닉네임이 성공적으로 변경되었습니다.");
+      if(am_i) {
+        await storage.write(key: 'nickname', value: nickname);
+      }
       Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: "닉네임이 성공적으로 변경되었습니다.");
     } else {
       print("닉네임변경 에러${change_my_nickname.statusCode}");
     }
@@ -161,7 +167,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
     if (friendName.statusCode == 200) {
       is_friend = true;
-      Fluttertoast.showToast(msg: "성공적으로 팔로우했습니다!");
+      Fluttertoast.showToast(msg: "친구 추가를 완료했어요!");
     } else if (friendName.statusCode == 404) {
       Fluttertoast.showToast(msg: "존재하지 않는 회원입니다.");
     } else if (friendName.statusCode == 400) {
@@ -172,6 +178,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
       is_friend = false;
       print("친구팔로 에러${friendName.statusCode}");
     }
+    setState(() {
+
+    });
   }
 
   unfollow() async {
@@ -185,7 +194,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
     if (friendName.statusCode == 200) {
       is_friend = false;
-      Fluttertoast.showToast(msg: "친구 언팔로우 성공");
+      Fluttertoast.showToast(msg: "친구 삭제를 완료했어요!");
     } else {
       is_friend = true;
       print("친구언팔 에러${friendName.statusCode}");
@@ -835,7 +844,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  Fluttertoast.showToast(msg: "준비중입니다.");
+                  Fluttertoast.showToast(msg: "준비 중입니다.");
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
@@ -1095,7 +1104,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
               onPressed: () {
-                setState(() {
                   if ((is_friend == true) && (am_i == false)) {
                     unfollow();
                     print('친구 언팔로우 프린트 메세지입니다');
@@ -1108,7 +1116,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   } else {
                     print('error');
                   }
-                });
+                  setState(() {
+
+                  });
               },
               style: ButtonStyle(
                   maximumSize: am_i
@@ -1177,6 +1187,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 builder: (context) => MyPageProfileFriend(nickname)));
           },
           child: Container(
+            width: 87,
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
@@ -1184,6 +1195,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             child: SizedBox(
               height: 52,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '친구',
@@ -1217,7 +1229,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              Fluttertoast.showToast(msg: "준비중 입니다.");
+              Fluttertoast.showToast(msg: "준비 중입니다.");
             },
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -1269,24 +1281,26 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Widget Badge() {
-    return ListView.separated(
-        scrollDirection: Axis.horizontal,
-        // shrinkWrap: true,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            width: 52,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: PeeroreumColor.gray[100],
-            ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return Container(
-            width: 8,
-          );
-        },
-        itemCount: 2);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+        width: 52,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: PeeroreumColor.gray[100],
+        ),
+    ),
+        SizedBox(width: 8,),
+        Container(
+          width: 52,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: PeeroreumColor.gray[100],
+          ),
+        )
+      ],
+    );
   }
 
   Widget myWedu() {

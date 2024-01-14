@@ -256,7 +256,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
@@ -277,7 +277,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
@@ -355,7 +355,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)

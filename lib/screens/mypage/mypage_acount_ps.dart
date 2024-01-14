@@ -112,7 +112,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "비밀번호",
+          "새 비밀번호",
           style: TextStyle(
               fontFamily: 'Pretendard',
               fontSize: 14,
