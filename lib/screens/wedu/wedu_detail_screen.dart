@@ -994,19 +994,20 @@ class _DetailWeduState extends State<DetailWedu> {
                               children: [
                                 Container(
                                   height: 28,
-                                  padding: EdgeInsets.fromLTRB(12, 4, 12, 0),
+                                  padding: EdgeInsets.fromLTRB(12, 2, 12, 2),
                                   decoration: BoxDecoration(
                                       color: PeeroreumColor.primaryPuple[50],
                                       borderRadius: BorderRadius.circular(16)),
-                                  child: Text(
-                                    '오늘의 미션',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                      color: PeeroreumColor.primaryPuple[400],
+                                  child: Center(
+                                    child: Text(
+                                      '오늘의 미션',
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: PeeroreumColor.primaryPuple[400],
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                                 SizedBox(
@@ -1034,28 +1035,29 @@ class _DetailWeduState extends State<DetailWedu> {
                           children: [
                             Container(
                               color: PeeroreumColor.white,
-                              padding: EdgeInsets.fromLTRB(16, 5, 16, 16),
+                              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Container(
-                                    width: 180,
-                                    child: Text(
-                                      weduChallenge,
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18,
-                                          color: PeeroreumColor.gray[800]),
+                                  Flexible(
+                                    flex: 100,
+                                    fit: FlexFit.tight,
+                                    child: Container(
+                                      child: Text(
+                                        weduChallenge,
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18,
+                                            color: PeeroreumColor.gray[800]),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
                                     width: 8,
                                   ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Image.asset('assets/images/wedu_mission.png'),
-                                    )
+                                  Spacer(),
+                                  Image.asset('assets/images/wedu_mission.png')
                                 ],
                               ),
                             ),
