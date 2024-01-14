@@ -256,7 +256,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
@@ -277,7 +277,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
@@ -355,7 +355,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비중입니다.")},
+          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
             minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
@@ -441,6 +441,103 @@ class _MyPageState extends State<MyPage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "로그아웃",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Container(
+                  alignment: Alignment.center,
+                  height: 48,
+                  child: Text(
+                    "로그아웃하시겠습니까?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: PeeroreumColor.gray[600],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16), // 패딩
+                          shape: RoundedRectangleBorder(
+                            // 모양
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.gray[600]),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamedAndRemoveUntil(context, '/signIn/email', (route) => false);
+                          FlutterSecureStorage().deleteAll();
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '확인',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,

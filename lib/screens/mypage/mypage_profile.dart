@@ -33,7 +33,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   String nickname;
   bool am_i;
   _MyPageProfileState(this.nickname, this.am_i);
-
+  FlutterSecureStorage storage = FlutterSecureStorage();
   var token;
   final nickname_controller = TextEditingController();
   List<dynamic> inroom_datas = [];
@@ -57,7 +57,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
+    token = await storage.read(key: "accessToken");
     withPeerDay = await VisitCount.getVisitCount();
     var inWeduResult = await http.get(
         Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
@@ -103,6 +103,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         profileImage = data;
       });
+      if(am_i) {
+        await storage.write(key: 'profileImage', value: profileImage);
+      }
       Fluttertoast.showToast(msg: "프로필 이미지가 성공적으로 변경되었습니다.");
     } else {
       print("프로필이미지 ${profileChange.statusMessage}");
@@ -144,8 +147,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         nickname = data;
       });
-      Fluttertoast.showToast(msg: "닉네임이 성공적으로 변경되었습니다.");
+      if(am_i) {
+        await storage.write(key: 'nickname', value: nickname);
+      }
       Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: "닉네임이 성공적으로 변경되었습니다.");
     } else {
       print("닉네임변경 에러${change_my_nickname.statusCode}");
     }
@@ -161,7 +167,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
     if (friendName.statusCode == 200) {
       is_friend = true;
-      Fluttertoast.showToast(msg: "성공적으로 팔로우했습니다!");
+      Fluttertoast.showToast(msg: "친구 추가를 완료했어요!");
     } else if (friendName.statusCode == 404) {
       Fluttertoast.showToast(msg: "존재하지 않는 회원입니다.");
     } else if (friendName.statusCode == 400) {
@@ -172,6 +178,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
       is_friend = false;
       print("친구팔로 에러${friendName.statusCode}");
     }
+    setState(() {
+
+    });
   }
 
   unfollow() async {
@@ -185,7 +194,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
     if (friendName.statusCode == 200) {
       is_friend = false;
-      Fluttertoast.showToast(msg: "친구 언팔로우 성공");
+      Fluttertoast.showToast(msg: "친구 삭제를 완료했어요!");
     } else {
       is_friend = true;
       print("친구언팔 에러${friendName.statusCode}");
@@ -439,159 +448,165 @@ class _MyPageProfileState extends State<MyPageProfile> {
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            insetPadding: EdgeInsets.all(20),
+            iconPadding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             backgroundColor: PeeroreumColor.white,
             surfaceTintColor: Colors.transparent,
-            title: Text("프로필 사진 변경", textAlign: TextAlign.center),
-            titleTextStyle: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: PeeroreumColor.black,
-            ),
-            titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-            content: GestureDetector(
-              onTap: () async {
-                final ImagePicker picker = ImagePicker();
-                final XFile? pickedFile =
-                    await picker.pickImage(source: ImageSource.gallery);
-                if (pickedFile != null) {
-                  setState(() {
-                    _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
-                  });
-                }
-              },
-              child: Container(
-                width: 90,
-                height: 90,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      width: 2,
-                      color: grade != null
-                          ? PeeroreumColor.gradeColor[grade]!
-                          : Color.fromARGB(255, 186, 188, 189)),
-                ),
-                child: Container(
-                  height: 84,
-                  width: 84,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 2,
-                      color: PeeroreumColor.white,
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "프로필 사진 변경",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.black,
                     ),
-                    image: profileImage != null
-                        ? (_image != null
-                            ? DecorationImage(
-                                image: FileImage(File(_image!.path)),
-                                //fit: BoxFit.cover,
-                              )
-                            : DecorationImage(
-                                image: NetworkImage(profileImage),
-                                //fit: BoxFit.cover,
-                              ))
-                        : (_image != null
-                            ? DecorationImage(
-                                image: FileImage(File(_image!.path)),
-                                //fit: BoxFit.cover,
-                              )
-                            : DecorationImage(
-                                image: AssetImage(
-                                'assets/images/user.jpg',
-                              ))),
                   ),
-                  child: Align(
-                    alignment: Alignment(0.3, 1.2),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? pickedFile =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (pickedFile != null) {
+                        setState(() {
+                          _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+                        });
+                      }
+                    },
                     child: Container(
-                        padding: EdgeInsets.all(4),
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: 2,
+                            color: grade != null
+                                ? PeeroreumColor.gradeColor[grade]!
+                                : Color.fromARGB(255, 186, 188, 189)),
+                      ),
+                      child: Container(
+                        height: 84,
+                        width: 84,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: PeeroreumColor.gray[200],
                           border: Border.all(
-                            color: PeeroreumColor.gray[100]!,
-                            width: 1,
+                            width: 2,
+                            color: PeeroreumColor.white,
+                          ),
+                          image: profileImage != null
+                              ? (_image != null
+                                  ? DecorationImage(
+                                      image: FileImage(File(_image!.path)),
+                                      //fit: BoxFit.cover,
+                                    )
+                                  : DecorationImage(
+                                      image: NetworkImage(profileImage),
+                                      //fit: BoxFit.cover,
+                                    ))
+                              : (_image != null
+                                  ? DecorationImage(
+                                      image: FileImage(File(_image!.path)),
+                                      //fit: BoxFit.cover,
+                                    )
+                                  : DecorationImage(
+                                      image: AssetImage(
+                                      'assets/images/user.jpg',
+                                    ))),
+                        ),
+                        child: Align(
+                          alignment: Alignment(1.2, 1.2),
+                          child: Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: PeeroreumColor.gray[200],
+                                border: Border.all(
+                                  color: PeeroreumColor.gray[100]!,
+                                  width: 1,
+                                ),
+                              ),
+                              child: SvgPicture.asset('assets/icons/camera.svg')),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                            padding: EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16), // 패딩
+                            shape: RoundedRectangleBorder(
+                              // 모양
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            '닫기',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: PeeroreumColor.gray[600]),
                           ),
                         ),
-                        child: SvgPicture.asset('assets/icons/camera.svg')),
-                  ),
-                ),
-              ),
-            ),
-            contentTextStyle: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: PeeroreumColor.gray[600],
-            ),
-            actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                        padding: EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16), // 패딩
-                        shape: RoundedRectangleBorder(
-                          // 모양
-                          borderRadius: BorderRadius.circular(8),
-                        ),
                       ),
-                      child: Text(
-                        '닫기',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: PeeroreumColor.gray[600]),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        if (_image != null) {
-                          setState(() {
-                            profileImageAPI(_image);
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                          });
-                        }
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: _image != null
-                            ? PeeroreumColor.primaryPuple[400]
-                            : PeeroreumColor.gray[300],
-                        padding:
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            if (_image != null) {
+                              setState(() {
+                                profileImageAPI(_image);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              });
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: _image != null
+                                ? PeeroreumColor.primaryPuple[400]
+                                : PeeroreumColor.gray[300],
+                            padding:
                             EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            '적용하기',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: _image != null
+                                  ? PeeroreumColor.white
+                                  : PeeroreumColor.gray[600],
+                            ),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        '적용하기',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: _image != null
-                              ? PeeroreumColor.white
-                              : PeeroreumColor.gray[600],
-                        ),
-                      ),
-                    ),
-                  ),
+                    ],
+                  )
                 ],
-              )
-            ],
+              ),
+            )
           );
         });
       },
@@ -631,169 +646,174 @@ class _MyPageProfileState extends State<MyPageProfile> {
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              insetPadding: EdgeInsets.symmetric(horizontal: 20),
+              contentPadding: EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               backgroundColor: PeeroreumColor.white,
               surfaceTintColor: Colors.transparent,
-              title: Text("닉네임 변경", textAlign: TextAlign.center),
-              titleTextStyle: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: PeeroreumColor.black,
-              ),
-              titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-              content: Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: 60,
-                child: TextFormField(
-                  controller: change_nickname_controller,
-                  onChanged: (value) {
-                    if (change_nickname_controller.text.isNotEmpty) {
-                      setState(() {
-                        if (change_nickname_controller.text.length >= 2 &&
-                            change_nickname_controller.text.length <= 12) {
-                          checkNickname = true;
-                        } else {
-                          checkNickname = false;
-                        }
-                      });
-                    } else {
-                      setState(() {
-                        checkNickname = false;
-                        isDuplicateNickname = false;
-                      });
-                    }
-                    checkDuplicateNickname(value);
-                  },
-                  decoration: InputDecoration(
-                    hintText: '닉네임은 30일마다 1회만 변경 가능해요.',
-                    hintStyle: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.gray[600],
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "닉네임 변경",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: PeeroreumColor.black,
+                      ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                    ),
-                    focusedBorder: checkNickname && !isDuplicateNickname
-                        ? OutlineInputBorder(
+                    SizedBox(height: 8),
+                    Container(
+                      height: 72,
+                      child: TextFormField(
+                        controller: change_nickname_controller,
+                        onChanged: (value) {
+                          if (change_nickname_controller.text.isNotEmpty) {
+                            setState(() {
+                              if (change_nickname_controller.text.length >= 2 &&
+                                  change_nickname_controller.text.length <= 12) {
+                                checkNickname = true;
+                              } else {
+                                checkNickname = false;
+                              }
+                            });
+                          } else {
+                            setState(() {
+                              checkNickname = false;
+                              isDuplicateNickname = false;
+                            });
+                          }
+                          checkDuplicateNickname(value);
+                        },
+                        decoration: InputDecoration(
+                          hintText: '닉네임은 30일마다 1회만 변경 가능해요.',
+                          hintStyle: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.gray[600],
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          ),
+                          focusedBorder: checkNickname && !isDuplicateNickname
+                              ? OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
                                 color: PeeroreumColor.primaryPuple[400]!),
                           )
-                        : OutlineInputBorder(
+                              : OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
                               color: PeeroreumColor.black,
                             ),
                           ),
-                    helperText: checkNickname && !isDuplicateNickname
-                        ? "사용 가능한 닉네임입니다."
-                        : "언더바(_)를 제외한 특수문자는 사용할 수 없어요.",
-                    helperStyle: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: checkNickname && !isDuplicateNickname
-                            ? PeeroreumColor.primaryPuple[400]
-                            : PeeroreumColor.gray[600]),
-                    errorText: checkError(),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: PeeroreumColor.error,
-                      ),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: PeeroreumColor.error,
-                        )),
-                    counterText:
-                        '${change_nickname_controller.text.length} / 12',
-                    counterStyle: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: PeeroreumColor.gray[600]!),
-                  ),
-                  cursorColor: PeeroreumColor.gray[600],
-                ),
-              ),
-              contentTextStyle: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: PeeroreumColor.gray[600],
-              ),
-              actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
-                          shape: RoundedRectangleBorder(
-                            // 모양
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          '취소',
-                          style: TextStyle(
+                          helperText: checkNickname && !isDuplicateNickname
+                              ? "사용 가능한 닉네임입니다."
+                              : "언더바(_)를 제외한 특수문자는 사용할 수 없어요.",
+                          helperStyle: TextStyle(
                               fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: PeeroreumColor.gray[600]),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          if (checkNickname && !isDuplicateNickname) {
-                            checkError();
-                            setState(() {
-                              nicknameAPI();
-                            });
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: checkNickname && !isDuplicateNickname
-                              ? PeeroreumColor.primaryPuple[400]
-                              : PeeroreumColor.gray[300],
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          '변경하기',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
                               color: checkNickname && !isDuplicateNickname
-                                  ? PeeroreumColor.white
+                                  ? PeeroreumColor.primaryPuple[400]
                                   : PeeroreumColor.gray[600]),
+                          errorText: checkError(),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: PeeroreumColor.error,
+                            ),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: PeeroreumColor.error,
+                              )),
+                          counterText:
+                          '${change_nickname_controller.text.length} / 12',
+                          counterStyle: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: PeeroreumColor.gray[600]!),
                         ),
+                        cursorColor: PeeroreumColor.gray[600],
                       ),
                     ),
-                  ],
-                )
-              ],
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16), // 패딩
+                              shape: RoundedRectangleBorder(
+                                // 모양
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              '취소',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: PeeroreumColor.gray[600]),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              if (checkNickname && !isDuplicateNickname) {
+                                checkError();
+                                setState(() {
+                                  nicknameAPI();
+                                });
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: checkNickname && !isDuplicateNickname
+                                  ? PeeroreumColor.primaryPuple[400]
+                                  : PeeroreumColor.gray[300],
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              '변경하기',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: checkNickname && !isDuplicateNickname
+                                      ? PeeroreumColor.white
+                                      : PeeroreumColor.gray[600]),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                      ],
+                    )
+                ),
             );
           });
         });
@@ -835,7 +855,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  Fluttertoast.showToast(msg: "준비중입니다.");
+                  Fluttertoast.showToast(msg: "준비 중입니다.");
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
@@ -866,103 +886,108 @@ class _MyPageProfileState extends State<MyPageProfile> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
-          title: Text("친구 찾기", textAlign: TextAlign.center),
-          titleTextStyle: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Pretendard',
-            color: PeeroreumColor.black,
-          ),
-          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-          content: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: 48,
-            child: TextFormField(
-              controller: nickname_controller,
-              decoration: InputDecoration(
-                hintText: '닉네임을 정확하게 입력해주세요.',
-                hintStyle: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.gray[600],
+          insetPadding: EdgeInsets.all(20),
+          iconPadding: EdgeInsets.zero,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "친구찾기",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                    color: PeeroreumColor.black,
+                  ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                SizedBox(height: 8),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: 48,
+                  child: TextFormField(
+                    controller: nickname_controller,
+                    decoration: InputDecoration(
+                      hintText: '닉네임을 정확하게 입력해 주세요.',
+                      hintStyle: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.gray[600],
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                    ),
+                    cursorColor: PeeroreumColor.gray[600],
+                  ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-              ),
-              cursorColor: PeeroreumColor.gray[600],
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16), // 패딩
+                          shape: RoundedRectangleBorder(
+                            // 모양
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.gray[600]),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            searchfriend();
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '확인',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
-          contentTextStyle: TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: PeeroreumColor.gray[600],
-          ),
-          actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                      padding: EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 16), // 패딩
-                      shape: RoundedRectangleBorder(
-                        // 모양
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      '취소',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: PeeroreumColor.gray[600]),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        searchfriend();
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: PeeroreumColor.primaryPuple[400],
-                      padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      '확인',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: PeeroreumColor.white),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
         );
       },
     );
@@ -1095,7 +1120,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
               onPressed: () {
-                setState(() {
                   if ((is_friend == true) && (am_i == false)) {
                     unfollow();
                     print('친구 언팔로우 프린트 메세지입니다');
@@ -1108,7 +1132,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   } else {
                     print('error');
                   }
-                });
+                  setState(() {
+
+                  });
               },
               style: ButtonStyle(
                   maximumSize: am_i
@@ -1177,6 +1203,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 builder: (context) => MyPageProfileFriend(nickname)));
           },
           child: Container(
+            width: 87,
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
@@ -1184,6 +1211,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             child: SizedBox(
               height: 52,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '친구',
@@ -1217,7 +1245,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              Fluttertoast.showToast(msg: "준비중 입니다.");
+              Fluttertoast.showToast(msg: "준비 중입니다.");
             },
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -1269,24 +1297,26 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   Widget Badge() {
-    return ListView.separated(
-        scrollDirection: Axis.horizontal,
-        // shrinkWrap: true,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            width: 52,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: PeeroreumColor.gray[100],
-            ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return Container(
-            width: 8,
-          );
-        },
-        itemCount: 2);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+        width: 52,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: PeeroreumColor.gray[100],
+        ),
+    ),
+        SizedBox(width: 8,),
+        Container(
+          width: 52,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: PeeroreumColor.gray[100],
+          ),
+        )
+      ],
+    );
   }
 
   Widget myWedu() {
@@ -1453,8 +1483,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
                         style: TextStyle(
@@ -1463,8 +1493,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('D-${inroom_datas[rindex]["dday"]!}',
                         style: TextStyle(
@@ -1489,8 +1519,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(inroom_datas[rindex]["id"])));
+            am_i? Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailWedu(inroom_datas[rindex]["id"]))) : null;
           },
         );
       },

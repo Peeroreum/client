@@ -406,8 +406,8 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
                         style: TextStyle(
@@ -416,8 +416,8 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w500,
                             color: PeeroreumColor.gray[600])),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                      child: Text('⋅'),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                     ),
                     Text('D-${inroom_datas[rindex]["dday"]!}',
                         style: TextStyle(
@@ -704,6 +704,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                 ? SvgPicture.asset('assets/icons/lock.svg',
                                     color: PeeroreumColor.gray[400], width: 12)
                                 : SizedBox(),
+                            datas[index]['locked'].toString() == "true"
+                                ? SizedBox(width: 4,) : SizedBox(),
                             Flexible(
                               child: Text(
                                 datas[index]["title"]!,
@@ -729,8 +731,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                     fontWeight: FontWeight.w500,
                                     color: PeeroreumColor.gray[600])),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2),
-                              child: Text('⋅'),
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                             ),
                             Text('${datas[index]["attendingPeopleNum"]!}명',
                                 style: TextStyle(
@@ -739,8 +741,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                     fontWeight: FontWeight.w500,
                                     color: PeeroreumColor.gray[600])),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2),
-                              child: Text('⋅'),
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                             ),
                             Text('D-${datas[index]["dday"]!}',
                                 style: TextStyle(
@@ -847,6 +849,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                   ? SvgPicture.asset('assets/icons/lock.svg',
                                       color: PeeroreumColor.gray[400])
                                   : SizedBox(),
+                              datas[index]['locked'].toString() == "true"
+                                  ? SizedBox(width: 4,) : SizedBox(),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
                                         "true"
@@ -880,8 +884,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                       fontWeight: FontWeight.w500,
                                       color: PeeroreumColor.gray[600])),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text('${datas[index]["attendingPeopleNum"]!}명',
                                   style: TextStyle(
@@ -890,8 +894,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                       fontWeight: FontWeight.w500,
                                       color: PeeroreumColor.gray[600])),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
                               ),
                               Text('D-${datas[index]["dday"]!}',
                                   style: TextStyle(
@@ -907,9 +911,12 @@ class _HomeWeduState extends State<HomeWedu> {
                   ],
                 ),
                 Container(
+                  width: 48,
+                  height: 48,
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                      color: PeeroreumColor.gray[100],
+                    border: Border.all(color: PeeroreumColor.gray[200]!),
+                      color: PeeroreumColor.white,
                       borderRadius: BorderRadius.circular(8)),
                   child: IconButton(
                     onPressed: () async {
@@ -940,7 +947,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     fontWeight: FontWeight.w600),
               ),
               decoration: BoxDecoration(
-                  color: PeeroreumColor.gray[50],
+                  color: PeeroreumColor.gray[100],
                   borderRadius: BorderRadius.circular(8)),
             ),
             SizedBox(
@@ -1146,99 +1153,109 @@ class _HomeWeduState extends State<HomeWedu> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             backgroundColor: PeeroreumColor.white,
             surfaceTintColor: Colors.transparent,
-            title: Text("비밀번호", textAlign: TextAlign.center),
-            titleTextStyle: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Pretendard',
-              color: PeeroreumColor.black,
-            ),
-            titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-            content: Container(
-              color: PeeroreumColor.white,
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: 48,
-              child: TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  hintText: '비밀번호를 입력하세요.',
-                  hintStyle: TextStyle(
+            insetPadding: EdgeInsets.all(20),
+            iconPadding: EdgeInsets.zero,
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "비밀번호",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                       fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.gray[600]),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                ),
-                cursorColor: PeeroreumColor.gray[600],
+                      color: PeeroreumColor.black,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    color: PeeroreumColor.white,
+                    height: 48,
+                    child: TextFormField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        hintText: '비밀번호를 입력하세요.',
+                        hintStyle: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.gray[600]),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                            borderRadius: BorderRadius.all(Radius.circular(8))),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                            borderRadius: BorderRadius.all(Radius.circular(8))),
+                      ),
+                      cursorColor: PeeroreumColor.gray[600],
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '취소',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: PeeroreumColor.gray[600]),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                            padding: EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16), // 패딩
+                            shape: RoundedRectangleBorder(
+                              // 모양
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            passwordController.text == datas[index]['password']
+                                ? enrollWedu(index)
+                                : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '확인',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: PeeroreumColor.white),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: PeeroreumColor.primaryPuple[400],
+                            padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        '취소',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: PeeroreumColor.gray[600]),
-                      ),
-                      style: TextButton.styleFrom(
-                        backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                        padding: EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16), // 패딩
-                        shape: RoundedRectangleBorder(
-                          // 모양
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        passwordController.text == datas[index]['password']
-                            ? enrollWedu(index)
-                            : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        '확인',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: PeeroreumColor.white),
-                      ),
-                      style: TextButton.styleFrom(
-                        backgroundColor: PeeroreumColor.primaryPuple[400],
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
           );
         });
   }
