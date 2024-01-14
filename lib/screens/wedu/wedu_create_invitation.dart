@@ -30,6 +30,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
 
   Color _backgroundColor = PeeroreumColor.primaryPuple[400]!;
   Color _fontColor = PeeroreumColor.white;
+  Color? _savedBackgroundColor;
+  Color? _savedFontColor;
   String _inviText = "같이방에서 같이 공부해요~ ☆";
 
   WidgetsToImageController controller = WidgetsToImageController();
@@ -327,31 +329,56 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                             pickerColor: _backgroundColor,
                                             onColorChanged: (Color color) {
                                               setState(() {
-                                                _image = null;
-                                                _backgroundColor = color;
+                                                //_image = null;
+                                                _savedBackgroundColor = color;
+                                                //_backgroundColor = color;
                                                 int red = color.red;
                                                 int blue = color.blue;
                                                 int green = color.green;
-                                                _fontColor = Color.fromRGBO(
+                                                _savedFontColor = Color.fromRGBO(
                                                     255 - red,
                                                     255 - green,
                                                     255 - blue,
                                                     1);
-                                                checkColors();
+                                                //checkColors();
                                               });
                                             },
                                           ),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              updateColor();
-                                            },
-                                            child: const Text('확인',
-                                            style: TextStyle(
-                                              color: PeeroreumColor.black,
-                                              fontFamily: 'Pretendard'
-                                            ),
-                                            ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  updateColor();
+                                                },
+                                                child: Text('취소',
+                                                style: TextStyle(
+                                                  color: PeeroreumColor.gray[600],
+                                                  fontFamily: 'Pretendard'
+                                                ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 20,),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _image = null;
+                                                    _backgroundColor = _savedBackgroundColor!;
+                                                    _fontColor = _savedFontColor!;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  updateColor();
+                                                },
+                                                child: Text('확인',
+                                                style: TextStyle(
+                                                  color: PeeroreumColor.primaryPuple[400],
+                                                  fontFamily: 'Pretendard'
+                                                ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 4,)
+                                            ],
                                           )
                                         ],
                                       )),
@@ -363,6 +390,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                 // Handle image picker button tap
                 await getImage(ImageSource.gallery);
                 if (_image != null){
+                  _backgroundColor = Color(0xfffffffe);
                   _fontColor = PeeroreumColor.white;
                   isFontColorSelected = [true, false, false];
                 } else {
@@ -422,20 +450,25 @@ class _CreateInvitationState extends State<CreateInvitation> {
                 ),
                 image: index == 5
                   ? DecorationImage(
-                      image: AssetImage('assets/icons/color_picker.png'),
+                      image: AssetImage('assets/images/colorpicker_background.png'),
                     )
                   : null,
               ),
               child: index==5 || index==6
               ? (index==6
                 ?Padding(
-                  padding: const EdgeInsets.all(1.0),
+                  padding: const EdgeInsets.all(0),
                   child: SvgPicture.asset(
-                  'assets/icons/camera.svg',
+                  'assets/icons/camera2.svg',
                   color: PeeroreumColor.white,
-                              ),
+                              )
                 )
-                : null)
+                : Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: SvgPicture.asset(
+                  'assets/icons/spoid.svg',
+                  color: PeeroreumColor.white,
+                              )))
               :(isBackgroundSelected[index] 
                               ? SvgPicture.asset(
                                   'assets/icons/check2.svg',
@@ -494,7 +527,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                         borderRadius: BorderRadius.circular(8.0), // 테두리의 둥근 정도 조절
                         ),
                       child: Padding(
-                          padding: const EdgeInsets.all(15),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment:
                                 CrossAxisAlignment.end,
@@ -510,22 +543,46 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 pickerColor: _fontColor,
                                 onColorChanged: (Color color) {
                                   setState(() {
-                                    _fontColor = color;
-                                    checkColors();
+                                    _savedFontColor = color;
+                                    //checkColors();
                                   });
                                 },
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  updateColor();
-                                },
-                                child: const Text('확인',
-                                style: TextStyle(
-                                  color: PeeroreumColor.black,
-                                  fontFamily: 'Pretendard'
-                                ),
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      updateColor();
+                                    },
+                                    child: Text('취소',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600],
+                                      fontFamily: 'Pretendard'
+                                    ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20,),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _fontColor = _savedFontColor!;
+                                      });
+                                      Navigator.pop(context);
+                                      updateColor();
+                                    },
+                                    child: Text('확인',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.primaryPuple[400],
+                                      fontFamily: 'Pretendard'
+                                    ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 4,)
+                                ],
                               )
                             ],
                           )),
@@ -560,13 +617,18 @@ class _CreateInvitationState extends State<CreateInvitation> {
                 ),
                 image: index == 2
                   ? DecorationImage(
-                      image: AssetImage('assets/icons/color_picker.png'),
+                      image: AssetImage('assets/images/colorpicker_background.png'),
                       
                     )
                   : null,
               ),
               child: index==2
-              ? null
+              ? Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: SvgPicture.asset(
+                  'assets/icons/spoid.svg',
+                  color: PeeroreumColor.white,
+                              ))
               :(isFontColorSelected[index] 
                               ? SvgPicture.asset(
                                   'assets/icons/check2.svg',
