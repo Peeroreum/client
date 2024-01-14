@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../api/PeeroreumApi.dart';
 import '../../data/WeduSearchHistory.dart';
@@ -86,6 +88,26 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   _saveSearchHistory(String value) async {
     await SearchHistory.addSearchItem(value);
     _loadSearchHistory();
+  }
+
+  Future<String> getShortLink(String screenName, String id) async {
+    String dynamicLinkPrefix = 'https://peeroreum.page.link';
+    final dynamicLinkParams = DynamicLinkParameters(
+      uriPrefix: dynamicLinkPrefix,
+      link: Uri.parse('$dynamicLinkPrefix/home'),
+      androidParameters: const AndroidParameters(
+        packageName: 'com.example.peeroreum_client',
+        minimumVersion: 0,
+      ),
+      iosParameters: const IOSParameters(
+        bundleId: 'com.example.peeroreumClient',
+        minimumVersion: '0',
+      ),
+    );
+    final dynamicLink =
+        await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
+
+    return dynamicLink.shortUrl.toString();
   }
 
   bool search_clear = false;
@@ -468,7 +490,10 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                       color: PeeroreumColor.gray[600])),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text(
                                   '${datas[index]["attendingPeopleNum"]!}명 참여중',
@@ -479,7 +504,10 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                       color: PeeroreumColor.gray[600])),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('⋅'),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text('D-${datas[index]["dday"]!}',
                                   style: TextStyle(
@@ -497,11 +525,15 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                 Container(
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                      color: PeeroreumColor.gray[100],
+                      color: PeeroreumColor.white,
+                      border: Border.all(color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.circular(8)),
                   child: IconButton(
-                    onPressed: () {
-                      // shareDeepLink();
+                    onPressed: () async {
+                      Share.share(await getShortLink(
+                        '/home',
+                        '$index',
+                      ));
                     },
                     icon: SvgPicture.asset(
                       'assets/icons/share.svg',
@@ -525,7 +557,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                     fontWeight: FontWeight.w600),
               ),
               decoration: BoxDecoration(
-                  color: PeeroreumColor.gray[50],
+                  color: PeeroreumColor.gray[100],
                   borderRadius: BorderRadius.circular(8)),
             ),
             SizedBox(
