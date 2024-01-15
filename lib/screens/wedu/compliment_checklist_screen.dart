@@ -36,6 +36,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   }
 
   fetchStatus() async {
+    if(mounted){
     sender = await FlutterSecureStorage().read(key: "nickname");
     myimage = await FlutterSecureStorage().read(key: "profileImage");
     mygrade = await FlutterSecureStorage().read(key: "grade");
@@ -53,6 +54,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     }
     successList =
         successList.where((user) => user['nickname'] != sender).toList();
+    }
   }
 
   @override
@@ -92,95 +94,93 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
         body: FutureBuilder<void>(
             future: fetchStatus(),
             builder: (context, snapshot) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                '전체',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: PeeroreumColor.gray[500]),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Text(
-                                '${successList.length}',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: PeeroreumColor.gray[500]),
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                '명',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: PeeroreumColor.gray[500]),
-                              ),
-                            ],
-                          ),
-                          TextButton.icon(
-                            onPressed: () {
-                              for (int i = 0; i < isCheckedList.length; i++) {
-                                if (isActiveList[i] == true) {
-                                  if (isCheckedList[i] == false) {
-                                    setState(() {
-                                      isCheckedList[i] = true;
-                                    });
-                                  }
-                                }
-                              }
-                            },
-                            icon: SvgPicture.asset(
-                              'assets/icons/check.svg',
-                              color: PeeroreumColor.gray[500],
-                            ),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.only(right: 0),
-                            ),
-                            label: Text(
-                              '전체선택',
+              return Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '전체',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[500]),
                             ),
-                          )
-                        ],
-                      ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              '${successList.length}',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: PeeroreumColor.gray[500]),
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              '명',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: PeeroreumColor.gray[500]),
+                            ),
+                          ],
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            for (int i = 0; i < isCheckedList.length; i++) {
+                              if (isActiveList[i] == true) {
+                                if (isCheckedList[i] == false) {
+                                  setState(() {
+                                    isCheckedList[i] = true;
+                                  });
+                                }
+                              }
+                            }
+                          },
+                          icon: SvgPicture.asset(
+                            'assets/icons/check.svg',
+                            color: PeeroreumColor.gray[500],
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.only(right: 0),
+                          ),
+                          label: Text(
+                            '전체선택',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: PeeroreumColor.gray[500]),
+                          ),
+                        )
+                      ],
                     ),
-                    Divider(
-                      color: PeeroreumColor.gray[100],
-                      thickness: 1,
-                      height: 8,
-                    ),
-                    mycheck ? OkMe() : Container(),
-                    mycheck
-                        ? Divider(
-                            thickness: 1,
-                            color: PeeroreumColor.gray[100],
-                            height: 8,
-                          )
-                        : Container(),
-                    okList()
-                  ],
-                ),
+                  ),
+                  Divider(
+                    color: PeeroreumColor.gray[100],
+                    thickness: 1,
+                    height: 8,
+                  ),
+                  mycheck ? OkMe() : Container(),
+                  mycheck
+                      ? Divider(
+                          thickness: 1,
+                          color: PeeroreumColor.gray[100],
+                          height: 8,
+                        )
+                      : Container(),
+                  okList()
+                ],
               );
             }),
         bottomNavigationBar: Container(
@@ -306,10 +306,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   }
 
   okList() {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: double.maxFinite,
+    return Flexible(
+        // width: MediaQuery.of(context).size.width,
+        // height: MediaQuery.of(context).size.height-299,
         child: ListView.separated(
+          scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
