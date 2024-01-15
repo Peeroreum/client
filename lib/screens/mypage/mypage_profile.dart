@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -380,7 +381,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  nickname_change();
+                  setState(() {
+                    nickname_change();
+                  });
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
@@ -617,35 +620,37 @@ class _MyPageProfileState extends State<MyPageProfile> {
   ///////////////////닉네임 변경///////////////////
   bool checkNickname = false;
   bool isDuplicateNickname = false;
-
-  checkDuplicateNickname(String value) async {
-    var result = await http.get(
-        Uri.parse('${API.hostConnect}/signup/nickname/$value'),
-        headers: {'Content-Type': 'application/json'});
-    if (result.statusCode == 409) {
-      setState(() {
-        isDuplicateNickname = true;
-      });
-    } else {
-      isDuplicateNickname = false;
-    }
-  }
-
-  checkError() {
-    if (!checkNickname && change_nickname_controller.text.isNotEmpty) {
-      return "한글 2자, 영문/숫자 4자 이상 적어주세요.";
-    }
-    if (isDuplicateNickname) {
-      return "이미 사용 중인 닉네임입니다.";
-    }
-    return null;
-  }
-
   nickname_change() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, setState) {
+            checkDuplicateNickname(String value) async {
+              var result = await http.get(
+                  Uri.parse('${API.hostConnect}/signup/nickname/$value'),
+                  headers: {'Content-Type': 'application/json'});
+              if (result.statusCode == 409) {
+                setState(() {
+                  isDuplicateNickname = true;
+                });
+              } else {
+                setState(() {
+                  isDuplicateNickname = false;
+                });
+              }
+            }
+
+            checkError() {
+              if (!checkNickname &&
+                  change_nickname_controller.text.isNotEmpty) {
+                return "한글 2자, 영문/숫자 4자 이상 적어주세요.";
+              }
+              if (isDuplicateNickname) {
+                return "이미 사용 중인 닉네임입니다.";
+              }
+              return null;
+            }
+
             return AlertDialog(
               insetPadding: EdgeInsets.symmetric(horizontal: 20),
               contentPadding: EdgeInsets.all(20),
@@ -674,12 +679,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         child: TextFormField(
                           controller: change_nickname_controller,
                           onChanged: (value) {
-                            if (change_nickname_controller.text.isNotEmpty) {
+                            checkDuplicateNickname(value);
+                            if (value.isNotEmpty) {
                               setState(() {
-                                if (change_nickname_controller.text.length >=
-                                        2 &&
-                                    change_nickname_controller.text.length <=
-                                        12) {
+                                if (value.length >= 2 && value.length <= 12) {
                                   checkNickname = true;
                                 } else {
                                   checkNickname = false;
@@ -691,8 +694,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 isDuplicateNickname = false;
                               });
                             }
-                            checkDuplicateNickname(value);
                           },
+                          inputFormatters: [
+                            FilteringTextInputFormatter(
+                              RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|_|]'),
+                              allow: true,
+                            )
+                          ],
                           decoration: InputDecoration(
                             hintText: '닉네임은 30일마다 1회만 변경 가능해요.',
                             hintStyle: TextStyle(
@@ -789,7 +797,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             child: TextButton(
                               onPressed: () {
                                 if (checkNickname && !isDuplicateNickname) {
-                                  checkError();
                                   setState(() {
                                     nicknameAPI();
                                   });
