@@ -1085,7 +1085,7 @@ class _CreateWeduState extends State<CreateWedu> {
       'title': nameValue,
       'subject': subject.indexOf(dropdownSubject),
       'targetDate': '$date'.substring(0, 10),
-      'grade': grade.indexOf(dropdownGrade),
+      'grade': grade.indexOf(dropdownGrade)+1,
       'maximumPeople': dropdownHeadcount,
       'challenge':
           personalChallenge.isNotEmpty ? personalChallenge : dropdownChallenge,
