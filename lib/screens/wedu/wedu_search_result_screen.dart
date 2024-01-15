@@ -205,37 +205,67 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
-                return Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
+                return datas.isEmpty
+                    ? Center(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 69,
+                            ),
+                            Image.asset('assets/images/no_wedu_oreum.png'),
+                            Text(
+                              '찾으시는 같이방이 없어요 🥲',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.black),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              '다른 검색어를 입력해 보세요!',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: PeeroreumColor.gray[700]),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Column(
                         children: [
-                          Text(
-                            '검색된 같이방',
-                            style: TextStyle(
-                                color: PeeroreumColor.gray[800],
-                                fontFamily: 'Pretendard',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600),
+                          Container(
+                            padding: EdgeInsets.all(20),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '검색된 같이방',
+                                  style: TextStyle(
+                                      color: PeeroreumColor.gray[800],
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  '${datas.length}',
+                                  style: TextStyle(
+                                      color: PeeroreumColor.gray[800],
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
                           ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            '${datas.length}',
-                            style: TextStyle(
-                                color: PeeroreumColor.gray[800],
-                                fontFamily: 'Pretendard',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600),
-                          )
+                          Expanded(child: listview_body())
                         ],
-                      ),
-                    ),
-                    Expanded(child: listview_body())
-                  ],
-                );
+                      );
               }
             },
           )),

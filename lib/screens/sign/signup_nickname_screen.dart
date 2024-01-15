@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
@@ -152,6 +153,12 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                         }
                         checkDuplicateNickname(value);
                       },
+                      inputFormatters: [
+                        FilteringTextInputFormatter(
+                          RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|_|]'),
+                          allow: true,
+                        )
+                      ],
                       decoration: InputDecoration(
                           hintText: '닉네임을 입력하세요',
                           hintStyle: TextStyle(
