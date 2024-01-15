@@ -51,6 +51,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   _DetailWeduCalendarState(this.id, this.weduTitle);
   dynamic weduData = '';
   dynamic weduMonthlyData = '';
+  dynamic weduFire = '';
   List<dynamic> challengeImage = [];
   List<dynamic> successList = [];
   List<dynamic> notSuccessList = [];
@@ -99,13 +100,17 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   Future<void> fetchDatas() async {
     token = await const FlutterSecureStorage().read(key: "accessToken");
 
-    // var weduResult = await http.get(
-    //     Uri.parse( '${API.hostConnect}/wedu/$id'),
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': 'Bearer $token'
-    //     }
-    // );
+    var weduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (weduResult.statusCode == 200) {
+      weduData = await jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+      weduFire = weduData['continuousDate'];
+    } else {
+      print("에러${weduResult.statusCode}");
+    }
 
     //DateTime requestDate = DateTime(currentDate.year,focusedMonth!,savedFocusedDay!);
     String requestFormatDate2 = DateFormat('yyyyMMdd').format(currentDate);
@@ -126,13 +131,6 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     } else {
       print("에러${weduProgress.statusCode}");
     }
-
-    // if(weduResult.statusCode == 200) {
-    //   weduData = await jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
-    //   weduTitle = weduData['title'];
-    // } else {
-    //   print("에러${weduResult.statusCode}");
-    // }
 
     //var now = DateTime.now();
     //String formatDate = DateFormat('yyyyMMdd').format(now);
@@ -268,7 +266,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                             color: PeeroreumColor.black),
                       ),
                       Text(
-                        '10',
+                        '$weduFire',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
@@ -418,10 +416,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       height: 36,
                       width: 36,
                       child: (currentDate.year == startDate.year &&
-                        currentDate.month == startDate.month &&
+                                  currentDate.month == startDate.month &&
                                   day < startDate.day) ||
                               (currentDate.year == finalDate.year &&
-                                currentDate.month == finalDate.month &&
+                                  currentDate.month == finalDate.month &&
                                   day > finalDate.day)
                           ? Container(
                               alignment: Alignment.center,
