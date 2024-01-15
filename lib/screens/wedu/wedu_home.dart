@@ -1,12 +1,18 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter_share/flutter_share.dart';
 
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
@@ -20,6 +26,7 @@ import 'package:peeroreum_client/screens/wedu/wedu_skeleton.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -51,6 +58,25 @@ class _HomeWeduState extends State<HomeWedu> {
     super.initState();
     fetchDatas();
   }
+
+ shareNetworkImage(String imageUrl) async {
+  // 이미지 다운로드
+  final response = await http.get(Uri.parse(imageUrl));
+  final bytes = response.bodyBytes;
+
+  // 임시 디렉토리 경로 얻기
+  final directory = await getTemporaryDirectory();
+  final filePath = '${directory.path}/temp_image.png';
+
+  // 이미지 파일로 저장
+  File file = File(filePath);
+  await file.writeAsBytes(bytes);
+  return file.path;
+  // XFile로 변환
+  // final xFile = XFile(file.path);
+  // return xFile!;
+  }
+
 
   Future<String> getShortLink(String screenName, String id) async {
     String dynamicLinkPrefix = 'https://peeroreum.page.link';
@@ -920,10 +946,37 @@ class _HomeWeduState extends State<HomeWedu> {
                       borderRadius: BorderRadius.circular(8)),
                   child: IconButton(
                     onPressed: () async {
-                      Share.share(await getShortLink(
+                      final link = await getShortLink(
                         '/home',
                         '$index',
-                      ));
+                      );
+                      dynamic image22 = await shareNetworkImage(inviDatas[datas[index]['id']]['invitationUrl'].toString())!;
+                      final THU = Uri.parse(inviDatas[datas[index]['id']]['invitationUrl'].toString());
+                      final RoomName = datas[index]["title"];
+                      int templateId = 102956;
+                      // 카카오톡 실행 가능 여부 확인
+                      bool isKakaoTalkSharingAvailable = await ShareClient.instance.isKakaoTalkSharingAvailable();
+
+                      if (isKakaoTalkSharingAvailable) {
+                        try {
+                          Uri uri =
+                              await ShareClient.instance.shareCustom(templateId: templateId, templateArgs: {'RoomName': '$RoomName', 'THU': '$THU'}
+                              );
+                          await ShareClient.instance.launchKakaoTalk(uri);
+                          print('카카오톡 공유 완료');
+                        } catch (error) {
+                          print('카카오톡 공유 실패 $error');
+                        }
+                      } else {
+                        try {
+                          Uri shareUrl = await WebSharerClient.instance.makeCustomUrl(
+                              templateId: templateId, templateArgs: {'RoomName': '$RoomName', 'THU': '$THU'}, );
+                          await launchBrowserTab(shareUrl, popupOpen: true);
+                        } catch (error) {
+                          print('카카오톡 공유 실패 $error');
+                        }
+                      }
+
                     },
                     icon: SvgPicture.asset(
                       'assets/icons/share.svg',
