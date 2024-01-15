@@ -151,6 +151,8 @@ class _DetailWeduState extends State<DetailWedu> {
       // 이미지 선택이 취소되었을 때의 처리
       print('Image selection cancelled');
     }
+
+    postImages();
   }
 
   void takeFromGallery() async {
@@ -943,8 +945,8 @@ class _DetailWeduState extends State<DetailWedu> {
                         collapsedBackgroundColor: PeeroreumColor.white,
                         trailing: SvgPicture.asset(
                           isExpanded
-                              ? 'assets/icons/up.svg'
-                              : 'assets/icons/down.svg',
+                              ? 'assets/icons/down.svg'
+                              : 'assets/icons/up.svg',
                           color: PeeroreumColor.gray[500],
                         ),
                         title: Container(
@@ -996,7 +998,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             color: PeeroreumColor.white,
                             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Flexible(
                                   flex: 100,
@@ -1012,11 +1014,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Spacer(),
-                                Image.asset('assets/images/wedu_mission.png')
+                                Image.asset('assets/images/wedu_mission.png'),
                               ],
                             ),
                           ),
