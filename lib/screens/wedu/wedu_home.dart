@@ -252,7 +252,29 @@ class _HomeWeduState extends State<HomeWedu> {
             ),
           ),
           dropdown_body(),
-          Expanded(child: listview_body())
+          datas.isEmpty
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 4,
+                      color: PeeroreumColor.gray[50],
+                    ),
+                    Image.asset(
+                      'assets/images/no_wedu_oreum.png',
+                      width: 150,
+                    ),
+                    Text(
+                      '찾으시는 같이방이 없어요 🥲',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.black),
+                    ),
+                  ],
+                )
+              : Expanded(child: listview_body())
         ],
       )),
     );
@@ -407,7 +429,10 @@ class _HomeWeduState extends State<HomeWedu> {
                             color: PeeroreumColor.gray[600])),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                      child: SvgPicture.asset(
+                        'assets/icons/dot.svg',
+                        color: PeeroreumColor.gray[600],
+                      ),
                     ),
                     Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
                         style: TextStyle(
@@ -417,7 +442,10 @@ class _HomeWeduState extends State<HomeWedu> {
                             color: PeeroreumColor.gray[600])),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                      child: SvgPicture.asset(
+                        'assets/icons/dot.svg',
+                        color: PeeroreumColor.gray[600],
+                      ),
                     ),
                     Text('D-${inroom_datas[rindex]["dday"]!}',
                         style: TextStyle(
@@ -705,7 +733,10 @@ class _HomeWeduState extends State<HomeWedu> {
                                     color: PeeroreumColor.gray[400], width: 12)
                                 : SizedBox(),
                             datas[index]['locked'].toString() == "true"
-                                ? SizedBox(width: 4,) : SizedBox(),
+                                ? SizedBox(
+                                    width: 4,
+                                  )
+                                : SizedBox(),
                             Flexible(
                               child: Text(
                                 datas[index]["title"]!,
@@ -731,8 +762,12 @@ class _HomeWeduState extends State<HomeWedu> {
                                     fontWeight: FontWeight.w500,
                                     color: PeeroreumColor.gray[600])),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                              child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset(
+                                'assets/icons/dot.svg',
+                                color: PeeroreumColor.gray[600],
+                              ),
                             ),
                             Text('${datas[index]["attendingPeopleNum"]!}명',
                                 style: TextStyle(
@@ -741,8 +776,12 @@ class _HomeWeduState extends State<HomeWedu> {
                                     fontWeight: FontWeight.w500,
                                     color: PeeroreumColor.gray[600])),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                              child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset(
+                                'assets/icons/dot.svg',
+                                color: PeeroreumColor.gray[600],
+                              ),
                             ),
                             Text('D-${datas[index]["dday"]!}',
                                 style: TextStyle(
@@ -850,7 +889,10 @@ class _HomeWeduState extends State<HomeWedu> {
                                       color: PeeroreumColor.gray[400])
                                   : SizedBox(),
                               datas[index]['locked'].toString() == "true"
-                                  ? SizedBox(width: 4,) : SizedBox(),
+                                  ? SizedBox(
+                                      width: 4,
+                                    )
+                                  : SizedBox(),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
                                         "true"
@@ -884,8 +926,12 @@ class _HomeWeduState extends State<HomeWedu> {
                                       fontWeight: FontWeight.w500,
                                       color: PeeroreumColor.gray[600])),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text('${datas[index]["attendingPeopleNum"]!}명',
                                   style: TextStyle(
@@ -894,8 +940,12 @@ class _HomeWeduState extends State<HomeWedu> {
                                       fontWeight: FontWeight.w500,
                                       color: PeeroreumColor.gray[600])),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text('D-${datas[index]["dday"]!}',
                                   style: TextStyle(
@@ -915,7 +965,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   height: 48,
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                    border: Border.all(color: PeeroreumColor.gray[200]!),
+                      border: Border.all(color: PeeroreumColor.gray[200]!),
                       color: PeeroreumColor.white,
                       borderRadius: BorderRadius.circular(8)),
                   child: IconButton(
@@ -1153,7 +1203,8 @@ class _HomeWeduState extends State<HomeWedu> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             backgroundColor: PeeroreumColor.white,
             surfaceTintColor: Colors.transparent,
             insetPadding: EdgeInsets.all(20),
@@ -1187,10 +1238,12 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontWeight: FontWeight.w400,
                             color: PeeroreumColor.gray[600]),
                         enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                            borderSide:
+                                BorderSide(color: PeeroreumColor.gray[200]!),
                             borderRadius: BorderRadius.all(Radius.circular(8))),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: PeeroreumColor.gray[200]!),
+                            borderSide:
+                                BorderSide(color: PeeroreumColor.gray[200]!),
                             borderRadius: BorderRadius.all(Radius.circular(8))),
                       ),
                       cursorColor: PeeroreumColor.gray[600],
@@ -1230,7 +1283,8 @@ class _HomeWeduState extends State<HomeWedu> {
                           onPressed: () {
                             passwordController.text == datas[index]['password']
                                 ? enrollWedu(index)
-                                : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
+                                : Fluttertoast.showToast(
+                                    msg: '비밀번호가 일치하지 않습니다.');
                             Navigator.pop(context);
                           },
                           child: Text(
@@ -1243,8 +1297,8 @@ class _HomeWeduState extends State<HomeWedu> {
                           ),
                           style: TextButton.styleFrom(
                             backgroundColor: PeeroreumColor.primaryPuple[400],
-                            padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
