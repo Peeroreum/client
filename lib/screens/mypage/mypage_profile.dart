@@ -297,8 +297,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
           child: Row(
             children: [
               GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 child: Container(
                   width: 24,
+                  height: 24,
+                  padding: EdgeInsets.all(2),
                   margin: EdgeInsets.only(right: 4),
                   constraints: BoxConstraints(),
                   child: SvgPicture.asset('assets/icons/search.svg',
@@ -309,12 +312,16 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 },
               ),
               GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 child: Container(
+                  height: 24,
                   width: 24,
                   padding: EdgeInsets.zero,
                   constraints: BoxConstraints(),
                   child: SvgPicture.asset(
                     'assets/icons/icon_dots_mono.svg',
+                    height: 24,
+                    width: 24,
                     color: PeeroreumColor.black,
                   ),
                 ),
