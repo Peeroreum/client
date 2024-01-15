@@ -165,41 +165,42 @@ class _HomeWeduState extends State<HomeWedu> {
         ),
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 20),
-          padding: EdgeInsets.only(top: 8),
-          child: Row(
-            children: [
-              GestureDetector(
-                child: Container(
-                  padding: EdgeInsets.only(right: 8),
-                  child: SvgPicture.asset(
-                    'assets/icons/plus_square.svg',
-                    color: PeeroreumColor.gray[800],
-                    width: 24,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => CreateWedu(),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)),
-                  );
-                },
-              ),
-              GestureDetector(
+        Row(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                width: 24,
+                height: 24,
+                margin: EdgeInsets.only(right: 8),
                 child: SvgPicture.asset(
-                  'assets/icons/bell_none.svg',
+                  'assets/icons/plus_square2.svg',
                   color: PeeroreumColor.gray[800],
+                  width: 24,
+                  height: 24,
                 ),
-                onTap: () {
-                  Fluttertoast.showToast(msg: "준비중입니다.");
-                },
-              )
-            ],
-          ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => CreateWedu(),
+                      transitionDuration: const Duration(seconds: 0),
+                      reverseTransitionDuration: const Duration(seconds: 0)),
+                );
+              },
+            ),
+            GestureDetector(
+              child: SvgPicture.asset(
+                'assets/icons/bell_none.svg',
+                color: PeeroreumColor.gray[800],
+              ),
+              onTap: () {
+                Fluttertoast.showToast(msg: "준비중입니다.");
+              },
+            ),
+            SizedBox(width: 20,)
+          ],
         ),
       ],
     );

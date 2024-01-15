@@ -243,6 +243,8 @@ class _DetailWeduState extends State<DetailWedu> {
                   },
                   icon: SvgPicture.asset(
                     'assets/icons/icon_dots_mono.svg',
+                    width: 24,
+                    height: 24,
                     color: PeeroreumColor.gray[800],
                   ))
             ],
