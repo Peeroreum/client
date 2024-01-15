@@ -1,18 +1,10 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-import 'package:flutter_share/flutter_share.dart';
-
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
@@ -23,8 +15,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_skeleton.dart';
-import 'package:uni_links/uni_links.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 
@@ -58,25 +48,6 @@ class _HomeWeduState extends State<HomeWedu> {
     super.initState();
     fetchDatas();
   }
-
- shareNetworkImage(String imageUrl) async {
-  // 이미지 다운로드
-  final response = await http.get(Uri.parse(imageUrl));
-  final bytes = response.bodyBytes;
-
-  // 임시 디렉토리 경로 얻기
-  final directory = await getTemporaryDirectory();
-  final filePath = '${directory.path}/temp_image.png';
-
-  // 이미지 파일로 저장
-  File file = File(filePath);
-  await file.writeAsBytes(bytes);
-  return file.path;
-  // XFile로 변환
-  // final xFile = XFile(file.path);
-  // return xFile!;
-  }
-
 
   Future<String> getShortLink(String screenName, String id) async {
     String dynamicLinkPrefix = 'https://peeroreum.page.link';
@@ -1000,7 +971,6 @@ class _HomeWeduState extends State<HomeWedu> {
                         '/home',
                         '$index',
                       );
-                      dynamic image22 = await shareNetworkImage(inviDatas[datas[index]['id']]['invitationUrl'].toString())!;
                       final THU = Uri.parse(inviDatas[datas[index]['id']]['invitationUrl'].toString());
                       final RoomName = datas[index]["title"];
                       int templateId = 102956;
