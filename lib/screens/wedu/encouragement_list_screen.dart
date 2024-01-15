@@ -46,60 +46,58 @@ class _EncouragementListState extends State<EncouragementList> {
                 ))
           ],
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical:13, horizontal:20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '전체',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[500]),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            '${notSuccessList.length}',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[500]),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            '명',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[500]),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+        body: Container(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical:13, horizontal:20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '전체',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: PeeroreumColor.gray[500]),
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          '${notSuccessList.length}',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: PeeroreumColor.gray[500]),
+                        ),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text(
+                          '명',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: PeeroreumColor.gray[500]),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                Divider(
-                  color: PeeroreumColor.gray[100],
-                  thickness: 1,
-                  height: 8,
-                ),
-                notOkList()
-              ],
-            ),
+              ),
+              Divider(
+                color: PeeroreumColor.gray[100],
+                thickness: 1,
+                height: 8,
+              ),
+              notOkList()
+            ],
           ),
         ),
         );
@@ -108,7 +106,7 @@ class _EncouragementListState extends State<EncouragementList> {
   notOkList() {
     return Container(
         width: MediaQuery.of(context).size.width,
-        height: double.maxFinite,
+        height: MediaQuery.of(context).size.height - 140,
         child: ListView.separated(
             itemBuilder: (BuildContext context, int index) {
               return Container(
