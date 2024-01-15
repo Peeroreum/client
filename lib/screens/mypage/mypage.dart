@@ -145,48 +145,48 @@ class _MyPageState extends State<MyPage> {
             children: [
               Container(
                   child: Row(children: [
-                Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        width: 2,
-                        color: grade != null
-                            ? PeeroreumColor.gradeColor[int.parse(grade)]!
-                            : Color.fromARGB(255, 186, 188, 189)),
-                  ),
-                  child: Container(
-                    height: 42,
-                    width: 42,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        width: 1,
-                        color: PeeroreumColor.white,
+                    Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: 2,
+                            color: grade != null
+                                ? PeeroreumColor.gradeColor[int.parse(grade)]!
+                                : Color.fromARGB(255, 186, 188, 189)),
                       ),
-                      image: profileImage != null
-                          ? DecorationImage(
+                      child: Container(
+                        height: 42,
+                        width: 42,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            width: 1,
+                            color: PeeroreumColor.white,
+                          ),
+                          image: profileImage != null
+                              ? DecorationImage(
                               image: NetworkImage(profileImage),
                               fit: BoxFit.cover)
-                          : DecorationImage(
+                              : DecorationImage(
                               image: AssetImage(
-                              'assets/images/user.jpg',
-                            )),
+                                'assets/images/user.jpg',
+                              )),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Container(width: 11),
-                Text(
-                  '$nickname',
-                  style: TextStyle(
-                    color: PeeroreumColor.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Pretendard',
-                  ),
-                ),
-              ])),
+                    Container(width: 11),
+                    Text(
+                      '$nickname',
+                      style: TextStyle(
+                        color: PeeroreumColor.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Pretendard',
+                      ),
+                    ),
+                  ])),
               SvgPicture.asset('assets/icons/right.svg', height: 24, color: PeeroreumColor.gray[600],),
             ],
           ),
@@ -237,8 +237,8 @@ class _MyPageState extends State<MyPage> {
                 .push(MaterialPageRoute(builder: (context) => InWedu()))
           },
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
-            padding: EdgeInsets.symmetric(horizontal: 20)
+              minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -258,7 +258,7 @@ class _MyPageState extends State<MyPage> {
         TextButton(
           onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
+              minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
@@ -279,7 +279,7 @@ class _MyPageState extends State<MyPage> {
         TextButton(
           onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
+              minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
@@ -311,7 +311,7 @@ class _MyPageState extends State<MyPage> {
                 MaterialPageRoute(builder: (context) => MyPageNotification()))
           },
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
+              minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
@@ -335,7 +335,7 @@ class _MyPageState extends State<MyPage> {
                 .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
           },
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
+              minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
 
           ),
@@ -357,7 +357,7 @@ class _MyPageState extends State<MyPage> {
         TextButton(
           onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
+              minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
 
           ),
@@ -390,7 +390,7 @@ class _MyPageState extends State<MyPage> {
                 .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
           },
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
+              minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
 
           ),
@@ -414,7 +414,7 @@ class _MyPageState extends State<MyPage> {
             logout();
           },
           style: TextButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
+              minimumSize: Size.fromHeight(56),
               padding: EdgeInsets.symmetric(horizontal: 20)
           ),
           child: Row(
@@ -537,87 +537,6 @@ class _MyPageState extends State<MyPage> {
               ],
             ),
           ),
-        );
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          backgroundColor: PeeroreumColor.white,
-          surfaceTintColor: Colors.transparent,
-          title: Text("로그아웃", textAlign: TextAlign.center),
-          titleTextStyle: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Pretendard',
-            color: PeeroreumColor.black,
-          ),
-          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-          content: Text(
-            "로그아웃 하시겠습니까?",
-            textAlign: TextAlign.center,
-          ),
-          contentTextStyle: TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: PeeroreumColor.gray[600],
-          ),
-          actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                      padding: EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 16), // 패딩
-                      shape: RoundedRectangleBorder(
-                        // 모양
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      '취소',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: PeeroreumColor.gray[600]),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => EmailSignIn()));
-                      token = FlutterSecureStorage().deleteAll();
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: PeeroreumColor.primaryPuple[400],
-                      padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      '확인',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: PeeroreumColor.white),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
         );
       },
     );
