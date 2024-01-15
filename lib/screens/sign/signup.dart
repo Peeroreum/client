@@ -216,7 +216,7 @@ class _serviceTermsState extends State<serviceTerms> {
                       fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: button
+                      color: isCheckedList[0]
                           ? PeeroreumColor.black
                           : PeeroreumColor.gray[600],
                     ),
