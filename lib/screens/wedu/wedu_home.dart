@@ -43,10 +43,22 @@ class _HomeWeduState extends State<HomeWedu> {
   var grade = 0;
   var subject = 0;
 
+  late Future initFuture;
+
+  ScrollController _scrollController = ScrollController();
+  int currentPage = 0;
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
-    fetchDatas();
+    initFuture = fetchDatas();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
+        loadMoreData();
+      }
+    });
+    currentPage = 0;
   }
 
   Future<String> getShortLink(String screenName, String id) async {
@@ -73,18 +85,11 @@ class _HomeWeduState extends State<HomeWedu> {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
 
-    var weduResult = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (weduResult.statusCode == 200) {
-      datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
-    } else {
-      print("에러${weduResult.statusCode}");
-    }
+    await fetchInWeduData();
+    await fetchWeduData();
+  }
+
+  fetchInWeduData() async {
     var inWeduResult = await http.get(
         Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
         headers: {
@@ -94,10 +99,27 @@ class _HomeWeduState extends State<HomeWedu> {
     if (inWeduResult.statusCode == 200) {
       inroom_datas = jsonDecode(utf8.decode(inWeduResult.bodyBytes))['data'];
     } else {
+      print("에러${inWeduResult.statusCode}");
+    }
+  }
+
+  fetchWeduData() async {
+    currentPage = 0;
+    var weduResult = await http.get(
+        Uri.parse(
+            '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (weduResult.statusCode == 200) {
+      setState(() {
+        datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+        fetchImage(datas);
+      });
+    } else {
       print("에러${weduResult.statusCode}");
     }
-
-    await fetchImage(datas);
   }
 
   fetchImage(datas) async {
@@ -107,6 +129,33 @@ class _HomeWeduState extends State<HomeWedu> {
       inviDatas.addAll({data['id']: inviData});
       hashTags.addAll({data['id']: inviData['hashTags']});
     }
+  }
+
+  loadMoreData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<dynamic> addedDatas = [];
+    currentPage++;
+    var weduResult = await http.get(
+        Uri.parse(
+            '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (weduResult.statusCode == 200) {
+       addedDatas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+       setState(() {
+         datas.addAll(addedDatas);
+         _isLoading = false;
+       });
+    } else {
+      print("에러${weduResult.statusCode}");
+    }
+
+    fetchImage(addedDatas);
   }
 
   PreferredSizeWidget appbarWidget() {
@@ -325,155 +374,160 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Widget in_room_body() {
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      // shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      itemCount: inroom_datas.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return Container(
-          width: 8,
-        );
-      },
-      itemBuilder: (BuildContext context, int index) {
-        int rindex = inroom_datas.length - 1 - index;
-        return GestureDetector(
-          child: Container(
-            width: 150,
-            padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    height: 48,
-                    width: 48,
+    return FutureBuilder<void>(
+        future: fetchInWeduData(),
+        builder: (context, snapshot) {
+            return ListView.separated(
+              scrollDirection: Axis.horizontal,
+              // shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              itemCount: inroom_datas.length,
+              separatorBuilder: (BuildContext context, int index) {
+                return Container(
+                  width: 8,
+                );
+              },
+              itemBuilder: (BuildContext context, int index) {
+                int rindex = inroom_datas.length - 1 - index;
+                return GestureDetector(
+                  child: Container(
+                    width: 150,
+                    padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
                     decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        image: (inroom_datas[rindex]['imagePath'] != null)
-                            ? DecorationImage(
-                                image: NetworkImage(
-                                    inroom_datas[rindex]['imagePath']),
-                                fit: BoxFit.cover)
-                            : DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/example_logo.png')))),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        color: PeeroreumColor.subjectColor[dropdownSubjectList[
-                            inroom_datas[rindex]['subject']]]?[0],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 8),
-                        child: Text(
-                          dropdownSubjectList[inroom_datas[rindex]['subject']],
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10,
-                            color: PeeroreumColor.subjectColor[
-                                dropdownSubjectList[inroom_datas[rindex]
-                                    ['subject']]]?[1],
-                          ),
+                        border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                            height: 48,
+                            width: 48,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 1, color: PeeroreumColor.gray[200]!),
+                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                image: (inroom_datas[rindex]['imagePath'] != null)
+                                    ? DecorationImage(
+                                    image: NetworkImage(
+                                        inroom_datas[rindex]['imagePath']),
+                                    fit: BoxFit.cover)
+                                    : DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/example_logo.png')))),
+                        SizedBox(
+                          height: 16,
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Flexible(
-                      child: CustomWidgetMarquee(
-                        animationDuration: Duration(seconds: 5),
-                        pauseDuration: Duration(seconds: 1),
-                        directionOption: DirectionOption.oneDirection,
-                        child: Text(
-                          inroom_datas[rindex]["title"]!,
-                          overflow: TextOverflow.ellipsis,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(4)),
+                                color: PeeroreumColor.subjectColor[dropdownSubjectList[
+                                inroom_datas[rindex]['subject']]]?[0],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 8),
+                                child: Text(
+                                  dropdownSubjectList[inroom_datas[rindex]['subject']],
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10,
+                                    color: PeeroreumColor.subjectColor[
+                                    dropdownSubjectList[inroom_datas[rindex]
+                                    ['subject']]]?[1],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Flexible(
+                              child: CustomWidgetMarquee(
+                                animationDuration: Duration(seconds: 5),
+                                pauseDuration: Duration(seconds: 1),
+                                directionOption: DirectionOption.oneDirection,
+                                child: Text(
+                                  inroom_datas[rindex]["title"]!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: PeeroreumColor.black),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(dropdownGradeList[inroom_datas[rindex]["grade"]],
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: PeeroreumColor.gray[600])),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset(
+                                'assets/icons/dot.svg',
+                                color: PeeroreumColor.gray[600],
+                              ),
+                            ),
+                            Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: PeeroreumColor.gray[600])),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SvgPicture.asset(
+                                'assets/icons/dot.svg',
+                                color: PeeroreumColor.gray[600],
+                              ),
+                            ),
+                            Text('D-${inroom_datas[rindex]["dday"]!}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: PeeroreumColor.gray[600])),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          '${inroom_datas[rindex]["progress"]}% 달성', //이후 퍼센티지 수정
                           style: TextStyle(
                               fontFamily: 'Pretendard',
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.black),
-                        ),
-                      ),
+                              color: PeeroreumColor.primaryPuple[400]),
+                        )
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(dropdownGradeList[inroom_datas[rindex]["grade"]],
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: PeeroreumColor.gray[600])),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/dot.svg',
-                        color: PeeroreumColor.gray[600],
-                      ),
-                    ),
-                    Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: PeeroreumColor.gray[600])),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/dot.svg',
-                        color: PeeroreumColor.gray[600],
-                      ),
-                    ),
-                    Text('D-${inroom_datas[rindex]["dday"]!}',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: PeeroreumColor.gray[600])),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  '${inroom_datas[rindex]["progress"]}% 달성', //이후 퍼센티지 수정
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.primaryPuple[400]),
-                )
-              ],
-            ),
-          ),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(inroom_datas[rindex]["id"])));
-          },
-        );
-      },
-    );
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailWedu(inroom_datas[rindex]["id"])));
+                  },
+                );
+              },
+            );
+        });
+
   }
 
   Widget dropdown_body() {
@@ -534,6 +588,7 @@ class _HomeWeduState extends State<HomeWedu> {
                           setState(() {
                             selectedGrade = value;
                             grade = dropdownGradeList.indexOf(selectedGrade);
+                            fetchWeduData();
                           });
                         }),
                   ),
@@ -589,8 +644,8 @@ class _HomeWeduState extends State<HomeWedu> {
                         onChanged: (dynamic value) {
                           setState(() {
                             selectedSubject = value;
-                            subject =
-                                dropdownSubjectList.indexOf(selectedSubject);
+                            subject = dropdownSubjectList.indexOf(selectedSubject);
+                            fetchWeduData();
                           });
                         }),
                   ),
@@ -646,6 +701,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 onChanged: (dynamic value) {
                   setState(() {
                     selectedSortType = value;
+                    fetchWeduData();
                   });
                 },
               ),
@@ -658,153 +714,156 @@ class _HomeWeduState extends State<HomeWedu> {
 
   Widget listview_body() {
     return ListView.separated(
+      controller: _scrollController,
       shrinkWrap: true,
       padding: EdgeInsets.symmetric(horizontal: 20),
-      itemCount: datas.length,
+      itemCount: datas.length + (_isLoading ? 1 : 0),
       separatorBuilder: (BuildContext context, int index) {
         return Container(
           height: 8,
         );
       },
       itemBuilder: (BuildContext context, int index) {
-        return GestureDetector(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      image: (datas[index]["imagePath"] != null)
-                          ? DecorationImage(
-                              image: NetworkImage(datas[index]["imagePath"]),
-                              fit: BoxFit.cover)
-                          : DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/example_logo.png'))),
-                ),
-                SizedBox(
-                  width: 16,
-                ),
-                Flexible(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                                color: PeeroreumColor.subjectColor[
-                                    dropdownSubjectList[datas[index]
-                                        ['subject']]]?[0],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 2, horizontal: 8),
-                                child: Text(
-                                  dropdownSubjectList[datas[index]['subject']],
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10,
-                                    color: PeeroreumColor.subjectColor[
-                                        dropdownSubjectList[datas[index]
-                                            ['subject']]]?[1],
+        if(index < datas.length) {
+          return GestureDetector(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 1, color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        image: (datas[index]["imagePath"] != null)
+                            ? DecorationImage(
+                            image: NetworkImage(datas[index]["imagePath"]),
+                            fit: BoxFit.cover)
+                            : DecorationImage(
+                            image: AssetImage(
+                                'assets/images/example_logo.png'))),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Flexible(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(4)),
+                                  color: PeeroreumColor.subjectColor[
+                                  dropdownSubjectList[datas[index]
+                                  ['subject']]]?[0],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 2, horizontal: 8),
+                                  child: Text(
+                                    dropdownSubjectList[datas[index]['subject']],
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10,
+                                      color: PeeroreumColor.subjectColor[
+                                      dropdownSubjectList[datas[index]
+                                      ['subject']]]?[1],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            datas[index]['locked'].toString() == "true"
-                                ? SvgPicture.asset('assets/icons/lock.svg',
-                                    color: PeeroreumColor.gray[400], width: 12)
-                                : SizedBox(),
-                            datas[index]['locked'].toString() == "true"
-                                ? SizedBox(
-                                    width: 4,
-                                  )
-                                : SizedBox(),
-                            Flexible(
-                              child: Text(
-                                datas[index]["title"]!,
-                                style: TextStyle(
-                                    overflow: TextOverflow.ellipsis,
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: PeeroreumColor.black),
+                              SizedBox(
+                                width: 4,
                               ),
-                            ),
-                          ],
-                        ),
-                        // SizedBox(
-                        //   height: 4,
-                        // ),
-                        Row(
-                          children: [
-                            Text(dropdownGradeList[datas[index]["grade"]],
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: PeeroreumColor.gray[600])),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2.0),
-                              child: SvgPicture.asset(
-                                'assets/icons/dot.svg',
-                                color: PeeroreumColor.gray[600],
+                              datas[index]['locked'].toString() == "true"
+                                  ? SvgPicture.asset('assets/icons/lock.svg',
+                                  color: PeeroreumColor.gray[400], width: 12)
+                                  : SizedBox(),
+                              datas[index]['locked'].toString() == "true"
+                                  ? SizedBox(
+                                width: 4,
+                              )
+                                  : SizedBox(),
+                              Flexible(
+                                child: Text(
+                                  datas[index]["title"]!,
+                                  style: TextStyle(
+                                      overflow: TextOverflow.ellipsis,
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: PeeroreumColor.black),
+                                ),
                               ),
-                            ),
-                            Text('${datas[index]["attendingPeopleNum"]!}명',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: PeeroreumColor.gray[600])),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2.0),
-                              child: SvgPicture.asset(
-                                'assets/icons/dot.svg',
-                                color: PeeroreumColor.gray[600],
+                            ],
+                          ),
+                          // SizedBox(
+                          //   height: 4,
+                          // ),
+                          Row(
+                            children: [
+                              Text(dropdownGradeList[datas[index]["grade"]],
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                              Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
-                            ),
-                            Text('D-${datas[index]["dday"]!}',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: PeeroreumColor.gray[600])),
-                          ],
-                        )
-                      ]),
-                )
-              ],
+                              Text('${datas[index]["attendingPeopleNum"]!}명',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                              Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
+                              ),
+                              Text('D-${datas[index]["dday"]!}',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                            ],
+                          )
+                        ]),
+                  )
+                ],
+              ),
             ),
-          ),
-          onTap: () {
-            showModalBottomSheet(
-              backgroundColor: Colors.transparent,
-              context: context,
-              isScrollControlled: true,
-              builder: (context) {
-                return roominfo(index);
-              },
-            );
-          },
-        );
+            onTap: () {
+              showModalBottomSheet(
+                backgroundColor: Colors.transparent,
+                context: context,
+                isScrollControlled: true,
+                builder: (context) {
+                  return roominfo(index);
+                },
+              );
+            },
+          );
+        }
       },
     );
   }
@@ -1176,7 +1235,7 @@ class _HomeWeduState extends State<HomeWedu> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchDatas(),
+          future: initFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return SkeletonWedu();
@@ -1336,5 +1395,12 @@ class _HomeWeduState extends State<HomeWedu> {
             ),
           );
         });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
   }
 }
