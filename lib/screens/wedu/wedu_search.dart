@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search_result_screen.dart';
 
@@ -73,6 +74,14 @@ class _searchWeduState extends State<searchWedu> {
                 setState(() {
                   search_clear = true;
                 });
+              }
+            },
+            onSubmitted: (value) {
+              if (_searchController.text.isNotEmpty) {
+                _saveSearchHistory(_searchController.text);
+                goToSearchResult(_searchController.text);
+              } else {
+                Fluttertoast.showToast(msg: '검색어를 입력하세요.');
               }
             },
             onChanged: (value) {
