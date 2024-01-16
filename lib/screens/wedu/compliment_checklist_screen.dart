@@ -36,24 +36,24 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   }
 
   fetchStatus() async {
-    if(mounted){
-    sender = await FlutterSecureStorage().read(key: "nickname");
-    myimage = await FlutterSecureStorage().read(key: "profileImage");
-    mygrade = await FlutterSecureStorage().read(key: "grade");
-    successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
-    var here_am_i =
-        successList.where((user) => user['nickname'] == sender).toList();
-    if (here_am_i.isNotEmpty) {
-      setState(() {
-        mycheck = true;
-      });
-    } else {
-      setState(() {
-        mycheck = false;
-      });
-    }
-    successList =
-        successList.where((user) => user['nickname'] != sender).toList();
+    if (mounted) {
+      sender = await FlutterSecureStorage().read(key: "nickname");
+      myimage = await FlutterSecureStorage().read(key: "profileImage");
+      mygrade = await FlutterSecureStorage().read(key: "grade");
+      successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+      var here_am_i =
+          successList.where((user) => user['nickname'] == sender).toList();
+      if (here_am_i.isNotEmpty) {
+        setState(() {
+          mycheck = true;
+        });
+      } else {
+        setState(() {
+          mycheck = false;
+        });
+      }
+      successList =
+          successList.where((user) => user['nickname'] != sender).toList();
     }
   }
 
@@ -115,7 +115,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                               width: 4,
                             ),
                             Text(
-                              '${successList.length}',
+                              '${successList.length + (mycheck ? 1 : 0)}',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w500,
@@ -310,7 +310,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
         // width: MediaQuery.of(context).size.width,
         // height: MediaQuery.of(context).size.height-299,
         child: ListView.separated(
-          scrollDirection: Axis.vertical,
+            scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
