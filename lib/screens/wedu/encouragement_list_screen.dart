@@ -104,9 +104,9 @@ class _EncouragementListState extends State<EncouragementList> {
   }
 
   notOkList() {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height - 140,
+    return Flexible(
+        // width: MediaQuery.of(context).size.width,
+        // height: MediaQuery.of(context).size.height - 140,
         child: ListView.separated(
             itemBuilder: (BuildContext context, int index) {
               return Container(

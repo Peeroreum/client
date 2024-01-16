@@ -141,9 +141,9 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
   }
 
   Widget friends() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height-140,
+    return Flexible(
+      // width: MediaQuery.of(context).size.width,
+      // height: MediaQuery.of(context).size.height-140,
       child: ListView.separated(
         scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
