@@ -5,16 +5,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/wedu/compliment_list_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_calendar.dart';
-import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 
@@ -56,6 +53,8 @@ class _DetailWeduState extends State<DetailWedu> {
 
   bool isMyImage = true;
   bool isCreator = false;
+  bool isSuccess = false;
+  bool isDialogShow = false;
 
   @override
   void initState() {
@@ -105,17 +104,14 @@ class _DetailWeduState extends State<DetailWedu> {
           'Authorization': 'Bearer $token'
         });
     if (challengeList.statusCode == 200) {
-      successList =
-          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
-              ['successMembers'];
-      notSuccessList =
-          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
-              ['failMembers'];
+      successList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['successMembers'];
+      notSuccessList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['failMembers'];
     } else {
       print("목록${challengeList.statusCode}");
     }
 
     await fetchImages(successList);
+    checkChallenge();
   }
 
   fetchImages(List<dynamic> successList) async {
@@ -124,6 +120,11 @@ class _DetailWeduState extends State<DetailWedu> {
     List<dynamic> resultImageList = [];
     for (var index = 0; index < successList.length; index++) {
       var successOne = successList[index]['nickname'].toString();
+      if(nickname == successOne) {
+        setState(() {
+          isSuccess = true;
+        });
+      }
       var result = await http.get(
           Uri.parse(
               '${API.hostConnect}/wedu/$id/challenge/$successOne/$formatDate'),
@@ -139,6 +140,115 @@ class _DetailWeduState extends State<DetailWedu> {
       }
     }
     challengeImageList = resultImageList;
+  }
+
+  checkChallenge() {
+    if(!isSuccess && !isDialogShow) {
+      isDialogShow = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                insetPadding: EdgeInsets.symmetric(horizontal: 20),
+                contentPadding: EdgeInsets.all(20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                backgroundColor: PeeroreumColor.white,
+                surfaceTintColor: Colors.transparent,
+                content: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(width: 24,),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                '오늘의 미션',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 20,
+                                    color: PeeroreumColor.black
+                                ),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: SvgPicture.asset('assets/icons/x.svg', color: PeeroreumColor.black,),
+                          )
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 96,
+                              width: 106,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                        'assets/images/yeolgong_oreum.png',
+                                      ),
+                                      fit: BoxFit.cover
+                                  )
+                              ),
+                            ),
+                            SizedBox(height: 16,),
+                            Text(
+                              weduChallenge,
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  color: PeeroreumColor.black
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showDoChallengeBottomSheet();
+                        },
+                        child: Container(
+                          height: 48,
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                            color: PeeroreumColor.primaryPuple[400],
+                            borderRadius: BorderRadius.circular(8)
+                          ),
+                          child: Center(
+                            child: Text(
+                              '지금 인증하러 가기',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: PeeroreumColor.white
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }
+        );
+      });
+    }
   }
 
   void takeFromCamera() async {
@@ -292,107 +402,7 @@ class _DetailWeduState extends State<DetailWedu> {
               height: 48,
               child: TextButton(
                 onPressed: () {
-                  _images.clear();
-                  showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: PeeroreumColor.white, // 여기에 색상 지정
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.0),
-                              topRight: Radius.circular(16.0),
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                '인증 방식을 선택하세요.',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.gray[800],
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(20),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          takeFromCamera();
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          '카메라',
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: PeeroreumColor.white,
-                                          ),
-                                        ),
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    PeeroreumColor
-                                                        .primaryPuple[400]),
-                                            padding: MaterialStateProperty.all(
-                                                EdgeInsets.all(12)),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ))),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          takeFromGallery();
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          '갤러리',
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: PeeroreumColor.white,
-                                          ),
-                                        ),
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    PeeroreumColor
-                                                        .primaryPuple[400]),
-                                            padding: MaterialStateProperty.all(
-                                                EdgeInsets.all(12)),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ))),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      });
+                  showDoChallengeBottomSheet();
                 },
                 child: Text(
                   '인증하기',
@@ -1651,5 +1661,109 @@ class _DetailWeduState extends State<DetailWedu> {
     } else {
       print("같이방 삭제 실패 ${result.statusCode}");
     }
+  }
+
+  void showDoChallengeBottomSheet() {
+    _images.clear();
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: PeeroreumColor.white, // 여기에 색상 지정
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '인증 방식을 선택하세요.',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.gray[800],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            takeFromCamera();
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '카메라',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.white,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all(
+                                  PeeroreumColor
+                                      .primaryPuple[400]),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(8.0),
+                                  ))),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            takeFromGallery();
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '갤러리',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.white,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all(
+                                  PeeroreumColor
+                                      .primaryPuple[400]),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(8.0),
+                                  ))),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 }
