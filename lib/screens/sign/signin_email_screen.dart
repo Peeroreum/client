@@ -490,7 +490,7 @@ class _EmailSignInState extends State<EmailSignIn> {
         headers: {'Content-Type': 'application/json'});
 
     if (result.statusCode == 200) {
-      var data = jsonDecode(result.body)['data'];
+      var data = jsonDecode(utf8.decode(result.bodyBytes))['data'];
       secureStorage.write(key: "accessToken", value: data['accessToken']);
       secureStorage.write(key: "email", value: data['email']);
       secureStorage.write(key: "nickname", value: data['nickname']);
