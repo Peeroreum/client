@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -1174,7 +1175,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
-              onPressed: () {
+              onPressed: () async{
                 if ((is_friend == true) && (am_i == false)) {
                   unfollow();
                   print('친구 언팔로우 프린트 메세지입니다');
@@ -1183,7 +1184,31 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   print('친구 팔로우 프린트 메세지 입니다');
                 } else if ((is_friend == false) && (am_i == true)) {
                   print('프로필 공유');
-                  Fluttertoast.showToast(msg: "복사되었습니다");
+                  //Fluttertoast.showToast(msg: "복사되었습니다");
+                    final UserName = nickname;
+                    int templateId = 102993;
+                    // 카카오톡 실행 가능 여부 확인
+                    bool isKakaoTalkSharingAvailable = await ShareClient.instance.isKakaoTalkSharingAvailable();
+
+                    if (isKakaoTalkSharingAvailable) {
+                      try {
+                        Uri uri =
+                            await ShareClient.instance.shareCustom(templateId: templateId, templateArgs: {'UserName': '$UserName'}
+                            );
+                        await ShareClient.instance.launchKakaoTalk(uri);
+                        print('카카오톡 공유 완료');
+                      } catch (error) {
+                        print('카카오톡 공유 실패 $error');
+                      }
+                    } else {
+                      try {
+                        Uri shareUrl = await WebSharerClient.instance.makeCustomUrl(
+                            templateId: templateId, templateArgs: {'UserName': '$UserName'}, );
+                        await launchBrowserTab(shareUrl, popupOpen: true);
+                      } catch (error) {
+                        print('카카오톡 공유 실패 $error');
+                      }
+                    }
                 } else {
                   print('error');
                 }
