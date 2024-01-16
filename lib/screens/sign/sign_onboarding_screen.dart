@@ -94,8 +94,9 @@ class _OnBoardingState extends State<OnBoarding> {
           Visibility(
             visible: _isVisible,
             child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 42),
               width: double.maxFinite,
+              height: 48,
               child: TextButton(
                 onPressed: () {
                   _controller.nextPage();
@@ -124,43 +125,11 @@ class _OnBoardingState extends State<OnBoarding> {
             ),
           ),
           Visibility(
-            visible: _isVisible,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 8),
-              width: double.maxFinite,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isVisible = false;
-                  });
-                  _controller.jumpToPage(2);
-                },
-                child: Text(
-                  '건너뛰기',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.gray[600],
-                  ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                  padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Visibility(
             visible: !_isVisible,
             child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 56),
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 42),
               width: double.maxFinite,
+              height: 48,
               child: TextButton(
                 onPressed: () async{
                   await OnboardingCheck.setUserType(false);
