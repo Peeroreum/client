@@ -22,59 +22,19 @@ class _OnBoardingState extends State<OnBoarding> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
-      body: Stack(
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 40),
-            child: Center(
-              
-            child: CarouselSlider(
-              items: [
-                buildCarouselItem(
-                  '“같이 공부할 친구가 필요하다면?”',
-                  '친구와 함께 공동 목표를 세워\n''챌린지를 시작해 보세요. ',
-                  'assets/images/onBoarding1.png',
-                ),
-                buildCarouselItem(
-                  '“친구야, 도와줘!”',
-                  '모르는 문제를 친구에게 물어보고,\n''다른 친구의 문제도 풀어보아요.',
-                  'assets/images/onBoarding2.png',
-                ),
-                buildCarouselItem(
-                  '“중요한 건 꾸준히 하는 마음!”',
-                  '공부 시간, 질문 답변 수, 목표 달성률에 따라\n''달라지는 내 순위를 확인해 보세요.',
-                  'assets/images/onBoarding3.png',
-                ),
-              ],
-              carouselController: _controller,
-              options: CarouselOptions(
-                height: 541,
-                viewportFraction: 1,
-                enableInfiniteScroll: false,
-                scrollDirection: Axis.horizontal,
-                onPageChanged: (index, reason) {
-                  pageIndex = index;
-                  print('Current Page Index: $pageIndex');
-                  if (index == 2) {
-                    setState(() {
-                      _isVisible = false;
-                    });
-                  } else{
-                    setState(() {
-                      _isVisible = true;
-                    });
-                  }
-                },
-              ),
-            ),
-                  ),
-          ),
-        Positioned(
-          left: 0,
-          right: 0,
-          top: -600,
-          bottom: 0,
-          child: DotsIndicator(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(20),
+        child: AppBar(
+          backgroundColor: PeeroreumColor.white,
+          elevation: 0,
+        )
+        ),
+      body: 
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              //SizedBox(),
+              DotsIndicator(
               position: pageIndex,
               dotsCount: 3,
               decorator: DotsDecorator(
@@ -85,9 +45,54 @@ class _OnBoardingState extends State<OnBoarding> {
                 activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
               ),
             ),
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Center(
+                  
+                child: CarouselSlider(
+                  items: [
+                    buildCarouselItem(
+                      '“같이 공부할 친구가 필요하다면?”',
+                      '친구와 함께 공동 목표를 세워\n''챌린지를 시작해 보세요. ',
+                      'assets/images/onBoarding1.png',
+                    ),
+                    buildCarouselItem(
+                      '“친구야, 도와줘!”',
+                      '모르는 문제를 친구에게 물어보고,\n''다른 친구의 문제도 풀어보아요.',
+                      'assets/images/onBoarding2.png',
+                    ),
+                    buildCarouselItem(
+                      '“중요한 건 꾸준히 하는 마음!”',
+                      '공부 시간, 질문 답변 수, 목표 달성률에 따라\n''달라지는 내 순위를 확인해 보세요.',
+                      'assets/images/onBoarding3.png',
+                    ),
+                  ],
+                  carouselController: _controller,
+                  options: CarouselOptions(
+                    height: 541,
+                    viewportFraction: 1,
+                    enableInfiniteScroll: false,
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index, reason) {
+                      pageIndex = index;
+                      print('Current Page Index: $pageIndex');
+                      if (index == 2) {
+                        setState(() {
+                          _isVisible = false;
+                        });
+                      } else{
+                        setState(() {
+                          _isVisible = true;
+                        });
+                      }
+                    },
+                  ),
+                ),
+                      ),
+              ),
+            ],
           ),
-        ]
-      ),
+
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
