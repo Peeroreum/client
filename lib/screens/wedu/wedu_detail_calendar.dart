@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -867,7 +865,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 enableInfiniteScroll: false,
                 viewportFraction: 1,
                 height: 380,
-                enlargeCenterPage: true,
+                enlargeCenterPage: false,
               ),
             ),
             SizedBox(
