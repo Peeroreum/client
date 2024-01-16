@@ -17,12 +17,15 @@ class _EncouragementListState extends State<EncouragementList> {
     return Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
-          elevation: 0,
           backgroundColor: PeeroreumColor.white,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
           leading: IconButton(
             icon: SvgPicture.asset(
               'assets/icons/x.svg',
               color: PeeroreumColor.gray[800],
+              width: 18,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -43,6 +46,7 @@ class _EncouragementListState extends State<EncouragementList> {
                 icon: SvgPicture.asset(
                   'assets/icons/icon_dots_mono.svg',
                   color: PeeroreumColor.gray[800],
+                  width: 24,
                 ))
           ],
         ),

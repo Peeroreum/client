@@ -50,12 +50,12 @@ class _OnBoardingState extends State<OnBoarding> {
                   items: [
                     buildCarouselItem(
                       '“같이 공부할 친구가 필요하다면?”',
-                      '친구와 함께 공동 목표를 세워\n챌린지를 시작해 보세요. ',
+                      '친구와 함께 공동 목표를 세워\n챌린지를 시작해 보세요.',
                       'assets/images/onBoarding1.png',
                     ),
                     buildCarouselItem(
                       '“친구야, 도와줘!”',
-                      '모르는 문제를 친구에게 물어보고,\n다른 친구의 문제도 풀어보아요.',
+                      '모르는 문제를 친구에게 물어보고,\n다른 친구의 문제도 풀어 봐요.',
                       'assets/images/onBoarding2.png',
                     ),
                     buildCarouselItem(

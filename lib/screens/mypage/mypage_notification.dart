@@ -41,7 +41,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
 
   getNotificationSetting() async {
     List<String>? setTypes = await NotificationSetting.getNotificationType();
-    setTypes ??= ["false", "false", "false", "false"];
+    setTypes ??= ["true", "true", "true", "true"];
 
     setState(() {
       _allChecked = setTypes![0] == "true";

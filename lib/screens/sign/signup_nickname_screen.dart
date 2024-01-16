@@ -123,6 +123,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                   width: MediaQuery.of(context).size.width,
                   child: TextFormField(
                       controller: nicknameController,
+                      scrollPadding: EdgeInsets.only(bottom: 400),
                       onTap: () {
                         setState(() {
                           nickname_focus = true;

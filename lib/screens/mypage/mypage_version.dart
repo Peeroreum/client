@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 class MyPageVersion extends StatefulWidget {
@@ -76,19 +78,34 @@ class _MyPageVersionState extends State<MyPageVersion> {
                 color: PeeroreumColor.gray[200]!,
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  '오류신고',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.gray[800],
+            child: GestureDetector(
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: 'peeroreum.help@gmail.com'));
+                Fluttertoast.showToast(msg: '클립보드에 복사되었습니다.');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '문의하기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.gray[800],
+                    ),
                   ),
-                ),
-              ],
+                  Text(
+                    'peeroreum.help@gmail.com',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: PeeroreumColor.gray[600],
+                  )
+                  )
+                ],
+              ),
             ),
           ),
         ],

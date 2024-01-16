@@ -36,7 +36,6 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   }
 
   fetchStatus() async {
-    if (mounted) {
       sender = await FlutterSecureStorage().read(key: "nickname");
       myimage = await FlutterSecureStorage().read(key: "profileImage");
       mygrade = await FlutterSecureStorage().read(key: "grade");
@@ -44,17 +43,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
       var here_am_i =
           successList.where((user) => user['nickname'] == sender).toList();
       if (here_am_i.isNotEmpty) {
-        setState(() {
-          mycheck = true;
-        });
+        mycheck = true;
       } else {
-        setState(() {
-          mycheck = false;
-        });
+        mycheck = false;
       }
-      successList =
-          successList.where((user) => user['nickname'] != sender).toList();
-    }
+      successList = successList.where((user) => user['nickname'] != sender).toList();
   }
 
   @override
@@ -68,6 +61,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
             icon: SvgPicture.asset(
               'assets/icons/x.svg',
               color: PeeroreumColor.gray[800],
+              width: 18,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -88,6 +82,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 icon: SvgPicture.asset(
                   'assets/icons/icon_dots_mono.svg',
                   color: PeeroreumColor.gray[800],
+                  width: 24,
                 ))
           ],
         ),

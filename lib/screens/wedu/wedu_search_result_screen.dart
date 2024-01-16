@@ -345,7 +345,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                 ? SvgPicture.asset('assets/icons/lock.svg',
                                     color: PeeroreumColor.gray[400], width: 12)
                                 : Container(),
-                            // SizedBox(width: 4),
+                            datas[index]['locked'].toString() == "true"
+                                ?  SizedBox(width: 4) : SizedBox(),
                             Flexible(
                               child: Text(
                                 datas[index]["title"]!,
@@ -486,6 +487,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   ? SvgPicture.asset('assets/icons/lock.svg',
                                       color: PeeroreumColor.gray[400])
                                   : SizedBox(),
+                              datas[index]['locked'].toString() == "true"
+                                  ? SizedBox(width: 4) : SizedBox(),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
                                         "true"

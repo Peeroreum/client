@@ -385,25 +385,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
             TextButton(
               onPressed: () {
-                profileImage_change(context);
-              },
-              style: TextButton.styleFrom(
-                minimumSize: Size.fromHeight(40),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all(0),
-              ),
-              child: Text(
-                '프로필 사진 변경',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.black,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
                 setState(() {
                   nickname_change();
                 });
@@ -415,6 +396,25 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               child: Text(
                 '닉네임 변경',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: PeeroreumColor.black,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                profileImage_change(context);
+              },
+              style: TextButton.styleFrom(
+                minimumSize: Size.fromHeight(40),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+              ),
+              child: Text(
+                '프로필 사진 변경',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 18,

@@ -40,32 +40,19 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
   }
 
   fetchStatus() async {
-    if (mounted) {
       sender = await FlutterSecureStorage().read(key: "nickname");
       myimage = await FlutterSecureStorage().read(key: "profileImage");
       mygrade = await FlutterSecureStorage().read(key: "grade");
-      notSuccessList =
-          ModalRoute.of(context)!.settings.arguments as List<dynamic>;
-      var here_am_i =
-          notSuccessList.where((user) => user['nickname'] == sender).toList();
+      notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+      var here_am_i = notSuccessList.where((user) => user['nickname'] == sender).toList();
 
       if (here_am_i.isNotEmpty) {
-        if (mounted) {
-          setState(() {
-            mycheck = true;
-          });
-        }
+        mycheck = true;
       } else {
-        if (mounted) {
-          setState(() {
-            mycheck = false;
-          });
-        }
+        mycheck = false;
       }
 
-      notSuccessList =
-          notSuccessList.where((user) => user['nickname'] != sender).toList();
-    }
+      notSuccessList = notSuccessList.where((user) => user['nickname'] != sender).toList();
   }
 
   @override
@@ -79,6 +66,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
           icon: SvgPicture.asset(
             'assets/icons/x.svg',
             color: PeeroreumColor.gray[800],
+            width: 18,
           ),
           onPressed: () {
             Navigator.of(context).pop();
@@ -99,6 +87,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
               icon: SvgPicture.asset(
                 'assets/icons/icon_dots_mono.svg',
                 color: PeeroreumColor.gray[800],
+                width: 24,
               ))
         ],
       ),

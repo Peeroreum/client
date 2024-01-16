@@ -1279,7 +1279,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   physics: AlwaysScrollableScrollPhysics(),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
+                    height: (MediaQuery.of(context).size.height - 52 - 64 - 24 - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom),
                     child: bodyWidget(),
                   ),
                 ),
