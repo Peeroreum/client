@@ -40,241 +40,245 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
   }
 
   fetchStatus() async {
-    if(mounted){
-    sender = await FlutterSecureStorage().read(key: "nickname");
-    myimage = await FlutterSecureStorage().read(key: "profileImage");
-    mygrade = await FlutterSecureStorage().read(key: "grade");
-    notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
-    var here_am_i = notSuccessList.where((user) => user['nickname'] == sender).toList();
-    
-    if (here_am_i.isNotEmpty) {
-      if (mounted) {
-        setState(() {
-          mycheck = true;
-        });
+    if (mounted) {
+      sender = await FlutterSecureStorage().read(key: "nickname");
+      myimage = await FlutterSecureStorage().read(key: "profileImage");
+      mygrade = await FlutterSecureStorage().read(key: "grade");
+      notSuccessList =
+          ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+      var here_am_i =
+          notSuccessList.where((user) => user['nickname'] == sender).toList();
+
+      if (here_am_i.isNotEmpty) {
+        if (mounted) {
+          setState(() {
+            mycheck = true;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            mycheck = false;
+          });
+        }
       }
-    } else {
-      if (mounted) {
-        setState(() {
-          mycheck = false;
-        });
-      }
+
+      notSuccessList =
+          notSuccessList.where((user) => user['nickname'] != sender).toList();
     }
-    
-    notSuccessList =
-        notSuccessList.where((user) => user['nickname'] != sender).toList();
-  }}
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: PeeroreumColor.white,
+      appBar: AppBar(
+        elevation: 0,
         backgroundColor: PeeroreumColor.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: PeeroreumColor.white,
-          leading: IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/x.svg',
-              color: PeeroreumColor.gray[800],
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/icons/x.svg',
+            color: PeeroreumColor.gray[800],
           ),
-          title: Text(
-            '미달성',
-            style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w500,
-                fontSize: 20,
-                color: PeeroreumColor.black),
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(
-                  'assets/icons/icon_dots_mono.svg',
-                  color: PeeroreumColor.gray[800],
-                ))
-          ],
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: FutureBuilder<void>(
-            future: fetchStatus(),
-            builder: (context, snapshot) {
-              return SizedBox(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                '전체',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: PeeroreumColor.gray[500]),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Text(
-                                '${notSuccessList.length}',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: PeeroreumColor.gray[500]),
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                '명',
-                                style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: PeeroreumColor.gray[500]),
-                              ),
-                            ],
-                          ),
-                          TextButton.icon(
-                            onPressed: () {
-                              for (int i = 0; i < isCheckedList.length; i++) {
-                                if (isActiveList[i] == true) {
-                                  if (isCheckedList[i] == false) {
-                                    setState(() {
-                                      isCheckedList[i] = true;
-                                    });
-                                  }
-                                }
-                              }
-                            },
-                            icon: SvgPicture.asset(
-                              'assets/icons/check.svg',
-                              color: PeeroreumColor.gray[500],
-                            ),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.only(right: 0),
-                            ),
-                            label: Text(
-                              '전체선택',
+        title: Text(
+          '미달성',
+          style: TextStyle(
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w500,
+              fontSize: 20,
+              color: PeeroreumColor.black),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset(
+                'assets/icons/icon_dots_mono.svg',
+                color: PeeroreumColor.gray[800],
+              ))
+        ],
+      ),
+      body: FutureBuilder<void>(
+          future: fetchStatus(),
+          builder: (context, snapshot) {
+            return SizedBox(
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '전체',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[500]),
                             ),
-                          )
-                        ],
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              '${notSuccessList.length + (mycheck ? 1 : 0)}',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: PeeroreumColor.gray[500]),
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              '명',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: PeeroreumColor.gray[500]),
+                            ),
+                          ],
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            for (int i = 0; i < isCheckedList.length; i++) {
+                              if (isActiveList[i] == true) {
+                                if (isCheckedList[i] == false) {
+                                  setState(() {
+                                    isCheckedList[i] = true;
+                                  });
+                                }
+                              }
+                            }
+                          },
+                          icon: SvgPicture.asset(
+                            'assets/icons/check.svg',
+                            color: PeeroreumColor.gray[500],
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.only(right: 0),
+                          ),
+                          label: Text(
+                            '전체선택',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: PeeroreumColor.gray[500]),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    color: PeeroreumColor.gray[100],
+                    thickness: 1,
+                    height: 8,
+                  ),
+                  mycheck ? notOkMe() : Container(),
+                  mycheck
+                      ? Divider(
+                          thickness: 1,
+                          color: PeeroreumColor.gray[100],
+                          height: 8,
+                        )
+                      : Container(),
+                  notOkList(),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+                    child: SizedBox(
+                      height: 48,
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () {
+                          for (int i = 0; i < isCheckedList.length; i++) {
+                            if (isActiveList[i] == true) {
+                              if (isCheckedList[i]) {
+                                setState(() {
+                                  // _isChecked 값이 true인 경우에만 isActive를 false로 설정
+                                  isActiveList[i] = false;
+                                  receiverList
+                                      .add(notSuccessList[i]['nickname']);
+                                });
+                              }
+                            }
+                          }
+                          sendNotification();
+                        },
+                        child: Text(
+                          '독려하기',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.white,
+                          ),
+                        ),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                PeeroreumColor.primaryPuple[400]),
+                            padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(vertical: 12)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ))),
                       ),
                     ),
-                    Divider(
-                      color: PeeroreumColor.gray[100],
-                      thickness: 1,
-                      height: 8,
-                    ),
-                    mycheck ? notOkMe() : Container(),
-                    mycheck
-                        ? Divider(
-                            thickness: 1,
-                            color: PeeroreumColor.gray[100],
-                            height: 8,
-                          )
-                        : Container(),
-                    notOkList(),
-                    Container(
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-          child: SizedBox(
-            height: 48,
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () {
-                for (int i = 0; i < isCheckedList.length; i++) {
-                  if (isActiveList[i] == true) {
-                    if (isCheckedList[i]) {
-                      setState(() {
-                        // _isChecked 값이 true인 경우에만 isActive를 false로 설정
-                        isActiveList[i] = false;
-                        receiverList.add(notSuccessList[i]['nickname']);
-                      });
-                    }
-                  }
-                }
-                sendNotification();
-              },
-              child: Text(
-                '독려하기',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: PeeroreumColor.white,
-                ),
+                  )
+                ],
               ),
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      PeeroreumColor.primaryPuple[400]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ))),
-            ),
-          ),
-        )
-                  ],
-                ),
-              );
-            }),
-        // bottomNavigationBar: Container(
-        //   padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-        //   child: SizedBox(
-        //     height: 48,
-        //     child: TextButton(
-        //       onPressed: () {
-        //         for (int i = 0; i < isCheckedList.length; i++) {
-        //           if (isActiveList[i] == true) {
-        //             if (isCheckedList[i]) {
-        //               setState(() {
-        //                 // _isChecked 값이 true인 경우에만 isActive를 false로 설정
-        //                 isActiveList[i] = false;
-        //                 receiverList.add(notSuccessList[i]['nickname']);
-        //               });
-        //             }
-        //           }
-        //         }
-        //         sendNotification();
-        //       },
-        //       child: Text(
-        //         '독려하기',
-        //         style: TextStyle(
-        //           fontFamily: 'Pretendard',
-        //           fontSize: 16,
-        //           fontWeight: FontWeight.w600,
-        //           color: PeeroreumColor.white,
-        //         ),
-        //       ),
-        //       style: ButtonStyle(
-        //           backgroundColor: MaterialStateProperty.all(
-        //               PeeroreumColor.primaryPuple[400]),
-        //           padding: MaterialStateProperty.all(
-        //               EdgeInsets.symmetric(vertical: 12)),
-        //           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        //               RoundedRectangleBorder(
-        //             borderRadius: BorderRadius.circular(8.0),
-        //           ))),
-        //     ),
-        //   ),
-        // )
-        );
+            );
+          }),
+      // bottomNavigationBar: Container(
+      //   padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+      //   child: SizedBox(
+      //     height: 48,
+      //     child: TextButton(
+      //       onPressed: () {
+      //         for (int i = 0; i < isCheckedList.length; i++) {
+      //           if (isActiveList[i] == true) {
+      //             if (isCheckedList[i]) {
+      //               setState(() {
+      //                 // _isChecked 값이 true인 경우에만 isActive를 false로 설정
+      //                 isActiveList[i] = false;
+      //                 receiverList.add(notSuccessList[i]['nickname']);
+      //               });
+      //             }
+      //           }
+      //         }
+      //         sendNotification();
+      //       },
+      //       child: Text(
+      //         '독려하기',
+      //         style: TextStyle(
+      //           fontFamily: 'Pretendard',
+      //           fontSize: 16,
+      //           fontWeight: FontWeight.w600,
+      //           color: PeeroreumColor.white,
+      //         ),
+      //       ),
+      //       style: ButtonStyle(
+      //           backgroundColor: MaterialStateProperty.all(
+      //               PeeroreumColor.primaryPuple[400]),
+      //           padding: MaterialStateProperty.all(
+      //               EdgeInsets.symmetric(vertical: 12)),
+      //           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      //               RoundedRectangleBorder(
+      //             borderRadius: BorderRadius.circular(8.0),
+      //           ))),
+      //     ),
+      //   ),
+      // )
+    );
   }
 
   notOkMe() {
