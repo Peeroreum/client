@@ -33,7 +33,6 @@ class _OnBoardingState extends State<OnBoarding> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              //SizedBox(),
               DotsIndicator(
               position: pageIndex,
               dotsCount: 3,
@@ -42,34 +41,32 @@ class _OnBoardingState extends State<OnBoarding> {
                 activeColor: PeeroreumColor.primaryPuple[400],
                 size: Size.square(8),
                 activeSize: const Size(20, 8),
-                activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
               ),
             ),
               Container(
                 margin: EdgeInsets.only(top: 20),
-                child: Center(
-                  
                 child: CarouselSlider(
                   items: [
                     buildCarouselItem(
                       '“같이 공부할 친구가 필요하다면?”',
-                      '친구와 함께 공동 목표를 세워\n''챌린지를 시작해 보세요. ',
+                      '친구와 함께 공동 목표를 세워\n챌린지를 시작해 보세요. ',
                       'assets/images/onBoarding1.png',
                     ),
                     buildCarouselItem(
                       '“친구야, 도와줘!”',
-                      '모르는 문제를 친구에게 물어보고,\n''다른 친구의 문제도 풀어보아요.',
+                      '모르는 문제를 친구에게 물어보고,\n다른 친구의 문제도 풀어보아요.',
                       'assets/images/onBoarding2.png',
                     ),
                     buildCarouselItem(
                       '“중요한 건 꾸준히 하는 마음!”',
-                      '공부 시간, 질문 답변 수, 목표 달성률에 따라\n''달라지는 내 순위를 확인해 보세요.',
+                      '공부 시간, 질문 답변 수, 목표 달성률에 따라\n달라지는 내 순위를 확인해 보세요.',
                       'assets/images/onBoarding3.png',
                     ),
                   ],
                   carouselController: _controller,
                   options: CarouselOptions(
-                    height: 541,
+                    height: 550,
                     viewportFraction: 1,
                     enableInfiniteScroll: false,
                     scrollDirection: Axis.horizontal,
@@ -88,7 +85,6 @@ class _OnBoardingState extends State<OnBoarding> {
                     },
                   ),
                 ),
-                      ),
               ),
             ],
           ),
@@ -99,7 +95,7 @@ class _OnBoardingState extends State<OnBoarding> {
           Visibility(
             visible: _isVisible,
             child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 42),
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 28),
               width: double.maxFinite,
               height: 48,
               child: TextButton(
@@ -132,7 +128,7 @@ class _OnBoardingState extends State<OnBoarding> {
           Visibility(
             visible: !_isVisible,
             child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 42),
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 28),
               width: double.maxFinite,
               height: 48,
               child: TextButton(
@@ -170,10 +166,10 @@ class _OnBoardingState extends State<OnBoarding> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Image.asset(imagePath, width: 350, height: 432),
-          SizedBox(height: 21,),
+          SizedBox(height: 20,),
           Text(
             title,
             style: TextStyle(
@@ -183,7 +179,7 @@ class _OnBoardingState extends State<OnBoarding> {
               color: PeeroreumColor.black,
             ),
           ),
-          SizedBox(height: 16,),
+          SizedBox(height: 16),
           Text(
             description,
             style: TextStyle(
@@ -192,6 +188,7 @@ class _OnBoardingState extends State<OnBoarding> {
               fontWeight: FontWeight.w400,
               color: PeeroreumColor.gray[400],
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
