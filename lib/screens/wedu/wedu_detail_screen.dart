@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
@@ -687,7 +686,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                 vertical: 4, horizontal: 8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              color: Color.fromARGB(100, 0, 0, 0),
+                              color: Color.fromARGB(60, 0, 0, 0),
                             ),
                             child: Text(
                               '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
@@ -706,7 +705,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 enableInfiniteScroll: false,
                 viewportFraction: 1,
                 height: 380,
-                enlargeCenterPage: true,
+                enlargeCenterPage: false,
               ),
             ),
             SizedBox(
@@ -880,7 +879,8 @@ class _DetailWeduState extends State<DetailWedu> {
                             child: LinearPercentIndicator(
                               padding: EdgeInsets.all(0),
                               lineHeight: 8,
-                              animationDuration: 2000,
+                              animation: true,
+                              animationDuration: 500,
                               percent: percent,
                               backgroundColor: PeeroreumColor.gray[200],
                               linearGradient: LinearGradient(colors: [
@@ -1026,7 +1026,18 @@ class _DetailWeduState extends State<DetailWedu> {
                                     ),
                                   ),
                                 ),
-                                Image.asset('assets/images/wedu_mission.png'),
+                                Container(
+                                  height: 96,
+                                  width: 106,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                            'assets/images/yeolgong_oreum.png',
+                                          ),
+                                          fit: BoxFit.cover
+                                      )
+                                  ),
+                                ),
                               ],
                             ),
                           ),
