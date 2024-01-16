@@ -1274,6 +1274,7 @@ class _HomeWeduState extends State<HomeWedu> {
             } else {
               return RefreshIndicator(
                 onRefresh: () => fetchDatas(),
+                color: PeeroreumColor.primaryPuple[400],
                 child: SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
                   child: SizedBox(
