@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:peeroreum_client/data/Onboarding_check.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
@@ -55,7 +56,17 @@ void main() async {
   KakaoSdk.init(nativeAppKey: nativeAppKey);
   bool isLoggedIn = await checkLogIn();
   String? firebaseToken = await fcmSetting();
-  runApp(PeeroreumApp(isLoggedIn, firebaseToken!));
+  //await OnboardingCheck.setUserType(true); // 처음에 값 설정
+  bool? isNewUser = await checkUser();
+  runApp(PeeroreumApp(isLoggedIn, firebaseToken!,isNewUser!));
+}
+
+Future<bool> checkUser() async{
+  bool? isnewhere = await OnboardingCheck.getUserType();
+  if (isnewhere != false){
+    isnewhere = true;
+  }
+  return isnewhere!;
 }
 
 Future<bool> checkLogIn() async {
@@ -66,8 +77,9 @@ Future<bool> checkLogIn() async {
 
 class PeeroreumApp extends StatelessWidget {
   bool isLoggedIn;
+  bool isNewUser;
   String firebaseToken;
-  PeeroreumApp(this.isLoggedIn, this.firebaseToken, {super.key});
+  PeeroreumApp(this.isLoggedIn, this.firebaseToken,this.isNewUser, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -86,7 +98,9 @@ class PeeroreumApp extends StatelessWidget {
           )
       ),
       title: 'Peeroreum',
-      home: isLoggedIn? bottomNaviBar(firebaseToken) : EmailSignIn(),
+      home: isNewUser
+      ? OnBoarding()
+      : (isLoggedIn? bottomNaviBar(firebaseToken) : EmailSignIn()),
       // initialRoute: isLoggedIn? '/home' : '/signIn/email',
       routes: {
         '/signIn': (context) => SignIn(),
