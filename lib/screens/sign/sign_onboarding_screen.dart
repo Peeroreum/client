@@ -186,7 +186,7 @@ class _OnBoardingState extends State<OnBoarding> {
               fontFamily: 'Pretendard',
               fontSize: 18,
               fontWeight: FontWeight.w400,
-              color: PeeroreumColor.gray[400],
+              color: PeeroreumColor.gray[700],
             ),
             textAlign: TextAlign.center,
           ),
