@@ -1,4 +1,4 @@
-package com.example.peeroreum_client
+package com.peeroreum.peeroreum_client
 
 import io.flutter.embedding.android.FlutterActivity
 

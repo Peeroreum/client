@@ -64,6 +64,50 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984740225939:android:32b22cb012110de3e3be66",
+        "android_client_info": {
+          "package_name": "com.peeroreum.peeroreum_client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984740225939-772fb6791icka45kvqk4olkkio69dp0t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.peeroreum.peeroreum_client",
+            "certificate_hash": "08fe0fb813be270f1926648a84efa367fa54fb4c"
+          }
+        },
+        {
+          "client_id": "984740225939-90rmjde1dta2gjir2lpc9ae7ini6e6so.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xay-u3aox_CvIpJSNF7woWwLi3bVjlY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984740225939-90rmjde1dta2gjir2lpc9ae7ini6e6so.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "984740225939-02sqnjvc9hr1lierr8mgrgrhph7cu8l9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.peeroreumClient"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
