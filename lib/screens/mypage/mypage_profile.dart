@@ -1323,7 +1323,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              Fluttertoast.showToast(msg: "준비 중입니다.");
+              // Fluttertoast.showToast(msg: "준비 중입니다.");
             },
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),

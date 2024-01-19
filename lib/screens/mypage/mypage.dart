@@ -255,48 +255,48 @@ class _MyPageState extends State<MyPage> {
             ],
           ),
         ),
-        TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '내 질의응답',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
-                ),
-              ),
-            ],
-          ),
-        ),
-        TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '스크랩',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
-                ),
-              ),
-            ],
-          ),
-        ),
+        // TextButton(
+        //   onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
+        //   style: TextButton.styleFrom(
+        //       minimumSize: Size.fromHeight(56),
+        //       padding: EdgeInsets.symmetric(horizontal: 20)
+        //   ),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.start,
+        //     children: [
+        //       Text(
+        //         '내 질의응답',
+        //         style: TextStyle(
+        //           color: PeeroreumColor.gray[800],
+        //           fontSize: 16,
+        //           fontWeight: FontWeight.w600,
+        //           fontFamily: 'Pretendard',
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        // TextButton(
+        //   onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
+        //   style: TextButton.styleFrom(
+        //       minimumSize: Size.fromHeight(56),
+        //       padding: EdgeInsets.symmetric(horizontal: 20)
+        //   ),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.start,
+        //     children: [
+        //       Text(
+        //         '스크랩',
+        //         style: TextStyle(
+        //           color: PeeroreumColor.gray[800],
+        //           fontSize: 16,
+        //           fontWeight: FontWeight.w600,
+        //           fontFamily: 'Pretendard',
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
@@ -354,28 +354,28 @@ class _MyPageState extends State<MyPage> {
             ],
           ),
         ),
-        TextButton(
-          onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '멤버십/구독 관리',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
-                ),
-              ),
-            ],
-          ),
-        ),
+        // TextButton(
+        //   onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
+        //   style: TextButton.styleFrom(
+        //       minimumSize: Size.fromHeight(56),
+        //       padding: EdgeInsets.symmetric(horizontal: 20)
+        //
+        //   ),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.start,
+        //     children: [
+        //       Text(
+        //         '멤버십/구독 관리',
+        //         style: TextStyle(
+        //           color: PeeroreumColor.gray[800],
+        //           fontSize: 16,
+        //           fontWeight: FontWeight.w600,
+        //           fontFamily: 'Pretendard',
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
