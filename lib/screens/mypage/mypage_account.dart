@@ -98,13 +98,17 @@ class _MyPageAccountState extends State<MyPageAccount> {
                           SizedBox(
                             height: 4,
                           ),
-                          Text(
-                            email ?? 'error@mail.com',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: PeeroreumColor.gray[600],
+                          Container(
+                            width: 250,
+                            child: Text(
+                              email ?? 'error@mail.com',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: PeeroreumColor.gray[600],
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -150,9 +154,136 @@ class _MyPageAccountState extends State<MyPageAccount> {
               ],
             ),
           ),
-          Container(),
+          Center(
+            child: TextButton(
+              onPressed: () {
+                showWithdrawDialog();
+              },
+              child: Text(
+                '탈퇴하기',
+                style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14.0,
+                    color: PeeroreumColor.gray[500]
+                ),
+              ),
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  void showWithdrawDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "탈퇴하기",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "정말 탈퇴하시겠습니다?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                SizedBox(height: 4,),
+                Text(
+                  "현재까지의 모든 활동 데이터가 삭제됩니다.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16), // 패딩
+                          shape: RoundedRectangleBorder(
+                            // 모양
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.gray[600]),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamedAndRemoveUntil(context, '/signIn/email', (route) => false);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.error,
+                          padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '탈퇴하기',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
