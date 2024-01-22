@@ -3,9 +3,9 @@
 import 'dart:convert';
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
@@ -49,6 +49,7 @@ class _HomeWeduState extends State<HomeWedu> {
   ScrollController _scrollController = ScrollController();
   int currentPage = 0;
   bool _isLoading = false;
+  bool _isUp = true;
 
   @override
   void initState() {
@@ -59,6 +60,17 @@ class _HomeWeduState extends State<HomeWedu> {
               _scrollController.position.maxScrollExtent &&
           !_isLoading) {
         loadMoreData();
+      }
+      if (_scrollController.offset ==
+          _scrollController.position.minScrollExtent) {
+        setState(() {
+          _isUp = true;
+        });
+      } else if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        setState(() {
+          _isUp = false;
+        });
       }
     });
     currentPage = 0;
@@ -263,55 +275,45 @@ class _HomeWeduState extends State<HomeWedu> {
   Widget bodyWidget() {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
-      body: Container(
-          child: Column(
-        children: [
-          room_body(),
-          (inroom_datas.isNotEmpty)
-              ? SizedBox(
-                  height: 180, //180으로 나중에 수정
-                  child: in_room_body())
-              : SizedBox(
-                  height: 0,
+      appBar: room_body(),
+      body: NestedScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              if (inroom_datas.isNotEmpty)
+                SliverAppBar(
+                  expandedHeight: 200,
+                  pinned: false,
+                  floating: true,
+                  backgroundColor: PeeroreumColor.white,
+                  elevation: 0,
+                  flexibleSpace: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      return FlexibleSpaceBar(
+                        collapseMode: CollapseMode.parallax,
+                        background: Column(
+                          children: [
+                            SizedBox(
+                              height: 180,
+                              child: in_room_body(),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-          (inroom_datas.isNotEmpty)
-              ? SizedBox(
-                  height: 20,
-                )
-              : SizedBox(
-                  height: 0,
-                ),
-          Container(
-            height: 8,
-            color: PeeroreumColor.gray[50],
-          ),
-          // Divider(
-          //   height: 28,
-          //   thickness: 8,
-          //   color: PeeroreumColor.gray[50],
-          // ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('같이방',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Pretendard')),
-              ],
-            ),
-          ),
-          dropdown_body(),
-          datas.isEmpty
+            ];
+          },
+          body: datas.isEmpty
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      height: 4,
-                      color: PeeroreumColor.gray[50],
-                    ),
+                    sliver(),
                     Image.asset(
                       'assets/images/no_wedu_oreum.png',
                       width: 150,
@@ -319,22 +321,69 @@ class _HomeWeduState extends State<HomeWedu> {
                     Text(
                       '찾으시는 같이방이 없어요 🥲',
                       style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.black),
+                        fontFamily: 'Pretendard',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: PeeroreumColor.black,
+                      ),
                     ),
                   ],
                 )
-              : Expanded(child: listview_body())
-        ],
-      )),
+              : Column(
+                  children: [
+                    sliver(),
+                    Container(
+                      height: _isUp ? 0 : 1,
+                      color: PeeroreumColor.gray[200],
+                    ),
+                    Expanded(child: listview_body()),
+                    SizedBox(
+                      height: 8,
+                    ),
+                  ],
+                )),
     );
   }
 
-  Widget room_body() {
-    return Container(
-      child: Padding(
+  Widget sliver() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 8,
+          color: PeeroreumColor.gray[50],
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '같이방',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
+          ),
+        ),
+        dropdown_body(),
+      ],
+    );
+  }
+
+  PreferredSizeWidget room_body() {
+    return AppBar(
+      backgroundColor: PeeroreumColor.white,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      titleSpacing: 0,
+      automaticallyImplyLeading: false,
+      title: Padding(
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -344,6 +393,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 Text(
                   "참여 중인 같이방",
                   style: TextStyle(
+                      color: PeeroreumColor.black,
                       fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w600),
@@ -1165,12 +1215,16 @@ class _HomeWeduState extends State<HomeWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
-                        datas[index]['locked'].toString() == "true"
-                            ? insertPassword(index)
-                            : enrollWedu(index);
-                        fetchDatas();
-                        setState(() {});
+                        if (inroom_datas.length <= 10) {
+                          Navigator.pop(context);
+                          datas[index]['locked'].toString() == "true"
+                              ? insertPassword(index)
+                              : enrollWedu(index);
+                          fetchDatas();
+                          setState(() {});
+                        } else {
+                          Fluttertoast.showToast(msg: '같이방은 10개까지만 참여 가능해요.');
+                        }
                       },
                       child: Text(
                         '참여하기',
@@ -1275,14 +1329,7 @@ class _HomeWeduState extends State<HomeWedu> {
               return RefreshIndicator(
                 onRefresh: () => fetchDatas(),
                 color: PeeroreumColor.primaryPuple[400],
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: (MediaQuery.of(context).size.height - 52 - 64 - 24 - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom),
-                    child: bodyWidget(),
-                  ),
-                ),
+                child: bodyWidget(),
               );
             }
           }),
