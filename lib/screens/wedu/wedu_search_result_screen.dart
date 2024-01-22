@@ -255,7 +255,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                 Text(
                                   '${datas.length}',
                                   style: TextStyle(
-                                      color: PeeroreumColor.gray[800],
+                                      color: PeeroreumColor.gray[600],
                                       fontFamily: 'Pretendard',
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600),
@@ -346,7 +346,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                     color: PeeroreumColor.gray[400], width: 12)
                                 : Container(),
                             datas[index]['locked'].toString() == "true"
-                                ?  SizedBox(width: 4) : SizedBox(),
+                                ? SizedBox(width: 4)
+                                : SizedBox(),
                             Flexible(
                               child: Text(
                                 datas[index]["title"]!,
@@ -375,7 +376,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               padding: EdgeInsets.symmetric(horizontal: 2),
                               child: Text('⋅'),
                             ),
-                            Text('${datas[index]["attendingPeopleNum"]!}명 참여중',
+                            Text('${datas[index]["attendingPeopleNum"]!}명',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -488,7 +489,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                       color: PeeroreumColor.gray[400])
                                   : SizedBox(),
                               datas[index]['locked'].toString() == "true"
-                                  ? SizedBox(width: 4) : SizedBox(),
+                                  ? SizedBox(width: 4)
+                                  : SizedBox(),
                               SizedBox(
                                 width: datas[index]['locked'].toString() ==
                                         "true"
