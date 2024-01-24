@@ -140,6 +140,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
                               }
                             });
                           },
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (value) {
+                            id_focus = false;
+                          },
                           decoration: InputDecoration(
                             hintText: 'peer@mail.com',
                             hintStyle: TextStyle(
@@ -299,6 +303,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             });
                           }
                         },
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (value) {
+                          pw_focus = false;
+                        },
                         decoration: InputDecoration(
                           hintText: '비밀번호를 입력하세요',
                           hintStyle: TextStyle(
@@ -408,7 +416,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                     SizedBox(
                       height: 4.0,
                     ),
-                    TextField(
+                    TextFormField(
                       controller: pw2_controller,
                       scrollPadding: EdgeInsets.only(bottom: 140),
                       onTap: () {
@@ -441,6 +449,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             pw2_check = false;
                           });
                         }
+                      },
+                      onFieldSubmitted: (value) {
+                        pw2_focus = false;
                       },
                       obscureText: pw2_hide,
                       obscuringCharacter: '●',
