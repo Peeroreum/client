@@ -111,6 +111,10 @@ class _EmailSignInState extends State<EmailSignIn> {
                           id_showClearbutton = false;
                         }
                       },
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (term) {
+                        FocusScope.of(context).nextFocus();
+                      },
                       style:
                           TextStyle(fontSize: 14, color: PeeroreumColor.black),
                       decoration: InputDecoration(
@@ -168,6 +172,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                           pw_showClearbutton = false;
                         }
                       },
+                      textInputAction: TextInputAction.done,
                       obscureText: pw_visible,
                       obscuringCharacter: '●',
                       style:
