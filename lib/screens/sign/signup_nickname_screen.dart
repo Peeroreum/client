@@ -155,10 +155,8 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                         checkDuplicateNickname(value);
                       },
                       inputFormatters: [
-                        FilteringTextInputFormatter(
-                          RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|_|]'),
-                          allow: true,
-                        )
+                        FilteringTextInputFormatter.allow(RegExp(
+                            r'[a-z|A-Z|0-9|_|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]'))
                       ],
                       decoration: InputDecoration(
                           hintText: '닉네임을 입력하세요',
