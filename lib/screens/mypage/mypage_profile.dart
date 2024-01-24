@@ -229,6 +229,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     MyPageProfile(nickname_controller.text, false)))
             .then((value) {
           setState(() {});
+          nickname_controller.clear();
         });
       }
     } else if (friendName.statusCode == 404) {
