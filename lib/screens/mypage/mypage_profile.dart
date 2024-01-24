@@ -718,10 +718,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             }
                           },
                           inputFormatters: [
-                            FilteringTextInputFormatter(
-                              RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|_|]'),
-                              allow: true,
-                            )
+                            FilteringTextInputFormatter.allow(RegExp(
+                                r'[a-z|A-Z|0-9|_|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]'))
                           ],
                           decoration: InputDecoration(
                             hintText: '닉네임은 30일마다 1회만 변경 가능해요.',
@@ -1175,7 +1173,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
-              onPressed: () async{
+              onPressed: () async {
                 if ((is_friend == true) && (am_i == false)) {
                   unfollow();
                   print('친구 언팔로우 프린트 메세지입니다');
@@ -1185,30 +1183,34 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 } else if ((is_friend == false) && (am_i == true)) {
                   print('프로필 공유');
                   //Fluttertoast.showToast(msg: "복사되었습니다");
-                    final UserName = nickname;
-                    int templateId = 102993;
-                    // 카카오톡 실행 가능 여부 확인
-                    bool isKakaoTalkSharingAvailable = await ShareClient.instance.isKakaoTalkSharingAvailable();
+                  final UserName = nickname;
+                  int templateId = 102993;
+                  // 카카오톡 실행 가능 여부 확인
+                  bool isKakaoTalkSharingAvailable =
+                      await ShareClient.instance.isKakaoTalkSharingAvailable();
 
-                    if (isKakaoTalkSharingAvailable) {
-                      try {
-                        Uri uri =
-                            await ShareClient.instance.shareCustom(templateId: templateId, templateArgs: {'UserName': '$UserName'}
-                            );
-                        await ShareClient.instance.launchKakaoTalk(uri);
-                        print('카카오톡 공유 완료');
-                      } catch (error) {
-                        print('카카오톡 공유 실패 $error');
-                      }
-                    } else {
-                      try {
-                        Uri shareUrl = await WebSharerClient.instance.makeCustomUrl(
-                            templateId: templateId, templateArgs: {'UserName': '$UserName'}, );
-                        await launchBrowserTab(shareUrl, popupOpen: true);
-                      } catch (error) {
-                        print('카카오톡 공유 실패 $error');
-                      }
+                  if (isKakaoTalkSharingAvailable) {
+                    try {
+                      Uri uri = await ShareClient.instance.shareCustom(
+                          templateId: templateId,
+                          templateArgs: {'UserName': '$UserName'});
+                      await ShareClient.instance.launchKakaoTalk(uri);
+                      print('카카오톡 공유 완료');
+                    } catch (error) {
+                      print('카카오톡 공유 실패 $error');
                     }
+                  } else {
+                    try {
+                      Uri shareUrl =
+                          await WebSharerClient.instance.makeCustomUrl(
+                        templateId: templateId,
+                        templateArgs: {'UserName': '$UserName'},
+                      );
+                      await launchBrowserTab(shareUrl, popupOpen: true);
+                    } catch (error) {
+                      print('카카오톡 공유 실패 $error');
+                    }
+                  }
                 } else {
                   print('error');
                 }
