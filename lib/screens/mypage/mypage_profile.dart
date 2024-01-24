@@ -1424,6 +1424,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 Text(
                   "참여 중인 같이방",
                   style: TextStyle(
+                      color: PeeroreumColor.gray[800],
                       fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w600),
@@ -1434,6 +1435,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 Text(
                   '${inroom_datas.length}',
                   style: TextStyle(
+                      color: PeeroreumColor.gray[600],
                       fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w600),
