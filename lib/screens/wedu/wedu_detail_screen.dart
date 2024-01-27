@@ -1284,7 +1284,8 @@ class _DetailWeduState extends State<DetailWedu> {
       : GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: (){
-          Fluttertoast.showToast(msg: '준비 중입니다.');
+          //Fluttertoast.showToast(msg: '준비 중입니다.');
+          Navigator.of(context).pushNamed('/report');
         },
         child: Container(
           margin: const EdgeInsets.fromLTRB(0,16,0,41),

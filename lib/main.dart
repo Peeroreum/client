@@ -7,6 +7,7 @@ import 'package:peeroreum_client/data/Onboarding_check.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
+import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
 import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
@@ -116,6 +117,7 @@ class PeeroreumApp extends StatelessWidget {
         '/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
         'signUp/onBoarding':(context) => OnBoarding(),
         'signUp/Complete':(context) => SignUpComplete(),
+        '/report':(context) => Report(),
       },
       debugShowCheckedModeBanner: false,
     );
