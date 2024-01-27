@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 class Report extends StatefulWidget {
   //const Report({super.key});
@@ -24,6 +28,26 @@ class _ReportState extends State<Report> {
       reason = newReason;
       selectedReason = newSelectedReason;
     });
+  }
+
+  void sendMail() async{
+    String username = 'peeroreum.help@gmail.com';
+    String password = 'djsgvbwgyvqesydk';
+    final smtpServer = gmail(username,password);
+    final message = Message()
+    ..from = Address(username, 'Mail Service')
+    ..recipients.add('peeroreum.help@gmail.com')
+    ..subject = reason[3]==false ?'$selectedReason' :'$selectedReason-$otherReason' //신고 사유에 따른 이메일 제목 설정
+    ..text = '$detailReason';
+
+    try{
+      await send(message, smtpServer);
+
+    }catch(e){
+      if(kDebugMode){
+        print(e.toString());
+      }
+    }
   }
 
   @override
@@ -153,7 +177,9 @@ class _ReportState extends State<Report> {
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.allow(
                                   RegExp(
-                                      r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]'))
+                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'
+                              )
+                                      )
                             ],
                             style: TextStyle(color: Colors.black),
                             cursorColor: PeeroreumColor.gray[600],
@@ -203,7 +229,9 @@ class _ReportState extends State<Report> {
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(
                           RegExp(
-                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]'))
+                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'
+                              )
+                              )
                     ],
                     maxLines: null,
                     cursorColor: PeeroreumColor.gray[600],
@@ -231,18 +259,9 @@ class _ReportState extends State<Report> {
                   onPressed: (selectedReason != '신고사유를 선택해주세요' && detailReason != "" && selectedReason != '기타' 
                   || selectedReason == '기타' && otherReason != "" && detailReason != "")
                       ? () {
+                        sendMail();
+                        Fluttertoast.showToast(msg: "신고 접수되었습니다. 감사합니다.");
                         Navigator.pop(context);
-                        // 이메일 보내기 처리
-                          // Navigator.push(
-                          //   context,
-                          //   PageRouteBuilder(
-                          //       pageBuilder: (_, __, ___) =>
-                          //           SignUpNickname(member),
-                          //       transitionDuration:
-                          //           const Duration(seconds: 0),
-                          //       reverseTransitionDuration:
-                          //           const Duration(seconds: 0)),
-                          // );
                         }
                       : null,
                   style: ButtonStyle(
