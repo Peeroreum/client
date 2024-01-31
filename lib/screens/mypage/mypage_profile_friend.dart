@@ -21,12 +21,16 @@ class MyPageProfileFriend extends StatefulWidget {
 
 class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
   var nickname;
+  var mynickname;
   _MyPageProfileFriendState(this.nickname);
   var token;
   var myfriends = [];
+  bool am_i = false;
 
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
+    mynickname = await FlutterSecureStorage().read(key: "nickname");
+    print("##################${mynickname}");
     var friend = await http
         .get(Uri.parse('${API.hostConnect}/member/friend/$nickname'), headers: {
       'Content-Type': 'application/json',
@@ -84,7 +88,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(vertical:13, horizontal:20),
+          padding: EdgeInsets.symmetric(vertical: 13, horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -145,60 +149,72 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
       // width: MediaQuery.of(context).size.width,
       // height: MediaQuery.of(context).size.height-140,
       child: ListView.separated(
-        scrollDirection: Axis.vertical,
+          scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          width: 2,
-                          color: PeeroreumColor.gradeColor[myfriends[index]['grade']]!),
-                    ),
-                    child: Container(
-                      height: 44,
-                      width: 44,
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                if (mynickname == myfriends[index]["nickname"]) {
+                  am_i = true;
+                }
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        MyPageProfile(myfriends[index]["nickname"], am_i)));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          width: 1,
-                          color: PeeroreumColor.white,
+                            width: 2,
+                            color: PeeroreumColor
+                                .gradeColor[myfriends[index]['grade']]!),
+                      ),
+                      child: Container(
+                        height: 44,
+                        width: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            width: 1,
+                            color: PeeroreumColor.white,
+                          ),
+                          image: myfriends[index]["profileImage"] != null
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      myfriends[index]["profileImage"]),
+                                  fit: BoxFit.cover)
+                              : DecorationImage(
+                                  image: AssetImage('assets/images/user.jpg')),
                         ),
-                        image: myfriends[index]["profileImage"] != null
-                            ? DecorationImage(
-                            image: NetworkImage(
-                                myfriends[index]["profileImage"]),
-                            fit: BoxFit.cover)
-                            : DecorationImage(
-                            image: AssetImage('assets/images/user.jpg')),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    myfriends[index]['nickname'],
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[800]),
-                  )
-                ],
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      myfriends[index]['nickname'],
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[800]),
+                    )
+                  ],
+                ),
               ),
             );
           },
           separatorBuilder: (BuildContext context, int index) => Divider(
-            color: PeeroreumColor.gray[100],
-            thickness: 1,
-            height: 8,
-          ),
+                color: PeeroreumColor.gray[100],
+                thickness: 1,
+                height: 8,
+              ),
           itemCount: myfriends.length),
     );
     // return ListView.separated(

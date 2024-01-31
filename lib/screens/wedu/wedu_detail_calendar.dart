@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/pie_chart.dart';
 
 import '../../api/PeeroreumApi.dart';
@@ -56,6 +57,8 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   List<dynamic> challengeImageList = [];
 
   List<dynamic> progress = [];
+  bool am_i = false;
+  var mynickname;
 
   @override
   void initState() {
@@ -97,6 +100,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
 
   Future<void> fetchDatas() async {
     token = await const FlutterSecureStorage().read(key: "accessToken");
+    mynickname = await FlutterSecureStorage().read(key: "nickname");
 
     var weduResult = await http.get(Uri.parse('${API.hostConnect}/wedu/$id'),
         headers: {
@@ -698,36 +702,46 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             padding: const EdgeInsets.only(right: 12),
             child: Column(
               children: [
-                Container(
-                  //padding: EdgeInsets.all(3.5),
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        width: 2,
-                        color: PeeroreumColor
-                            .gradeColor[notSuccessList[index]['grade']]!),
-                    // image: DecorationImage(
-                    //   image: AssetImage('assets/images/user.jpg')
-                    // ),
-                  ),
+                GestureDetector(
+                  onTap: () {
+                    if (mynickname == notSuccessList[index]['nickname']) {
+                      am_i = true;
+                    }
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => MyPageProfile(
+                            notSuccessList[index]['nickname'], am_i)));
+                  },
                   child: Container(
-                    height: 44,
-                    width: 44,
+                    //padding: EdgeInsets.all(3.5),
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        width: 1,
-                        color: PeeroreumColor.white,
+                          width: 2,
+                          color: PeeroreumColor
+                              .gradeColor[notSuccessList[index]['grade']]!),
+                      // image: DecorationImage(
+                      //   image: AssetImage('assets/images/user.jpg')
+                      // ),
+                    ),
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          width: 1,
+                          color: PeeroreumColor.white,
+                        ),
+                        image: notSuccessList[index]["profileImage"] != null
+                            ? DecorationImage(
+                                image: NetworkImage(
+                                    notSuccessList[index]["profileImage"]),
+                                fit: BoxFit.cover)
+                            : DecorationImage(
+                                image: AssetImage('assets/images/user.jpg')),
                       ),
-                      image: notSuccessList[index]["profileImage"] != null
-                          ? DecorationImage(
-                              image: NetworkImage(
-                                  notSuccessList[index]["profileImage"]),
-                              fit: BoxFit.cover)
-                          : DecorationImage(
-                              image: AssetImage('assets/images/user.jpg')),
                     ),
                   ),
                 ),
@@ -773,32 +787,43 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            width: 2,
-                            color: PeeroreumColor
-                                .gradeColor[successOne['grade']]!),
-                      ),
+                    GestureDetector(
+                      onTap: () {
+                        if (mynickname == successOne["nickname"]) {
+                          am_i = true;
+                        }
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                MyPageProfile(successOne["nickname"], am_i)));
+                      },
                       child: Container(
-                        height: 44,
-                        width: 44,
+                        width: 48,
+                        height: 48,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            width: 1,
-                            color: PeeroreumColor.white,
+                              width: 2,
+                              color: PeeroreumColor
+                                  .gradeColor[successOne['grade']]!),
+                        ),
+                        child: Container(
+                          height: 44,
+                          width: 44,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 1,
+                              color: PeeroreumColor.white,
+                            ),
+                            image: successOne["profileImage"] != null
+                                ? DecorationImage(
+                                    image: NetworkImage(
+                                        successOne["profileImage"]),
+                                    fit: BoxFit.cover)
+                                : DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/user.jpg')),
                           ),
-                          image: successOne["profileImage"] != null
-                              ? DecorationImage(
-                                  image:
-                                      NetworkImage(successOne["profileImage"]),
-                                  fit: BoxFit.cover)
-                              : DecorationImage(
-                                  image: AssetImage('assets/images/user.jpg')),
                         ),
                       ),
                     ),
