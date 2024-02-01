@@ -10,6 +10,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
+import 'package:peeroreum_client/screens/wedu/encouragement_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_calendar.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -120,9 +122,9 @@ class _DetailWeduState extends State<DetailWedu> {
     for (var index = 0; index < successList.length; index++) {
       var successOne = successList[index]['nickname'].toString();
       if(nickname == successOne) {
-        setState(() {
+        //setState(() {
           isSuccess = true;
-        });
+        //});
       }
       var result = await http.get(
           Uri.parse(
@@ -1081,8 +1083,13 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/wedu/challenge/ok/compliment',
-                        arguments: successList);
+                    // Navigator.pushNamed(context, '/wedu/challenge/ok/compliment',
+                    //     arguments: successList);
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return ComplimentCheckList(successList, id);
+                      },
+                    ));
                   },
                   child: Text(
                     '전체보기',
@@ -1127,8 +1134,13 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/wedu/challenge/notok/encouragement',
-                        arguments: notSuccessList);
+                    // Navigator.pushNamed(context, '/wedu/challenge/notok/encouragement',
+                    //     arguments: notSuccessList);
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return EncouragementCheckList(notSuccessList, id);
+                      },
+                    ));
                   },
                   child: Text(
                     '전체보기',
