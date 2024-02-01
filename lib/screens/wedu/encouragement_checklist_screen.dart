@@ -502,7 +502,8 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
             itemCount: notSuccessList.length));
   }
   Future<List<String>?> encouragementChecklistData() async{
-    List<String> namelist=[];
+    String? me = await FlutterSecureStorage().read(key: "nickname");
+    List<String> namelist=['($me)'];
     List<Map<String,String>>? checklistdata = await CheckEncouragementList.getEncouragementCheck();
     if (checklistdata != null) {
       checklistdata.forEach((map){ 

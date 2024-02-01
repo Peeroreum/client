@@ -38,6 +38,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     // TODO: implement initState
     super.initState();
     receiverList = [];
+    fetchStatus();
     fetchChecklistData();
   }
   fetchChecklistData() async {
@@ -453,7 +454,8 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
             itemCount: successList.length));
   }
   Future<List<String>?> complimentChecklistData() async{
-    List<String> namelist=[];
+    String? me = await FlutterSecureStorage().read(key: "nickname");
+    List<String> namelist=['($me)'];
     List<Map<String,String>>? checklistdata = await CheckComplimentList.getComplimentCheck();
     if (checklistdata != null) {
       checklistdata.forEach((map){ 
