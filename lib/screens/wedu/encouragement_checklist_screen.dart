@@ -66,7 +66,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
     }
   }
   getChecklistData() async{
-    List<Map<String, String>>? data = await CheckEncouragementList.getEncouragementCheck();
+    List<Map<String, String>>? data = await CheckEncouragementList.getEncouragementCheck(id);
     print('get해서 callchecklist에 넣음');
     setState(() {
       callchecklist = data!;
@@ -237,13 +237,13 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                                 setState(() {
                                   // _isChecked 값이 true인 경우에만 isActive를 false로 설정
                                   isActiveList[i] = false;
-                                  //receiverList.add(notSuccessList[i]['nickname']);
+                                  receiverList.add(notSuccessList[i]['nickname']);
                                 });
                                 callchecklist.add({notSuccessList[i]['nickname'] : DateTime.now().toString().substring(0, 10)});
                               }
                             }
                           }
-                          CheckEncouragementList.setEncouragementCheck(callchecklist);
+                          CheckEncouragementList.setEncouragementCheck(id,callchecklist);
                           print('set으로 리스트 저장');
                           sendNotification();
                           Fluttertoast.showToast(msg: "독려하기 완료!");
@@ -504,17 +504,17 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
   Future<List<String>?> encouragementChecklistData() async{
     String? me = await FlutterSecureStorage().read(key: "nickname");
     List<String> namelist=['($me)'];
-    List<Map<String,String>>? checklistdata = await CheckEncouragementList.getEncouragementCheck();
+    List<Map<String,String>>? checklistdata = await CheckEncouragementList.getEncouragementCheck(id);
     if (checklistdata != null) {
       checklistdata.forEach((map){ 
         List<String> timelist = map.values.toList();
         if(DateTime.now().toString().substring(0, 10) != timelist.first){
-          CheckEncouragementList.setEncouragementCheck([]);
+          CheckEncouragementList.setEncouragementCheck(id,[]);
         }
       });
     }
 
-    List<Map<String,String>>? listdata = await CheckEncouragementList.getEncouragementCheck();
+    List<Map<String,String>>? listdata = await CheckEncouragementList.getEncouragementCheck(id);
     if (listdata != null){
       print(listdata);
       for (var map in listdata) { 

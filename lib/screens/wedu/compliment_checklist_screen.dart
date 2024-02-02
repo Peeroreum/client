@@ -66,7 +66,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     }
   }
   getChecklistData() async{
-    List<Map<String, String>>? data = await CheckComplimentList.getComplimentCheck();
+    List<Map<String, String>>? data = await CheckComplimentList.getComplimentCheck(id);
     print('get해서 callchecklist에 넣음');
     setState(() {
       callchecklist = data!;
@@ -235,13 +235,13 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                         setState(() {
                           // _isChecked 값이 true인 경우에만 isActive를 false로 설정
                           isActiveList[i] = false;
-                          //receiverList.add(successList[i]['nickname']);
+                          receiverList.add(successList[i]['nickname']);
                         });
                         callchecklist.add({successList[i]['nickname'] : DateTime.now().toString().substring(0, 10)});
                       }
                     }
                   }
-                CheckComplimentList.setComplimentCheck(callchecklist);
+                CheckComplimentList.setComplimentCheck(id,callchecklist);
                 sendNotification();
                 Fluttertoast.showToast(msg: '칭찬하기 완료!');
               },
@@ -456,17 +456,17 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   Future<List<String>?> complimentChecklistData() async{
     String? me = await FlutterSecureStorage().read(key: "nickname");
     List<String> namelist=['($me)'];
-    List<Map<String,String>>? checklistdata = await CheckComplimentList.getComplimentCheck();
+    List<Map<String,String>>? checklistdata = await CheckComplimentList.getComplimentCheck(id);
     if (checklistdata != null) {
       checklistdata.forEach((map){ 
         List<String> timelist = map.values.toList();
         if(DateTime.now().toString().substring(0, 10) != timelist.first){
-          CheckComplimentList.setComplimentCheck([]);
+          CheckComplimentList.setComplimentCheck(id,[]);
         }
       });
     }
 
-    List<Map<String,String>>? listdata = await CheckComplimentList.getComplimentCheck();
+    List<Map<String,String>>? listdata = await CheckComplimentList.getComplimentCheck(id);
     if (listdata != null){
       print(listdata);
       for (var map in listdata) { 
