@@ -128,10 +128,10 @@ class _HomeWeduState extends State<HomeWedu> {
           'Authorization': 'Bearer $token'
         });
     if (weduResult.statusCode == 200) {
-      setState(() {
+      //setState(() {
         datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
         fetchImage(datas);
-      });
+      //});
     } else {
       print("에러${weduResult.statusCode}");
     }
