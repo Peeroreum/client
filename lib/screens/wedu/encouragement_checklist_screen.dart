@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/data/Checklist.dart';
 
 import '../../api/NotificationApi.dart';
 import '../../data/NotificationSetting.dart';
 import '../../designs/PeeroreumColor.dart';
 
 class EncouragementCheckList extends StatefulWidget {
+  EncouragementCheckList(this.notSuccessList, this.id);
+  List<dynamic> notSuccessList;
+  int id;
+
   @override
-  State<EncouragementCheckList> createState() => _EncouragementCheckListState();
+  State<EncouragementCheckList> createState() => _EncouragementCheckListState(notSuccessList, id);
 }
 
 class _EncouragementCheckListState extends State<EncouragementCheckList> {
-  List<dynamic> notSuccessList = [];
+  _EncouragementCheckListState(this.notSuccessList, this.id);
+  List<dynamic> notSuccessList;
+  int id;
+
   List<String> receiverList = [];
+  List<String> sendList = [];
+  late List<Map<String,String>> callchecklist = [];
   late List<bool> isCheckedList =
       List.generate(notSuccessList.length, (index) => false);
   late List<bool> isActiveList =
@@ -28,6 +39,38 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
     // TODO: implement initState
     super.initState();
     receiverList = [];
+    fetchChecklistData();
+  }
+  fetchChecklistData() async {
+    List<String>? data = await encouragementChecklistData();
+    if (data != null) {
+      setState(() {
+        sendList = data;
+        updateChecklist();
+      });
+    } else{
+      print('리스트에 이름이 없습니다');
+    }
+  }
+  void updateChecklist() {
+    for (int i = 0; i < notSuccessList.length; i++) {
+      print(notSuccessList[i]['nickname']);
+      if (sendList.contains('(${notSuccessList[i]['nickname']})')) {
+        setState(() {
+          isCheckedList[i] = true;
+          isActiveList[i] = false;
+        });
+      } else {
+        print('이름 포함하지 않음');
+      }
+    }
+  }
+  getChecklistData() async{
+    List<Map<String, String>>? data = await CheckEncouragementList.getEncouragementCheck(id);
+    print('get해서 callchecklist에 넣음');
+    setState(() {
+      callchecklist = data!;
+    });
   }
 
   sendNotification() async {
@@ -43,7 +86,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
       sender = await FlutterSecureStorage().read(key: "nickname");
       myimage = await FlutterSecureStorage().read(key: "profileImage");
       mygrade = await FlutterSecureStorage().read(key: "grade");
-      notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+      //notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
       var here_am_i = notSuccessList.where((user) => user['nickname'] == sender).toList();
 
       if (here_am_i.isNotEmpty) {
@@ -51,8 +94,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
       } else {
         mycheck = false;
       }
-
-      notSuccessList = notSuccessList.where((user) => user['nickname'] != sender).toList();
+      //notSuccessList = notSuccessList.where((user) => user['nickname'] != sender).toList();
   }
 
   @override
@@ -172,14 +214,14 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                     thickness: 1,
                     height: 8,
                   ),
-                  mycheck ? notOkMe() : Container(),
-                  mycheck
-                      ? Divider(
-                          thickness: 1,
-                          color: PeeroreumColor.gray[100],
-                          height: 8,
-                        )
-                      : Container(),
+                  //mycheck ? notOkMe() : Container(),
+                  // mycheck
+                  //     ? Divider(
+                  //         thickness: 1,
+                  //         color: PeeroreumColor.gray[100],
+                  //         height: 8,
+                  //       )
+                  //     : Container(),
                   notOkList(),
                   Container(
                     padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
@@ -187,20 +229,24 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                       height: 48,
                       width: double.infinity,
                       child: TextButton(
-                        onPressed: () {
+                        onPressed: () async{
+                          await getChecklistData();
                           for (int i = 0; i < isCheckedList.length; i++) {
                             if (isActiveList[i] == true) {
                               if (isCheckedList[i]) {
                                 setState(() {
                                   // _isChecked 값이 true인 경우에만 isActive를 false로 설정
                                   isActiveList[i] = false;
-                                  receiverList
-                                      .add(notSuccessList[i]['nickname']);
+                                  receiverList.add(notSuccessList[i]['nickname']);
                                 });
+                                callchecklist.add({notSuccessList[i]['nickname'] : DateTime.now().toString().substring(0, 10)});
                               }
                             }
                           }
+                          CheckEncouragementList.setEncouragementCheck(id,callchecklist);
+                          print('set으로 리스트 저장');
                           sendNotification();
+                          Fluttertoast.showToast(msg: "독려하기 완료!");
                         },
                         child: Text(
                           '독려하기',
@@ -454,5 +500,28 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                   height: 8,
                 ),
             itemCount: notSuccessList.length));
+  }
+  Future<List<String>?> encouragementChecklistData() async{
+    String? me = await FlutterSecureStorage().read(key: "nickname");
+    List<String> namelist=['($me)'];
+    List<Map<String,String>>? checklistdata = await CheckEncouragementList.getEncouragementCheck(id);
+    if (checklistdata != null) {
+      checklistdata.forEach((map){ 
+        List<String> timelist = map.values.toList();
+        if(DateTime.now().toString().substring(0, 10) != timelist.first){
+          CheckEncouragementList.setEncouragementCheck(id,[]);
+        }
+      });
+    }
+
+    List<Map<String,String>>? listdata = await CheckEncouragementList.getEncouragementCheck(id);
+    if (listdata != null){
+      print(listdata);
+      for (var map in listdata) { 
+        namelist.add(map.keys.toString());
+      }
+      print(namelist);
+    }
+    return namelist;
   }
 }
