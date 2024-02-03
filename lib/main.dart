@@ -85,7 +85,7 @@ class PeeroreumApp extends StatelessWidget {
     return MaterialApp(
       builder: (context, child) {
         return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
+            data: MediaQuery.of(context).copyWith(textScaleFactor:1.0),
             child: child!);
       },
       localizationsDelegates: [
