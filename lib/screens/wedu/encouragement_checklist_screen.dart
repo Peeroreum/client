@@ -506,12 +506,8 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
     List<String> namelist=['($me)'];
     List<Map<String,String>>? checklistdata = await CheckEncouragementList.getEncouragementCheck(id);
     if (checklistdata != null) {
-      checklistdata.forEach((map){ 
-        List<String> timelist = map.values.toList();
-        if(DateTime.now().toString().substring(0, 10) != timelist.first){
-          CheckEncouragementList.setEncouragementCheck(id,[]);
-        }
-      });
+      checklistdata.removeWhere((element) => element.values.any((value) => value != DateTime.now().toString().substring(0, 10)));
+      CheckEncouragementList.setEncouragementCheck(id, checklistdata);
     }
 
     List<Map<String,String>>? listdata = await CheckEncouragementList.getEncouragementCheck(id);

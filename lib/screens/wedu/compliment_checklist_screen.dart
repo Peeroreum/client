@@ -458,12 +458,8 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     List<String> namelist=['($me)'];
     List<Map<String,String>>? checklistdata = await CheckComplimentList.getComplimentCheck(id);
     if (checklistdata != null) {
-      checklistdata.forEach((map){ 
-        List<String> timelist = map.values.toList();
-        if(DateTime.now().toString().substring(0, 10) != timelist.first){
-          CheckComplimentList.setComplimentCheck(id,[]);
-        }
-      });
+      checklistdata.removeWhere((element) => element.values.any((value) => value != DateTime.now().toString().substring(0, 10)));
+      CheckComplimentList.setComplimentCheck(id, checklistdata);
     }
 
     List<Map<String,String>>? listdata = await CheckComplimentList.getComplimentCheck(id);
