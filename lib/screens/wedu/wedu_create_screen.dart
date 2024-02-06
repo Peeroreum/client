@@ -810,10 +810,9 @@ class _CreateWeduState extends State<CreateWedu> {
                                   validator: (String tag) {
                                     if (_controller.getTags!.contains(tag))
                                       return 'you already entered that';
-                                    else if (_controller.getTags!.length >=
-                                        15) {
+                                    else if (_controller.getTags!.length >= 5) {
                                       Fluttertoast.showToast(
-                                          msg: '해시태그는 최대 15개까지 적을 수 있어요.');
+                                          msg: '해시태그는 최대 5개까지 적을 수 있어요.');
                                       return '태그 15개 제한';
                                     } else {
                                       _tag.add(tag);
