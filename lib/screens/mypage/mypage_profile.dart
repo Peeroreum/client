@@ -47,7 +47,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   var profileImage;
   var backgroundImage;
   var friendNumber;
-  var withPeerDay = 0;
+  var withPeerDay;
   Member member = Member();
   final change_nickname_controller = TextEditingController();
 
@@ -59,7 +59,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
 
   Future<void> fetchDatas() async {
     token = await storage.read(key: "accessToken");
-    withPeerDay = await VisitCount.getVisitCount();
     var inWeduResult = await http.get(
         Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
         headers: {
@@ -86,6 +85,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       profileImage = data["profileImage"];
       backgroundImage = data["backgroundImage"];
       is_friend = data['following'];
+      withPeerDay = data['activeDaysCount'];
     }
   }
 
