@@ -614,6 +614,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         padding: EdgeInsets.only(right: 8),
         itemCount: successList.length,
         itemBuilder: (BuildContext context, int index) {
+          String okNickname = successList[index]['nickname'];
+          if (okNickname.length > 5) {
+            okNickname = okNickname.substring(0, 5);
+          }
           return Container(
               child: Padding(
             padding: const EdgeInsets.only(right: 12),
@@ -672,7 +676,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   height: 8,
                 ),
                 Text(
-                  '${successList[index]['nickname']}',
+                  okNickname,
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w500,
@@ -697,6 +701,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         padding: EdgeInsets.only(right: 8),
         itemCount: notSuccessList.length,
         itemBuilder: (BuildContext context, int index) {
+          String notOkNickname = notSuccessList[index]['nickname'];
+          if (notOkNickname.length > 5) {
+            notOkNickname = notOkNickname.substring(0, 5);
+          }
           return Container(
               child: Padding(
             padding: const EdgeInsets.only(right: 12),
@@ -749,7 +757,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   height: 8,
                 ),
                 Text(
-                  '${notSuccessList[index]['nickname']}',
+                  notOkNickname,
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w500,
