@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, avoid_unnecessary_containers
+
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
@@ -45,13 +47,22 @@ class _DetailWeduState extends State<DetailWedu> {
   List<dynamic> challengeImageList = [];
   List<dynamic> challengeImage = [];
   dynamic weduData = '';
-  dynamic weduTitle = '';
-  dynamic weduImage = null;
-  dynamic weduDday = '';
   dynamic weduProgress = '';
   dynamic weduChallenge = '';
   dynamic weduFire = '';
   double percent = 0.0;
+  //수정하기screen에 넘겨줄 변수//
+  dynamic weduImage = null;
+  dynamic weduTitle = '';
+  dynamic weduSubject = '';
+  dynamic weduDday = '';
+  dynamic weduGrade = '';
+  dynamic weduAttendingPeopleNum = '';
+  dynamic weduMaxPeopleNum = '';
+  List<dynamic> weduHashTags = [];
+  dynamic weduLocked = false;
+  dynamic weduPassword = '';
+  //////////////////////////////
 
   bool isMyImage = true;
   bool isCreator = false;
@@ -77,13 +88,22 @@ class _DetailWeduState extends State<DetailWedu> {
         });
     if (weduResult.statusCode == 200) {
       weduData = await jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
-      weduTitle = weduData['title'];
-      weduImage = weduData['imageUrl'];
-      weduDday = weduData['dday'];
       weduProgress = weduData['progress'].toString();
       weduChallenge = weduData['challenge'];
       weduFire = weduData['continuousDate'];
       percent = double.parse(weduProgress) / 100;
+      //수정하기screen에 넘겨줄 변수//
+      weduTitle = weduData['title'];
+      weduImage = weduData['imageUrl'];
+      weduDday = weduData['dday'];
+      weduSubject = weduData['subject'];
+      weduGrade = weduData['grade'];
+      weduAttendingPeopleNum = weduData['attendingPeopleNum'];
+      weduMaxPeopleNum = weduData['maxPeopleNum'];
+      weduHashTags = weduData['hashTags'];
+      weduLocked = weduData['locked'];
+      weduPassword = weduData['password'];
+      //////////////////////////////
 
       isCreator = email == weduData['hostMail'];
       if (weduProgress == '0') {
@@ -1205,7 +1225,17 @@ class _DetailWeduState extends State<DetailWedu> {
                         //wedu_change(context);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ModifyWedu(
-                                id, weduTitle, weduImage, weduDday)));
+                                id,
+                                weduTitle,
+                                weduImage,
+                                weduDday,
+                                weduSubject,
+                                weduGrade,
+                                weduAttendingPeopleNum,
+                                weduMaxPeopleNum,
+                                weduHashTags,
+                                weduLocked,
+                                weduPassword)));
                       },
                       style: TextButton.styleFrom(
                         minimumSize: Size.fromHeight(40),
