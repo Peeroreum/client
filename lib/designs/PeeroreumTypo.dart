@@ -235,6 +235,7 @@ class B4_14px_M extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w500
       ),
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

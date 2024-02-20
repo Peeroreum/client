@@ -79,9 +79,41 @@ class _DetailIeduState extends State<DetailIedu> {
             "id": 2,
             "profileImage":null,
             "content": "hello",
-            "memberNickname": "호롤롤롤와랄랄라호롤롤롤와랄랄라",
+            "memberNickname": "홀리몰리과카몰리호롤롤롤와랄랄라",
             "memberGrade": 3,
             "hasParent": 1,
+            "isLiked":false,
+            "likesNum": 10,
+            "commentsNum":0,
+            "isChosen": false,
+            "imagePaths": [
+              "https://assets.clip-studio.com/ko-kr/description/1983627/img/e7a490f340-e64d-3088-a085-0f6baf88e6.jpg"
+            ],
+            "createdTime": "2022-10-18T12:11:46"
+        },
+        {
+            "id": 3,
+            "profileImage":null,
+            "content": "hello",
+            "memberNickname": "짱구",
+            "memberGrade": 3,
+            "hasParent": -1,
+            "isLiked":false,
+            "likesNum": 10,
+            "commentsNum":0,
+            "isChosen": false,
+            "imagePaths": [
+              "https://assets.clip-studio.com/ko-kr/description/1983627/img/e7a490f340-e64d-3088-a085-0f6baf88e6.jpg"
+            ],
+            "createdTime": "2022-10-18T12:11:46"
+        },
+        {
+            "id": 4,
+            "profileImage":null,
+            "content": "hello",
+            "memberNickname": "집가고싶당",
+            "memberGrade": 3,
+            "hasParent": 3,
             "isLiked":false,
             "likesNum": 10,
             "commentsNum":0,
@@ -423,11 +455,14 @@ class _DetailIeduState extends State<DetailIedu> {
               ),
               //--대안--
               Container(
+                padding: EdgeInsets.only(bottom: 8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: List<Widget>.generate(
                     commentDatas.length,
                     (index) => MakeComment(
+                      index:
+                      index,
                       id: 
                       commentDatas[index]["id"],
                       hasParent: 
@@ -546,7 +581,7 @@ class _DetailIeduState extends State<DetailIedu> {
                       constraints: BoxConstraints(
                         minHeight: 48
                       ),
-                      width: double.infinity,
+                      width: double.maxFinite,
                       decoration: BoxDecoration(
                         color: PeeroreumColor.gray[100],
                         border: Border.all(color: PeeroreumColor.gray[200]!),
@@ -742,6 +777,7 @@ class _DetailIeduState extends State<DetailIedu> {
 }
 
 class MakeComment extends StatefulWidget {
+    final dynamic index;
     final dynamic id;
     final dynamic hasParent;
     final dynamic grade;
@@ -758,6 +794,7 @@ class MakeComment extends StatefulWidget {
 
     const MakeComment({
       Key? key,
+      required this.index,
       required this.id,
       required this.hasParent,
       required this.grade,
@@ -797,8 +834,21 @@ class MakeComment extends StatefulWidget {
       return Container(
         width: MediaQuery.of(context).size.width,
         padding: widget.hasParent == -1
-        ?EdgeInsets.symmetric(vertical: 16, horizontal: 20)
+        ?EdgeInsets.symmetric(vertical: 16)
         :EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+        margin: widget.hasParent == -1
+        ?EdgeInsets.symmetric(horizontal: 20)
+        :null,
+        decoration: widget.hasParent == -1 && widget.index != 0
+        ?BoxDecoration(
+          border: Border(
+                    top: BorderSide(
+                      color: PeeroreumColor.gray[100]!,
+                      width: 1.0,
+                    )
+                  ),
+        )
+        :null,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -814,6 +864,9 @@ class MakeComment extends StatefulWidget {
               padding: widget.hasParent == -1
               ?EdgeInsets.zero
               :EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              margin: widget.hasParent == -1
+              ?EdgeInsets.zero
+              :EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
                 color: widget.hasParent == -1
                 ?Colors.transparent
@@ -831,72 +884,83 @@ class MakeComment extends StatefulWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                    width: 1,
-                                    color: widget.grade != null
-                                        ? PeeroreumColor.gradeColor[widget.grade]!
-                                        : Color.fromARGB(255, 186, 188, 189)),
-                              ),
-                              child: Container(
-                                height: 26,
-                                width: 26,
+                        Container(
+                          width: widget.hasParent == -1
+                          ?MediaQuery.of(context).size.width -40 -34
+                          :MediaQuery.of(context).size.width -112 -34,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 28,
+                                height: 28,
                                 decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      width: 2,
-                                      color: PeeroreumColor.white.withOpacity(0.0),
-                                    )),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      width: 1,
+                                      color: widget.grade != null
+                                          ? PeeroreumColor.gradeColor[widget.grade]!
+                                          : Color.fromARGB(255, 186, 188, 189)),
+                                ),
                                 child: Container(
-                                  height: 24,
-                                  width: 24,
+                                  height: 26,
+                                  width: 26,
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: widget.profileImage != null
-                                        ? DecorationImage(
-                                            image: NetworkImage(widget.profileImage),
-                                            fit: BoxFit.cover)
-                                        : DecorationImage(
-                                            image: AssetImage(
-                                            'assets/images/user.jpg',
-                                          )),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        width: 2,
+                                        color: PeeroreumColor.white.withOpacity(0.0),
+                                      )),
+                                  child: Container(
+                                    height: 24,
+                                    width: 24,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: widget.profileImage != null
+                                          ? DecorationImage(
+                                              image: NetworkImage(widget.profileImage),
+                                              fit: BoxFit.cover)
+                                          : DecorationImage(
+                                              image: AssetImage(
+                                              'assets/images/user.jpg',
+                                            )),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 8,),
-                            B4_14px_M(text: widget.name),
-                            SizedBox(width: 12,),
-                            Visibility(
-                              visible: widget.isQwselected == false && widget.hasParent == -1,
-                              child: GestureDetector(
-                                onTap: () {
-                                  final _dState = context.findAncestorStateOfType<_DetailIeduState>();
-                                  if(_dState != null){
-                                    _dState.setState(() {
-                                      _dState.isQselected = true;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: PeeroreumColor.primaryPuple[400],
-                                    borderRadius: BorderRadius.circular(4)
+                              const SizedBox(width: 8,),
+                              Flexible(
+                                child: B4_14px_M(text: widget.name)),
+                              SizedBox(width: 12,),
+                              Visibility(
+                                visible: widget.isQwselected == false,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    print('눌림');
+                                    final _dState = context.findAncestorStateOfType<_DetailIeduState>();
+                                    if(_dState != null){
+                                      _dState.setState(() {
+                                        _dState.isQselected = true;
+                                        print('작동 하는 거였나');
+                                      });
+                                    } else{
+                                      print('왜 작동 안하냐');
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[400],
+                                      borderRadius: BorderRadius.circular(4)
+                                    ),
+                                    width: 57,
+                                    height: 24,
+                                    child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
                                   ),
-                                  width: 57,
-                                  height: 24,
-                                  child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         Container(
                           width: 18,
