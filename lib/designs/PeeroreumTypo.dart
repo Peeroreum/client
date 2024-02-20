@@ -339,7 +339,8 @@ class B4_14px_R extends StatelessWidget {
         color: color ?? PeeroreumColor.black,
         fontFamily: 'Pretendard',
         fontSize: 14,
-        fontWeight: FontWeight.w400
+        fontWeight: FontWeight.w400,
+        height: 24/14
       ),
     );
   }
