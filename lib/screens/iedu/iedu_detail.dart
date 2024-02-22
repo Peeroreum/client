@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 
 class DetailIedu extends StatefulWidget {
   final int id;
@@ -39,18 +40,13 @@ class _DetailIeduState extends State<DetailIedu> {
   dynamic questionDatas='';
   dynamic profileDatas ='';
 
-  dynamic profileImage;
+  dynamic profileImage = '';
   dynamic grade;
-  dynamic name;
-  dynamic date;
-  dynamic title;
-  dynamic contents;
-  List<dynamic> questionImage = [
-    "https://i.pinimg.com/736x/4a/d7/8f/4ad78f5e3407a9912fd0862be6a68a5b.jpg",
-    "https://i.pinimg.com/564x/d9/d6/44/d9d644476f17c8b2106d9b823bcd51f3.jpg",
-    "https://i.pinimg.com/originals/90/38/93/9038934164164e0e8fd69032c8b1602f.jpg",
-    "https://i.pinimg.com/originals/9b/2a/e8/9b2ae82b19caea75419be79b046b2107.jpg"
-  ];
+  dynamic name = '';
+  dynamic date = DateTime.now().toString();
+  dynamic title = '';
+  dynamic contents = '';
+  List<dynamic> questionImage = [];
   int currentPage = 1;
   dynamic isLiked = false;
   dynamic isBookmarked = false;
@@ -67,73 +63,9 @@ class _DetailIeduState extends State<DetailIedu> {
   final ImagePicker picker = ImagePicker();
   XFile? _image;
   //----------------
-  List<dynamic> commentDatas = [
-    {
-            "id": 1,
-            "profileImage": null,
-            "content": "질문100만개 와랄라",
-            "memberNickname": "홀리몰리과카몰리호롤롤롤와랄랄라",
-            "memberGrade": 1,
-            "hasParent": -1,
-            "isLiked": true,
-            "likesNum": 80,
-            "commentsNum": 0,
-            "isChosen": true,
-            "imagePaths": [
-                "https://img3.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202303/02/bemypet/20230302170052142ncnl.jpg"
-            ],
-            "createdTime": "2024-10-18T12:07:15"
-        },
-    {
-            "id": 2,
-            "profileImage":null,
-            "content": "hello",
-            "memberNickname": "홀리몰리과카몰리호롤롤롤와랄랄라",
-            "memberGrade": 3,
-            "hasParent": 1,
-            "isLiked":false,
-            "likesNum": 10,
-            "commentsNum":0,
-            "isChosen": false,
-            "imagePaths": [
-              "https://assets.clip-studio.com/ko-kr/description/1983627/img/e7a490f340-e64d-3088-a085-0f6baf88e6.jpg"
-            ],
-            "createdTime": "2022-10-18T12:11:46"
-        },
-        {
-            "id": 3,
-            "profileImage":null,
-            "content": "hello",
-            "memberNickname": "짱구",
-            "memberGrade": 3,
-            "hasParent": -1,
-            "isLiked":false,
-            "likesNum": 10,
-            "commentsNum":0,
-            "isChosen": false,
-            "imagePaths": [
-              "https://assets.clip-studio.com/ko-kr/description/1983627/img/e7a490f340-e64d-3088-a085-0f6baf88e6.jpg"
-            ],
-            "createdTime": "2022-10-18T12:11:46"
-        },
-        {
-            "id": 4,
-            "profileImage":null,
-            "content": "hello",
-            "memberNickname": "집가고싶당",
-            "memberGrade": 3,
-            "hasParent": 3,
-            "isLiked":false,
-            "likesNum": 10,
-            "commentsNum":0,
-            "isChosen": false,
-            "imagePaths": [
-              "https://assets.clip-studio.com/ko-kr/description/1983627/img/e7a490f340-e64d-3088-a085-0f6baf88e6.jpg"
-            ],
-            "createdTime": "2022-10-18T12:11:46"
-        }
-  ];
-  Future<void> fetchDatas() async {
+  dynamic commentDatas;
+  
+  Future<void>fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
 
@@ -227,6 +159,18 @@ class _DetailIeduState extends State<DetailIedu> {
           body: FutureBuilder(
             future: fetchDatas(), 
             builder: (context, snapshot){
+              // if (snapshot.connectionState == ConnectionState.waiting) {
+              // return Center(child: CircularProgressIndicator());
+              // } else if (snapshot.hasError) {
+              //   // 에러 발생 시
+              //   return Center(child: Text('Error: ${snapshot.error}'));
+              // } else {
+              //   return RefreshIndicator(
+              //     onRefresh: () => fetchDatas(),
+              //     color: PeeroreumColor.primaryPuple[400],
+              //     child: bodyWidget(),
+              //   );
+              // }
               return bodyWidget();
             }),
         ),
@@ -261,9 +205,9 @@ class _DetailIeduState extends State<DetailIedu> {
                   margin: EdgeInsets.only(right: 4),
                   constraints: BoxConstraints(),
                   child: isBookmarked 
-                      ?SvgPicture.asset('assets/icons/bookmark.svg',
+                      ?SvgPicture.asset('assets/icons/bookmark_fill.svg',
                           color: PeeroreumColor.black)
-                      :SvgPicture.asset('assets/icons/bookmark_fill.svg',
+                      :SvgPicture.asset('assets/icons/bookmark.svg',
                           color: PeeroreumColor.black),
                 ),
                 onTap: () {
@@ -313,7 +257,7 @@ class _DetailIeduState extends State<DetailIedu> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          T2_20px(text: 'Title'),
+                          T2_20px(text: title),
                         ],
                       ),
                     ),
@@ -366,7 +310,7 @@ class _DetailIeduState extends State<DetailIedu> {
                             ),
                           ),
                           const SizedBox(width: 8,),
-                          Text('name',
+                          Text(name,
                           style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 14,
@@ -380,23 +324,23 @@ class _DetailIeduState extends State<DetailIedu> {
                               visible: false,
                               child: Row(
                               children: [
-                                C1_12px_M(text: 'YYYY', color: PeeroreumColor.gray[400]),
+                                C1_12px_M(text: date.substring(0,4), color: PeeroreumColor.gray[400]),
                                 SizedBox(width: 2,),
                                 C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
                                 SizedBox(width: 2,),
                               ],
                             )),
-                            C1_12px_M(text: 'MM', color: PeeroreumColor.gray[400]),
+                            C1_12px_M(text: date.substring(5,7), color: PeeroreumColor.gray[400]),
                             SizedBox(width: 2,),
                             C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
                             SizedBox(width: 2,),
-                            C1_12px_M(text: 'DD', color: PeeroreumColor.gray[400]),
+                            C1_12px_M(text: date.substring(8,10), color: PeeroreumColor.gray[400]),
                             SizedBox(width: 4,),
-                            C1_12px_M(text: 'TT', color: PeeroreumColor.gray[400]),
+                            C1_12px_M(text: date.substring(11,13), color: PeeroreumColor.gray[400]),
                             SizedBox(width: 2,),
                             C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
                             SizedBox(width: 2,),
-                            C1_12px_M(text: 'MM', color: PeeroreumColor.gray[400]),
+                            C1_12px_M(text: date.substring(14,16), color: PeeroreumColor.gray[400]),
                           ],
                         )
                       ],
@@ -404,7 +348,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     SizedBox(height: 16,),
                     Column(
                       children: [
-                        B4_14px_R(text: 'contents')
+                        B4_14px_R(text: contents)
                       ],
                     ),
                     SizedBox(height: 16,),
@@ -540,39 +484,25 @@ class _DetailIeduState extends State<DetailIedu> {
                 padding: EdgeInsets.only(bottom: 8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: List<Widget>.generate(
-                    commentDatas.length,
-                    (index) => MakeComment(
-                      index:
-                      index,
-                      id: 
-                      commentDatas[index]["id"],
-                      hasParent: 
-                      commentDatas[index]["parentId"],
-                      grade: 
-                      commentDatas[index]['memberProfileDto']['grade'], 
-                      profileImage:
-                      commentDatas[index]['memberProfileDto']['profileImage'],
-                      name: 
-                      commentDatas[index]['memberProfileDto']['nickname'], 
-                      isQwselected: 
-                      isQselected, 
-                      isChosen: 
-                      commentDatas[index]["isSelected"], 
-                      comment: 
-                      commentDatas[index]["content"],
-                      commentImage: 
-                      commentDatas[index]["images"],
-                      createdTime:
-                      commentDatas[index]["createdTime"],
-                      isLiked:
-                      commentDatas[index]["isLiked"],
-                      likesNum:
-                      commentDatas[index]["likes"],
-                      commentsNum:
-                      commentDatas[index]["comments"]
-                    ),
-                  ).toList(),
+                  children: (commentDatas ?? <dynamic>[]) // commentDatas가 null이면 빈 리스트를 사용합니다.
+                    .map<Widget>((commentData) {
+                      return MakeComment(
+                        index: commentDatas.indexOf(commentData),
+                        id: commentData["id"],
+                        hasParent: commentData["parentId"],
+                        grade: commentData['memberProfileDto']['grade'], 
+                        profileImage: commentData['memberProfileDto']['profileImage'],
+                        name: commentData['memberProfileDto']['nickname'], 
+                        isQwselected: isQselected, 
+                        isChosen: commentData["isSelected"], 
+                        comment: commentData["content"],
+                        commentImage: commentData["images"],
+                        createdTime: commentData["createdTime"],
+                        isLiked: commentData["isLiked"],
+                        likesNum: commentData["likes"],
+                        commentsNum: commentData["comments"]
+                      );
+                    }).toList(),
                 ),
               ),
               // Expanded(
@@ -761,9 +691,14 @@ class _DetailIeduState extends State<DetailIedu> {
                     ),
                     SizedBox(width: 16,),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async{
                         if(_image == null){
-                          //Navigator.pushNamed(context, '화이트보드 화면')
+                          final dynamic whiteboardImage = await Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return WhiteboardIedu();
+                          }));
+                          setState(() {
+                            _image = whiteboardImage;
+                          });
                         } else{
                           Fluttertoast.showToast(msg: "댓글은 파일 최대 1개까지만 첨부 가능합니다.");
                         }
@@ -910,12 +845,12 @@ class _DetailIeduState extends State<DetailIedu> {
       'parentAnswerId': '$selectedParent'
     };
 
+    formData = FormData.fromMap(IeduAnswerMap);
+
     if(_image != null){
       var file = await MultipartFile.fromFile(_image!.path);
-      IeduAnswerMap.addAll({'files': file});
+      formData.files.add(MapEntry('files', file));
     }
-
-    formData = FormData.fromMap(IeduAnswerMap);
 
     dio.options.contentType = 'multipart/form-data';
     dio.options.headers = {'Authorization': 'Bearer $token'};
@@ -1156,7 +1091,7 @@ class MakeComment extends StatefulWidget {
                     ],
                   ),
                   SizedBox(height: 4,),
-                  if(widget.commentImage != null)
+                  if(widget.commentImage != null && widget.commentImage!.isNotEmpty)
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -1175,7 +1110,7 @@ class MakeComment extends StatefulWidget {
                           border: Border.all(color: PeeroreumColor.gray[100]!),
                           borderRadius: BorderRadius.circular(8),
                           image: DecorationImage(
-                                    image: NetworkImage(widget.commentImage![0]),
+                                    image: NetworkImage(widget.commentImage!.first),
                                     fit: BoxFit.cover,
                                   ),
                         ),

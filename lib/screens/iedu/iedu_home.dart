@@ -82,6 +82,18 @@ class _HomeIeduState extends State<HomeIedu> {
     }
   }
 
+  bool UpCheck(String createdAt) {
+    DateTime createdTime = DateTime.parse(createdAt);
+    DateTime now = DateTime.now();
+
+    Duration difference = now.difference(createdTime);
+    if (difference.inHours >= 1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -132,7 +144,9 @@ class _HomeIeduState extends State<HomeIedu> {
     if (IeduResult.statusCode == 200) {
       print("성공 fetchIeduData ${IeduResult.statusCode}");
       datas = jsonDecode(utf8.decode(IeduResult.bodyBytes))['data'];
-      isReadList = List.generate(datas.length, (index) => false);
+      if (isReadList.isEmpty) {
+        isReadList = List.generate(datas.length, (index) => false);
+      }
     } else {
       print("에러 fetchIeduData ${IeduResult.statusCode}");
     }
@@ -657,31 +671,35 @@ class _HomeIeduState extends State<HomeIedu> {
                   children: [
                     Container(
                       width: datas[index]['selected']
-                          ? MediaQuery.of(context).size.width - 80 - 50 - 2 - 9
-                          : MediaQuery.of(context).size.width - 80 - 50 - 2,
+                          ? MediaQuery.of(context).size.width - 141
+                          : MediaQuery.of(context).size.width - 132,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFFEBEA),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: SizedBox(
-                              height: 16,
-                              child: Center(
-                                child: C2_10px_Sb(
-                                  text: 'UP',
-                                  color: Color(0xFFF03A2E),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
+                          UpCheck(datas[index]["createdTime"])
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 2, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFFFEBEA),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: SizedBox(
+                                    height: 16,
+                                    child: Center(
+                                      child: C2_10px_Sb(
+                                        text: 'UP',
+                                        color: Color(0xFFF03A2E),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          UpCheck(datas[index]["createdTime"])
+                              ? SizedBox(
+                                  width: 8,
+                                )
+                              : Container(),
                           Flexible(child: T4_16px(text: datas[index]['title'])),
                         ],
                       ),
@@ -741,8 +759,13 @@ class _HomeIeduState extends State<HomeIedu> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              width: 2,
-                              color: Color.fromARGB(255, 186, 188, 189)),
+                              width: 1,
+                              color: datas[index]["memberProfileDto"]
+                                          ["grade"] !=
+                                      null
+                                  ? PeeroreumColor.gradeColor[datas[index]
+                                      ["memberProfileDto"]["grade"]]!
+                                  : Color.fromARGB(255, 186, 188, 189)),
                         ),
                         child: Container(
                           height: 24,
@@ -750,7 +773,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              width: 1,
+                              width: 2,
                               color: PeeroreumColor.white,
                             ),
                             image: datas[index]["memberProfileDto"]
