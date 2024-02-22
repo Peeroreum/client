@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -9,27 +11,33 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail_image.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:peeroreum_client/api/PeeroreumApi.dart';
 
 class DetailIedu extends StatefulWidget {
+  final int id;
   final bool isQselected;
   const DetailIedu(
+    this.id,
     this.isQselected
   );
 
   @override
-  State<DetailIedu> createState() => _DetailIeduState(isQselected);
+  State<DetailIedu> createState() => _DetailIeduState(id, isQselected);
 }
 
 class _DetailIeduState extends State<DetailIedu> {
-  _DetailIeduState(this.isQselected);
+  _DetailIeduState(this.id, this.isQselected);
+  
+  var id, token, nickname;
   TextEditingController _textController = TextEditingController();
-  // double? _textFieldHeight = null; // 기본 높이
-
-  // GlobalKey _childKey = GlobalKey();
-  // dynamic setHeight= null;
 
   int? _maxLines = 1; // 현재 줄 수
   int _visibleLines = 1; // 화면에 보이는 줄 수
+
+
+  dynamic questionDatas='';
+  dynamic profileDatas ='';
 
   dynamic profileImage;
   dynamic grade;
@@ -45,6 +53,7 @@ class _DetailIeduState extends State<DetailIedu> {
   ];
   int currentPage = 1;
   dynamic isLiked = false;
+  dynamic isBookmarked = false;
   dynamic likesNum = 0;
   dynamic commentsNum = 0;
   dynamic isQselected;
@@ -124,6 +133,63 @@ class _DetailIeduState extends State<DetailIedu> {
             "createdTime": "2022-10-18T12:11:46"
         }
   ];
+  Future<void> fetchDatas() async {
+    token = await FlutterSecureStorage().read(key: "accessToken");
+    nickname = await FlutterSecureStorage().read(key: "nickname");
+
+    await fetchIeduQuestionData();
+    await fetchIeduAnswerData();
+  }
+
+  fetchIeduQuestionData() async{
+    var inIeduQuestionResult = await http.get(
+      Uri.parse('${API.hostConnect}/question/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
+    if (inIeduQuestionResult.statusCode == 200){
+      questionDatas = jsonDecode(utf8.decode(inIeduQuestionResult.bodyBytes))['data'];
+      profileDatas = questionDatas['memberProfileDto'];
+      profileImage = profileDatas['profileImage'];
+      grade = profileDatas['grade'];
+      name = profileDatas['nickname'];
+      date = questionDatas['createdTime'];
+      title = questionDatas['title'];
+      contents = questionDatas['content'];
+      questionImage = questionDatas['imageUrls'];
+      isLiked = questionDatas['liked'];
+      isBookmarked = questionDatas['bookmarked'];
+      likesNum = questionDatas['likes'];
+      commentsNum = questionDatas['comments'];
+    } else if(inIeduQuestionResult.statusCode == 404){
+      // profileImage = null;
+      // grade = null;
+      // name = "(삭제)";
+      // title = "작성자에 의해 삭제된 질문입니다";
+      // contents = "(삭제)";
+      // questionImage = [];
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(msg: "존재하지 않는 질문입니다.");
+    }
+    else{
+      print("에러${inIeduQuestionResult.statusCode}");
+    }
+  }
+
+  fetchIeduAnswerData() async {
+    var inIeduAnswerResult = await http.get(
+        Uri.parse('${API.hostConnect}/answer?questionId=$id&page'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (inIeduAnswerResult.statusCode == 200) {
+      commentDatas = jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
+    } else {
+      print("에러${inIeduAnswerResult.statusCode}");
+    }
+  }
 
   @override
   void initState() {
@@ -141,10 +207,16 @@ class _DetailIeduState extends State<DetailIedu> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: ()async{
-        setState(() {
-          selectedParent = -1;
-        });
-        return false;
+         if (selectedParent != -1) {
+          setState(() {
+            selectedParent = -1;
+          });
+          // 뒤로 가기 버튼을 눌렀을 때 선택된 부모가 있으면 화면을 뒤로 가지 않고 selectedParent를 초기화합니다.
+          return false;
+        } else {
+          // 선택된 부모가 없는 경우에는 뒤로 가기 동작을 허용합니다.
+          return true;
+        }
       },
       child: GestureDetector(
         onTap: () {
@@ -152,7 +224,11 @@ class _DetailIeduState extends State<DetailIedu> {
         },
         child: Scaffold(
           appBar: appbarWidget(),
-          body: bodyWidget(),
+          body: FutureBuilder(
+            future: fetchDatas(), 
+            builder: (context, snapshot){
+              return bodyWidget();
+            }),
         ),
       ),
     );
@@ -184,10 +260,16 @@ class _DetailIeduState extends State<DetailIedu> {
                   height: 24,
                   margin: EdgeInsets.only(right: 4),
                   constraints: BoxConstraints(),
-                  child: SvgPicture.asset('assets/icons/bookmark.svg',
-                      color: PeeroreumColor.black),
+                  child: isBookmarked 
+                      ?SvgPicture.asset('assets/icons/bookmark.svg',
+                          color: PeeroreumColor.black)
+                      :SvgPicture.asset('assets/icons/bookmark_fill.svg',
+                          color: PeeroreumColor.black),
                 ),
                 onTap: () {
+                  setState(() {
+                    isBookmarked = !isBookmarked;
+                  });
                 },
               ),
               GestureDetector(
@@ -466,29 +548,29 @@ class _DetailIeduState extends State<DetailIedu> {
                       id: 
                       commentDatas[index]["id"],
                       hasParent: 
-                      commentDatas[index]["hasParent"],
+                      commentDatas[index]["parentId"],
                       grade: 
-                      commentDatas[index]["memberGrade"], 
+                      commentDatas[index]['memberProfileDto']['grade'], 
                       profileImage:
-                      commentDatas[index]["profileImage"],
+                      commentDatas[index]['memberProfileDto']['profileImage'],
                       name: 
-                      commentDatas[index]["memberNickname"], 
+                      commentDatas[index]['memberProfileDto']['nickname'], 
                       isQwselected: 
                       isQselected, 
                       isChosen: 
-                      commentDatas[index]["isChosen"], 
+                      commentDatas[index]["isSelected"], 
                       comment: 
                       commentDatas[index]["content"],
                       commentImage: 
-                      commentDatas[index]["imagePaths"],
+                      commentDatas[index]["images"],
                       createdTime:
                       commentDatas[index]["createdTime"],
                       isLiked:
                       commentDatas[index]["isLiked"],
                       likesNum:
-                      commentDatas[index]["likesNum"],
+                      commentDatas[index]["likes"],
                       commentsNum:
-                      commentDatas[index]["commentsNum"]
+                      commentDatas[index]["comments"]
                     ),
                   ).toList(),
                 ),
@@ -637,13 +719,7 @@ class _DetailIeduState extends State<DetailIedu> {
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
                               print(selectedParent);
-                              setState(() {
-                                _image = null; 
-                                _textController.clear();
-                                _maxLines = null;
-                                isSubmittable=false;
-                                selectedParent = -1;
-                              });
+                              postAnswer();
                             },
                             child: Container(
                               height: 24,
@@ -665,7 +741,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     GestureDetector(
                       onTap: () {
                         if(_image == null){
-                          takeFromGallery();
+                          showImagePickerSheet();
                         } else{
                           Fluttertoast.showToast(msg: "댓글은 파일 최대 1개까지만 첨부 가능합니다.");
                         }
@@ -686,7 +762,11 @@ class _DetailIeduState extends State<DetailIedu> {
                     SizedBox(width: 16,),
                     GestureDetector(
                       onTap: () {
-                        
+                        if(_image == null){
+                          //Navigator.pushNamed(context, '화이트보드 화면')
+                        } else{
+                          Fluttertoast.showToast(msg: "댓글은 파일 최대 1개까지만 첨부 가능합니다.");
+                        }
                       },
                       child: Row(
                         children: [
@@ -719,8 +799,6 @@ class _DetailIeduState extends State<DetailIedu> {
       // 이미지 선택이 취소되었을 때의 처리
       print('Image selection cancelled');
     }
-
-    postImages();
   }
 
   void takeFromGallery() async {
@@ -732,31 +810,130 @@ class _DetailIeduState extends State<DetailIedu> {
         _image = image;
       });
     }
-
-    postImages();
   }
 
-  Future<void> postImages() async {
+  void showImagePickerSheet() {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: PeeroreumColor.white, // 여기에 색상 지정
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            takeFromCamera();
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '카메라',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.white,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.primaryPuple[400]),
+                              padding:
+                                  MaterialStateProperty.all(EdgeInsets.all(12)),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ))),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            takeFromGallery();
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '갤러리',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.white,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.primaryPuple[400]),
+                              padding:
+                                  MaterialStateProperty.all(EdgeInsets.all(12)),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ))),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> postAnswer() async {
     var dio = Dio();
     var formData = FormData();
 
+    var IeduAnswerMap = <String, dynamic>{
+      'content': _textController.text,
+      'questionId': '$id',
+      'parentAnswerId': '$selectedParent'
+    };
+
+    if(_image != null){
+      var file = await MultipartFile.fromFile(_image!.path);
+      IeduAnswerMap.addAll({'files': file});
+    }
+
+    formData = FormData.fromMap(IeduAnswerMap);
+
     dio.options.contentType = 'multipart/form-data';
-    //dio.options.headers = {'Authorization': 'Bearer $token'};
+    dio.options.headers = {'Authorization': 'Bearer $token'};
 
-    // for (var image in _images) {
-    //   var file = await MultipartFile.fromFile(image.path);
-    //   formData.files.add(MapEntry('files', file));
-    // }
-    // var response =
-    //     await dio.post('${API.hostConnect}/wedu/$id/challenge', data: formData);
+    var response = await dio.post('${API.hostConnect}/answer', data: formData);
 
-    // if (response.statusCode == 200) {
-    //   Fluttertoast.showToast(msg: '오늘의 챌린지 인증 성공!');
-    //   fetchDatas();
-    //   setState(() {});
-    // } else {
-    //   Fluttertoast.showToast(msg: '잠시 후에 다시 시작해 주세요.');
-    // }
+    if (response.statusCode == 200) {
+      fetchDatas();
+      setState(() {
+        _image = null; 
+        _textController.clear();
+        _maxLines = null;
+        isSubmittable=false;
+        selectedParent = -1;
+      });
+    } else {
+      Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
+    }
   }
 
   int textlines(String text) {
@@ -791,6 +968,7 @@ class MakeComment extends StatefulWidget {
     final dynamic isLiked;
     final dynamic likesNum;
     final dynamic commentsNum;
+    final dynamic isDeleted;
 
     const MakeComment({
       Key? key,
@@ -808,6 +986,7 @@ class MakeComment extends StatefulWidget {
       this.isLiked,
       this.likesNum,
       this.commentsNum,
+      this.isDeleted,
     }) : super(key: key);
   
     @override
