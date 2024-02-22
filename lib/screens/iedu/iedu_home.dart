@@ -36,7 +36,7 @@ class _HomeIeduState extends State<HomeIedu> {
   List<String> DetailSubjects = [];
 
   List<dynamic> datas = [];
-  List<bool> isReadList = List.generate(6, (index) => false);
+  List<bool> isReadList = [];
 
   var token;
   var nickname;
@@ -132,6 +132,7 @@ class _HomeIeduState extends State<HomeIedu> {
     if (IeduResult.statusCode == 200) {
       print("성공 fetchIeduData ${IeduResult.statusCode}");
       datas = jsonDecode(utf8.decode(IeduResult.bodyBytes))['data'];
+      isReadList = List.generate(datas.length, (index) => false);
     } else {
       print("에러 fetchIeduData ${IeduResult.statusCode}");
     }
@@ -637,7 +638,7 @@ class _HomeIeduState extends State<HomeIedu> {
               isReadList[index] = true;
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DetailIedu(
-                      datas[index]['selected'], datas[index]['id'])));
+                      datas[index]['id'], datas[index]['selected'])));
             });
           },
           child: Container(
