@@ -20,11 +20,10 @@ class T1_24px extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 24,
-        fontWeight: FontWeight.w600
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 24,
+          fontWeight: FontWeight.w600),
     );
   }
 }
@@ -46,11 +45,10 @@ class T2_20px extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 20,
-        fontWeight: FontWeight.w600
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 20,
+          fontWeight: FontWeight.w600),
     );
   }
 }
@@ -72,11 +70,10 @@ class T3_18px extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 18,
-        fontWeight: FontWeight.w600
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 18,
+          fontWeight: FontWeight.w600),
     );
   }
 }
@@ -98,11 +95,11 @@ class T4_16px extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 16,
-        fontWeight: FontWeight.w600
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 16,
+          fontWeight: FontWeight.w600),
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
@@ -124,11 +121,10 @@ class T5_14px extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 14,
-        fontWeight: FontWeight.w600
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 14,
+          fontWeight: FontWeight.w600),
     );
   }
 }
@@ -152,11 +148,10 @@ class B1_24px_M extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 24,
-        fontWeight: FontWeight.w500
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 24,
+          fontWeight: FontWeight.w500),
     );
   }
 }
@@ -178,11 +173,10 @@ class B2_20px_M extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 20,
-        fontWeight: FontWeight.w500
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 20,
+          fontWeight: FontWeight.w500),
     );
   }
 }
@@ -204,11 +198,10 @@ class B3_18px_M extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 18,
-        fontWeight: FontWeight.w500
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 18,
+          fontWeight: FontWeight.w500),
     );
   }
 }
@@ -230,11 +223,10 @@ class B4_14px_M extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 14,
-        fontWeight: FontWeight.w500
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 14,
+          fontWeight: FontWeight.w500),
       overflow: TextOverflow.ellipsis,
     );
   }
@@ -259,11 +251,10 @@ class B1_24px_R extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 24,
-        fontWeight: FontWeight.w400
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 24,
+          fontWeight: FontWeight.w400),
     );
   }
 }
@@ -285,11 +276,10 @@ class B2_20px_R extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 20,
-        fontWeight: FontWeight.w400
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 20,
+          fontWeight: FontWeight.w400),
     );
   }
 }
@@ -311,11 +301,10 @@ class B3_18px_R extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 18,
-        fontWeight: FontWeight.w400
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 18,
+          fontWeight: FontWeight.w400),
     );
   }
 }
@@ -337,12 +326,11 @@ class B4_14px_R extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        height: 24/14
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          height: 24 / 14),
     );
   }
 }
@@ -366,11 +354,10 @@ class C1_12px_Sb extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 12,
-        fontWeight: FontWeight.w600
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 12,
+          fontWeight: FontWeight.w600),
     );
   }
 }
@@ -392,11 +379,10 @@ class C1_12px_M extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 12,
-        fontWeight: FontWeight.w500
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 12,
+          fontWeight: FontWeight.w500),
     );
   }
 }
@@ -418,11 +404,10 @@ class C1_12px_R extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 12,
-        fontWeight: FontWeight.w400
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 12,
+          fontWeight: FontWeight.w400),
     );
   }
 }
@@ -444,11 +429,10 @@ class C2_10px_Sb extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 10,
-        fontWeight: FontWeight.w600
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 10,
+          fontWeight: FontWeight.w600),
     );
   }
 }
@@ -470,11 +454,10 @@ class C2_10px_M extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 10,
-        fontWeight: FontWeight.w500
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 10,
+          fontWeight: FontWeight.w500),
     );
   }
 }
@@ -496,11 +479,10 @@ class C2_10px_R extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-        color: color ?? PeeroreumColor.black,
-        fontFamily: 'Pretendard',
-        fontSize: 10,
-        fontWeight: FontWeight.w400
-      ),
+          color: color ?? PeeroreumColor.black,
+          fontFamily: 'Pretendard',
+          fontSize: 10,
+          fontWeight: FontWeight.w400),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:peeroreum_client/data/Onboarding_check.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
+import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
 import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
@@ -31,7 +32,8 @@ void main() async {
   );
 
   // Check if you received the link via `getInitialLink` first
-  final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+  final PendingDynamicLinkData? initialLink =
+      await FirebaseDynamicLinks.instance.getInitialLink();
 
   if (initialLink != null) {
     final Uri deepLink = initialLink.link;
@@ -40,15 +42,15 @@ void main() async {
   }
 
   FirebaseDynamicLinks.instance.onLink.listen(
-        (pendingDynamicLinkData) {
-          // Set up the `onLink` event listener next as it may be received here
-          if (pendingDynamicLinkData != null) {
-            final Uri deepLink = pendingDynamicLinkData.link;
-            // Example of using the dynamic link to push the user to a different screen
-            //Navigator.pushNamed(context, deepLink.path);
-          }
-        },
-      );
+    (pendingDynamicLinkData) {
+      // Set up the `onLink` event listener next as it may be received here
+      if (pendingDynamicLinkData != null) {
+        final Uri deepLink = pendingDynamicLinkData.link;
+        // Example of using the dynamic link to push the user to a different screen
+        //Navigator.pushNamed(context, deepLink.path);
+      }
+    },
+  );
   //await DynamicLink().setup();
   const nativeAppKey = "a17f729816582e161afaae9395c1f1b5";
   KakaoSdk.init(nativeAppKey: nativeAppKey);
@@ -56,12 +58,12 @@ void main() async {
   String? firebaseToken = await fcmSetting();
   //await OnboardingCheck.setUserType(true); // 처음에 값 설정
   bool? isNewUser = await checkUser();
-  runApp(PeeroreumApp(isLoggedIn, firebaseToken!,isNewUser!));
+  runApp(PeeroreumApp(isLoggedIn, firebaseToken!, isNewUser!));
 }
 
-Future<bool> checkUser() async{
+Future<bool> checkUser() async {
   bool? isnewhere = await OnboardingCheck.getUserType();
-  if (isnewhere != false){
+  if (isnewhere != false) {
     isnewhere = true;
   }
   return isnewhere!;
@@ -77,7 +79,8 @@ class PeeroreumApp extends StatelessWidget {
   bool isLoggedIn;
   bool isNewUser;
   String firebaseToken;
-  PeeroreumApp(this.isLoggedIn, this.firebaseToken,this.isNewUser, {super.key});
+  PeeroreumApp(this.isLoggedIn, this.firebaseToken, this.isNewUser,
+      {super.key});
 
   // This widget is the root of your application.
   @override
@@ -85,31 +88,28 @@ class PeeroreumApp extends StatelessWidget {
     return MaterialApp(
       builder: (context, child) {
         return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor:1.0),
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
             child: child!);
       },
       localizationsDelegates: [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
       ],
       theme: ThemeData(
           appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: PeeroreumColor.white,
-                statusBarIconBrightness: Brightness.dark
-              )
-          )
-      ),
+                  statusBarColor: PeeroreumColor.white,
+                  statusBarIconBrightness: Brightness.dark))),
       title: 'Peeroreum',
       home: isNewUser
-      ? OnBoarding()
-      : (isLoggedIn? bottomNaviBar(firebaseToken) : EmailSignIn()),
+          ? OnBoarding()
+          : (isLoggedIn ? bottomNaviBar(firebaseToken, 1) : EmailSignIn()),
       // initialRoute: isLoggedIn? '/home' : '/signIn/email',
       routes: {
         '/signIn': (context) => SignIn(),
         '/signIn/email': (context) => EmailSignIn(),
         '/signUp/email': (context) => EmailSignUp(),
-        '/home': (context) => bottomNaviBar(firebaseToken),
+        '/home': (context) => bottomNaviBar(firebaseToken, 1),
         '/wedu': (context) => HomeWedu(),
         '/wedu/create_invitaion': (context) => CreateInvitation(),
         'wedu/my': (context) => InWedu(),
@@ -117,9 +117,10 @@ class PeeroreumApp extends StatelessWidget {
         '/wedu/challenge/notok': (context) => EncouragementList(),
         //'/wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
         //'/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
-        'signUp/onBoarding':(context) => OnBoarding(),
-        'signUp/Complete':(context) => SignUpComplete(),
-        '/report':(context) => Report(),
+        'signUp/onBoarding': (context) => OnBoarding(),
+        'signUp/Complete': (context) => SignUpComplete(),
+        '/report': (context) => Report(),
+        '/home/iedu': (context) => bottomNaviBar(firebaseToken, 2),
       },
       debugShowCheckedModeBanner: false,
     );

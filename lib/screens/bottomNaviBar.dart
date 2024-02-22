@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/FirebaseToken.dart';
+import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
@@ -18,25 +19,27 @@ import '../api/PeeroreumApi.dart';
 
 class bottomNaviBar extends StatefulWidget {
   String firebaseToken;
-  bottomNaviBar(this.firebaseToken, {super.key});
+  var selectedIndex;
+  bottomNaviBar(this.firebaseToken, this.selectedIndex, {super.key});
 
   @override
-  State<bottomNaviBar> createState() => _bottomNaviBarState(firebaseToken);
+  State<bottomNaviBar> createState() =>
+      _bottomNaviBarState(firebaseToken, selectedIndex);
 }
 
 class _bottomNaviBarState extends State<bottomNaviBar> {
   String firebaseToken;
-  var selectedIndex = 1;
+  var selectedIndex;
 
   List _pages = [
     Prepare(),
     HomeWedu(),
-    Prepare(),
+    HomeIedu(),
     Prepare(),
     MyPage(),
   ];
 
-  _bottomNaviBarState(this.firebaseToken);
+  _bottomNaviBarState(this.firebaseToken, this.selectedIndex);
 
   @override
   void initState() {
@@ -58,10 +61,9 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         },
-        body: jsonEncode(FirebaseToken(firebaseToken: firebaseToken))
-    );
+        body: jsonEncode(FirebaseToken(firebaseToken: firebaseToken)));
 
-    if(result.statusCode == 200) {
+    if (result.statusCode == 200) {
       print("firebaseToken post 성공");
     } else {
       print("firebaseToken post 실패 ${result.statusCode}");
