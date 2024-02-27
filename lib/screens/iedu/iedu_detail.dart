@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail_image.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,7 +41,7 @@ class _DetailIeduState extends State<DetailIedu> {
   dynamic questionDatas='';
   dynamic profileDatas ='';
 
-  dynamic profileImage = '';
+  dynamic profileImage;
   dynamic grade;
   dynamic name = '';
   dynamic date = DateTime.now().toString();
@@ -48,10 +49,10 @@ class _DetailIeduState extends State<DetailIedu> {
   dynamic contents = '';
   List<dynamic> questionImage = [];
   int currentPage = 1;
-  dynamic isLiked = false;
-  dynamic isBookmarked = false;
-  dynamic likesNum = 0;
-  dynamic commentsNum = 0;
+  bool isLiked = false;
+  dynamic isBookmarked;
+  int likesNum = 0;
+  int commentsNum = 0;
   dynamic isQselected;
 
   int selectedParent = -1;
@@ -64,6 +65,11 @@ class _DetailIeduState extends State<DetailIedu> {
   XFile? _image;
   //----------------
   dynamic commentDatas;
+
+  void updateData(){
+    setState(() {
+    });
+  }
   
   Future<void>fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
@@ -94,6 +100,7 @@ class _DetailIeduState extends State<DetailIedu> {
       isBookmarked = questionDatas['bookmarked'];
       likesNum = questionDatas['likes'];
       commentsNum = questionDatas['comments'];
+      print(questionImage);
     } else if(inIeduQuestionResult.statusCode == 404){
       // profileImage = null;
       // grade = null;
@@ -101,11 +108,13 @@ class _DetailIeduState extends State<DetailIedu> {
       // title = "작성자에 의해 삭제된 질문입니다";
       // contents = "(삭제)";
       // questionImage = [];
-      Navigator.of(context).pop();
-      Fluttertoast.showToast(msg: "존재하지 않는 질문입니다.");
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/home/iedu', (route) => false);
+      //Fluttertoast.showToast(msg: "존재하지 않는 질문입니다.");
+      print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
     }
     else{
-      print("에러${inIeduQuestionResult.statusCode}");
+      print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
     }
   }
 
@@ -119,7 +128,7 @@ class _DetailIeduState extends State<DetailIedu> {
     if (inIeduAnswerResult.statusCode == 200) {
       commentDatas = jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
     } else {
-      print("에러${inIeduAnswerResult.statusCode}");
+      print("fetchIeduAnswerData에러${inIeduAnswerResult.statusCode}");
     }
   }
 
@@ -154,26 +163,30 @@ class _DetailIeduState extends State<DetailIedu> {
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: Scaffold(
-          appBar: appbarWidget(),
-          body: FutureBuilder(
+        child: FutureBuilder(
             future: fetchDatas(), 
             builder: (context, snapshot){
               // if (snapshot.connectionState == ConnectionState.waiting) {
-              // return Center(child: CircularProgressIndicator());
+              // return Scaffold(
+              //   body: RefreshIndicator(
+              //       onRefresh: () => fetchDatas(),
+              //       color: PeeroreumColor.primaryPuple[400],
+              //       child: Container(),),
+              // );
               // } else if (snapshot.hasError) {
               //   // 에러 발생 시
-              //   return Center(child: Text('Error: ${snapshot.error}'));
+              //   return Scaffold(body: Center(child: Text('Error: ${snapshot.error}')));
               // } else {
-              //   return RefreshIndicator(
-              //     onRefresh: () => fetchDatas(),
-              //     color: PeeroreumColor.primaryPuple[400],
-              //     child: bodyWidget(),
-              //   );
+              //   return Scaffold(
+              //             appBar: appbarWidget(),
+              //             body: bodyWidget(),
+              //           );
               // }
-              return bodyWidget();
+              return Scaffold(
+                          appBar: appbarWidget(),
+                          body: bodyWidget(),
+                        );
             }),
-        ),
       ),
     );
   }
@@ -189,7 +202,7 @@ class _DetailIeduState extends State<DetailIedu> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          Navigator.of(context).pop();
+          Navigator.pushNamedAndRemoveUntil(context, '/home/iedu', (route) => false);
         },
       ),
       actions: [
@@ -204,16 +217,18 @@ class _DetailIeduState extends State<DetailIedu> {
                   height: 24,
                   margin: EdgeInsets.only(right: 4),
                   constraints: BoxConstraints(),
-                  child: isBookmarked 
+                  child: isBookmarked != null && isBookmarked 
                       ?SvgPicture.asset('assets/icons/bookmark_fill.svg',
                           color: PeeroreumColor.black)
                       :SvgPicture.asset('assets/icons/bookmark.svg',
                           color: PeeroreumColor.black),
                 ),
                 onTap: () {
-                  setState(() {
-                    isBookmarked = !isBookmarked;
-                  });
+                  // setState(() {
+                  //   isBookmarked = !isBookmarked;
+                  // });
+                  print(isBookmarked);
+                  postBookmark();
                 },
               ),
               GestureDetector(
@@ -230,7 +245,14 @@ class _DetailIeduState extends State<DetailIedu> {
                     color: PeeroreumColor.black,
                   ),
                 ),
-                onTap: () {
+                onTap: () async {
+                  await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return deleteQuestionBottomSheet(name);
+                      });
                 },
               )
             ],
@@ -299,8 +321,11 @@ class _DetailIeduState extends State<DetailIedu> {
                                   shape: BoxShape.circle,
                                   image: profileImage != null
                                       ? DecorationImage(
-                                          image: NetworkImage(profileImage),
-                                          fit: BoxFit.cover)
+                                          image: Image.network(profileImage).image,
+                                          fit: BoxFit.cover,
+                                          onError: (exception, stackTrace) {
+                                      print('Error loading image: $exception');
+                                    },)
                                       : DecorationImage(
                                           image: AssetImage(
                                           'assets/images/user.jpg',
@@ -356,7 +381,7 @@ class _DetailIeduState extends State<DetailIedu> {
                       visible: questionImage.isNotEmpty,
                       child: CarouselSlider(
                       items: questionImage.map((i) {
-                        var imageUrl = i.toString();
+                        var imageUrl = i?.toString();
                         return Builder(
                           builder: (BuildContext context) {
                             return GestureDetector(
@@ -375,11 +400,11 @@ class _DetailIeduState extends State<DetailIedu> {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     color: PeeroreumColor.gray[100],
-                                    image: i != null
-                                        ? DecorationImage(
-                                            image: NetworkImage(imageUrl),
-                                            fit: BoxFit.cover)
-                                        : null),
+                                    image: imageUrl != null
+                                      ?DecorationImage(
+                                              image: Image.network(imageUrl).image,
+                                              fit: BoxFit.cover)
+                                      :null),
                                 child: Align(
                                   alignment: Alignment.bottomRight,
                                   child: Container(
@@ -422,14 +447,15 @@ class _DetailIeduState extends State<DetailIedu> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            setState(() {
-                              if (isLiked) {
-                                likesNum -= 1;
-                              } else {
-                                likesNum += 1;
-                              }
-                              isLiked = !isLiked;
-                            });
+                            // setState(() {
+                            //   if (isLiked) {
+                            //     likesNum -= 1;
+                            //   } else {
+                            //     likesNum += 1;
+                            //   }
+                            //   isLiked = !isLiked;
+                            // });
+                            postQLike();
                           },
                           child: Row(
                             children: [
@@ -500,7 +526,10 @@ class _DetailIeduState extends State<DetailIedu> {
                         createdTime: commentData["createdTime"],
                         isLiked: commentData["isLiked"],
                         likesNum: commentData["likes"],
-                        commentsNum: commentData["comments"]
+                        commentsNum: commentData["comments"],
+                        isDeleted: commentData["isDeleted"],
+                        updateData: updateData,
+                        qWriter: name,
                       );
                     }).toList(),
                 ),
@@ -649,7 +678,9 @@ class _DetailIeduState extends State<DetailIedu> {
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
                               print(selectedParent);
-                              postAnswer();
+                              if(isSubmittable){
+                                postAnswer();
+                              }
                             },
                             child: Container(
                               height: 24,
@@ -834,6 +865,168 @@ class _DetailIeduState extends State<DetailIedu> {
           );
         });
   }
+  deleteQuestionBottomSheet(writerName) {
+      var isMyQuestion = writerName == nickname;
+      return Container(
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      child: isMyQuestion
+          ? GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                await confirmQuestionDeleteMessage();
+              },
+              child: Container(
+                  margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                  height: 56,
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 20,
+                  ),
+                  child: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '삭제하기',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.error,
+                      ),
+                    ),
+                  )),
+            )
+          : GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                //Fluttertoast.showToast(msg: '준비 중입니다.');
+                Navigator.of(context).pushNamed('/report');
+              },
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                height: 56,
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 20,
+                ),
+                child: Text('신고하기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: PeeroreumColor.error,
+                    )),
+              ),
+            ),
+    );
+  }
+
+  confirmQuestionDeleteMessage() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "질문을 삭제하시겠습니까?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          int count = 0;
+                          Navigator.of(context).popUntil((route) {
+                            // pop할 경로의 개수를 count 변수를 사용하여 관리
+                            bool shouldPop = count == 2;
+                            count++;
+                            return shouldPop;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16), // 패딩
+                          shape: RoundedRectangleBorder(
+                            // 모양
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.gray[600]),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          deleteQuestion();
+                           Navigator.pushNamedAndRemoveUntil(context, '/home/iedu', (route) => false);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.error,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '삭제',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Future<void> postAnswer() async {
     var dio = Dio();
@@ -886,6 +1079,131 @@ class _DetailIeduState extends State<DetailIedu> {
     List<LineMetrics> countLines = textPainter.computeLineMetrics();
     return countLines.length;
   }
+
+  Future<void> postBookmark() async{
+    if(isBookmarked == false){
+      http.post(
+        Uri.parse('${API.hostConnect}/bookmark/question/$id'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('북마크 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+          setState(() {
+          });
+        
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+    }
+    else if(isBookmarked == true){
+      http.delete(
+        Uri.parse('${API.hostConnect}/bookmark/question/$id'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('북마크 삭제 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+          setState(() {
+          });
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+    }
+  }
+
+  Future<void> postQLike() async{
+    if(isLiked == false){
+      http.post(
+        Uri.parse('${API.hostConnect}/like/question/$id'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('질문 좋아요 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+          setState(() {
+          });
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+    }
+    else if(isLiked == true){
+      http.delete(
+        Uri.parse('${API.hostConnect}/like/question/$id'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('질문 좋아요 삭제 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+          setState(() {
+          });
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+    }
+  }
+  Future<void> deleteQuestion() async{
+    http.delete(
+        Uri.parse('${API.hostConnect}/question/$id'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('질문 삭제 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+  }
 }
 
 class MakeComment extends StatefulWidget {
@@ -904,6 +1222,8 @@ class MakeComment extends StatefulWidget {
     final dynamic likesNum;
     final dynamic commentsNum;
     final dynamic isDeleted;
+    final VoidCallback updateData;
+    final dynamic qWriter;
 
     const MakeComment({
       Key? key,
@@ -921,7 +1241,9 @@ class MakeComment extends StatefulWidget {
       this.isLiked,
       this.likesNum,
       this.commentsNum,
-      this.isDeleted,
+      this.isDeleted = false,
+      required this.updateData,
+      required this.qWriter,
     }) : super(key: key);
   
     @override
@@ -930,17 +1252,19 @@ class MakeComment extends StatefulWidget {
   
   class _MakeCommentState extends State<MakeComment> {
     String createdTime = DateTime.now().toString();
-    bool isLiked = false;
-    int likesNum = 0;
-    int commentsNum = 0;
-  
+    var nickname, token;
+
     @override
     void initState() {
       super.initState();
       createdTime =  widget.createdTime ?? DateTime.now().toString();
-      isLiked = widget.isLiked ?? false;
-      likesNum = widget.likesNum ?? 0;
-      commentsNum = widget.commentsNum ?? 0;
+      getData();
+    }
+    Future<void>getData() async{
+      nickname = await FlutterSecureStorage().read(key: "nickname");
+      token = await FlutterSecureStorage().read(key: "accessToken");
+      setState(() {
+      });
     }
 
     @override
@@ -1033,7 +1357,7 @@ class MakeComment extends StatefulWidget {
                                       shape: BoxShape.circle,
                                       image: widget.profileImage != null
                                           ? DecorationImage(
-                                              image: NetworkImage(widget.profileImage),
+                                              image: Image.network(widget.profileImage).image,
                                               fit: BoxFit.cover)
                                           : DecorationImage(
                                               image: AssetImage(
@@ -1045,10 +1369,16 @@ class MakeComment extends StatefulWidget {
                               ),
                               const SizedBox(width: 8,),
                               Flexible(
-                                child: B4_14px_M(text: widget.name)),
+                                child: B4_14px_M(
+                                  text: widget.isDeleted
+                                    ? '(삭제)'
+                                    : widget.name,
+                                  color: widget.isDeleted
+                                  ? PeeroreumColor.gray[500]
+                                  : null,)),
                               SizedBox(width: 12,),
                               Visibility(
-                                visible: widget.isQwselected == false,
+                                visible: (widget.isQwselected == false) && (nickname == widget.qWriter) && (widget.qWriter != widget.name),
                                 child: GestureDetector(
                                   onTap: () {
                                     print('눌림');
@@ -1061,6 +1391,8 @@ class MakeComment extends StatefulWidget {
                                     } else{
                                       print('왜 작동 안하냐');
                                     }
+                                    selectAnswer();
+                                    widget.updateData();
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -1073,22 +1405,59 @@ class MakeComment extends StatefulWidget {
                                   ),
                                 ),
                               ),
+                              Visibility(
+                                visible: widget.isQwselected == true && widget.isChosen == true,
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[200],
+                                      borderRadius: BorderRadius.circular(4)
+                                    ),
+                                    width: 57,
+                                    height: 24,
+                                    child: Center(child: C1_12px_Sb(text: '채택완료', color: PeeroreumColor.white,)),
+                                  ),
+                              )
                             ],
                           ),
                         ),
-                        Container(
-                          width: 18,
-                          height: 18,
-                          child: SvgPicture.asset('assets/icons/icon_dots_mono.svg'),
+                        Visibility(
+                          visible: widget.isDeleted == false,
+                          child: GestureDetector(
+                            onTap: () async {
+                              await showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) {
+                                    return deleteAnswerBottomSheet(widget.name, widget.id);
+                                  });
+                            },
+                            child: Container(
+                              width: 18,
+                              height: 18,
+                              child: SvgPicture.asset('assets/icons/icon_dots_mono.svg'),
+                            ),
+                          ),
                         )
                       ],
                     ),
                   ),
                   SizedBox(height: 8,),
-                  Column(
-                    children: [
-                      B4_14px_R(text: widget.comment)
-                    ],
+                  Container(
+                    width: widget.hasParent == -1
+                    ?MediaQuery.of(context).size.width -40
+                    :MediaQuery.of(context).size.width -112,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        B4_14px_R(text: widget.isDeleted
+                        ? '삭제된 댓글입니다.'
+                        : widget.comment,
+                        color: widget.isDeleted
+                                  ? PeeroreumColor.gray[500]
+                                  : null,)
+                      ],
+                    ),
                   ),
                   SizedBox(height: 4,),
                   if(widget.commentImage != null && widget.commentImage!.isNotEmpty)
@@ -1106,112 +1475,112 @@ class MakeComment extends StatefulWidget {
                         ?MediaQuery.of(context).size.width -40
                         :MediaQuery.of(context).size.width -112,
                         height: 180,
-                        decoration: BoxDecoration(
+                        decoration: widget.commentImage != null && widget.commentImage!.isNotEmpty
+                        ?BoxDecoration(
                           border: Border.all(color: PeeroreumColor.gray[100]!),
                           borderRadius: BorderRadius.circular(8),
                           image: DecorationImage(
-                                    image: NetworkImage(widget.commentImage!.first),
+                                    image: Image.network(widget.commentImage!.first).image,
                                     fit: BoxFit.cover,
                                   ),
-                        ),
+                        )
+                        :null,
                       ),
                     ),
                   SizedBox(height: 8,),
-                  Row(
-                    children: [
-                      Visibility(
-                        visible: createdTime.toString().substring(0,4) != DateTime.now().toString().substring(0,4),
-                        child: Row(
-                          children: [
-                            C1_12px_M(text: createdTime.toString().substring(0,4),color: PeeroreumColor.gray[400],),
-                            SizedBox(width: 2,),
-                            C1_12px_M(text: '/',color: PeeroreumColor.gray[400]),
-                            SizedBox(width: 2,)
-                          ],
-                      )),
-                      C1_12px_M(text: createdTime.toString().substring(5,7),color: PeeroreumColor.gray[400]),
-                      SizedBox(width: 2,),
-                      C1_12px_M(text: '/',color: PeeroreumColor.gray[400]),
-                      SizedBox(width: 2,),
-                      C1_12px_M(text: createdTime.toString().substring(8,10),color: PeeroreumColor.gray[400]),
-                      SizedBox(width: 4,),
-                      C1_12px_M(text: createdTime.toString().substring(11,13),color: PeeroreumColor.gray[400]),
-                      SizedBox(width: 2,),
-                      C1_12px_M(text: ':',color: PeeroreumColor.gray[400]),
-                      SizedBox(width: 2,),
-                      C1_12px_M(text: createdTime.toString().substring(14,16),color: PeeroreumColor.gray[400]),
-            
-                      SizedBox(width: 8,),
-                      C1_12px_M(text: '|',color: PeeroreumColor.gray[200]),
-                      SizedBox(width: 8,),
-            
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          setState(() {
-                            if (isLiked) {
-                              likesNum -= 1;
-                            } else {
-                              likesNum += 1;
-                            }
-                            isLiked = !isLiked;
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 18,
-                              width: 18,
-                              child: isLiked
-                                        ? SvgPicture.asset('assets/icons/thumbs_up_fill.svg')
-                                        : SvgPicture.asset('assets/icons/thumbs_up.svg'),
-                            ),
-                            SizedBox(width: 4,),
-                            Container(
-                              constraints: BoxConstraints(minWidth: 17, minHeight: 16),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: C1_12px_M(text: '$likesNum',color: PeeroreumColor.gray[600])
-                                )
-                            ),
-                          ],
-                        ),
-                      ),
-            
-                      Visibility(
-                        visible: widget.hasParent == -1,
-                        child: GestureDetector(
+                  Visibility(
+                    visible: widget.isDeleted == false,
+                    child: Row(
+                      children: [
+                        Visibility(
+                          visible: createdTime.toString().substring(0,4) != DateTime.now().toString().substring(0,4),
+                          child: Row(
+                            children: [
+                              C1_12px_M(text: createdTime.toString().substring(0,4),color: PeeroreumColor.gray[400],),
+                              SizedBox(width: 2,),
+                              C1_12px_M(text: '/',color: PeeroreumColor.gray[400]),
+                              SizedBox(width: 2,)
+                            ],
+                        )),
+                        C1_12px_M(text: createdTime.toString().substring(5,7),color: PeeroreumColor.gray[400]),
+                        SizedBox(width: 2,),
+                        C1_12px_M(text: '/',color: PeeroreumColor.gray[400]),
+                        SizedBox(width: 2,),
+                        C1_12px_M(text: createdTime.toString().substring(8,10),color: PeeroreumColor.gray[400]),
+                        SizedBox(width: 4,),
+                        C1_12px_M(text: createdTime.toString().substring(11,13),color: PeeroreumColor.gray[400]),
+                        SizedBox(width: 2,),
+                        C1_12px_M(text: ':',color: PeeroreumColor.gray[400]),
+                        SizedBox(width: 2,),
+                        C1_12px_M(text: createdTime.toString().substring(14,16),color: PeeroreumColor.gray[400]),
+                              
+                        SizedBox(width: 8,),
+                        C1_12px_M(text: '|',color: PeeroreumColor.gray[200]),
+                        SizedBox(width: 8,),
+                              
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           onTap: () {
-                          final _dState = context.findAncestorStateOfType<_DetailIeduState>();
-                          if(_dState != null){
-                            _dState.setState(() {
-                              _dState.selectedParent = widget.id;
-                              print(widget.id);
-                            });
-                          }
+                            postALike(widget.id, widget.isLiked);
+                            print('${widget.id}, ${widget.isLiked}');
+                            widget.updateData();
                           },
                           child: Row(
                             children: [
-                              SizedBox(width: 8,),
-                              C1_12px_M(text: '|',color: PeeroreumColor.gray[200]),
-                              SizedBox(width: 8,),
                               Container(
                                 height: 18,
                                 width: 18,
-                                child: SvgPicture.asset('assets/icons/chat_drop_dots.svg'),
+                                child: widget.isLiked
+                                          ? SvgPicture.asset('assets/icons/thumbs_up_fill.svg')
+                                          : SvgPicture.asset('assets/icons/thumbs_up.svg'),
                               ),
                               SizedBox(width: 4,),
                               Container(
                                 constraints: BoxConstraints(minWidth: 17, minHeight: 16),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
-                                  child: C1_12px_M(text: '$commentsNum',color: PeeroreumColor.gray[600])
+                                  child: C1_12px_M(text: '${widget.likesNum}',color: PeeroreumColor.gray[600])
                                   )
                               ),
-                          ],),
+                            ],
+                          ),
                         ),
-                      )
-                    ],
+                              
+                        Visibility(
+                          visible: widget.hasParent == -1,
+                          child: GestureDetector(
+                            onTap: () {
+                            final _dState = context.findAncestorStateOfType<_DetailIeduState>();
+                            if(_dState != null){
+                              _dState.setState(() {
+                                _dState.selectedParent = widget.id;
+                                print(widget.id);
+                              });
+                            }
+                            },
+                            child: Row(
+                              children: [
+                                SizedBox(width: 8,),
+                                C1_12px_M(text: '|',color: PeeroreumColor.gray[200]),
+                                SizedBox(width: 8,),
+                                Container(
+                                  height: 18,
+                                  width: 18,
+                                  child: SvgPicture.asset('assets/icons/chat_drop_dots.svg'),
+                                ),
+                                SizedBox(width: 4,),
+                                Container(
+                                  constraints: BoxConstraints(minWidth: 17, minHeight: 16),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: C1_12px_M(text: '${widget.commentsNum}',color: PeeroreumColor.gray[600])
+                                    )
+                                ),
+                            ],),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -1220,4 +1589,274 @@ class MakeComment extends StatefulWidget {
         ),
       );
     }
+
+    deleteAnswerBottomSheet(writerName, commentID) {
+      var isMyAnswer = writerName == nickname;
+      return Container(
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      child: isMyAnswer
+          ? GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                await confirmCommentDeleteMessage(commentID);
+              },
+              child: Container(
+                  margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                  height: 56,
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 20,
+                  ),
+                  child: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '삭제하기',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.error,
+                      ),
+                    ),
+                  )),
+            )
+          : GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                //Fluttertoast.showToast(msg: '준비 중입니다.');
+                Navigator.of(context).pushNamed('/report');
+              },
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                height: 56,
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 20,
+                ),
+                child: Text('신고하기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: PeeroreumColor.error,
+                    )),
+              ),
+            ),
+    );
+    }
+
+    confirmCommentDeleteMessage(commentID) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "댓글을 삭제하시겠습니까?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          int count = 0;
+                          Navigator.of(context).popUntil((route) {
+                            // pop할 경로의 개수를 count 변수를 사용하여 관리
+                            bool shouldPop = count == 2;
+                            count++;
+                            return shouldPop;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16), // 패딩
+                          shape: RoundedRectangleBorder(
+                            // 모양
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.gray[600]),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          deleteAnswer(commentID);
+                          widget.updateData();
+                          int count = 0;
+                          Navigator.of(context).popUntil((route) {
+                            // pop할 경로의 개수를 count 변수를 사용하여 관리
+                            bool shouldPop = count == 2;
+                            count++;
+                            return shouldPop;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.error,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '삭제',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+    Future<void> postALike(answerID, answerLike) async{
+    if(answerLike== false){
+      http.post(
+        Uri.parse('${API.hostConnect}/like/answer/$answerID'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('답변 좋아요 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+          setState(() {
+          });
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+    }
+    else if(answerLike == true){
+      http.delete(
+        Uri.parse('${API.hostConnect}/like/answer/$answerID'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('답변 좋아요 삭제 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+          setState(() {
+          });
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+    }
+  }
+
+  Future<void> deleteAnswer(answerID) async{
+    http.delete(
+        Uri.parse('${API.hostConnect}/answer/$answerID'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+        ).then((response) {
+      if (response.statusCode == 200) {
+          print('답변 삭제 요청이 성공했습니다.');
+          print('응답: ${response.body}');
+          setState(() {
+          });
+      } else if(response.statusCode == 404){
+        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print(response.body);
+      }else {
+        print('답변 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
+  }
+
+  Future<void> selectAnswer() async{
+    print(widget.id);
+    http.put(
+      
+      Uri.parse('${API.hostConnect}/answer/${widget.id}/select'),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }
+    ).then((response) {
+    // 서버로부터 받은 응답 처리
+    if (response.statusCode == 200) {
+      print('답변 채택 요청이 성공했습니다.');
+      print('응답: ${response.body}');
+    } else {
+      print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+    }
+  }).catchError((error) {
+    // 요청 과정에서 오류가 발생한 경우 처리
+    print('오류 발생: $error');
+  });
+
+  }
   }
