@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/data/IeduRead.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -36,7 +37,8 @@ class _HomeIeduState extends State<HomeIedu> {
   List<String> DetailSubjects = [];
 
   List<dynamic> datas = [];
-  List<bool> isReadList = [];
+  List<String> isReadList = [];
+  bool whyrano = false;
 
   var token;
   var nickname;
@@ -94,6 +96,11 @@ class _HomeIeduState extends State<HomeIedu> {
     }
   }
 
+  getReadlistData() async {
+    List<String>? data = await Read.getRead();
+    isReadList = data!;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -130,6 +137,7 @@ class _HomeIeduState extends State<HomeIedu> {
     profileImage = await FlutterSecureStorage().read(key: "profileImage");
     _grade ??= int.parse(my_grade!);
     await fetchIeduData();
+    await getReadlistData();
   }
 
   fetchIeduData() async {
@@ -144,9 +152,6 @@ class _HomeIeduState extends State<HomeIedu> {
     if (IeduResult.statusCode == 200) {
       print("성공 fetchIeduData ${IeduResult.statusCode}");
       datas = jsonDecode(utf8.decode(IeduResult.bodyBytes))['data'];
-      if (isReadList.isEmpty) {
-        isReadList = List.generate(datas.length, (index) => false);
-      }
     } else {
       print("에러 fetchIeduData ${IeduResult.statusCode}");
     }
@@ -647,9 +652,12 @@ class _HomeIeduState extends State<HomeIedu> {
       },
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () {
+          onTap: () async {
             setState(() {
-              isReadList[index] = true;
+              if (!isReadList.contains(datas[index]['id'].toString())) {
+                isReadList.add(datas[index]['id'].toString());
+                Read.saveRead(isReadList);
+              }
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DetailIedu(
                       datas[index]['id'], datas[index]['selected'])));
@@ -659,7 +667,7 @@ class _HomeIeduState extends State<HomeIedu> {
             width: MediaQuery.of(context).size.width - 40,
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
-                color: isReadList[index]
+                color: isReadList.contains(datas[index]['id'].toString())
                     ? PeeroreumColor.gray[100]
                     : PeeroreumColor.white,
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
@@ -729,7 +737,8 @@ class _HomeIeduState extends State<HomeIedu> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 2, horizontal: 8),
                             decoration: BoxDecoration(
-                              color: isReadList[index]
+                              color: isReadList
+                                      .contains(datas[index]['id'].toString())
                                   ? PeeroreumColor.gray[300]
                                   : PeeroreumColor.gray[200],
                               borderRadius: BorderRadius.circular(4),
