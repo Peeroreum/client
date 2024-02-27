@@ -66,7 +66,9 @@ class _ReportState extends State<Report> {
           titleSpacing: 0,
           centerTitle: true,
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: SvgPicture.asset(
               'assets/icons/arrow-left.svg',
               color: PeeroreumColor.gray[800],
