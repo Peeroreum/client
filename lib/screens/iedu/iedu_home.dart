@@ -14,6 +14,7 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 import 'package:http/http.dart' as http;
+import 'package:peeroreum_client/screens/iedu/iedu_search.dart';
 
 class HomeIedu extends StatefulWidget {
   const HomeIedu({super.key});
@@ -198,8 +199,8 @@ class _HomeIeduState extends State<HomeIedu> {
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () {
-                  // Navigator.of(context).push(
-                  //     MaterialPageRoute(builder: (context) => searchIedu()));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => SearchIedu()));
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -658,10 +659,10 @@ class _HomeIeduState extends State<HomeIedu> {
                 isReadList.add(datas[index]['id'].toString());
                 Read.saveRead(isReadList);
               }
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DetailIedu(
-                      datas[index]['id'], datas[index]['selected'])));
             });
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailIedu(
+                    datas[index]['id'], datas[index]['selected'])));
           },
           child: Container(
             width: MediaQuery.of(context).size.width - 40,
