@@ -660,9 +660,12 @@ class _HomeIeduState extends State<HomeIedu> {
                 Read.saveRead(isReadList);
               }
             });
-            Navigator.of(context).push(MaterialPageRoute(
+            await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => DetailIedu(
                     datas[index]['id'], datas[index]['selected'])));
+            setState(() {
+              
+            });
           },
           child: Container(
             width: MediaQuery.of(context).size.width - 40,

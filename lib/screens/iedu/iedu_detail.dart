@@ -202,7 +202,8 @@ class _DetailIeduState extends State<DetailIedu> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          Navigator.pushNamedAndRemoveUntil(context, '/home/iedu', (route) => false);
+         // Navigator.pushNamedAndRemoveUntil(context, '/home/iedu', (route) => false);
+         Navigator.pop(context);
         },
       ),
       actions: [
