@@ -293,9 +293,12 @@ class _HomeIeduState extends State<HomeIedu> {
               },
               elevation: 5,
               backgroundColor: PeeroreumColor.primaryPuple[400],
-              child: SvgPicture.asset(
-                'assets/icons/pencil_with_line.svg',
-                color: PeeroreumColor.white,
+              child: SizedBox(
+                width: 24,
+                child: SvgPicture.asset(
+                  'assets/icons/pencil_with_line.svg',
+                  color: PeeroreumColor.white,
+                ),
               ),
             ),
           ),
