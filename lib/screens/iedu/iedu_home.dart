@@ -273,6 +273,9 @@ class _HomeIeduState extends State<HomeIedu> {
             children: [
               dropdown_body(),
               Expanded(child: asks()),
+              Container(
+                height: 8,
+              ),
             ],
           ),
           Padding(
@@ -696,8 +699,8 @@ class _HomeIeduState extends State<HomeIedu> {
                     children: [
                       Container(
                         width: datas[index]['selected']
-                            ? MediaQuery.of(context).size.width - 141
-                            : MediaQuery.of(context).size.width - 132,
+                            ? MediaQuery.of(context).size.width - 142
+                            : MediaQuery.of(context).size.width - 133,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
