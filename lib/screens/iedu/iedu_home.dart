@@ -125,7 +125,11 @@ class _HomeIeduState extends State<HomeIedu> {
       body: FutureBuilder<void>(
           future: initFuture,
           builder: (context, snapshot) {
-            return bodyWidget();
+            return RefreshIndicator(
+              onRefresh: () => fetchStatus(),
+              color: PeeroreumColor.primaryPuple[400],
+              child: bodyWidget(),
+            );
           }),
     );
   }
