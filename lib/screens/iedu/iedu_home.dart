@@ -51,9 +51,10 @@ class _HomeIeduState extends State<HomeIedu> {
   int subject = 0;
   int detailSubject = 0;
 
+  late Future initFuture;
   int currentPage = 0;
   bool _isLoading = false;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   String timeCheck(String createdAt) {
     DateTime createdTime = DateTime.parse(createdAt);
@@ -106,9 +107,7 @@ class _HomeIeduState extends State<HomeIedu> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Subjects.addAll(subjects);
-    DetailMiddleSubjects.addAll(middleSubjects);
-    DetailHighSubjects.addAll(highSubjects);
+    initFuture = fetchStatus();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
@@ -124,19 +123,23 @@ class _HomeIeduState extends State<HomeIedu> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchStatus(),
+          future: initFuture,
           builder: (context, snapshot) {
             return bodyWidget();
           }),
     );
   }
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     my_grade = await FlutterSecureStorage().read(key: "grade");
     nickname = await FlutterSecureStorage().read(key: "nickname");
     profileImage = await FlutterSecureStorage().read(key: "profileImage");
     _grade ??= int.parse(my_grade!);
+    Subjects.addAll(subjects);
+    DetailMiddleSubjects.addAll(middleSubjects);
+    DetailHighSubjects.addAll(highSubjects);
+
     await fetchIeduData();
     await getReadlistData();
   }
@@ -156,6 +159,7 @@ class _HomeIeduState extends State<HomeIedu> {
     } else {
       print("에러 fetchIeduData ${IeduResult.statusCode}");
     }
+    setState(() {});
   }
 
   loadMoreData() async {
@@ -167,7 +171,7 @@ class _HomeIeduState extends State<HomeIedu> {
     currentPage++;
     var IeduResult = await http.get(
         Uri.parse(
-            '${API.hostConnect}/question?grade=$_grade&subject=$_subject&detailSubject=$_detailSubject&page=$currentPage'),
+            '${API.hostConnect}/question?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -178,6 +182,7 @@ class _HomeIeduState extends State<HomeIedu> {
         datas.addAll(addedDatas);
         _isLoading = false;
       });
+      print("성공 loadMoreData ${IeduResult.statusCode}");
     } else {
       print("에러 loadMoreData ${IeduResult.statusCode}");
     }
@@ -273,6 +278,7 @@ class _HomeIeduState extends State<HomeIedu> {
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: FloatingActionButton(
+              shape: CircleBorder(),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return CreateIedu();
@@ -475,7 +481,9 @@ class _HomeIeduState extends State<HomeIedu> {
                           _grade = index;
                           _subject = null;
                           _detailSubject = null;
+                          print('_grade = $_grade');
                         });
+                        fetchIeduData();
                         Navigator.of(context).pop();
                       },
                       child: Container(
@@ -551,6 +559,8 @@ class _HomeIeduState extends State<HomeIedu> {
                             DetailSubjects.addAll(AddDetailSubjects);
                           }
                           _detailSubject = null;
+                          print('_subject = $_subject, subject = $subject');
+                          fetchIeduData();
                         });
                         Navigator.of(context).pop();
                       },
@@ -618,6 +628,9 @@ class _HomeIeduState extends State<HomeIedu> {
                         setState(() {
                           _detailSubject = DetailSubjects[index];
                           detailSubject = index;
+                          print(
+                              '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          fetchIeduData();
                         });
                         Navigator.of(context).pop();
                       },
@@ -644,6 +657,7 @@ class _HomeIeduState extends State<HomeIedu> {
 
   asks() {
     return ListView.separated(
+      controller: _scrollController,
       shrinkWrap: true,
       itemCount: datas.length + (_isLoading ? 1 : 0),
       separatorBuilder: (BuildContext context, int index) {
@@ -652,200 +666,209 @@ class _HomeIeduState extends State<HomeIedu> {
         );
       },
       itemBuilder: (BuildContext context, int index) {
-        return GestureDetector(
-          onTap: () async {
-            setState(() {
-              if (!isReadList.contains(datas[index]['id'].toString())) {
-                isReadList.add(datas[index]['id'].toString());
-                Read.saveRead(isReadList);
-              }
-            });
-            await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailIedu(
-                    datas[index]['id'], datas[index]['selected'])));
-            setState(() {
-              
-            });
-          },
-          child: Container(
-            width: MediaQuery.of(context).size.width - 40,
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            decoration: BoxDecoration(
-                color: isReadList.contains(datas[index]['id'].toString())
-                    ? PeeroreumColor.gray[100]
-                    : PeeroreumColor.white,
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: datas[index]['selected']
-                          ? MediaQuery.of(context).size.width - 141
-                          : MediaQuery.of(context).size.width - 132,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          UpCheck(datas[index]["createdTime"])
-                              ? Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 2, horizontal: 8),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFFFEBEA),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: SizedBox(
-                                    height: 16,
-                                    child: Center(
-                                      child: C2_10px_Sb(
-                                        text: 'UP',
-                                        color: Color(0xFFF03A2E),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          UpCheck(datas[index]["createdTime"])
-                              ? SizedBox(
-                                  width: 8,
-                                )
-                              : Container(),
-                          Flexible(child: T4_16px(text: datas[index]['title'])),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    datas[index]['selected']
-                        ? Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: PeeroreumColor.primaryPuple[200],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: SizedBox(
-                              height: 16,
-                              child: Center(
-                                child: C2_10px_Sb(
-                                  text: '채택완료',
-                                  color: PeeroreumColor.white,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: isReadList
-                                      .contains(datas[index]['id'].toString())
-                                  ? PeeroreumColor.gray[300]
-                                  : PeeroreumColor.gray[200],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: SizedBox(
-                              height: 16,
-                              child: Center(
-                                child: C2_10px_Sb(
-                                  text: '미채택',
-                                  color: PeeroreumColor.gray[600],
-                                ),
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 42,
-                  child: Row(
+        if (index < datas.length) {
+          return GestureDetector(
+            onTap: () async {
+              setState(() {
+                if (!isReadList.contains(datas[index]['id'].toString())) {
+                  isReadList.add(datas[index]['id'].toString());
+                  Read.saveRead(isReadList);
+                }
+              });
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DetailIedu(
+                      datas[index]['id'], datas[index]['selected'])));
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width - 40,
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              decoration: BoxDecoration(
+                  color: isReadList.contains(datas[index]['id'].toString())
+                      ? PeeroreumColor.gray[100]
+                      : PeeroreumColor.white,
+                  border:
+                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 1,
-                              color: datas[index]["memberProfileDto"]
-                                          ["grade"] !=
-                                      null
-                                  ? PeeroreumColor.gradeColor[datas[index]
-                                      ["memberProfileDto"]["grade"]]!
-                                  : Color.fromARGB(255, 186, 188, 189)),
+                        width: datas[index]['selected']
+                            ? MediaQuery.of(context).size.width - 141
+                            : MediaQuery.of(context).size.width - 132,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            UpCheck(datas[index]["createdTime"])
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFFFEBEA),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: 'UP',
+                                          color: Color(0xFFF03A2E),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            UpCheck(datas[index]["createdTime"])
+                                ? SizedBox(
+                                    width: 8,
+                                  )
+                                : Container(),
+                            Flexible(
+                                child: T4_16px(text: datas[index]['title'])),
+                          ],
                         ),
-                        child: Container(
-                          height: 24,
-                          width: 24,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      datas[index]['selected']
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: PeeroreumColor.primaryPuple[200],
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: SizedBox(
+                                height: 16,
+                                child: Center(
+                                  child: C2_10px_Sb(
+                                    text: '채택완료',
+                                    color: PeeroreumColor.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: isReadList
+                                        .contains(datas[index]['id'].toString())
+                                    ? PeeroreumColor.gray[300]
+                                    : PeeroreumColor.gray[200],
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: SizedBox(
+                                height: 16,
+                                child: Center(
+                                  child: C2_10px_Sb(
+                                    text: '미채택',
+                                    color: PeeroreumColor.gray[600],
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 42,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 26,
+                          height: 26,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              width: 2,
-                              color: PeeroreumColor.white,
+                                width: 1,
+                                color: datas[index]["memberProfileDto"]
+                                            ["grade"] !=
+                                        null
+                                    ? PeeroreumColor.gradeColor[datas[index]
+                                        ["memberProfileDto"]["grade"]]!
+                                    : Color.fromARGB(255, 186, 188, 189)),
+                          ),
+                          child: Container(
+                            height: 24,
+                            width: 24,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 2,
+                                color: PeeroreumColor.white,
+                              ),
+                              image: datas[index]["memberProfileDto"]
+                                          ["profileImage"] !=
+                                      null
+                                  ? DecorationImage(
+                                      image: NetworkImage(datas[index]
+                                          ["memberProfileDto"]["profileImage"]),
+                                      fit: BoxFit.cover)
+                                  : DecorationImage(
+                                      image:
+                                          AssetImage('assets/images/user.jpg')),
                             ),
-                            image: datas[index]["memberProfileDto"]
-                                        ["profileImage"] !=
-                                    null
-                                ? DecorationImage(
-                                    image: NetworkImage(datas[index]
-                                        ["memberProfileDto"]["profileImage"]),
-                                    fit: BoxFit.cover)
-                                : DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/user.jpg')),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Flexible(
-                        child: B4_14px_M(
-                            text: datas[index]["memberProfileDto"]["nickname"]),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      C1_12px_M(
-                        text: '${timeCheck(datas[index]["createdTime"])}전',
-                        color: PeeroreumColor.gray[400],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/dot.svg',
-                          color: PeeroreumColor.gray[600],
+                        SizedBox(
+                          width: 8,
                         ),
-                      ),
-                      C1_12px_M(
-                        text: '좋아요 ${datas[index]["likes"]}개',
-                        color: PeeroreumColor.gray[400],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/dot.svg',
-                          color: PeeroreumColor.gray[600],
+                        Flexible(
+                          child: B4_14px_M(
+                              text: datas[index]["memberProfileDto"]
+                                  ["nickname"]),
                         ),
-                      ),
-                      C1_12px_M(
-                        text: '댓글 ${datas[index]["comments"]}개',
-                        color: PeeroreumColor.gray[400],
-                      ),
-                    ],
+                        SizedBox(
+                          width: 8,
+                        ),
+                        C1_12px_M(
+                          text: '${timeCheck(datas[index]["createdTime"])}전',
+                          color: PeeroreumColor.gray[400],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/dot.svg',
+                            color: PeeroreumColor.gray[600],
+                          ),
+                        ),
+                        C1_12px_M(
+                          text: '좋아요 ${datas[index]["likes"]}개',
+                          color: PeeroreumColor.gray[400],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/dot.svg',
+                            color: PeeroreumColor.gray[600],
+                          ),
+                        ),
+                        C1_12px_M(
+                          text: '댓글 ${datas[index]["comments"]}개',
+                          color: PeeroreumColor.gray[400],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
   }
 }
