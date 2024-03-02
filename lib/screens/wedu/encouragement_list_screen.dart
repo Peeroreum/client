@@ -175,7 +175,7 @@ class _EncouragementListState extends State<EncouragementList> {
                         width: 8,
                       ),
                       Text(
-                        notSuccessList[index]['nickname'],
+                        (notSuccessList[index]['nickname'] == mynickname)? '$mynickname (나)' : notSuccessList[index]['nickname'],
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,

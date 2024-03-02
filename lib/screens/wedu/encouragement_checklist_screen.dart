@@ -158,7 +158,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                               width: 4,
                             ),
                             Text(
-                              '${notSuccessList.length + (mycheck ? 1 : 0)}',
+                              '${notSuccessList.length}',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w500,
@@ -446,7 +446,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                             width: 8,
                           ),
                           Text(
-                            notSuccessList[index]['nickname'],
+                            (notSuccessList[index]['nickname'] == sender)? '$sender (나)' : notSuccessList[index]['nickname'],
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w500,

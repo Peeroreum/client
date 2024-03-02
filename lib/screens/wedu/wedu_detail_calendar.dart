@@ -146,12 +146,20 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
           'Authorization': 'Bearer $token'
         });
     if (challengeList.statusCode == 200) {
-      successList =
-          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
-              ['successMembers'];
-      notSuccessList =
-          await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
-              ['failMembers'];
+      successList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['successMembers'];
+      notSuccessList = await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']['failMembers'];
+
+      var me = successList.firstWhere((member) => member['nickname'] == mynickname, orElse: () => null);
+      if (me != null) {
+        successList.remove(me);
+        successList.insert(0, me);
+      }
+
+      me = notSuccessList.firstWhere((member) => member['nickname'] == mynickname, orElse: () => null);
+      if (me != null) {
+        notSuccessList.remove(me);
+        notSuccessList.insert(0, me);
+      }
     } else {
       print("목록${challengeList.statusCode}");
     }
