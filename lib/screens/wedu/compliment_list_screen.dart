@@ -173,7 +173,7 @@ class _ComplimentListState extends State<ComplimentList> {
                         width: 8,
                       ),
                       Text(
-                        successList[index]['nickname'],
+                        (successList[index]['nickname'] == mynickname)? '$mynickname (나)' : successList[index]['nickname'],
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,

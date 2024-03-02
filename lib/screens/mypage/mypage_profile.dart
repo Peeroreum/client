@@ -12,10 +12,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
-import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile_friend.dart';
@@ -264,7 +262,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
       body: FutureBuilder<void>(
           future: fetchDatas(),
           builder: (context, snapshot) {
-            return bodyWidget();
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Scaffold(backgroundColor: PeeroreumColor.white);
+            } else if (snapshot.hasError) {
+              // 에러 발생 시
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              return bodyWidget();
+            }
           }),
     );
   }
@@ -1100,7 +1105,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         fontWeight: FontWeight.w500),
                   ),
                   Container(width: 2),
-                  Text(
+                  withPeerDay == null? Container()
+                  : Text(
                     "$withPeerDay",
                     style: TextStyle(
                         color: backgroundImage != null

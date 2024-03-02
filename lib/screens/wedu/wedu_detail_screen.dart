@@ -132,6 +132,26 @@ class _DetailWeduState extends State<DetailWedu> {
       notSuccessList =
           await jsonDecode(utf8.decode(challengeList.bodyBytes))['data']
               ['failMembers'];
+
+      var me = successList.firstWhere(
+              (member) => member['nickname'] == nickname,
+          orElse: () => null
+      );
+
+      if (me != null) {
+        successList.remove(me);
+        successList.insert(0, me);
+      }
+
+      me = notSuccessList.firstWhere(
+              (member) => member['nickname'] == nickname,
+          orElse: () => null
+      );
+
+      if (me != null) {
+        notSuccessList.remove(me);
+        notSuccessList.insert(0, me);
+      }
     } else {
       print("목록${challengeList.statusCode}");
     }

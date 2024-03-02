@@ -154,7 +154,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                               width: 4,
                             ),
                             Text(
-                              '${successList.length + (mycheck ? 1 : 0)}',
+                              '${successList.length}',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w500,
@@ -398,7 +398,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             width: 8,
                           ),
                           Text(
-                            successList[index]['nickname'],
+                            (successList[index]['nickname'] == sender)? '$sender (나)' : successList[index]['nickname'],
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w500,
