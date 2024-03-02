@@ -35,12 +35,16 @@ class _CreateIeduState extends State<CreateIedu> {
   int id = 1; //id는 나중에 AskIedu(id)로 변경할 것
   final ImagePicker picker = ImagePicker();
   List<XFile> _images = [];
+  bool isGuidanceRead = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
+        setState(() {
+          isGuidanceRead = true;
+        });
       },
       child: Scaffold(
         backgroundColor: PeeroreumColor.white,
@@ -155,43 +159,47 @@ class _CreateIeduState extends State<CreateIedu> {
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             child: Column(
               children: [
-                TextFormField(
-                  controller: contentController,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(
-                        r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
-                  ],
-                  maxLines: null,
-                  minLines: _images.isEmpty ? 20 : 10,
-                  style: TextStyle(color: Colors.black),
-                  cursorColor: PeeroreumColor.gray[600],
-                  decoration: InputDecoration(
-                      hintText: '궁금했던 학습 질문을 동료에게 물어보세요.',
-                      hintStyle: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: PeeroreumColor.gray[600]!),
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                      border: InputBorder.none),
-                  onChanged: (value) {
-                    contentCheck = value;
-                    check_validation();
-                  },
+                isGuidanceRead
+                    ? TextFormField(
+                        controller: contentController,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(
+                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
+                        ],
+                        maxLines: null,
+                        minLines: _images.isEmpty ? 20 : 16,
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: PeeroreumColor.gray[600],
+                        decoration: InputDecoration(
+                            hintText: '궁금했던 학습 질문을 동료에게 물어보세요.',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: PeeroreumColor.gray[600]!),
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none),
+                        onChanged: (value) {
+                          contentCheck = value;
+                          check_validation();
+                        },
+                      )
+                    : Container(),
+                // isGuidanceRead
+                //     ? Container(
+                //         padding: EdgeInsets.symmetric(vertical: 16),
+                //         margin: EdgeInsets.symmetric(vertical: 16),
+                //         height: 1,
+                //         color: PeeroreumColor.gray[200],
+                //       )
+                //     : Container(),
+                isGuidanceRead ? Container() : guidance(),
+                Container(
+                  height: 57,
                 ),
                 Container(
                   child: photos(),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  margin: EdgeInsets.symmetric(vertical: 16),
-                  height: 1,
-                  color: PeeroreumColor.gray[200],
-                ),
-                guidance(),
-                Container(
-                  height: 57,
                 ),
               ],
             ),
@@ -202,68 +210,78 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   Widget guidance() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        C1_12px_M(
-          text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
-          color: PeeroreumColor.gray[600],
-        ),
-        Container(
-          height: 12,
-        ),
-        Row(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/x_circle.svg',
-              color: PeeroreumColor.gray[600],
-            ),
-            SizedBox(
-              width: 4,
-            ),
-            C1_12px_R(
-              text: '비방, 욕설을 포함하는 글',
-              color: PeeroreumColor.gray[600],
-            ),
-          ],
-        ),
-        Container(
-          height: 8,
-        ),
-        Row(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/x_circle.svg',
-              color: PeeroreumColor.gray[600],
-            ),
-            SizedBox(
-              width: 4,
-            ),
-            C1_12px_R(
-              text: '무료 행사를 포함한 홍보 목적의 글',
-              color: PeeroreumColor.gray[600],
-            ),
-          ],
-        ),
-        Container(
-          height: 8,
-        ),
-        Row(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/x_circle.svg',
-              color: PeeroreumColor.gray[600],
-            ),
-            SizedBox(
-              width: 4,
-            ),
-            C1_12px_R(
-              text: '기타 오프라인 모임 조장 목적의 글',
-              color: PeeroreumColor.gray[600],
-            ),
-          ],
-        ),
-      ],
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        setState(() {
+          isGuidanceRead = true;
+        });
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          B4_14px_R(
+            text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
+            color: PeeroreumColor.gray[600],
+          ),
+          Container(
+            height: 12,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                child: SvgPicture.asset(
+                  'assets/icons/x_circle.svg',
+                  color: PeeroreumColor.gray[600],
+                ),
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              C1_12px_R(
+                text: '비방, 욕설을 포함하는 글',
+                color: PeeroreumColor.gray[600],
+              ),
+            ],
+          ),
+          Container(
+            height: 8,
+          ),
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/x_circle.svg',
+                color: PeeroreumColor.gray[600],
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              C1_12px_R(
+                text: '무료 행사를 포함한 홍보 목적의 글',
+                color: PeeroreumColor.gray[600],
+              ),
+            ],
+          ),
+          Container(
+            height: 8,
+          ),
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/x_circle.svg',
+                color: PeeroreumColor.gray[600],
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              C1_12px_R(
+                text: '기타 오프라인 모임 조장 목적의 글',
+                color: PeeroreumColor.gray[600],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
