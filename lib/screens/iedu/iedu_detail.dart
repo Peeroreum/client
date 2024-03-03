@@ -37,7 +37,8 @@ class _DetailIeduState extends State<DetailIedu> {
   int? _maxLines = 1; // 현재 줄 수
   int _visibleLines = 1; // 화면에 보이는 줄 수
 
-
+  dynamic selectedDatas ;
+  dynamic sltProfileDatas;
   dynamic questionDatas='';
   dynamic profileDatas ='';
 
@@ -77,6 +78,24 @@ class _DetailIeduState extends State<DetailIedu> {
 
     await fetchIeduQuestionData();
     await fetchIeduAnswerData();
+    await fetchSelectedQuestion(isQselected);
+  }
+
+  fetchSelectedQuestion(bool selectExist) async{
+    if(selectExist == true){
+      var selectedQuestionResult = await http.get(
+      Uri.parse('${API.hostConnect}/answer/$id/selected'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
+      if (selectedQuestionResult.statusCode == 200){
+        selectedDatas = jsonDecode(utf8.decode(selectedQuestionResult.bodyBytes))['data'];
+        sltProfileDatas = selectedDatas['memberProfileDto'];
+      } else{
+        print("fetchIeduQuestionData에러${selectedQuestionResult.statusCode}");
+      }
+    }
   }
 
   fetchIeduQuestionData() async{
@@ -472,7 +491,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                 constraints: BoxConstraints(minWidth: 17, minHeight: 16),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
-                                  child: C1_12px_M(text: '$likesNum',)
+                                  child: C1_12px_M(text: '$likesNum',color: PeeroreumColor.gray[600])
                                   )
                               ),
                             ],
@@ -491,7 +510,7 @@ class _DetailIeduState extends State<DetailIedu> {
                               constraints: BoxConstraints(minWidth: 17, minHeight: 16),
                               child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: C1_12px_M(text: '$commentsNum',)
+                                child: C1_12px_M(text: '$commentsNum',color: PeeroreumColor.gray[600])
                                 )
                             ),
                         ],)
@@ -505,6 +524,32 @@ class _DetailIeduState extends State<DetailIedu> {
                 width: MediaQuery.of(context).size.width,
                 height: 8,
                 color: PeeroreumColor.gray[100],
+              ),
+              Visibility(
+                visible: isQselected,
+                child: selectedDatas != null ?
+                  Container(
+                    color: PeeroreumColor.primaryPuple[50]!,
+                    child: MakeComment(
+                    index: 0,
+                    id: selectedDatas["id"],
+                    hasParent: -1,
+                    grade: selectedDatas['memberProfileDto']['grade'], 
+                    profileImage: selectedDatas['memberProfileDto']['profileImage'],
+                    name: selectedDatas['memberProfileDto']['nickname'], 
+                    isQwselected: isQselected, 
+                    isChosen: selectedDatas["isSelected"], 
+                    comment: selectedDatas["content"],
+                    commentImage: selectedDatas["images"],
+                    createdTime: selectedDatas["createdTime"],
+                    isLiked: selectedDatas["isLiked"],
+                    likesNum: selectedDatas["likes"],
+                    commentsNum: selectedDatas["comments"],
+                    isDeleted: selectedDatas["isDeleted"],
+                    updateData: updateData,
+                    qWriter: name,),
+                  )
+                  :Container(),
               ),
               //--대안--
               Container(
@@ -1410,12 +1455,24 @@ class MakeComment extends StatefulWidget {
                                 visible: widget.isQwselected == true && widget.isChosen == true,
                                 child: Container(
                                     decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[200],
+                                      color: PeeroreumColor.primaryPuple[400],
                                       borderRadius: BorderRadius.circular(4)
                                     ),
                                     width: 57,
                                     height: 24,
                                     child: Center(child: C1_12px_Sb(text: '채택완료', color: PeeroreumColor.white,)),
+                                  ),
+                              ),
+                              Visibility(
+                                visible: widget.isQwselected == true && widget.isChosen == false,
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.gray[300],
+                                      borderRadius: BorderRadius.circular(4)
+                                    ),
+                                    width: 57,
+                                    height: 24,
+                                    child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
                                   ),
                               )
                             ],
@@ -1825,7 +1882,19 @@ class MakeComment extends StatefulWidget {
           print('응답: ${response.body}');
           setState(() {
           });
-      } else if(response.statusCode == 404){
+          
+      } else if (response.statusCode == 403) {
+        var code403 = jsonDecode(utf8.decode(response.bodyBytes))['data'];
+        if(code403 == "채택된 답변은 삭제할 수 없습니다."){
+          Fluttertoast.showToast(msg: '채택된 답변은 삭제할 수 없습니다.');
+        } else{
+          Fluttertoast.showToast(msg: '권한이 없습니다.');
+        }
+        
+          print('응답: ${response.body}');
+          setState(() {
+          });}
+      else if(response.statusCode == 404){
         Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
         print(response.body);
       }else {
