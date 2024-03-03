@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
 import 'package:intl/intl.dart';
@@ -390,13 +391,32 @@ class _CreateWeduState extends State<CreateWedu> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                '목표 종료일',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              Row(
+                                children: [
+                                  const Text(
+                                    '목표 종료일',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      informChallengeDates();
+                                    },
+                                    child: Text(
+                                      ' ?⃝',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: PeeroreumColor.gray[500]
+                                      ),
+                                    )
+                                  )
+                                ],
                               ),
                               SizedBox(
                                 height: 8,
@@ -1128,5 +1148,72 @@ class _CreateWeduState extends State<CreateWedu> {
     }
 
     Navigator.pushNamed(context, '/wedu/create_invitaion', arguments: weduMap);
+  }
+
+  Future informChallengeDates() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              insetPadding: EdgeInsets.symmetric(horizontal: 20),
+              contentPadding: EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              backgroundColor: PeeroreumColor.white,
+              surfaceTintColor: Colors.transparent,
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(width: 24,),
+                        const Expanded(
+                          child: Center(
+                            child: Text(
+                              '잠깐!',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                  color: PeeroreumColor.black),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/x.svg',
+                            color: PeeroreumColor.gray[800],
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 20,),
+                    Image.asset(
+                        'assets/images/glasses_oreum.png',
+                      width: 177,
+                    ),
+                    const SizedBox(height: 16,),
+                    const Text(
+                      '습관 형성을 위해서는 66일이 걸린대요.\n오늘부터 같이방 챌린지를 시작해 볼까요?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          color: PeeroreumColor.black
+                      ),
+                    ),
+                    const SizedBox(height: 20,)
+                  ],
+                ),
+          )
+          );
+        }
+    );
   }
 }
