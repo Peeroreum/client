@@ -15,6 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 
 class DetailIedu extends StatefulWidget {
   final int id;
@@ -314,46 +315,53 @@ class _DetailIeduState extends State<DetailIedu> {
                       children: [
                         Row(
                           children: [
-                            Container(
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  width: 1,
-                                  color: grade != null
-                                      ? PeeroreumColor.gradeColor[grade]!
-                                      : Color.fromARGB(255, 186, 188, 189)),
-                            ),
-                            child: Container(
-                              height: 26,
-                              width: 26,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    width: 2,
-                                    color: PeeroreumColor.white.withOpacity(0.0),
-                                  )),
+                            GestureDetector(
+                              onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          MyPageProfile(name, nickname == name)));
+                                },
                               child: Container(
-                                height: 24,
-                                width: 24,
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    width: 1,
+                                    color: grade != null
+                                        ? PeeroreumColor.gradeColor[grade]!
+                                        : Color.fromARGB(255, 186, 188, 189)),
+                              ),
+                              child: Container(
+                                height: 26,
+                                width: 26,
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: profileImage != null
-                                      ? DecorationImage(
-                                          image: Image.network(profileImage).image,
-                                          fit: BoxFit.cover,
-                                          onError: (exception, stackTrace) {
-                                      print('Error loading image: $exception');
-                                    },)
-                                      : DecorationImage(
-                                          image: AssetImage(
-                                          'assets/images/user.jpg',
-                                        )),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      width: 2,
+                                      color: PeeroreumColor.white.withOpacity(0.0),
+                                    )),
+                                child: Container(
+                                  height: 24,
+                                  width: 24,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: profileImage != null
+                                        ? DecorationImage(
+                                            image: Image.network(profileImage).image,
+                                            fit: BoxFit.cover,
+                                            onError: (exception, stackTrace) {
+                                        print('Error loading image: $exception');
+                                      },)
+                                        : DecorationImage(
+                                            image: AssetImage(
+                                            'assets/images/user.jpg',
+                                          )),
+                                  ),
                                 ),
                               ),
+                                                      ),
                             ),
-                          ),
                           const SizedBox(width: 8,),
                           Text(name,
                           style: TextStyle(
@@ -1376,39 +1384,46 @@ class MakeComment extends StatefulWidget {
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Container(
-                                width: 28,
-                                height: 28,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      width: 1,
-                                      color: widget.grade != null
-                                          ? PeeroreumColor.gradeColor[widget.grade]!
-                                          : Color.fromARGB(255, 186, 188, 189)),
-                                ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          MyPageProfile(widget.name, nickname == widget.name)));
+                                },
                                 child: Container(
-                                  height: 26,
-                                  width: 26,
+                                  width: 28,
+                                  height: 28,
                                   decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        width: 2,
-                                        color: PeeroreumColor.white.withOpacity(0.0),
-                                      )),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        width: 1,
+                                        color: widget.grade != null
+                                            ? PeeroreumColor.gradeColor[widget.grade]!
+                                            : Color.fromARGB(255, 186, 188, 189)),
+                                  ),
                                   child: Container(
-                                    height: 24,
-                                    width: 24,
+                                    height: 26,
+                                    width: 26,
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: widget.profileImage != null
-                                          ? DecorationImage(
-                                              image: Image.network(widget.profileImage).image,
-                                              fit: BoxFit.cover)
-                                          : DecorationImage(
-                                              image: AssetImage(
-                                              'assets/images/user.jpg',
-                                            )),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          width: 2,
+                                          color: PeeroreumColor.white.withOpacity(0.0),
+                                        )),
+                                    child: Container(
+                                      height: 24,
+                                      width: 24,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: widget.profileImage != null
+                                            ? DecorationImage(
+                                                image: Image.network(widget.profileImage).image,
+                                                fit: BoxFit.cover)
+                                            : DecorationImage(
+                                                image: AssetImage(
+                                                'assets/images/user.jpg',
+                                              )),
+                                      ),
                                     ),
                                   ),
                                 ),
