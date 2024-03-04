@@ -34,6 +34,11 @@ class _DetailIeduState extends State<DetailIedu> {
   
   var id, token, nickname;
   TextEditingController _textController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
+  FocusNode _focusNode = FocusNode();
+  late Future initFuture;
+  int page = 0;
+  bool _isLoading = false;
 
   int? _maxLines = 1; // 현재 줄 수
   int _visibleLines = 1; // 화면에 보이는 줄 수
@@ -66,7 +71,7 @@ class _DetailIeduState extends State<DetailIedu> {
   final ImagePicker picker = ImagePicker();
   XFile? _image;
   //----------------
-  dynamic commentDatas;
+  List<dynamic> commentDatas = [];
 
   void updateData(){
     setState(() {
@@ -97,6 +102,9 @@ class _DetailIeduState extends State<DetailIedu> {
         print("fetchIeduQuestionData에러${selectedQuestionResult.statusCode}");
       }
     }
+    setState(() {
+      
+    });
   }
 
   fetchIeduQuestionData() async{
@@ -136,32 +144,82 @@ class _DetailIeduState extends State<DetailIedu> {
     else{
       print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
     }
+    setState(() {
+      
+    });
   }
 
   fetchIeduAnswerData() async {
+    page = 0;
+    print(page);
     var inIeduAnswerResult = await http.get(
-        Uri.parse('${API.hostConnect}/answer?questionId=$id&page'),
+        Uri.parse('${API.hostConnect}/answer?questionId=$id&page=$page'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         });
     if (inIeduAnswerResult.statusCode == 200) {
       commentDatas = jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
+      setState(() {
+        
+      });
     } else {
       print("fetchIeduAnswerData에러${inIeduAnswerResult.statusCode}");
     }
+    setState(() {
+      
+    });
   }
+
 
   @override
   void initState() {
     super.initState();
+    initFuture = fetchDatas();
     _textController= TextEditingController();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent &&
+          !_isLoading) {
+        loadmoreData();
+      }}
+    );
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(
+      loadmoreData
+      );
+    _scrollController.dispose();
     _textController.dispose();
+    page = 0;
     super.dispose();
+  }
+
+  void loadmoreData() async{
+      setState(() {
+        _isLoading = true;
+      });
+
+      List<dynamic> addedDatas = [];
+      page++;
+      var inIeduAnswerResult = await http.get(
+        Uri.parse('${API.hostConnect}/answer?questionId=$id&page=$page'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+      if (inIeduAnswerResult.statusCode == 200) {
+        addedDatas = jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
+        setState(() {
+          commentDatas.addAll(addedDatas);
+          _isLoading = false;
+        });
+      } else {
+        print("에러${inIeduAnswerResult.statusCode}");
+      }
+    
   }
 
   @override
@@ -184,7 +242,7 @@ class _DetailIeduState extends State<DetailIedu> {
           FocusScope.of(context).unfocus();
         },
         child: FutureBuilder(
-            future: fetchDatas(), 
+            future: initFuture, 
             builder: (context, snapshot){
               // if (snapshot.connectionState == ConnectionState.waiting) {
               // return Scaffold(
@@ -286,6 +344,7 @@ class _DetailIeduState extends State<DetailIedu> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           mainAxisSize: MainAxisSize.min,
             children: [
@@ -369,6 +428,14 @@ class _DetailIeduState extends State<DetailIedu> {
                             fontSize: 14,
                             fontWeight: FontWeight.w500
                           ),),
+                          if (nickname == name)
+                            Text(' (나)',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500
+                          ),),
+                          
                           ],
                         ),
                         Row(
@@ -484,6 +551,9 @@ class _DetailIeduState extends State<DetailIedu> {
                             //   isLiked = !isLiked;
                             // });
                             postQLike();
+                            setState(() {
+                              
+                            });
                           },
                           child: Row(
                             children: [
@@ -554,7 +624,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     likesNum: selectedDatas["likes"],
                     commentsNum: selectedDatas["comments"],
                     isDeleted: selectedDatas["isDeleted"],
-                    updateData: updateData,
+                    updateData: fetchDatas,
                     qWriter: name,),
                   )
                   :Container(),
@@ -582,7 +652,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         likesNum: commentData["likes"],
                         commentsNum: commentData["comments"],
                         isDeleted: commentData["isDeleted"],
-                        updateData: updateData,
+                        updateData: fetchDatas,
                         qWriter: name,
                       );
                     }).toList(),
@@ -689,6 +759,7 @@ class _DetailIeduState extends State<DetailIedu> {
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width-108,
                               child: TextFormField(
+                                      focusNode: _focusNode,
                                       controller: _textController,
                                       style: TextStyle(
                                         height: 24/14,
@@ -734,6 +805,10 @@ class _DetailIeduState extends State<DetailIedu> {
                               print(selectedParent);
                               if(isSubmittable){
                                 postAnswer();
+                                setState(() {
+                                  FocusScope.of(context).unfocus();
+                                  fetchIeduAnswerData();
+                                });
                               }
                             },
                             child: Container(
@@ -1146,9 +1221,8 @@ class _DetailIeduState extends State<DetailIedu> {
       if (response.statusCode == 200) {
           print('북마크 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          setState(() {
-          });
         
+          fetchDatas();
       } else if(response.statusCode == 404){
         Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
         print(response.body);
@@ -1171,8 +1245,8 @@ class _DetailIeduState extends State<DetailIedu> {
       if (response.statusCode == 200) {
           print('북마크 삭제 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          setState(() {
-          });
+      
+          fetchDatas();
       } else if(response.statusCode == 404){
         Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
         print(response.body);
@@ -1198,8 +1272,8 @@ class _DetailIeduState extends State<DetailIedu> {
       if (response.statusCode == 200) {
           print('질문 좋아요 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          setState(() {
-          });
+          
+          fetchDatas();
       } else if(response.statusCode == 404){
         Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
         print(response.body);
@@ -1222,8 +1296,8 @@ class _DetailIeduState extends State<DetailIedu> {
       if (response.statusCode == 200) {
           print('질문 좋아요 삭제 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          setState(() {
-          });
+          
+          fetchDatas();
       } else if(response.statusCode == 404){
         Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
         print(response.body);
@@ -1235,6 +1309,7 @@ class _DetailIeduState extends State<DetailIedu> {
       print('오류 발생: $error');
     });
     }
+    fetchIeduQuestionData();
   }
   Future<void> deleteQuestion() async{
     http.delete(
@@ -1247,6 +1322,8 @@ class _DetailIeduState extends State<DetailIedu> {
       if (response.statusCode == 200) {
           print('질문 삭제 요청이 성공했습니다.');
           print('응답: ${response.body}');
+
+          fetchDatas();
       } else if(response.statusCode == 404){
         Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
         print(response.body);
@@ -1373,146 +1450,154 @@ class MakeComment extends StatefulWidget {
                     width: widget.hasParent == -1
                     ?MediaQuery.of(context).size.width -40
                     :MediaQuery.of(context).size.width -112,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: widget.hasParent == -1
-                          ?MediaQuery.of(context).size.width -40 -34
-                          :MediaQuery.of(context).size.width -112 -34,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          MyPageProfile(widget.name, nickname == widget.name)));
-                                },
-                                child: Container(
-                                  width: 28,
-                                  height: 28,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        width: 1,
-                                        color: widget.grade != null
-                                            ? PeeroreumColor.gradeColor[widget.grade]!
-                                            : Color.fromARGB(255, 186, 188, 189)),
-                                  ),
+                    child: Visibility(
+                      visible: widget.isDeleted == false,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: widget.hasParent == -1
+                            ?MediaQuery.of(context).size.width -40 -34
+                            :MediaQuery.of(context).size.width -112 -34,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if(widget.isDeleted == false){
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            MyPageProfile(widget.name, nickname == widget.name)));
+                                    }
+                                  },
                                   child: Container(
-                                    height: 26,
-                                    width: 26,
+                                    width: 28,
+                                    height: 28,
                                     decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          width: 2,
-                                          color: PeeroreumColor.white.withOpacity(0.0),
-                                        )),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          width: 1,
+                                          color: widget.grade != null
+                                              ? PeeroreumColor.gradeColor[widget.grade]!
+                                              : Color.fromARGB(255, 186, 188, 189)),
+                                    ),
                                     child: Container(
-                                      height: 24,
-                                      width: 24,
+                                      height: 26,
+                                      width: 26,
                                       decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: widget.profileImage != null
-                                            ? DecorationImage(
-                                                image: Image.network(widget.profileImage).image,
-                                                fit: BoxFit.cover)
-                                            : DecorationImage(
-                                                image: AssetImage(
-                                                'assets/images/user.jpg',
-                                              )),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            width: 2,
+                                            color: PeeroreumColor.white.withOpacity(0.0),
+                                          )),
+                                      child: Container(
+                                        height: 24,
+                                        width: 24,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: widget.profileImage != null
+                                              ? DecorationImage(
+                                                  image: Image.network(widget.profileImage).image,
+                                                  fit: BoxFit.cover)
+                                              : DecorationImage(
+                                                  image: AssetImage(
+                                                  'assets/images/user.jpg',
+                                                )),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8,),
-                              Flexible(
-                                child: B4_14px_M(
-                                  text: widget.isDeleted
-                                    ? '(삭제)'
-                                    : widget.name,
-                                  color: widget.isDeleted
-                                  ? PeeroreumColor.gray[500]
-                                  : null,)),
-                              SizedBox(width: 12,),
-                              Visibility(
-                                visible: (widget.isQwselected == false) && (nickname == widget.qWriter) && (widget.qWriter != widget.name),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    print('눌림');
-                                    final _dState = context.findAncestorStateOfType<_DetailIeduState>();
-                                    if(_dState != null){
-                                      _dState.setState(() {
-                                        _dState.isQselected = true;
-                                        print('작동 하는 거였나');
-                                      });
-                                    } else{
-                                      print('왜 작동 안하냐');
-                                    }
-                                    selectAnswer();
-                                    widget.updateData();
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[400],
-                                      borderRadius: BorderRadius.circular(4)
+                                const SizedBox(width: 8,),
+                                Flexible(
+                                  child: B4_14px_M(
+                                    text: widget.name,
+                                    )),
+                                    if (nickname == widget.name && widget.isDeleted == false)
+                                      Text(' (나)',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500
+                                    ),),
+                                SizedBox(width: 12,),
+                                Visibility(
+                                  visible: (widget.isQwselected == false) && (nickname == widget.qWriter) && (widget.qWriter != widget.name),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      print('눌림');
+                                      final _dState = context.findAncestorStateOfType<_DetailIeduState>();
+                                      if(_dState != null){
+                                        _dState.setState(() {
+                                          _dState.isQselected = true;
+                                          print('작동 하는 거였나');
+                                        });
+                                      } else{
+                                        print('왜 작동 안하냐');
+                                      }
+                                      selectAnswer();
+                                      widget.updateData();
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: PeeroreumColor.primaryPuple[400],
+                                        borderRadius: BorderRadius.circular(4)
+                                      ),
+                                      width: 57,
+                                      height: 24,
+                                      child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
                                     ),
-                                    width: 57,
-                                    height: 24,
-                                    child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
                                   ),
                                 ),
-                              ),
-                              Visibility(
-                                visible: widget.isQwselected == true && widget.isChosen == true,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[400],
-                                      borderRadius: BorderRadius.circular(4)
+                                Visibility(
+                                  visible: widget.isQwselected == true && widget.isChosen == true,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        color: PeeroreumColor.primaryPuple[400],
+                                        borderRadius: BorderRadius.circular(4)
+                                      ),
+                                      width: 57,
+                                      height: 24,
+                                      child: Center(child: C1_12px_Sb(text: '채택완료', color: PeeroreumColor.white,)),
                                     ),
-                                    width: 57,
-                                    height: 24,
-                                    child: Center(child: C1_12px_Sb(text: '채택완료', color: PeeroreumColor.white,)),
-                                  ),
-                              ),
-                              Visibility(
-                                visible: widget.isQwselected == true && widget.isChosen == false,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      color: PeeroreumColor.gray[300],
-                                      borderRadius: BorderRadius.circular(4)
+                                ),
+                                Visibility(
+                                  visible: widget.isQwselected == true && widget.isChosen == false,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        color: PeeroreumColor.gray[300],
+                                        borderRadius: BorderRadius.circular(4)
+                                      ),
+                                      width: 57,
+                                      height: 24,
+                                      child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
                                     ),
-                                    width: 57,
-                                    height: 24,
-                                    child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
-                                  ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Visibility(
-                          visible: widget.isDeleted == false,
-                          child: GestureDetector(
-                            onTap: () async {
-                              await showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (context) {
-                                    return deleteAnswerBottomSheet(widget.name, widget.id);
-                                  });
-                            },
-                            child: Container(
-                              width: 18,
-                              height: 18,
-                              child: SvgPicture.asset('assets/icons/icon_dots_mono.svg'),
+                                )
+                              ],
                             ),
                           ),
-                        )
-                      ],
+                          Visibility(
+                            visible: widget.isDeleted == false,
+                            child: GestureDetector(
+                              onTap: () async {
+                                await showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) {
+                                      return deleteAnswerBottomSheet(widget.name, widget.id);
+                                    });
+                              },
+                              child: Container(
+                                width: 18,
+                                height: 18,
+                                child: SvgPicture.asset('assets/icons/icon_dots_mono.svg'),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: 8,),
@@ -1627,6 +1712,7 @@ class MakeComment extends StatefulWidget {
                             if(_dState != null){
                               _dState.setState(() {
                                 _dState.selectedParent = widget.id;
+                                FocusScope.of(context).requestFocus(_dState._focusNode);
                                 print(widget.id);
                               });
                             }
