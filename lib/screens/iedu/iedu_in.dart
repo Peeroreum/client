@@ -21,38 +21,90 @@ class InIedu extends StatefulWidget {
 
 class _InIeduState extends State<InIedu> {
   var token;
-  dynamic datas = '';
   List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
   bool aaa = true;
+
   int currentPage = 0;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
-  List<dynamic> question = [];
-  List<dynamic> answer = [];
+  late Future initFuture;
+
+  dynamic data_q = '';
+  dynamic question = '';
+  dynamic data_a = '';
+  dynamic answer = '';
 
   @override
   void initState() {
     super.initState();
+    initFuture = fetchDatas();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent &&
+          !_isLoading) {
+        loadMoreData();
+      }
+    });
+    currentPage = 0;
     fetchDatas();
   }
 
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     currentPage = 0;
-    var IeduQnA = await http.get(
-        Uri.parse('${API.hostConnect}/question/my&page=$currentPage'),
+
+    var IeduQuestion = await http.get(
+        Uri.parse('${API.hostConnect}/question/my?page=$currentPage'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         });
-    if (IeduQnA.statusCode == 200) {
-      print("성공 fetchQuestionData ${IeduQnA.statusCode}");
-      datas = jsonDecode(utf8.decode(IeduQnA.bodyBytes))['data'];
-      question = datas[""];
-      answer = datas[""];
+    if (IeduQuestion.statusCode == 200) {
+      print("성공 IeduQuestion ${IeduQuestion.statusCode}");
+      data_q = jsonDecode(utf8.decode(IeduQuestion.bodyBytes))["data"];
+      question = data_q["questionListReadDtos"];
     } else {
-      print("에러 fetchQuestionData ${IeduQnA.statusCode}");
+      print("에러 IeduQuestion ${IeduQuestion.statusCode}");
+    }
+
+    var IeduAnswer = await http.get(Uri.parse('${API.hostConnect}/answer/my'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (IeduAnswer.statusCode == 200) {
+      print("성공 IeduAnswer ${IeduAnswer.statusCode}");
+      data_a = jsonDecode(utf8.decode(IeduAnswer.bodyBytes))['data'];
+      answer = data_a["questionListReadDtos"];
+    } else {
+      print("에러 IeduAnswer ${IeduAnswer.statusCode}");
+    }
+  }
+
+  loadMoreData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<dynamic> addedDatas = [];
+    currentPage++;
+    var IeduQuestion = await http.get(
+        Uri.parse('${API.hostConnect}/question/my?page=$currentPage'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (IeduQuestion.statusCode == 200) {
+      print("성공 IeduQuestion ${IeduQuestion.statusCode}");
+      addedDatas = jsonDecode(utf8.decode(IeduQuestion.bodyBytes))["data"];
+      setState(() {
+        data_q.addAll(addedDatas);
+        question = data_q["questionListReadDtos"];
+        _isLoading = false;
+      });
+    } else {
+      print("에러 IeduQuestion ${IeduQuestion.statusCode}");
     }
   }
 
@@ -61,7 +113,7 @@ class _InIeduState extends State<InIedu> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchDatas(),
+          future: initFuture,
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -216,7 +268,7 @@ class _InIeduState extends State<InIedu> {
               width: 4,
             ),
             B4_14px_M(
-              text: 'NN',
+              text: '${data_q["total"]}',
               color: PeeroreumColor.gray[500],
             ),
           ],
@@ -226,21 +278,21 @@ class _InIeduState extends State<InIedu> {
         ),
         Expanded(
           child: ListView.separated(
-              shrinkWrap: true,
-              itemCount: 8, //datas.length + (_isLoading ? 1 : 0),
-              separatorBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 8,
-                );
-              },
-              itemBuilder: (BuildContext context, int index) {
-                //if (index < datas.length) {
+            shrinkWrap: true,
+            itemCount: question.length + (_isLoading ? 1 : 0),
+            separatorBuilder: (BuildContext context, int index) {
+              return Container(
+                height: 8,
+              );
+            },
+            itemBuilder: (BuildContext context, int index) {
+              if (index < question.length) {
                 return GestureDetector(
-                  // onTap: () async {
-                  //   await Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (context) => DetailIedu(
-                  //           datas[index]['id'], datas[index]['selected'])));
-                  // },
+                  onTap: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailIedu(question[index]['id'],
+                            question[index]['selected'])));
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -255,17 +307,15 @@ class _InIeduState extends State<InIedu> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              // width: datas[index]['selected']
-                              //     ? MediaQuery.of(context).size.width - 142
-                              //     : MediaQuery.of(context).size.width - 133,
-                              width: MediaQuery.of(context).size.width - 133,
+                              width: question[index]['selected']
+                                  ? MediaQuery.of(context).size.width - 142
+                                  : MediaQuery.of(context).size.width - 133,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: T4_16px(
-                                      // text: datas[index]['title'],
-                                      text: 'Title',
+                                      text: '${question[index]['title']}',
                                     ),
                                   ),
                                 ],
@@ -274,41 +324,41 @@ class _InIeduState extends State<InIedu> {
                             SizedBox(
                               width: 8,
                             ),
-                            // datas[index]['selected']
-                            //     ? Container(
-                            //         padding: EdgeInsets.symmetric(
-                            //             vertical: 2, horizontal: 8),
-                            //         decoration: BoxDecoration(
-                            //           color: PeeroreumColor.primaryPuple[200],
-                            //           borderRadius: BorderRadius.circular(4),
-                            //         ),
-                            //         child: SizedBox(
-                            //           height: 16,
-                            //           child: Center(
-                            //             child: C2_10px_Sb(
-                            //               text: '채택완료',
-                            //               color: PeeroreumColor.white,
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ):
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 8),
-                              decoration: BoxDecoration(
-                                color: PeeroreumColor.gray[200],
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: SizedBox(
-                                height: 16,
-                                child: Center(
-                                  child: C2_10px_Sb(
-                                    text: '미채택',
-                                    color: PeeroreumColor.gray[600],
+                            question[index]['selected']
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[200],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: '채택완료',
+                                          color: PeeroreumColor.white,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.gray[200],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: '미채택',
+                                          color: PeeroreumColor.gray[600],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                         SizedBox(
@@ -319,8 +369,8 @@ class _InIeduState extends State<InIedu> {
                           child: Row(
                             children: [
                               C1_12px_M(
-                                // text: '${timeCheck(datas[index]["createdTime"])} 전',
-                                text: 'NN 전',
+                                text:
+                                    '${timeCheck(question[index]["createdTime"])} 전',
                                 color: PeeroreumColor.gray[400],
                               ),
                               Padding(
@@ -332,8 +382,7 @@ class _InIeduState extends State<InIedu> {
                                 ),
                               ),
                               C1_12px_M(
-                                // text: '좋아요 ${datas[index]["likes"]}개',
-                                text: '좋아요 NN개',
+                                text: '좋아요 ${question[index]["likes"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
                               Padding(
@@ -345,8 +394,7 @@ class _InIeduState extends State<InIedu> {
                                 ),
                               ),
                               C1_12px_M(
-                                // text: '댓글 ${datas[index]["comments"]}개',
-                                text: '댓글 NN개',
+                                text: '댓글 ${question[index]["comments"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
                             ],
@@ -357,8 +405,8 @@ class _InIeduState extends State<InIedu> {
                   ),
                 );
               }
-              //},
-              ),
+            },
+          ),
         ),
       ],
     );
@@ -378,7 +426,7 @@ class _InIeduState extends State<InIedu> {
               width: 4,
             ),
             B4_14px_M(
-              text: 'NN',
+              text: '${data_a["total"]}',
               color: PeeroreumColor.gray[500],
             ),
           ],
@@ -389,20 +437,19 @@ class _InIeduState extends State<InIedu> {
         Expanded(
           child: ListView.separated(
               shrinkWrap: true,
-              itemCount: 8, //datas.length + (_isLoading ? 1 : 0),
+              itemCount: answer.length + (_isLoading ? 1 : 0),
               separatorBuilder: (BuildContext context, int index) {
                 return Container(
                   height: 8,
                 );
               },
               itemBuilder: (BuildContext context, int index) {
-                //if (index < datas.length) {
                 return GestureDetector(
-                  // onTap: () async {
-                  //   await Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (context) => DetailIedu(
-                  //           datas[index]['id'], datas[index]['selected'])));
-                  // },
+                  onTap: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailIedu(
+                            answer[index]['id'], answer[index]['selected'])));
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -417,17 +464,15 @@ class _InIeduState extends State<InIedu> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              // width: datas[index]['selected']
-                              //     ? MediaQuery.of(context).size.width - 142
-                              //     : MediaQuery.of(context).size.width - 133,
-                              width: MediaQuery.of(context).size.width - 133,
+                              width: answer[index]['selected']
+                                  ? MediaQuery.of(context).size.width - 142
+                                  : MediaQuery.of(context).size.width - 133,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: T4_16px(
-                                      // text: datas[index]['title'],
-                                      text: 'Title',
+                                      text: '${answer[index]['title']}',
                                     ),
                                   ),
                                 ],
@@ -436,41 +481,41 @@ class _InIeduState extends State<InIedu> {
                             SizedBox(
                               width: 8,
                             ),
-                            // datas[index]['selected']
-                            //     ? Container(
-                            //         padding: EdgeInsets.symmetric(
-                            //             vertical: 2, horizontal: 8),
-                            //         decoration: BoxDecoration(
-                            //           color: PeeroreumColor.primaryPuple[200],
-                            //           borderRadius: BorderRadius.circular(4),
-                            //         ),
-                            //         child: SizedBox(
-                            //           height: 16,
-                            //           child: Center(
-                            //             child: C2_10px_Sb(
-                            //               text: '채택완료',
-                            //               color: PeeroreumColor.white,
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ):
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 8),
-                              decoration: BoxDecoration(
-                                color: PeeroreumColor.gray[200],
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: SizedBox(
-                                height: 16,
-                                child: Center(
-                                  child: C2_10px_Sb(
-                                    text: '미채택',
-                                    color: PeeroreumColor.gray[600],
+                            answer[index]['selected']
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[200],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: '채택완료',
+                                          color: PeeroreumColor.white,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.gray[200],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: '미채택',
+                                          color: PeeroreumColor.gray[600],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                         SizedBox(
@@ -480,7 +525,7 @@ class _InIeduState extends State<InIedu> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             B4_14px_R(
-                              text: 'contenttttttttttttttttttttttt',
+                              text: '${answer[index]["content"]}',
                             ),
                           ],
                         ),
@@ -492,8 +537,8 @@ class _InIeduState extends State<InIedu> {
                           child: Row(
                             children: [
                               C1_12px_M(
-                                // text: '${timeCheck(datas[index]["createdTime"])} 전',
-                                text: 'NN 전',
+                                text:
+                                    '${timeCheck(answer[index]["createdTime"])} 전',
                                 color: PeeroreumColor.gray[400],
                               ),
                               Padding(
@@ -505,8 +550,7 @@ class _InIeduState extends State<InIedu> {
                                 ),
                               ),
                               C1_12px_M(
-                                // text: '좋아요 ${datas[index]["likes"]}개',
-                                text: '좋아요 NN개',
+                                text: '좋아요 ${answer[index]["likes"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
                               Padding(
@@ -518,8 +562,7 @@ class _InIeduState extends State<InIedu> {
                                 ),
                               ),
                               C1_12px_M(
-                                // text: '댓글 ${datas[index]["comments"]}개',
-                                text: '댓글 NN개',
+                                text: '댓글 ${answer[index]["comments"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
                             ],
@@ -529,9 +572,7 @@ class _InIeduState extends State<InIedu> {
                     ),
                   ),
                 );
-              }
-              //},
-              ),
+              }),
         ),
       ],
     );
