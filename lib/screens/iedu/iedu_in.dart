@@ -21,9 +21,6 @@ class InIedu extends StatefulWidget {
 
 class _InIeduState extends State<InIedu> {
   var token;
-  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
-  List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
-  bool aaa = true;
 
   int currentPage = 0;
   bool _isLoading = false;
@@ -34,6 +31,8 @@ class _InIeduState extends State<InIedu> {
   dynamic question = '';
   dynamic data_a = '';
   dynamic answer = '';
+  dynamic total_q = 0;
+  dynamic total_a = 0;
 
   @override
   void initState() {
@@ -63,6 +62,7 @@ class _InIeduState extends State<InIedu> {
     if (IeduQuestion.statusCode == 200) {
       print("성공 IeduQuestion ${IeduQuestion.statusCode}");
       data_q = jsonDecode(utf8.decode(IeduQuestion.bodyBytes))["data"];
+      total_q = data_q['total'];
       question = data_q["questionListReadDtos"];
     } else {
       print("에러 IeduQuestion ${IeduQuestion.statusCode}");
@@ -76,6 +76,7 @@ class _InIeduState extends State<InIedu> {
     if (IeduAnswer.statusCode == 200) {
       print("성공 IeduAnswer ${IeduAnswer.statusCode}");
       data_a = jsonDecode(utf8.decode(IeduAnswer.bodyBytes))['data'];
+      total_a = data_a['total'];
       answer = data_a["questionListReadDtos"];
     } else {
       print("에러 IeduAnswer ${IeduAnswer.statusCode}");
@@ -184,7 +185,7 @@ class _InIeduState extends State<InIedu> {
             Expanded(
               child: TabBarView(
                 children: [
-                  aaa
+                  data_q.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
@@ -199,7 +200,7 @@ class _InIeduState extends State<InIedu> {
                               fontSize: 16,
                               color: PeeroreumColor.gray[600]),
                         )),
-                  aaa
+                  data_a.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
@@ -268,7 +269,7 @@ class _InIeduState extends State<InIedu> {
               width: 4,
             ),
             B4_14px_M(
-              text: '${data_q["total"]}',
+              text: '$total_q',
               color: PeeroreumColor.gray[500],
             ),
           ],
@@ -426,7 +427,7 @@ class _InIeduState extends State<InIedu> {
               width: 4,
             ),
             B4_14px_M(
-              text: '${data_a["total"]}',
+              text: '$total_a',
               color: PeeroreumColor.gray[500],
             ),
           ],
@@ -524,8 +525,10 @@ class _InIeduState extends State<InIedu> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            B4_14px_R(
-                              text: '${answer[index]["content"]}',
+                            Flexible(
+                              child: B4_14px_R(
+                                text: '${answer[index]["content"]}',
+                              ),
                             ),
                           ],
                         ),

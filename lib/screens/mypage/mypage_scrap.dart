@@ -8,6 +8,7 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 
 class Scrap extends StatefulWidget {
   const Scrap({super.key});
@@ -18,19 +19,29 @@ class Scrap extends StatefulWidget {
 
 class _ScrapState extends State<Scrap> {
   var token;
-  dynamic datas = '';
-  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
-  List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
-  bool aaa = true;
+
   int currentPage = 0;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
-  List<dynamic> QnA = [];
-  List<dynamic> contents = [];
+  late Future initFuture;
+
+  dynamic data_qna = '';
+  dynamic total_qna = 0;
+  dynamic QnA = '';
+  dynamic contents = '';
 
   @override
   void initState() {
     super.initState();
+    initFuture = fetchDatas();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent &&
+          !_isLoading) {
+        loadMoreData();
+      }
+    });
+    currentPage = 0;
     fetchDatas();
   }
 
@@ -45,11 +56,37 @@ class _ScrapState extends State<Scrap> {
         });
     if (myScrap.statusCode == 200) {
       print("성공 myScrap ${myScrap.statusCode}");
-      datas = jsonDecode(utf8.decode(myScrap.bodyBytes))['data'];
-      QnA = datas[""];
-      contents = datas[""];
+      data_qna = jsonDecode(utf8.decode(myScrap.bodyBytes))['data'];
+      total_qna = data_qna['total'];
+      QnA = data_qna["questionListReadDtos"];
     } else {
       print("에러 myScrap ${myScrap.statusCode}");
+    }
+  }
+
+  loadMoreData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<dynamic> addedDatas = [];
+    currentPage++;
+    var myScrap = await http.get(
+        Uri.parse('${API.hostConnect}/question/my?page=$currentPage'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    if (myScrap.statusCode == 200) {
+      print("성공 IeduQuestion ${myScrap.statusCode}");
+      addedDatas = jsonDecode(utf8.decode(myScrap.bodyBytes))["data"];
+      setState(() {
+        data_qna.addAll(addedDatas);
+        QnA = data_qna["questionListReadDtos"];
+        _isLoading = false;
+      });
+    } else {
+      print("에러 IeduQuestion ${myScrap.statusCode}");
     }
   }
 
@@ -58,7 +95,7 @@ class _ScrapState extends State<Scrap> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchDatas(),
+          future: initFuture,
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -94,7 +131,7 @@ class _ScrapState extends State<Scrap> {
     return Container(
       color: PeeroreumColor.white,
       child: DefaultTabController(
-        length: 2,
+        length: 1,
         child: Column(
           children: [
             TabBar(
@@ -118,9 +155,9 @@ class _ScrapState extends State<Scrap> {
                   Tab(
                     text: '질의응답',
                   ),
-                  Tab(
-                    text: '컨텐츠',
-                  )
+                  //Tab(
+                  //  text: '컨텐츠',
+                  //)
                 ]),
             Container(
               height: 1,
@@ -129,7 +166,7 @@ class _ScrapState extends State<Scrap> {
             Expanded(
               child: TabBarView(
                 children: [
-                  aaa
+                  data_qna.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
@@ -137,14 +174,14 @@ class _ScrapState extends State<Scrap> {
                         )
                       : Center(
                           child: Text(
-                          '작성한 질문이 없습니다.',
+                          '스크랩한 질문이 없습니다.',
                           style: TextStyle(
                               fontFamily: "Pretendard",
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
                               color: PeeroreumColor.gray[600]),
                         )),
-                  aaa
+                  /*Content.length
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
@@ -159,7 +196,7 @@ class _ScrapState extends State<Scrap> {
                                 fontSize: 16,
                                 color: PeeroreumColor.gray[600]),
                           ),
-                        ),
+                        ),*/
                 ],
               ),
             ),
@@ -213,7 +250,7 @@ class _ScrapState extends State<Scrap> {
               width: 4,
             ),
             B4_14px_M(
-              text: 'NN',
+              text: '$total_qna',
               color: PeeroreumColor.gray[500],
             ),
           ],
@@ -223,21 +260,21 @@ class _ScrapState extends State<Scrap> {
         ),
         Expanded(
           child: ListView.separated(
-              shrinkWrap: true,
-              itemCount: 8, //datas.length + (_isLoading ? 1 : 0),
-              separatorBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 8,
-                );
-              },
-              itemBuilder: (BuildContext context, int index) {
-                //if (index < datas.length) {
+            shrinkWrap: true,
+            itemCount: QnA.length + (_isLoading ? 1 : 0),
+            separatorBuilder: (BuildContext context, int index) {
+              return Container(
+                height: 8,
+              );
+            },
+            itemBuilder: (BuildContext context, int index) {
+              if (index < QnA.length) {
                 return GestureDetector(
-                  // onTap: () async {
-                  //   await Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (context) => DetailIedu(
-                  //           datas[index]['id'], datas[index]['selected'])));
-                  // },
+                  onTap: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailIedu(
+                            QnA[index]['id'], QnA[index]['selected'])));
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -252,17 +289,15 @@ class _ScrapState extends State<Scrap> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              // width: datas[index]['selected']
-                              //     ? MediaQuery.of(context).size.width - 142
-                              //     : MediaQuery.of(context).size.width - 133,
-                              width: MediaQuery.of(context).size.width - 133,
+                              width: QnA[index]['selected']
+                                  ? MediaQuery.of(context).size.width - 142
+                                  : MediaQuery.of(context).size.width - 133,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: T4_16px(
-                                      // text: datas[index]['title'],
-                                      text: 'Title',
+                                      text: '${QnA[index]['title']}',
                                     ),
                                   ),
                                 ],
@@ -271,41 +306,41 @@ class _ScrapState extends State<Scrap> {
                             SizedBox(
                               width: 8,
                             ),
-                            // datas[index]['selected']
-                            //     ? Container(
-                            //         padding: EdgeInsets.symmetric(
-                            //             vertical: 2, horizontal: 8),
-                            //         decoration: BoxDecoration(
-                            //           color: PeeroreumColor.primaryPuple[200],
-                            //           borderRadius: BorderRadius.circular(4),
-                            //         ),
-                            //         child: SizedBox(
-                            //           height: 16,
-                            //           child: Center(
-                            //             child: C2_10px_Sb(
-                            //               text: '채택완료',
-                            //               color: PeeroreumColor.white,
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ):
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 8),
-                              decoration: BoxDecoration(
-                                color: PeeroreumColor.gray[200],
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: SizedBox(
-                                height: 16,
-                                child: Center(
-                                  child: C2_10px_Sb(
-                                    text: '미채택',
-                                    color: PeeroreumColor.gray[600],
+                            QnA[index]['selected']
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[200],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: '채택완료',
+                                          color: PeeroreumColor.white,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.gray[200],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: '미채택',
+                                          color: PeeroreumColor.gray[600],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                         SizedBox(
@@ -322,12 +357,12 @@ class _ScrapState extends State<Scrap> {
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     width: 1,
-                                    // color: datas[index]["memberProfileDto"]
-                                    //             ["grade"] !=
-                                    //         null
-                                    //     ? PeeroreumColor.gradeColor[datas[index]
-                                    //         ["memberProfileDto"]["grade"]]!
-                                    //     : Color.fromARGB(255, 186, 188, 189),
+                                    color: QnA[index]["memberProfileDto"]
+                                                ["grade"] !=
+                                            null
+                                        ? PeeroreumColor.gradeColor[QnA[index]
+                                            ["memberProfileDto"]["grade"]]!
+                                        : Color.fromARGB(255, 186, 188, 189),
                                   ),
                                 ),
                                 child: Container(
@@ -339,19 +374,17 @@ class _ScrapState extends State<Scrap> {
                                       width: 2,
                                       color: PeeroreumColor.white,
                                     ),
-                                    // image: datas[index]["memberProfileDto"]
-                                    //             ["profileImage"] !=
-                                    //         null
-                                    //     ? DecorationImage(
-                                    //         image: NetworkImage(datas[index]
-                                    //             ["memberProfileDto"]["profileImage"]),
-                                    //         fit: BoxFit.cover)
-                                    //     : DecorationImage(
-                                    //         image:
-                                    //             AssetImage('assets/images/user.jpg')),
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/user.jpg')),
+                                    image: QnA[index]["memberProfileDto"]
+                                                ["profileImage"] !=
+                                            null
+                                        ? DecorationImage(
+                                            image: NetworkImage(QnA[index]
+                                                    ["memberProfileDto"]
+                                                ["profileImage"]),
+                                            fit: BoxFit.cover)
+                                        : DecorationImage(
+                                            image: AssetImage(
+                                                'assets/images/user.jpg')),
                                   ),
                                 ),
                               ),
@@ -360,17 +393,15 @@ class _ScrapState extends State<Scrap> {
                               ),
                               Flexible(
                                 child: B4_14px_M(
-                                  // text: datas[index]["memberProfileDto"]
-                                  //     ["nickname"]
-                                  text: 'nickname',
-                                ),
+                                    text:
+                                        '${QnA[index]["memberProfileDto"]["nickname"]}'),
                               ),
                               SizedBox(
                                 width: 8,
                               ),
                               C1_12px_M(
-                                // text: '${timeCheck(datas[index]["createdTime"])} 전',
-                                text: 'NN 전',
+                                text:
+                                    '${timeCheck(QnA[index]["createdTime"])} 전',
                                 color: PeeroreumColor.gray[400],
                               ),
                               Padding(
@@ -382,8 +413,7 @@ class _ScrapState extends State<Scrap> {
                                 ),
                               ),
                               C1_12px_M(
-                                // text: '좋아요 ${datas[index]["likes"]}개',
-                                text: '좋아요 NN개',
+                                text: '좋아요 ${QnA[index]["likes"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
                               Padding(
@@ -395,8 +425,7 @@ class _ScrapState extends State<Scrap> {
                                 ),
                               ),
                               C1_12px_M(
-                                // text: '댓글 ${datas[index]["comments"]}개',
-                                text: '댓글 NN개',
+                                text: '댓글 ${QnA[index]["comments"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
                             ],
@@ -407,8 +436,8 @@ class _ScrapState extends State<Scrap> {
                   ),
                 );
               }
-              //},
-              ),
+            },
+          ),
         ),
       ],
     );
