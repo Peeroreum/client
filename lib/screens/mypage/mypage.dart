@@ -9,6 +9,7 @@ import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_scrap.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
@@ -285,27 +286,29 @@ class _MyPageState extends State<MyPage> {
             ],
           ),
         ),
-        // TextButton(
-        //   onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
-        //   style: TextButton.styleFrom(
-        //       minimumSize: Size.fromHeight(56),
-        //       padding: EdgeInsets.symmetric(horizontal: 20)
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.start,
-        //     children: [
-        //       Text(
-        //         '스크랩',
-        //         style: TextStyle(
-        //           color: PeeroreumColor.gray[800],
-        //           fontSize: 16,
-        //           fontWeight: FontWeight.w600,
-        //           fontFamily: 'Pretendard',
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
+        TextButton(
+          onPressed: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => Scrap()))
+          },
+          style: TextButton.styleFrom(
+              minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '스크랩',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
