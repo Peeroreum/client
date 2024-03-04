@@ -123,14 +123,15 @@ class _HomeIeduState extends State<HomeIedu> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: initFuture,
-          builder: (context, snapshot) {
-            return RefreshIndicator(
-              onRefresh: () => fetchStatus(),
-              color: PeeroreumColor.primaryPuple[400],
-              child: bodyWidget(),
-            );
-          }),
+        future: initFuture,
+        builder: (context, snapshot) {
+          return RefreshIndicator(
+            onRefresh: () => fetchStatus(),
+            color: PeeroreumColor.primaryPuple[400],
+            child: bodyWidget(),
+          );
+        },
+      ),
     );
   }
 
@@ -688,6 +689,7 @@ class _HomeIeduState extends State<HomeIedu> {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DetailIedu(
                       datas[index]['id'], datas[index]['selected'])));
+              fetchIeduData();
             },
             child: Container(
               width: MediaQuery.of(context).size.width - 40,
