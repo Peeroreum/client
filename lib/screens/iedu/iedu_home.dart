@@ -116,6 +116,7 @@ class _HomeIeduState extends State<HomeIedu> {
       }
     });
     currentPage = 0;
+    fetchStatus();
   }
 
   @override
