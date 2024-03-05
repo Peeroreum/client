@@ -317,6 +317,7 @@ class _InIeduState extends State<InIedu> {
                                   Flexible(
                                     child: T4_16px(
                                       text: '${question[index]['title']}',
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -474,6 +475,7 @@ class _InIeduState extends State<InIedu> {
                                   Flexible(
                                     child: T4_16px(
                                       text: '${answer[index]['title']}',
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -528,6 +530,7 @@ class _InIeduState extends State<InIedu> {
                             Flexible(
                               child: B4_14px_R(
                                 text: '${answer[index]["content"]}',
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],

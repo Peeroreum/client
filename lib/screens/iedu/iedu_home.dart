@@ -739,7 +739,8 @@ class _HomeIeduState extends State<HomeIedu> {
                                   )
                                 : Container(),
                             Flexible(
-                                child: T4_16px(text: datas[index]['title'])),
+                                child: T4_16px(text: datas[index]['title'],
+                                overflow: TextOverflow.ellipsis,)),
                           ],
                         ),
                       ),
@@ -835,7 +836,8 @@ class _HomeIeduState extends State<HomeIedu> {
                         Flexible(
                           child: B4_14px_M(
                               text: datas[index]["memberProfileDto"]
-                                  ["nickname"]),
+                                  ["nickname"],
+                              overflow: TextOverflow.ellipsis,),
                         ),
                         SizedBox(
                           width: 8,

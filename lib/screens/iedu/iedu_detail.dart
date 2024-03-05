@@ -779,7 +779,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                           fontFamily: 'Pretendard',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
-                                          height: 24/14
+                                          height: 1.0,
                                         )
                                       ),
                                       onChanged: (value) {
