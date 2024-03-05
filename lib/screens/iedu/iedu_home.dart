@@ -165,7 +165,9 @@ class _HomeIeduState extends State<HomeIedu> {
     } else {
       print("에러 fetchIeduData ${IeduResult.statusCode}");
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   loadMoreData() async {

@@ -133,7 +133,9 @@ class _HomeWeduState extends State<HomeWedu> {
     } else {
       print("에러${weduResult.statusCode}");
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   fetchImage(datas) async {
