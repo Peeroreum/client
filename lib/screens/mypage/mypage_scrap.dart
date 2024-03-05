@@ -298,6 +298,7 @@ class _ScrapState extends State<Scrap> {
                                   Flexible(
                                     child: T4_16px(
                                       text: '${QnA[index]['title']}',
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -394,7 +395,8 @@ class _ScrapState extends State<Scrap> {
                               Flexible(
                                 child: B4_14px_M(
                                     text:
-                                        '${QnA[index]["memberProfileDto"]["nickname"]}'),
+                                        '${QnA[index]["memberProfileDto"]["nickname"]}',
+                                    overflow: TextOverflow.ellipsis,),
                               ),
                               SizedBox(
                                 width: 8,
