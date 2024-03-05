@@ -581,10 +581,11 @@ class _HomeWeduState extends State<HomeWedu> {
                     ],
                   ),
                 ),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
+                onTap: () async {
+                  await Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
                           DetailWedu(inroom_datas[rindex]["id"])));
+                  fetchDatas();
                 },
               );
             },

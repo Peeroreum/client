@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
@@ -24,6 +25,18 @@ class CreateIedu extends StatefulWidget {
 }
 
 class _CreateIeduState extends State<CreateIedu> {
+  final grades = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+  final subjects = Subject.subject;
+  final middleSubjects = Subject.middleSubject;
+  final highSubjects = Subject.highSubject;
+  List<String> Subjects = ['전체'];
+  Map<String, List<String>> DetailMiddleSubjects = {
+    "전체": ["전체"]
+  };
+  Map<String, List<String>> DetailHighSubjects = {
+    "전체": ["전체"]
+  };
+  List<String> DetailSubjects = [];
   Color _nextColor = PeeroreumColor.gray[500]!;
   String titleCheck = "";
   String contentCheck = "";
@@ -31,25 +44,47 @@ class _CreateIeduState extends State<CreateIedu> {
   TextEditingController contentController = TextEditingController();
 
   var token;
-  var grade;
-  int id = 1; //id는 나중에 AskIedu(id)로 변경할 것
+  var my_grade;
+  int? _grade;
+  String? _subject;
+  String? _detailSubject;
+  int subject = 0;
+  int detailSubject = 0;
+  late Future initFuture;
+
   final ImagePicker picker = ImagePicker();
   List<XFile> _images = [];
-  bool isGuidanceRead = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initFuture = fetchStatus();
+  }
+
+  Future<void> fetchStatus() async {
+    token = await FlutterSecureStorage().read(key: "accessToken");
+    my_grade = await FlutterSecureStorage().read(key: "grade");
+    _grade ??= int.parse(my_grade!);
+    Subjects.addAll(subjects);
+    DetailMiddleSubjects.addAll(middleSubjects);
+    DetailHighSubjects.addAll(highSubjects);
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        setState(() {
-          isGuidanceRead = true;
-        });
       },
       child: Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: appbarWidget(),
-        body: bodyWidget(),
+        body: FutureBuilder<void>(
+            future: initFuture,
+            builder: (context, snapshot) {
+              return bodyWidget();
+            }),
         bottomSheet: bottomWidget(),
       ),
     );
@@ -119,10 +154,12 @@ class _CreateIeduState extends State<CreateIedu> {
 
   Widget bodyWidget() {
     return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       child: Column(
         children: [
+          dropdown_body(),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            padding: EdgeInsets.symmetric(vertical: 16),
             child: TextFormField(
               controller: titleController,
               inputFormatters: <TextInputFormatter>[
@@ -148,57 +185,43 @@ class _CreateIeduState extends State<CreateIedu> {
               },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Container(
-              height: 1,
-              color: PeeroreumColor.gray[200],
-            ),
+          Container(
+            height: 1,
+            color: PeeroreumColor.gray[200],
           ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            padding: EdgeInsets.symmetric(vertical: 16),
             child: Column(
               children: [
-                isGuidanceRead
-                    ? TextFormField(
-                        controller: contentController,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(
-                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
-                        ],
-                        maxLines: null,
-                        minLines: _images.isEmpty ? 20 : 16,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: PeeroreumColor.gray[600],
-                        decoration: InputDecoration(
-                            hintText: '궁금했던 학습 질문을 동료에게 물어보세요.',
-                            hintStyle: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: PeeroreumColor.gray[600]!),
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                            border: InputBorder.none),
-                        onChanged: (value) {
-                          contentCheck = value;
-                          check_validation();
-                        },
-                      )
-                    : Container(),
-                // isGuidanceRead
-                //     ? Container(
-                //         padding: EdgeInsets.symmetric(vertical: 16),
-                //         margin: EdgeInsets.symmetric(vertical: 16),
-                //         height: 1,
-                //         color: PeeroreumColor.gray[200],
-                //       )
-                //     : Container(),
-                isGuidanceRead ? Container() : guidance(),
-                Container(
-                  height: 57,
+                TextFormField(
+                  controller: contentController,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(
+                        r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
+                  ],
+                  maxLines: null,
+                  // minLines: _images.isEmpty ? 20 : 16,
+                  style: TextStyle(color: Colors.black),
+                  cursorColor: PeeroreumColor.gray[600],
+                  decoration: InputDecoration(
+                      // hintText: '궁금했던 학습 질문을 동료에게 물어보세요.',
+                      hintText: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
+                      hintStyle: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: PeeroreumColor.gray[600]!),
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      border: InputBorder.none),
+                  onChanged: (value) {
+                    contentCheck = value;
+                    check_validation();
+                  },
                 ),
+                if (contentController.text == "") guidance(),
                 Container(
+                  margin: EdgeInsets.fromLTRB(0, 16, 0, 40),
                   child: photos(),
                 ),
               ],
@@ -209,21 +232,368 @@ class _CreateIeduState extends State<CreateIedu> {
     );
   }
 
+  dropdown_body() {
+    return Row(
+      children: [
+        // 학년
+        GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: false,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return gradeSelect();
+                });
+          },
+          child: Container(
+            height: 40,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: PeeroreumColor.gray[200]!,
+              ),
+              color: Colors.transparent,
+            ),
+            child: Row(
+              children: [
+                Text(
+                  _grade != null
+                      ? grades[_grade!]
+                      : my_grade != null
+                          ? grades[int.parse(my_grade!)]
+                          : grades[0],
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      color: _grade != null
+                          ? PeeroreumColor.black
+                          : PeeroreumColor.gray[600]),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                SvgPicture.asset('assets/icons/down.svg'),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        // 과목
+        GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: false,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return subjectSelect();
+                });
+          },
+          child: Container(
+            height: 40,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: PeeroreumColor.gray[200]!,
+              ),
+              color: Colors.transparent,
+            ),
+            child: Row(
+              children: [
+                Text(
+                  _subject ?? '전체',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      color: _subject != null
+                          ? PeeroreumColor.black
+                          : PeeroreumColor.gray[600]),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                SvgPicture.asset('assets/icons/down.svg'),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        // 상세 과목
+        GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: false,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return detailSubjectSelect();
+                });
+          },
+          child: Container(
+            height: 40,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: PeeroreumColor.gray[200]!,
+              ),
+              color: Colors.transparent,
+            ),
+            child: Row(
+              children: [
+                Text(
+                  _detailSubject ?? '전체',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      color: _detailSubject != null
+                          ? PeeroreumColor.black
+                          : PeeroreumColor.gray[600]),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                SvgPicture.asset('assets/icons/down.svg'),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  gradeSelect() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 16,
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(20),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '학년',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: grades.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        setState(() {
+                          _grade = index;
+                          _subject = null;
+                          _detailSubject = null;
+                          print('_grade = $_grade');
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        child: Text(
+                          grades[index],
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.black,
+                          ),
+                        ),
+                      ));
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  subjectSelect() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 16,
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(20),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '과목',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: Subjects.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        setState(() {
+                          _subject = Subjects[index];
+                          subject = index;
+                          DetailSubjects = ['전체'];
+                          List<String> AddDetailSubjects;
+                          AddDetailSubjects = ((_grade! <= 3)
+                              ? DetailMiddleSubjects[_subject]
+                              : DetailHighSubjects[_subject])!;
+                          if (index != 0) {
+                            DetailSubjects.addAll(AddDetailSubjects);
+                          }
+                          _detailSubject = null;
+                          print('_subject = $_subject, subject = $subject');
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        child: Text(
+                          Subjects[index],
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.black,
+                          ),
+                        ),
+                      ));
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  detailSubjectSelect() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 16,
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(20),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '세부 과목',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: DetailSubjects.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        setState(() {
+                          _detailSubject = DetailSubjects[index];
+                          detailSubject = index;
+                          print(
+                              '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        child: Text(
+                          DetailSubjects[index],
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.black,
+                          ),
+                        ),
+                      ));
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget guidance() {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () {
-        setState(() {
-          isGuidanceRead = true;
-        });
-      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          B4_14px_R(
-            text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
-            color: PeeroreumColor.gray[600],
-          ),
+          // B4_14px_R(
+          //   text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
+          //   color: PeeroreumColor.gray[600],
+          // ),
           Container(
             height: 12,
           ),
@@ -433,20 +803,20 @@ class _CreateIeduState extends State<CreateIedu> {
     // postImages();
   }
 
-  fetchStatus() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
-    grade = await FlutterSecureStorage().read(key: "grade");
-  }
+  // fetchStatus() async {
+  //   token = await FlutterSecureStorage().read(key: "accessToken");
+  //   grade = await FlutterSecureStorage().read(key: "grade");
+  // }
 
   Future<void> postIedu() async {
-    await fetchStatus();
+    // await fetchStatus();
 
     var IeduMap = <String, dynamic>{
       'title': titleController.text,
       'content': contentController.text,
-      'subject': 1,
-      'detailSubject': 0,
-      'grade': grade,
+      'subject': subject,
+      'detailSubject': detailSubject,
+      'grade': _grade,
     };
 
     var dio = Dio();

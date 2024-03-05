@@ -34,8 +34,7 @@ class _InWeduState extends State<InWedu> {
 
   Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
-    var result = await http.get(
-        Uri.parse('${API.hostConnect}/wedu/my'),
+    var result = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -111,16 +110,42 @@ class _InWeduState extends State<InWedu> {
                   fontWeight: FontWeight.w600,
                 ),
                 tabs: [
-                  Tab(text: '참여 중인 같이방',),
-                  Tab(text: '완료된 같이방',)
+                  Tab(
+                    text: '참여 중인 같이방',
+                  ),
+                  Tab(
+                    text: '완료된 같이방',
+                  )
                 ]),
-            Expanded(
-                child: TabBarView(
-                    children: [
-                      ing_group.isNotEmpty? ing_room() : Center(child: Text('참여 중인 같이방이 없습니다.', style: TextStyle(fontFamily: "Pretendard", fontWeight: FontWeight.w600, fontSize: 16, color: PeeroreumColor.gray[600]),)),
-                      complete_group.isNotEmpty? complete_room() : Center(child: Text('완료된 같이방이 없습니다.', style: TextStyle(fontFamily: "Pretendard", fontWeight: FontWeight.w600, fontSize: 16, color: PeeroreumColor.gray[600]),))
-                ])
+            Container(
+              height: 1,
+              color: PeeroreumColor.gray[100],
             ),
+            Expanded(
+                child: TabBarView(children: [
+              ing_group.isNotEmpty
+                  ? ing_room()
+                  : Center(
+                      child: Text(
+                      '참여 중인 같이방이 없습니다.',
+                      style: TextStyle(
+                          fontFamily: "Pretendard",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.gray[600]),
+                    )),
+              complete_group.isNotEmpty
+                  ? complete_room()
+                  : Center(
+                      child: Text(
+                      '완료된 같이방이 없습니다.',
+                      style: TextStyle(
+                          fontFamily: "Pretendard",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: PeeroreumColor.gray[600]),
+                    ))
+            ])),
           ],
         ),
       ),
@@ -148,14 +173,20 @@ class _InWeduState extends State<InWedu> {
               children: [
                 Container(
                   margin: EdgeInsets.only(right: 16),
-                  width: 44, height: 44,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                      border: Border.all(
+                          width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       image: complete_group[index]["imagePath"] != null
-                          ? DecorationImage(image: NetworkImage(complete_group[index]["imagePath"]), fit: BoxFit.cover)
-                          : DecorationImage(image: AssetImage('assets/images/example_logo.png'))
-                  ),
+                          ? DecorationImage(
+                              image: NetworkImage(
+                                  complete_group[index]["imagePath"]),
+                              fit: BoxFit.cover)
+                          : DecorationImage(
+                              image: AssetImage(
+                                  'assets/images/example_logo.png'))),
                 ),
                 Expanded(
                   child: Column(
@@ -165,10 +196,9 @@ class _InWeduState extends State<InWedu> {
                           DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(4)),
-                              color: PeeroreumColor.subjectColor[
-                              subjectList[complete_group[index]
-                              ['subject']]]?[0],
+                                  BorderRadius.all(Radius.circular(4)),
+                              color: PeeroreumColor.subjectColor[subjectList[
+                                  complete_group[index]['subject']]]?[0],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -178,8 +208,8 @@ class _InWeduState extends State<InWedu> {
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     color: PeeroreumColor.subjectColor[
-                                    subjectList[complete_group[index]
-                                    ['subject']]]?[1],
+                                        subjectList[complete_group[index]
+                                            ['subject']]]?[1],
                                     fontWeight: FontWeight.w600,
                                     fontSize: 10),
                               ),
@@ -196,8 +226,7 @@ class _InWeduState extends State<InWedu> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: PeeroreumColor.black,
-                                  overflow: TextOverflow.ellipsis
-                              ),
+                                  overflow: TextOverflow.ellipsis),
                             ),
                           ),
                           // SizedBox(
@@ -224,8 +253,12 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text(
                                 '${complete_group[index]["attendingPeopleNum"]!}명',
@@ -236,8 +269,12 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text(
                                 'D-${complete_group[index]["dday"]!}',
@@ -268,7 +305,9 @@ class _InWeduState extends State<InWedu> {
                       LinearPercentIndicator(
                         padding: EdgeInsets.all(0),
                         lineHeight: 8,
-                        percent: double.parse(complete_group[index]["progress"].toString()) / 100,
+                        percent: double.parse(
+                                complete_group[index]["progress"].toString()) /
+                            100,
                         backgroundColor: PeeroreumColor.gray[200],
                         linearGradient: LinearGradient(colors: [
                           PeeroreumColor.primaryPuple[400]!,
@@ -312,14 +351,20 @@ class _InWeduState extends State<InWedu> {
               children: [
                 Container(
                   margin: EdgeInsets.only(right: 16),
-                  width: 44, height: 44,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                      border: Border.all(
+                          width: 1, color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       image: ing_group[index]["imagePath"] != null
-                          ? DecorationImage(image: NetworkImage(ing_group[index]["imagePath"]), fit: BoxFit.cover)
-                          : DecorationImage(image: AssetImage('assets/images/example_logo.png'))
-                  ),
+                          ? DecorationImage(
+                              image:
+                                  NetworkImage(ing_group[index]["imagePath"]),
+                              fit: BoxFit.cover)
+                          : DecorationImage(
+                              image: AssetImage(
+                                  'assets/images/example_logo.png'))),
                 ),
                 Expanded(
                   child: Column(
@@ -331,8 +376,7 @@ class _InWeduState extends State<InWedu> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(4)),
                               color: PeeroreumColor.subjectColor[
-                                  subjectList[ing_group[index]
-                                      ['subject']]]?[0],
+                                  subjectList[ing_group[index]['subject']]]?[0],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -360,8 +404,7 @@ class _InWeduState extends State<InWedu> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: PeeroreumColor.black,
-                                overflow: TextOverflow.ellipsis
-                              ),
+                                  overflow: TextOverflow.ellipsis),
                             ),
                           ),
                           // SizedBox(
@@ -388,8 +431,12 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text(
                                 '${ing_group[index]["attendingPeopleNum"]!}명 참여중',
@@ -400,8 +447,12 @@ class _InWeduState extends State<InWedu> {
                                     color: PeeroreumColor.gray[600]),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset('assets/icons/dot.svg', color: PeeroreumColor.gray[600],),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
+                                ),
                               ),
                               Text(
                                 'D-${ing_group[index]["dday"]!}',
@@ -432,7 +483,9 @@ class _InWeduState extends State<InWedu> {
                       LinearPercentIndicator(
                         padding: EdgeInsets.all(0),
                         lineHeight: 8,
-                        percent: double.parse(ing_group[index]["progress"].toString()) / 100,
+                        percent: double.parse(
+                                ing_group[index]["progress"].toString()) /
+                            100,
                         backgroundColor: PeeroreumColor.gray[200],
                         linearGradient: LinearGradient(colors: [
                           PeeroreumColor.primaryPuple[400]!,

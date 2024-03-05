@@ -8,6 +8,8 @@ import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_scrap.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
@@ -145,49 +147,53 @@ class _MyPageState extends State<MyPage> {
             children: [
               Container(
                   child: Row(children: [
-                    Container(
-                      width: 45,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            width: 2,
-                            color: grade != null
-                                ? PeeroreumColor.gradeColor[int.parse(grade)]!
-                                : Color.fromARGB(255, 186, 188, 189)),
+                Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        width: 2,
+                        color: grade != null
+                            ? PeeroreumColor.gradeColor[int.parse(grade)]!
+                            : Color.fromARGB(255, 186, 188, 189)),
+                  ),
+                  child: Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                        color: PeeroreumColor.white,
                       ),
-                      child: Container(
-                        height: 42,
-                        width: 42,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            width: 1,
-                            color: PeeroreumColor.white,
-                          ),
-                          image: profileImage != null
-                              ? DecorationImage(
+                      image: profileImage != null
+                          ? DecorationImage(
                               image: NetworkImage(profileImage),
                               fit: BoxFit.cover)
-                              : DecorationImage(
+                          : DecorationImage(
                               image: AssetImage(
-                                'assets/images/user.jpg',
-                              )),
-                        ),
-                      ),
+                              'assets/images/user.jpg',
+                            )),
                     ),
-                    Container(width: 11),
-                    Text(
-                      '$nickname',
-                      style: TextStyle(
-                        color: PeeroreumColor.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Pretendard',
-                      ),
-                    ),
-                  ])),
-              SvgPicture.asset('assets/icons/right.svg', height: 24, color: PeeroreumColor.gray[600],),
+                  ),
+                ),
+                Container(width: 11),
+                Text(
+                  '$nickname',
+                  style: TextStyle(
+                    color: PeeroreumColor.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Pretendard',
+                  ),
+                ),
+              ])),
+              SvgPicture.asset(
+                'assets/icons/right.svg',
+                height: 24,
+                color: PeeroreumColor.gray[600],
+              ),
             ],
           ),
         ),
@@ -204,7 +210,10 @@ class _MyPageState extends State<MyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset('assets/images/color_logo.png', height: 24,),
+            Image.asset(
+              'assets/images/color_logo.png',
+              height: 24,
+            ),
             Container(width: 4),
             Text(
               '+',
@@ -238,8 +247,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
               minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-          ),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -255,48 +263,52 @@ class _MyPageState extends State<MyPage> {
             ],
           ),
         ),
-        // TextButton(
-        //   onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
-        //   style: TextButton.styleFrom(
-        //       minimumSize: Size.fromHeight(56),
-        //       padding: EdgeInsets.symmetric(horizontal: 20)
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.start,
-        //     children: [
-        //       Text(
-        //         '내 질의응답',
-        //         style: TextStyle(
-        //           color: PeeroreumColor.gray[800],
-        //           fontSize: 16,
-        //           fontWeight: FontWeight.w600,
-        //           fontFamily: 'Pretendard',
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // TextButton(
-        //   onPressed: () => {Fluttertoast.showToast(msg: "준비 중입니다.")},
-        //   style: TextButton.styleFrom(
-        //       minimumSize: Size.fromHeight(56),
-        //       padding: EdgeInsets.symmetric(horizontal: 20)
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.start,
-        //     children: [
-        //       Text(
-        //         '스크랩',
-        //         style: TextStyle(
-        //           color: PeeroreumColor.gray[800],
-        //           fontSize: 16,
-        //           fontWeight: FontWeight.w600,
-        //           fontFamily: 'Pretendard',
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
+        TextButton(
+          onPressed: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => InIedu()))
+          },
+          style: TextButton.styleFrom(
+              minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '내 질의응답',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
+          ),
+        ),
+        TextButton(
+          onPressed: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => Scrap()))
+          },
+          style: TextButton.styleFrom(
+              minimumSize: Size.fromHeight(56),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '스크랩',
+                style: TextStyle(
+                  color: PeeroreumColor.gray[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -312,8 +324,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
               minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-          ),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -336,9 +347,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
               minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-
-          ),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -391,9 +400,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
               minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-
-          ),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -415,8 +422,7 @@ class _MyPageState extends State<MyPage> {
           },
           style: TextButton.styleFrom(
               minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)
-          ),
+              padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -511,13 +517,14 @@ class _MyPageState extends State<MyPage> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(context, '/signIn/email', (route) => false);
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/signIn/email', (route) => false);
                           FlutterSecureStorage().deleteAll();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],
-                          padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

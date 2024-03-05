@@ -326,11 +326,12 @@ class B4_14px_R extends StatelessWidget {
     return Text(
       text,
       style: style.copyWith(
-          color: color ?? PeeroreumColor.black,
-          fontFamily: 'Pretendard',
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          height: 24 / 14),
+        color: color ?? PeeroreumColor.black,
+        fontFamily: 'Pretendard',
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+      ),
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
