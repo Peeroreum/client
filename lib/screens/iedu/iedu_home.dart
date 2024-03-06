@@ -280,7 +280,12 @@ class _HomeIeduState extends State<HomeIedu> {
           Column(
             children: [
               dropdown_body(),
-              Expanded(child: asks()),
+              datas.isEmpty
+                  ? Container(
+                      height: MediaQuery.of(context).size.height - 52 - 72 - 98,
+                      child: noIedu(),
+                    )
+                  : Expanded(child: asks()),
               Container(
                 height: 8,
               ),
@@ -511,9 +516,11 @@ class _HomeIeduState extends State<HomeIedu> {
                         });
                         fetchIeduData();
                         Navigator.of(context).pop();
-                        _scrollController.animateTo(0,
-                            duration: Duration(milliseconds: 750),
-                            curve: Curves.ease);
+                        if (datas.isNotEmpty) {
+                          _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 750),
+                              curve: Curves.ease);
+                        }
                       },
                       child: Container(
                         width: double.infinity,
@@ -593,9 +600,11 @@ class _HomeIeduState extends State<HomeIedu> {
                           fetchIeduData();
                         });
                         Navigator.of(context).pop();
-                        _scrollController.animateTo(0,
-                            duration: Duration(milliseconds: 750),
-                            curve: Curves.ease);
+                        if (datas.isNotEmpty) {
+                          _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 750),
+                              curve: Curves.ease);
+                        }
                       },
                       child: Container(
                         width: double.infinity,
@@ -666,9 +675,11 @@ class _HomeIeduState extends State<HomeIedu> {
                           fetchIeduData();
                         });
                         Navigator.of(context).pop();
-                        _scrollController.animateTo(0,
-                            duration: Duration(milliseconds: 1),
-                            curve: Curves.ease);
+                        if (datas.isNotEmpty) {
+                          _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 750),
+                              curve: Curves.ease);
+                        }
                       },
                       child: Container(
                         width: double.infinity,
@@ -903,6 +914,28 @@ class _HomeIeduState extends State<HomeIedu> {
           );
         }
       },
+    );
+  }
+
+  noIedu() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/images/no_wedu_oreum.png',
+          width: 150,
+        ),
+        Text(
+          '찾으시는 질문이 없어요 🥲',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: PeeroreumColor.black,
+          ),
+        ),
+      ],
     );
   }
 
