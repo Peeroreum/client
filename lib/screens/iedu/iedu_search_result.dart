@@ -249,6 +249,34 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                     ? Center(
                         child: Column(
                           children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '검색된 내가해냄',
+                                    style: TextStyle(
+                                        color: PeeroreumColor.gray[800],
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  SizedBox(width: 4,),
+                                  Text(
+                                    '${datas.length}',
+                                    style: TextStyle(
+                                        color: PeeroreumColor.gray[600],
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: dropdown_body(),
+                            ),
                             SizedBox(
                               height: 69,
                             ),
@@ -704,8 +732,10 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                         setState(() {
                           _detailSubject = DetailSubjects[index];
                           detailSubject = index;
+                          currentPage = 0;
                         });
                         Navigator.of(context).pop();
+                        fetchDatas();
                       },
                       child: Container(
                         width: double.infinity,
@@ -771,6 +801,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           _grade = index;
                           _subject = null;
                           _detailSubject = null;
+                          currentPage = 0;
                         });
                         Navigator.of(context).pop();
                         fetchDatas();
@@ -847,8 +878,10 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             DetailSubjects.addAll(AddDetailSubjects);
                           }
                           _detailSubject = null;
+                          currentPage = 0;
                         });
                         Navigator.of(context).pop();
+                        fetchDatas();
                       },
                       child: Container(
                         width: double.infinity,
