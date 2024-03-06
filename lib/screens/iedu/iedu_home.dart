@@ -108,6 +108,9 @@ class _HomeIeduState extends State<HomeIedu> {
     // TODO: implement initState
     super.initState();
     initFuture = fetchStatus();
+    Subjects.addAll(subjects);
+    DetailMiddleSubjects.addAll(middleSubjects);
+    DetailHighSubjects.addAll(highSubjects);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
@@ -126,11 +129,18 @@ class _HomeIeduState extends State<HomeIedu> {
       body: FutureBuilder<void>(
         future: initFuture,
         builder: (context, snapshot) {
-          return RefreshIndicator(
-            onRefresh: () => fetchStatus(),
-            color: PeeroreumColor.primaryPuple[400],
-            child: bodyWidget(),
-          );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container();
+          } else if (snapshot.hasError) {
+            // 에러 발생 시
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return RefreshIndicator(
+              onRefresh: () => fetchStatus(),
+              color: PeeroreumColor.primaryPuple[400],
+              child: bodyWidget(),
+            );
+          }
         },
       ),
     );
@@ -142,9 +152,6 @@ class _HomeIeduState extends State<HomeIedu> {
     nickname = await FlutterSecureStorage().read(key: "nickname");
     profileImage = await FlutterSecureStorage().read(key: "profileImage");
     _grade ??= int.parse(my_grade!);
-    Subjects.addAll(subjects);
-    DetailMiddleSubjects.addAll(middleSubjects);
-    DetailHighSubjects.addAll(highSubjects);
 
     await fetchIeduData();
     await getReadlistData();
@@ -280,7 +287,12 @@ class _HomeIeduState extends State<HomeIedu> {
           Column(
             children: [
               dropdown_body(),
-              Expanded(child: asks()),
+              datas.isEmpty
+                  ? Container(
+                      height: MediaQuery.of(context).size.height - 52 - 72 - 98,
+                      child: noIedu(),
+                    )
+                  : Expanded(child: asks()),
               Container(
                 height: 8,
               ),
@@ -366,13 +378,15 @@ class _HomeIeduState extends State<HomeIedu> {
           // 과목
           GestureDetector(
             onTap: () {
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: false,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    return subjectSelect();
-                  });
+              if (_grade != 0) {
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: false,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return subjectSelect();
+                    });
+              }
             },
             child: Container(
               height: 40,
@@ -391,9 +405,11 @@ class _HomeIeduState extends State<HomeIedu> {
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
-                        color: _subject != null
+                        color: _grade == 0
                             ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600]),
+                            : _subject != null
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]),
                   ),
                   SizedBox(
                     width: 8,
@@ -409,13 +425,17 @@ class _HomeIeduState extends State<HomeIedu> {
           // 상세 과목
           GestureDetector(
             onTap: () {
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: false,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    return detailSubjectSelect();
-                  });
+              if (_grade != 0) {
+                if (_subject != null) {
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: false,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return detailSubjectSelect();
+                      });
+                }
+              }
             },
             child: Container(
               height: 40,
@@ -434,9 +454,11 @@ class _HomeIeduState extends State<HomeIedu> {
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
-                        color: _detailSubject != null
+                        color: _grade == 0
                             ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600]),
+                            : _detailSubject != null
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]),
                   ),
                   SizedBox(
                     width: 8,
@@ -494,11 +516,18 @@ class _HomeIeduState extends State<HomeIedu> {
                         setState(() {
                           _grade = index;
                           _subject = null;
+                          subject = 0;
                           _detailSubject = null;
+                          detailSubject = 0;
                           print('_grade = $_grade');
                         });
                         fetchIeduData();
                         Navigator.of(context).pop();
+                        if (datas.isNotEmpty) {
+                          _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 750),
+                              curve: Curves.ease);
+                        }
                       },
                       child: Container(
                         width: double.infinity,
@@ -573,10 +602,16 @@ class _HomeIeduState extends State<HomeIedu> {
                             DetailSubjects.addAll(AddDetailSubjects);
                           }
                           _detailSubject = null;
+                          detailSubject = 0;
                           print('_subject = $_subject, subject = $subject');
                           fetchIeduData();
                         });
                         Navigator.of(context).pop();
+                        if (datas.isNotEmpty) {
+                          _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 750),
+                              curve: Curves.ease);
+                        }
                       },
                       child: Container(
                         width: double.infinity,
@@ -647,6 +682,11 @@ class _HomeIeduState extends State<HomeIedu> {
                           fetchIeduData();
                         });
                         Navigator.of(context).pop();
+                        if (datas.isNotEmpty) {
+                          _scrollController.animateTo(0,
+                              duration: Duration(milliseconds: 750),
+                              curve: Curves.ease);
+                        }
                       },
                       child: Container(
                         width: double.infinity,
@@ -741,8 +781,10 @@ class _HomeIeduState extends State<HomeIedu> {
                                   )
                                 : Container(),
                             Flexible(
-                                child: T4_16px(text: datas[index]['title'],
-                                overflow: TextOverflow.ellipsis,)),
+                                child: T4_16px(
+                              text: datas[index]['title'],
+                              overflow: TextOverflow.ellipsis,
+                            )),
                           ],
                         ),
                       ),
@@ -837,9 +879,9 @@ class _HomeIeduState extends State<HomeIedu> {
                         ),
                         Flexible(
                           child: B4_14px_M(
-                              text: datas[index]["memberProfileDto"]
-                                  ["nickname"],
-                              overflow: TextOverflow.ellipsis,),
+                            text: datas[index]["memberProfileDto"]["nickname"],
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         SizedBox(
                           width: 8,
@@ -879,6 +921,28 @@ class _HomeIeduState extends State<HomeIedu> {
           );
         }
       },
+    );
+  }
+
+  noIedu() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/images/no_wedu_oreum.png',
+          width: 150,
+        ),
+        Text(
+          '찾으시는 질문이 없어요 🥲',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: PeeroreumColor.black,
+          ),
+        ),
+      ],
     );
   }
 
