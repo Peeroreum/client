@@ -23,15 +23,16 @@ class SearchResultIedu extends StatefulWidget {
 class _SearchResultIeduState extends State<SearchResultIedu> {
   var token;
 
+  late Future initFuture;
   String keyword;
   _SearchResultIeduState(this.keyword);
 
   List<Map<String, String>> _searchHistory = [];
-  List<dynamic> datas = [];
+  dynamic datas;
 
   List<String> isReadList = [];
 
-  int? _grade;
+  int _grade = 0;
   String? _subject;
   String? _detailSubject;
   int subject = 0;
@@ -58,6 +59,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
   @override
   void initState() {
     super.initState();
+    initFuture = fetchDatas();
     Subjects.addAll(subjects);
     DetailMiddleSubjects.addAll(middleSubjects);
     DetailHighSubjects.addAll(highSubjects);
@@ -69,24 +71,26 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
       }
     });
     currentPage = 0;
-    fetchDatas();
-    
   }
 
   Future<void> fetchDatas() async {
+    print('fetch~~/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage');
     token = await FlutterSecureStorage().read(key: "accessToken");
     var weduResult = await http
-        .get(Uri.parse('${API.hostConnect}/question/search/${keyword}'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
+        .get(Uri.parse('${API.hostConnect}/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'), 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
     if (weduResult.statusCode == 200) {
       datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
-      print("데이터 fetch 완료 \n $datas");
+      print(datas.length);
+      print(datas);
     } else {
       print("에러${weduResult.statusCode}");
     }
     await getReadlistData();
+    setState(() {});
   }
 
   _loadSearchHistory() async {
@@ -234,7 +238,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                 ),
               )),
           body: FutureBuilder<void>(
-            future: fetchDatas(),
+            future: initFuture,
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
@@ -339,7 +343,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
               child: Row(
                 children: [
                   Text(
-                    grades[0],
+                    grades[_grade],
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
@@ -447,6 +451,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
   }
   asks() {
     return ListView.separated(
+      controller: _scrollController,
       shrinkWrap: true,
       itemCount: datas.length + (_isLoading ? 1 : 0),
       separatorBuilder: (BuildContext context, int index) {
@@ -455,6 +460,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
         );
       },
       itemBuilder: (BuildContext context, int index) {
+      if (index < datas.length) {
         return GestureDetector(
           onTap: () async {
             setState(() {
@@ -466,9 +472,6 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
             await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => DetailIedu(
                     datas[index]['id'], datas[index]['selected'])));
-            setState(() {
-              
-            });
           },
           child: Container(
             width: MediaQuery.of(context).size.width - 40,
@@ -477,7 +480,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                 color: isReadList.contains(datas[index]['id'].toString())
                     ? PeeroreumColor.gray[100]
                     : PeeroreumColor.white,
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                border:
+                    Border.all(width: 1, color: PeeroreumColor.gray[200]!),
                 borderRadius: BorderRadius.all(Radius.circular(8.0))),
             child: Column(
               children: [
@@ -486,8 +490,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   children: [
                     Container(
                       width: datas[index]['selected']
-                          ? MediaQuery.of(context).size.width - 141
-                          : MediaQuery.of(context).size.width - 132,
+                          ? MediaQuery.of(context).size.width - 142
+                          : MediaQuery.of(context).size.width - 133,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -515,7 +519,9 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                   width: 8,
                                 )
                               : Container(),
-                          Flexible(child: T4_16px(text: datas[index]['title'])),
+                          Flexible(
+                              child: T4_16px(text: datas[index]['title'],
+                              overflow: TextOverflow.ellipsis,)),
                         ],
                       ),
                     ),
@@ -610,7 +616,9 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                       ),
                       Flexible(
                         child: B4_14px_M(
-                            text: datas[index]["memberProfileDto"]["nickname"]),
+                            text: datas[index]["memberProfileDto"]
+                                ["nickname"],
+                            overflow: TextOverflow.ellipsis,),
                       ),
                       SizedBox(
                         width: 8,
@@ -648,6 +656,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
             ),
           ),
         );
+      }
       },
     );
   }
@@ -764,6 +773,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           _detailSubject = null;
                         });
                         Navigator.of(context).pop();
+                        fetchDatas();
                       },
                       child: Container(
                         width: double.infinity,
@@ -865,12 +875,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
     setState(() {
       _isLoading = true;
     });
-
     List<dynamic> addedDatas = [];
     currentPage++;
     var IeduResult = await http.get(
         Uri.parse(
-            '${API.hostConnect}/question/search/${keyword}'),
+            '${API.hostConnect}/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -881,6 +890,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
         datas.addAll(addedDatas);
         _isLoading = false;
       });
+      print("성공 loadMoreData ${IeduResult.statusCode}");
     } else {
       print("에러 loadMoreData ${IeduResult.statusCode}");
     }
