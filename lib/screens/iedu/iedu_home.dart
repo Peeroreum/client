@@ -288,10 +288,7 @@ class _HomeIeduState extends State<HomeIedu> {
             children: [
               dropdown_body(),
               datas.isEmpty
-                  ? Container(
-                      height: MediaQuery.of(context).size.height - 52 - 72 - 98,
-                      child: noIedu(),
-                    )
+                  ? noIedu()
                   : Expanded(child: asks()),
               Container(
                 height: 8,
@@ -929,6 +926,9 @@ class _HomeIeduState extends State<HomeIedu> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        SizedBox(
+          height: 69,
+        ),
         Image.asset(
           'assets/images/no_wedu_oreum.png',
           width: 150,

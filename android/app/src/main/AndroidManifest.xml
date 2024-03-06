@@ -30,7 +30,10 @@
     <application
         android:label="피어오름"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher_round">
+        android:icon="@mipmap/ic_launcher_round"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        >
         <!-- 카카오 로그인 커스텀 URL 스킴 설정 -->
         <activity
             android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
