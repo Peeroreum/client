@@ -60,15 +60,15 @@ class _CreateIeduState extends State<CreateIedu> {
     // TODO: implement initState
     super.initState();
     initFuture = fetchStatus();
+    Subjects.addAll(subjects);
+    DetailMiddleSubjects.addAll(middleSubjects);
+    DetailHighSubjects.addAll(highSubjects);
   }
 
   Future<void> fetchStatus() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     my_grade = await FlutterSecureStorage().read(key: "grade");
     _grade ??= int.parse(my_grade!);
-    Subjects.addAll(subjects);
-    DetailMiddleSubjects.addAll(middleSubjects);
-    DetailHighSubjects.addAll(highSubjects);
   }
 
   @override
@@ -267,9 +267,7 @@ class _CreateIeduState extends State<CreateIedu> {
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
-                      color: _grade != null
-                          ? PeeroreumColor.black
-                          : PeeroreumColor.gray[600]),
+                      color: PeeroreumColor.black),
                 ),
                 SizedBox(
                   width: 8,
@@ -285,13 +283,15 @@ class _CreateIeduState extends State<CreateIedu> {
         // 과목
         GestureDetector(
           onTap: () {
-            showModalBottomSheet(
-                context: context,
-                isScrollControlled: false,
-                backgroundColor: Colors.transparent,
-                builder: (context) {
-                  return subjectSelect();
-                });
+            if (_grade != 0) {
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: false,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return subjectSelect();
+                  });
+            }
           },
           child: Container(
             height: 40,
@@ -310,9 +310,7 @@ class _CreateIeduState extends State<CreateIedu> {
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
-                      color: _subject != null
-                          ? PeeroreumColor.black
-                          : PeeroreumColor.gray[600]),
+                      color: PeeroreumColor.black),
                 ),
                 SizedBox(
                   width: 8,
@@ -328,13 +326,17 @@ class _CreateIeduState extends State<CreateIedu> {
         // 상세 과목
         GestureDetector(
           onTap: () {
-            showModalBottomSheet(
-                context: context,
-                isScrollControlled: false,
-                backgroundColor: Colors.transparent,
-                builder: (context) {
-                  return detailSubjectSelect();
-                });
+            if (_grade != 0) {
+              if (_subject != null) {
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: false,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return detailSubjectSelect();
+                    });
+              }
+            }
           },
           child: Container(
             height: 40,
@@ -353,9 +355,7 @@ class _CreateIeduState extends State<CreateIedu> {
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
-                      color: _detailSubject != null
-                          ? PeeroreumColor.black
-                          : PeeroreumColor.gray[600]),
+                      color: PeeroreumColor.black),
                 ),
                 SizedBox(
                   width: 8,
@@ -412,7 +412,9 @@ class _CreateIeduState extends State<CreateIedu> {
                         setState(() {
                           _grade = index;
                           _subject = null;
+                          subject = 0;
                           _detailSubject = null;
+                          detailSubject = 0;
                           print('_grade = $_grade');
                         });
                         Navigator.of(context).pop();
@@ -490,6 +492,7 @@ class _CreateIeduState extends State<CreateIedu> {
                             DetailSubjects.addAll(AddDetailSubjects);
                           }
                           _detailSubject = null;
+                          detailSubject = 0;
                           print('_subject = $_subject, subject = $subject');
                         });
                         Navigator.of(context).pop();
