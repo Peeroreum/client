@@ -11,6 +11,7 @@ import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SearchResultIedu extends StatefulWidget {
   final String keyword;
@@ -436,13 +437,17 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
           // 상세 과목
           GestureDetector(
             onTap: () {
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: false,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    return detailSubjectSelect();
-                  });
+              if (_subject != null && subject != 0 && _grade != 0) {
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: false,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return detailSubjectSelect();
+                      });
+              } else{
+                Fluttertoast.showToast(msg: "학년과 과목을 모두 선택해주세요");
+              }
             },
             child: Container(
               height: 40,
@@ -798,9 +803,15 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         setState(() {
-                          _grade = index;
-                          _subject = null;
-                          _detailSubject = null;
+                          var checkGrade = index;
+                          if ( (1 <= _grade && _grade <= 3 &&  1<= checkGrade && checkGrade <= 3) ||
+                                (4 <= _grade && _grade <= 6 &&  4<= checkGrade && checkGrade <= 6)){
+                            _grade = checkGrade;
+                          } else{
+                            _grade = index;
+                            //_subject = null;
+                            _detailSubject = null;
+                          }
                           currentPage = 0;
                         });
                         Navigator.of(context).pop();
