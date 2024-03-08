@@ -299,7 +299,7 @@ class _DetailIeduState extends State<DetailIedu> {
                   constraints: BoxConstraints(),
                   child: isBookmarked != null && isBookmarked 
                       ?SvgPicture.asset('assets/icons/bookmark_fill.svg',
-                          color: PeeroreumColor.black)
+                          color: PeeroreumColor.primaryPuple[400])
                       :SvgPicture.asset('assets/icons/bookmark.svg',
                           color: PeeroreumColor.black),
                 ),
