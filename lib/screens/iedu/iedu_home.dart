@@ -332,7 +332,7 @@ class _HomeIeduState extends State<HomeIedu> {
             onTap: () {
               showModalBottomSheet(
                   context: context,
-                  isScrollControlled: false,
+                  isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return gradeSelect();
@@ -379,7 +379,7 @@ class _HomeIeduState extends State<HomeIedu> {
             onTap: () {
               showModalBottomSheet(
                   context: context,
-                  isScrollControlled: false,
+                  isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return subjectSelect();
@@ -423,7 +423,7 @@ class _HomeIeduState extends State<HomeIedu> {
               if (_subject != null) {
                 showModalBottomSheet(
                     context: context,
-                    isScrollControlled: false,
+                    isScrollControlled: true,
                     backgroundColor: Colors.transparent,
                     builder: (context) {
                       return detailSubjectSelect();
@@ -467,6 +467,7 @@ class _HomeIeduState extends State<HomeIedu> {
   gradeSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.63,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -542,6 +543,7 @@ class _HomeIeduState extends State<HomeIedu> {
   subjectSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.63,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -626,6 +628,7 @@ class _HomeIeduState extends State<HomeIedu> {
   detailSubjectSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.4,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(

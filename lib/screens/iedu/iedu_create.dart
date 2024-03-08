@@ -249,7 +249,7 @@ class _CreateIeduState extends State<CreateIedu> {
           onTap: () {
             showModalBottomSheet(
                 context: context,
-                isScrollControlled: false,
+                isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 builder: (context) {
                   return gradeSelect();
@@ -294,7 +294,7 @@ class _CreateIeduState extends State<CreateIedu> {
           onTap: () {
             showModalBottomSheet(
                 context: context,
-                isScrollControlled: false,
+                isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 builder: (context) {
                   return subjectSelect();
@@ -336,7 +336,7 @@ class _CreateIeduState extends State<CreateIedu> {
             if (_subject != null) {
               showModalBottomSheet(
                   context: context,
-                  isScrollControlled: false,
+                  isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return detailSubjectSelect();
@@ -377,6 +377,7 @@ class _CreateIeduState extends State<CreateIedu> {
   gradeSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.63,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -448,6 +449,7 @@ class _CreateIeduState extends State<CreateIedu> {
   subjectSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.63,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -526,6 +528,7 @@ class _CreateIeduState extends State<CreateIedu> {
   detailSubjectSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.4,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -574,7 +577,7 @@ class _CreateIeduState extends State<CreateIedu> {
                       child: Container(
                         width: double.infinity,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         child: Text(
                           DetailSubjects[index],
                           style: TextStyle(
