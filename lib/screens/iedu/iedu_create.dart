@@ -292,15 +292,13 @@ class _CreateIeduState extends State<CreateIedu> {
         // 과목
         GestureDetector(
           onTap: () {
-            if (_grade != 0) {
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: false,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    return subjectSelect();
-                  });
-            }
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: false,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return subjectSelect();
+                });
           },
           child: Container(
             height: 40,
@@ -335,16 +333,14 @@ class _CreateIeduState extends State<CreateIedu> {
         // 상세 과목
         GestureDetector(
           onTap: () {
-            if (_grade != 0) {
-              if (_subject != null) {
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: false,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) {
-                      return detailSubjectSelect();
-                    });
-              }
+            if (_subject != null) {
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: false,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return detailSubjectSelect();
+                  });
             }
           },
           child: Container(
