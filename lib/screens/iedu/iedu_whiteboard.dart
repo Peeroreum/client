@@ -232,12 +232,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 for (int i = 0; i < isPenSelected.length; i++) {
                   isPenSelected[i] = i == 1;
                 }
-                _opacity = 0.3;
+                _opacity = 0.2;
               });
               _drawingController.setPaintContent(SimpleLine());
               _drawingController.setStyle(
                   strokeWidth: 20,
-                  blendMode: BlendMode.multiply,
+                  blendMode: BlendMode.srcOver,
                   color: _color.withOpacity(_opacity));
             },
             // 다음 업데이트 때 작업-길게 눌렀을 때 추가기능
@@ -272,7 +272,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
               });
               _drawingController.setPaintContent(Eraser(color: Colors.white));
               _drawingController.setStyle(
-                  strokeWidth: _strokeWidth,
+                  strokeWidth: 20,
                   blendMode: BlendMode.srcOver,
                   color: _color.withOpacity(1));
             },
