@@ -160,6 +160,7 @@ class _DetailIeduState extends State<DetailIedu> {
         });
     if (inIeduAnswerResult.statusCode == 200) {
       commentDatas = jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
+      print(commentDatas);
       setState(() {
         
       });
@@ -713,6 +714,9 @@ class _DetailIeduState extends State<DetailIedu> {
                       onTap: () {
                         setState(() {
                           _image = null;
+                          if(comment == ""){
+                            isSubmittable = false;
+                          }
                         });
                       },
                       child: Opacity(
@@ -753,7 +757,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         borderRadius: BorderRadius.circular(8)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Center(
                             child: SizedBox(
@@ -762,7 +766,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                       focusNode: _focusNode,
                                       controller: _textController,
                                       style: TextStyle(
-                                        height: 24/14,
+                                        //height: 1.0,
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400
@@ -779,14 +783,14 @@ class _DetailIeduState extends State<DetailIedu> {
                                           fontFamily: 'Pretendard',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
-                                          height: 1.0,
+                                          //height: 24/14,
                                         )
                                       ),
                                       onChanged: (value) {
                                         comment = value;
                                         final lines = textlines(value);
                                         setState(() {
-                                          if (comment != ""){
+                                          if (comment != "" || _image != null){
                                             isSubmittable = true;
                                           } else {
                                             isSubmittable = false;
@@ -889,6 +893,7 @@ class _DetailIeduState extends State<DetailIedu> {
     if (image != null) {
       setState(() {
         _image = image;
+        isSubmittable = true;
       });
     } else {
       // 이미지 선택이 취소되었을 때의 처리
@@ -903,6 +908,7 @@ class _DetailIeduState extends State<DetailIedu> {
       setState(() {
         print("리스트에 이미지 저장");
         _image = image;
+        isSubmittable = true;
       });
     }
   }
@@ -1196,7 +1202,7 @@ class _DetailIeduState extends State<DetailIedu> {
   int textlines(String text) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: TextStyle(
-                                  height: 24/14,
+                                  height: 1.0,
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400
@@ -1606,14 +1612,18 @@ class MakeComment extends StatefulWidget {
                     ?MediaQuery.of(context).size.width -40
                     :MediaQuery.of(context).size.width -112,
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        B4_14px_R(text: widget.isDeleted
-                        ? '삭제된 댓글입니다.'
-                        : widget.comment,
-                        color: widget.isDeleted
-                                  ? PeeroreumColor.gray[500]
-                                  : null,)
+                        Visibility(
+                          visible: widget.comment.toString().isNotEmpty ,
+                          child: B4_14px_R(text: widget.isDeleted
+                          ? '삭제된 댓글입니다.'
+                          : widget.comment,
+                          color: widget.isDeleted
+                                    ? PeeroreumColor.gray[500]
+                                    : null,),
+                        )
                       ],
                     ),
                   ),
