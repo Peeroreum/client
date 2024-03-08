@@ -56,6 +56,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
   int currentPage = 0;
   bool _isLoading = false;
   ScrollController _scrollController = ScrollController();
+  Map<String, Color> focusColor = {
+    "grade": PeeroreumColor.gray[200]!,
+    "subjet": PeeroreumColor.gray[200]!,
+    "detailSubject": PeeroreumColor.gray[200]!
+  };
 
   @override
   void initState() {
@@ -351,12 +356,20 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
           // 학년
           GestureDetector(
             onTap: () {
+              setState(() {
+                focusColor["grade"] = PeeroreumColor.black;
+                print(focusColor["grade"]);
+              });
               showModalBottomSheet(
                   context: context,
                   isScrollControlled: false,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return gradeSelect();
+                  }).then((value){
+                    setState(() {
+                      focusColor["grade"] = PeeroreumColor.gray[200]!;
+                    });
                   });
             },
             child: Container(
@@ -365,7 +378,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: PeeroreumColor.gray[200]!,
+                  color: focusColor["grade"] ?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -394,12 +407,19 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
           // 과목
           GestureDetector(
             onTap: () {
+              setState(() {
+                focusColor["subject"] = PeeroreumColor.black;
+              });
               showModalBottomSheet(
                   context: context,
                   isScrollControlled: false,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return subjectSelect();
+                  }).then((value){
+                    setState(() {
+                      focusColor["subject"] = PeeroreumColor.gray[200]!;
+                    });
                   });
             },
             child: Container(
@@ -408,7 +428,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: PeeroreumColor.gray[200]!,
+                  color: focusColor["subject"]?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -438,13 +458,20 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
           GestureDetector(
             onTap: () {
               if (_subject != null && subject != 0 && _grade != 0) {
+                setState(() {
+                  focusColor["detailSubject"] = PeeroreumColor.black;
+                });
                   showModalBottomSheet(
                       context: context,
                       isScrollControlled: false,
                       backgroundColor: Colors.transparent,
                       builder: (context) {
                         return detailSubjectSelect();
-                      });
+                      }).then((value){
+                    setState(() {
+                      focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
+                    });
+                  });
               } else{
                 Fluttertoast.showToast(msg: "학년과 과목을 모두 선택해주세요");
               }
@@ -455,7 +482,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: PeeroreumColor.gray[200]!,
+                  color: focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -813,6 +840,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             _detailSubject = null;
                           }
                           currentPage = 0;
+                          focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
                         Navigator.of(context).pop();
                         fetchDatas();
@@ -890,6 +918,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           }
                           _detailSubject = null;
                           currentPage = 0;
+                          focusColor['subject'] = PeeroreumColor.gray[200]!;
                         });
                         Navigator.of(context).pop();
                         fetchDatas();
