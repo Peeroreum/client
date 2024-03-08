@@ -258,14 +258,17 @@ class _HomeIeduState extends State<HomeIedu> {
       actions: [
         Row(
           children: [
-            GestureDetector(
-              child: SvgPicture.asset(
-                'assets/icons/bell_none.svg',
-                color: PeeroreumColor.gray[800],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 12),
+              child: GestureDetector(
+                child: SvgPicture.asset(
+                  'assets/icons/bell_none.svg',
+                  color: PeeroreumColor.gray[800],
+                ),
+                onTap: () {
+                  Fluttertoast.showToast(msg: "준비중입니다.");
+                },
               ),
-              onTap: () {
-                Fluttertoast.showToast(msg: "준비중입니다.");
-              },
             ),
             SizedBox(
               width: 20,
@@ -887,14 +890,14 @@ class _HomeIeduState extends State<HomeIedu> {
                           width: 8,
                         ),
                         C1_12px_M(
-                          text: '${timeCheck(datas[index]["createdTime"])}전',
+                          text: '${timeCheck(datas[index]["createdTime"])} 전',
                           color: PeeroreumColor.gray[400],
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
                           child: SvgPicture.asset(
                             'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[600],
+                            color: PeeroreumColor.gray[400],
                           ),
                         ),
                         C1_12px_M(
@@ -905,7 +908,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
                           child: SvgPicture.asset(
                             'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[600],
+                            color: PeeroreumColor.gray[400],
                           ),
                         ),
                         C1_12px_M(

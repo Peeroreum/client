@@ -55,6 +55,8 @@ class _CreateIeduState extends State<CreateIedu> {
   final ImagePicker picker = ImagePicker();
   List<XFile> _images = [];
 
+  FocusNode ContentFocusNode = FocusNode();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -189,42 +191,49 @@ class _CreateIeduState extends State<CreateIedu> {
             height: 1,
             color: PeeroreumColor.gray[200],
           ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: contentController,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(
-                        r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
-                  ],
-                  maxLines: null,
-                  // minLines: _images.isEmpty ? 20 : 16,
-                  style: TextStyle(color: Colors.black),
-                  cursorColor: PeeroreumColor.gray[600],
-                  decoration: InputDecoration(
-                      // hintText: '궁금했던 학습 질문을 동료에게 물어보세요.',
-                      hintText: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
-                      hintStyle: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: PeeroreumColor.gray[600]!),
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                      border: InputBorder.none),
-                  onChanged: (value) {
-                    contentCheck = value;
-                    check_validation();
-                  },
-                ),
-                if (contentController.text == "") guidance(),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 16, 0, 40),
-                  child: photos(),
-                ),
-              ],
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              FocusScope.of(context).requestFocus(ContentFocusNode);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: contentController,
+                    focusNode: ContentFocusNode,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(
+                          r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
+                    ],
+                    maxLines: null,
+                    minLines: 6,
+                    // minLines: _images.isEmpty ? 20 : 16,
+                    style: TextStyle(color: Colors.black),
+                    cursorColor: PeeroreumColor.gray[600],
+                    decoration: InputDecoration(
+                        hintText: '궁금했던 학습 질문을 동료에게 물어보세요.',
+                        hintStyle: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.gray[600]!),
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                        border: InputBorder.none),
+                    onChanged: (value) {
+                      contentCheck = value;
+                      check_validation();
+                    },
+                  ),
+                  if (contentController.text == "") guidance(),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 16, 0, 40),
+                    child: photos(),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -593,10 +602,10 @@ class _CreateIeduState extends State<CreateIedu> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // B4_14px_R(
-          //   text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
-          //   color: PeeroreumColor.gray[600],
-          // ),
+          B4_14px_R(
+            text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
+            color: PeeroreumColor.gray[600],
+          ),
           Container(
             height: 12,
           ),
