@@ -55,6 +55,11 @@ class _HomeIeduState extends State<HomeIedu> {
   int currentPage = 0;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
+  Map<String, Color> focusColor = {
+    "grade": PeeroreumColor.gray[200]!,
+    "subjet": PeeroreumColor.gray[200]!,
+    "detailSubject": PeeroreumColor.gray[200]!
+  };
 
   String timeCheck(String createdAt) {
     DateTime createdTime = DateTime.parse(createdAt);
@@ -330,13 +335,20 @@ class _HomeIeduState extends State<HomeIedu> {
           // 학년
           GestureDetector(
             onTap: () {
+              setState(() {
+                focusColor["grade"] = PeeroreumColor.black;
+              });
               showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return gradeSelect();
-                  });
+                  }).then((value) {
+                setState(() {
+                  focusColor["grade"] = PeeroreumColor.gray[200]!;
+                });
+              });
             },
             child: Container(
               height: 40,
@@ -344,7 +356,7 @@ class _HomeIeduState extends State<HomeIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: PeeroreumColor.gray[200]!,
+                  color: focusColor["grade"] ?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -377,13 +389,20 @@ class _HomeIeduState extends State<HomeIedu> {
           // 과목
           GestureDetector(
             onTap: () {
+              setState(() {
+                focusColor["subject"] = PeeroreumColor.black;
+              });
               showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return subjectSelect();
-                  });
+                  }).then((value) {
+                setState(() {
+                  focusColor["subject"] = PeeroreumColor.gray[200]!;
+                });
+              });
             },
             child: Container(
               height: 40,
@@ -391,7 +410,7 @@ class _HomeIeduState extends State<HomeIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: PeeroreumColor.gray[200]!,
+                  color: focusColor["subject"] ?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -420,14 +439,21 @@ class _HomeIeduState extends State<HomeIedu> {
           // 상세 과목
           GestureDetector(
             onTap: () {
-              if (_subject != null) {
+              if (_subject != null && _grade != 0) {
+                setState(() {
+                  focusColor["detailSubject"] = PeeroreumColor.black;
+                });
                 showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
                     backgroundColor: Colors.transparent,
                     builder: (context) {
                       return detailSubjectSelect();
-                    });
+                    }).then((value) {
+                  setState(() {
+                    focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
+                  });
+                });
               }
             },
             child: Container(
@@ -436,7 +462,8 @@ class _HomeIeduState extends State<HomeIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: PeeroreumColor.gray[200]!,
+                  color:
+                      focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -509,7 +536,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           _grade = index;
                           _detailSubject = null;
                           detailSubject = 0;
-                          print('_grade = $_grade');
+                          focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
                         fetchIeduData();
                         Navigator.of(context).pop();
@@ -594,7 +621,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           }
                           _detailSubject = null;
                           detailSubject = 0;
-                          print('_subject = $_subject, subject = $subject');
+                          focusColor['subject'] = PeeroreumColor.gray[200]!;
                           fetchIeduData();
                         });
                         Navigator.of(context).pop();
