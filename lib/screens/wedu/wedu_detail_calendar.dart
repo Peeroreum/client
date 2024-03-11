@@ -10,7 +10,6 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/pie_chart.dart';
-import 'package:peeroreum_client/screens/report.dart';
 
 import '../../api/PeeroreumApi.dart';
 
@@ -860,15 +859,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     'assets/icons/icon_dots_mono.svg',
                     color: PeeroreumColor.gray[800],
                   ),
-                  onTap: () {
-                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => 
-                       Report(data: "[같이해냄] 챌린지 이미지 신고\n"
-                                    +"날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0,10)}\n"
-                                    +"같이방 아이디 : $id\n"
-                                    +"같이방 이름 : $weduTitle\n"
-                                    +"업로드한 사람 : ${successOne["nickname"].toString()}\n",)));
-                  },
+                  onTap: () {},
                 )
               ],
             ),
