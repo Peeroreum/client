@@ -7,6 +7,7 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
+import 'package:peeroreum_client/screens/ranking.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
 import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
@@ -119,7 +120,7 @@ class PeeroreumApp extends StatelessWidget {
         //'/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
         'signUp/onBoarding': (context) => OnBoarding(),
         'signUp/Complete': (context) => SignUpComplete(),
-        '/report': (context) => Report(),
+        '/report': (context) => Report(data: "상세 data 아직 추가 안 됨",),
         '/home/iedu': (context) => bottomNaviBar(firebaseToken, 2),
       },
       debugShowCheckedModeBanner: false,
