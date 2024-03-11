@@ -9,15 +9,21 @@ import 'package:mailer/smtp_server.dart';
 
 class Report extends StatefulWidget {
   //const Report({super.key});
-  const Report({Key? key}) : super(key: key);
+  final dynamic data;
+
+  const Report({
+    Key? key,
+    required this.data
+    }): super(key: key);
 
   @override
-  State<Report> createState() => _ReportState();
+  State<Report> createState() => _ReportState(data);
 }
 
-
-
 class _ReportState extends State<Report> {
+  _ReportState(this.data);
+  String data;
+
   String selectedReason = "신고사유를 선택해주세요";
   String otherReason = "";
   List<bool> reason = [false, false, false, false];
@@ -38,7 +44,7 @@ class _ReportState extends State<Report> {
     ..from = Address(username, 'Mail Service')
     ..recipients.add('peeroreum.help@gmail.com')
     ..subject = reason[3]==false ?'$selectedReason' :'$selectedReason-$otherReason' //신고 사유에 따른 이메일 제목 설정
-    ..text = '$detailReason';
+    ..text = '$data\n$detailReason';
 
     try{
       await send(message, smtpServer);
