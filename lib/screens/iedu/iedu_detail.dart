@@ -16,6 +16,7 @@ import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
+import 'package:peeroreum_client/screens/report.dart';
 
 class DetailIedu extends StatefulWidget {
   final int id;
@@ -1041,7 +1042,12 @@ class _DetailIeduState extends State<DetailIedu> {
               behavior: HitTestBehavior.translucent,
               onTap: () {
                 //Fluttertoast.showToast(msg: '준비 중입니다.');
-                Navigator.of(context).pushNamed('/report');
+                Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => 
+                      Report(data: "[내가해냄] 내가 해냄 질문 신고\n"
+                                    +"날짜 : $date\n"
+                                    +"질문 아이디 : $id\n"
+                                    +"업로드한 사람 : $name\n",)));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -1800,7 +1806,12 @@ class MakeComment extends StatefulWidget {
               behavior: HitTestBehavior.translucent,
               onTap: () {
                 //Fluttertoast.showToast(msg: '준비 중입니다.');
-                Navigator.of(context).pushNamed('/report');
+                Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => 
+                      Report(data: "[내가해냄] 내가 해냄 답변 신고\n"
+                                    +"날짜 : ${widget.createdTime}\n"
+                                    +"답변 아이디 : ${widget.id}\n"
+                                    +"업로드한 사람 : ${widget.name}\n",)));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
