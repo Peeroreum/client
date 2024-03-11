@@ -219,6 +219,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 color: isPenSelected[0]
                     ? PeeroreumColor.black
                     : PeeroreumColor.gray[600],
+                width: isPenSelected[0]? 24 : null,
               ),
             ),
           ),
@@ -255,6 +256,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 color: isPenSelected[1]
                     ? PeeroreumColor.black
                     : PeeroreumColor.gray[600],
+                width: isPenSelected[1]? 24 : null,
               ),
             ),
           ),
@@ -284,13 +286,14 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
             //   });
             // },
             child: Container(
-              margin: const EdgeInsets.all(4.0),
-              width: 24,
+              margin: isPenSelected[2]? const EdgeInsets.all(2.0) : const EdgeInsets.all(4.0),
+              width: isPenSelected[2]? 26 : null,
               child: SvgPicture.asset(
                 'assets/icons/eraser.svg',
                 color: isPenSelected[2]
                     ? PeeroreumColor.black
                     : PeeroreumColor.gray[600],
+                width: isPenSelected[2]? 26 : null
               ),
             ),
           ),
