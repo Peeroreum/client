@@ -1324,7 +1324,7 @@ class _DetailWeduState extends State<DetailWedu> {
   }
 
   aboutImageWedu(String successOneNickname) {
-    isMyImage = nickname == successOneNickname;
+    isMyImage = nickname != successOneNickname;
     return Container(
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
@@ -1367,9 +1367,8 @@ class _DetailWeduState extends State<DetailWedu> {
                 Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => 
                       Report(data: "[같이해냄] 챌린지 이미지 신고\n"
-                                    +"날짜 : ${DateTime.now()}\n"
+                                    +"날짜 : ${DateTime.now().toString().substring(0,10)}\n"
                                     +"같이방 아이디 : $id\n"
-                                    +"이미지 url : $weduImage\n"
                                     +"업로드한 사람 : $successOneNickname\n",)));
               },
               child: Container(
