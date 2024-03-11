@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/encouragement_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_calendar.dart';
@@ -1363,8 +1364,13 @@ class _DetailWeduState extends State<DetailWedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                //Fluttertoast.showToast(msg: '준비 중입니다.');
-                Navigator.of(context).pushNamed('/report');
+                Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => 
+                      Report(data: "[같이해냄] 챌린지 이미지 신고\n"
+                                    +"날짜 : ${DateTime.now()}\n"
+                                    +"같이방 아이디 : $id\n"
+                                    +"이미지 url : $weduImage\n"
+                                    +"업로드한 사람 : $successOneNickname\n",)));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
