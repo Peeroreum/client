@@ -72,10 +72,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
         FocusScope.of(context).unfocus();
         isLongPressed = [false, false, false];
       },
-      child: Scaffold(
-        backgroundColor: PeeroreumColor.white,
-        appBar: appbarWidget(),
-        body: bodyWidget(),
+      child: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: PeeroreumColor.white,
+          appBar: appbarWidget(),
+          body: bodyWidget(),
+        ),
       ),
     );
   }
@@ -94,8 +99,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
       leading: IconButton(
         color: PeeroreumColor.black,
         icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
-        onPressed: () {
-          Navigator.pop(context);
+        onPressed: () async {
+          if(await onBackKey()) {
+            Navigator.pop(context);
+          }
         },
       ),
       actions: [
@@ -219,6 +226,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 color: isPenSelected[0]
                     ? PeeroreumColor.black
                     : PeeroreumColor.gray[600],
+                width: isPenSelected[0]? 24 : null,
               ),
             ),
           ),
@@ -232,12 +240,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 for (int i = 0; i < isPenSelected.length; i++) {
                   isPenSelected[i] = i == 1;
                 }
-                _opacity = 0.3;
+                _opacity = 0.2;
               });
               _drawingController.setPaintContent(SimpleLine());
               _drawingController.setStyle(
                   strokeWidth: 20,
-                  blendMode: BlendMode.multiply,
+                  blendMode: BlendMode.srcOver,
                   color: _color.withOpacity(_opacity));
             },
             // 다음 업데이트 때 작업-길게 눌렀을 때 추가기능
@@ -255,6 +263,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 color: isPenSelected[1]
                     ? PeeroreumColor.black
                     : PeeroreumColor.gray[600],
+                width: isPenSelected[1]? 24 : null,
               ),
             ),
           ),
@@ -272,7 +281,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
               });
               _drawingController.setPaintContent(Eraser(color: Colors.white));
               _drawingController.setStyle(
-                  strokeWidth: _strokeWidth,
+                  strokeWidth: 20,
                   blendMode: BlendMode.srcOver,
                   color: _color.withOpacity(1));
             },
@@ -284,13 +293,14 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
             //   });
             // },
             child: Container(
-              margin: const EdgeInsets.all(4.0),
-              width: 24,
+              margin: isPenSelected[2]? const EdgeInsets.all(2.0) : const EdgeInsets.all(4.0),
+              width: isPenSelected[2]? 26 : null,
               child: SvgPicture.asset(
                 'assets/icons/eraser.svg',
                 color: isPenSelected[2]
                     ? PeeroreumColor.black
                     : PeeroreumColor.gray[600],
+                width: isPenSelected[2]? 26 : null
               ),
             ),
           ),
@@ -495,5 +505,102 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
     whiteboardImage = (XFile(file.path));
 
     Navigator.pop(context, whiteboardImage);
+  }
+
+  Future<bool> onBackKey() async {
+    return await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            backgroundColor: PeeroreumColor.white,
+            surfaceTintColor: Colors.transparent,
+            insetPadding: EdgeInsets.all(20),
+            iconPadding: EdgeInsets.zero,
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "정말 나가시겠습니까?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Pretendard',
+                      color: PeeroreumColor.black,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "작성하신 내용이 삭제됩니다.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: PeeroreumColor.gray[600],
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context, false);
+                          },
+                          child: Text(
+                            '취소',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: PeeroreumColor.gray[600]),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                            padding: EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16), // 패딩
+                            shape: RoundedRectangleBorder(
+                              // 모양
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context, true);
+                          },
+                          child: Text(
+                            '확인',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: PeeroreumColor.white),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: PeeroreumColor.primaryPuple[400],
+                            padding: EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
