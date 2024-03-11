@@ -14,6 +14,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile_friend.dart';
@@ -896,7 +897,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  Fluttertoast.showToast(msg: "준비 중입니다.");
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => 
+                      Report(data: "[프로필] 유저 신고\n"
+                                    +"유저 아이디 : $nickname\n"
+                                    )));
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
