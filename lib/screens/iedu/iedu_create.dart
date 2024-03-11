@@ -56,6 +56,11 @@ class _CreateIeduState extends State<CreateIedu> {
   List<XFile> _images = [];
 
   FocusNode ContentFocusNode = FocusNode();
+  Map<String, Color> focusColor = {
+    "grade": PeeroreumColor.gray[200]!,
+    "subjet": PeeroreumColor.gray[200]!,
+    "detailSubject": PeeroreumColor.gray[200]!
+  };
 
   @override
   void initState() {
@@ -247,13 +252,21 @@ class _CreateIeduState extends State<CreateIedu> {
         // 학년
         GestureDetector(
           onTap: () {
+            setState(() {
+              focusColor["grade"] = PeeroreumColor.black;
+              print(focusColor["grade"]);
+            });
             showModalBottomSheet(
                 context: context,
-                isScrollControlled: false,
+                isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 builder: (context) {
                   return gradeSelect();
-                });
+                }).then((value) {
+              setState(() {
+                focusColor["grade"] = PeeroreumColor.gray[200]!;
+              });
+            });
           },
           child: Container(
             height: 40,
@@ -261,7 +274,7 @@ class _CreateIeduState extends State<CreateIedu> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: PeeroreumColor.gray[200]!,
+                color: focusColor["grade"] ?? PeeroreumColor.gray[200]!,
               ),
               color: Colors.transparent,
             ),
@@ -292,15 +305,20 @@ class _CreateIeduState extends State<CreateIedu> {
         // 과목
         GestureDetector(
           onTap: () {
-            if (_grade != 0) {
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: false,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    return subjectSelect();
-                  });
-            }
+            setState(() {
+              focusColor["subject"] = PeeroreumColor.black;
+            });
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return subjectSelect();
+                }).then((value) {
+              setState(() {
+                focusColor["subject"] = PeeroreumColor.gray[200]!;
+              });
+            });
           },
           child: Container(
             height: 40,
@@ -308,7 +326,7 @@ class _CreateIeduState extends State<CreateIedu> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: PeeroreumColor.gray[200]!,
+                color: focusColor["subject"] ?? PeeroreumColor.gray[200]!,
               ),
               color: Colors.transparent,
             ),
@@ -335,16 +353,21 @@ class _CreateIeduState extends State<CreateIedu> {
         // 상세 과목
         GestureDetector(
           onTap: () {
-            if (_grade != 0) {
-              if (_subject != null) {
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: false,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) {
-                      return detailSubjectSelect();
-                    });
-              }
+            if (_subject != null) {
+              setState(() {
+                focusColor["detailSubject"] = PeeroreumColor.black;
+              });
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return detailSubjectSelect();
+                  }).then((value) {
+                setState(() {
+                  focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
+                });
+              });
             }
           },
           child: Container(
@@ -353,7 +376,7 @@ class _CreateIeduState extends State<CreateIedu> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: PeeroreumColor.gray[200]!,
+                color: focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
               ),
               color: Colors.transparent,
             ),
@@ -381,6 +404,7 @@ class _CreateIeduState extends State<CreateIedu> {
   gradeSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.63,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -424,7 +448,7 @@ class _CreateIeduState extends State<CreateIedu> {
                           subject = 0;
                           _detailSubject = null;
                           detailSubject = 0;
-                          print('_grade = $_grade');
+                          focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
                         Navigator.of(context).pop();
                       },
@@ -452,6 +476,7 @@ class _CreateIeduState extends State<CreateIedu> {
   subjectSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.63,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -502,7 +527,7 @@ class _CreateIeduState extends State<CreateIedu> {
                           }
                           _detailSubject = null;
                           detailSubject = 0;
-                          print('_subject = $_subject, subject = $subject');
+                          focusColor['subject'] = PeeroreumColor.gray[200]!;
                         });
                         Navigator.of(context).pop();
                       },
@@ -530,6 +555,7 @@ class _CreateIeduState extends State<CreateIedu> {
   detailSubjectSelect() {
     return Container(
       width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.4,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -578,7 +604,7 @@ class _CreateIeduState extends State<CreateIedu> {
                       child: Container(
                         width: double.infinity,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         child: Text(
                           DetailSubjects[index],
                           style: TextStyle(
