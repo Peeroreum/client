@@ -7,7 +7,6 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
-import 'package:peeroreum_client/screens/ranking.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
 import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
