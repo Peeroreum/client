@@ -1324,7 +1324,7 @@ class _DetailWeduState extends State<DetailWedu> {
   }
 
   aboutImageWedu(String successOneNickname) {
-    isMyImage = nickname != successOneNickname;
+    isMyImage = nickname == successOneNickname;
     return Container(
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
