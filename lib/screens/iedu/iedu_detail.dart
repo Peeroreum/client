@@ -1573,7 +1573,7 @@ class MakeComment extends StatefulWidget {
                                     ),
                                 ),
                                 Visibility(
-                                  visible: widget.isQwselected == true && widget.isChosen == false,
+                                  visible: widget.isQwselected == true && widget.isChosen == false && nickname == widget.qWriter,
                                   child: Container(
                                       decoration: BoxDecoration(
                                         color: PeeroreumColor.gray[300],
