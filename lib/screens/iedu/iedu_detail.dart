@@ -1537,19 +1537,17 @@ class MakeComment extends StatefulWidget {
                                 Visibility(
                                   visible: (widget.isQwselected == false) && (nickname == widget.qWriter) && (widget.qWriter != widget.name),
                                   child: GestureDetector(
-                                    onTap: () {
-                                      print('눌림');
+                                    onTap: () async {
                                       final _dState = context.findAncestorStateOfType<_DetailIeduState>();
-                                      if(_dState != null){
-                                        _dState.setState(() {
-                                          _dState.isQselected = true;
-                                          print('작동 하는 거였나');
-                                        });
-                                      } else{
-                                        print('왜 작동 안하냐');
+                                      if(await checkSelect()) {
+                                        if (_dState != null) {
+                                          _dState.setState(() {
+                                            _dState.isQselected = true;
+                                          });
+                                        }
+                                        selectAnswer();
+                                        widget.updateData();
                                       }
-                                      selectAnswer();
-                                      widget.updateData();
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -2051,4 +2049,108 @@ class MakeComment extends StatefulWidget {
   });
 
   }
+
+  checkSelect() async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: PeeroreumColor.white,
+          surfaceTintColor: Colors.transparent,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "해당 댓글을 채택하시겠습니까?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  "추가 채택 및 취소가 불가능합니다.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[600],
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16), // 패딩
+                          shape: RoundedRectangleBorder(
+                            // 모양
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.gray[600]),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          '채택',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: PeeroreumColor.white
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
+}
