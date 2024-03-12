@@ -59,6 +59,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
 
   List<dynamic> progress = [];
   bool am_i = false;
+  bool isMyImage = true;
   var mynickname;
 
   @override
@@ -562,7 +563,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             ],
           ),
         ),
-        (successList.length > 0) ? okList() : Container(),
+        (successList.isNotEmpty) ? okList() : Container(),
         Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           child: Row(
@@ -676,9 +677,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                       builder: (context) {
                         return challengeImages(successList[index], index);
                       },
-                    ).timeout(const Duration(seconds: 5), onTimeout: () {
-                      fetchImages(successList[index]);
-                    });
+                    );
+                    // .timeout(const Duration(seconds: 5), onTimeout: () {
+                    //    fetchImages(successList[index]);
+                    // });
                   },
                 ),
                 SizedBox(
@@ -780,6 +782,81 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       ),
     );
   }
+  aboutImageWedu(String successOneNickname) {
+    isMyImage = mynickname == successOneNickname;
+    return Container(
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      child: isMyImage
+          ? GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                //await confirmChallengeDeleteMessage();
+                Navigator.pop(context);
+              },
+              child: Container(
+                  margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                  height: 56,
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 20,
+                  ),
+                  child: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '삭제하기',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.error,
+                      ),
+                    ),
+                  )),
+            )
+          : GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async{
+                await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => 
+                       Report(data: "[같이해냄] 챌린지 이미지 신고\n"
+                                    +"날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0,10)}\n"
+                                    +"같이방 아이디 : $id\n"
+                                    +"같이방 이름 : $weduTitle\n"
+                                    +"업로드한 사람 : ${successOneNickname}\n",)));
+                int count = 0;
+                Navigator.of(context).popUntil((route) {
+                  // pop할 경로의 개수를 count 변수를 사용하여 관리
+                  bool shouldPop = count == 2;
+                  count++;
+                  return shouldPop;
+                });
+              },
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                height: 56,
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 20,
+                ),
+                child: Text('신고하기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: PeeroreumColor.error,
+                    )),
+              ),
+            ),
+    );
+  }
 
   challengeImages(dynamic successOne, var index) {
     challengeImage = challengeImageList[index];
@@ -861,13 +938,13 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     color: PeeroreumColor.gray[800],
                   ),
                   onTap: () {
-                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => 
-                       Report(data: "[같이해냄] 챌린지 이미지 신고\n"
-                                    +"날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0,10)}\n"
-                                    +"같이방 아이디 : $id\n"
-                                    +"같이방 이름 : $weduTitle\n"
-                                    +"업로드한 사람 : ${successOne["nickname"].toString()}\n",)));
+                     showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return aboutImageWedu(successOne["nickname"].toString());
+                      });
                   },
                 )
               ],
