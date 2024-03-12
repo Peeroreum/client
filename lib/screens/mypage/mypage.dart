@@ -3,11 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_scrap.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -15,8 +12,6 @@ import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_version.dart';
-import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
-import 'package:http/http.dart' as http;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -84,7 +79,7 @@ class _MyPageState extends State<MyPage> {
           child: Column(
             children: [
               Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  // padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       border: Border.all(
@@ -131,106 +126,115 @@ class _MyPageState extends State<MyPage> {
   Widget first_col() {
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: () {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => MyPageProfile(nickname, true)));
           },
-          style: ElevatedButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
-            backgroundColor: PeeroreumColor.white,
-            elevation: 0,
-            padding: EdgeInsets.all(0),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                  child: Row(children: [
+          // style: ElevatedButton.styleFrom(
+          //   minimumSize: Size.fromHeight(56),
+          //   backgroundColor: PeeroreumColor.white,
+          //   elevation: 0,
+          //   padding: EdgeInsets.all(0),
+          // ),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        width: 2,
-                        color: grade != null
-                            ? PeeroreumColor.gradeColor[int.parse(grade)]!
-                            : Color.fromARGB(255, 186, 188, 189)),
-                  ),
-                  child: Container(
-                    height: 42,
-                    width: 42,
+                    child: Row(children: [
+                  Container(
+                    width: 45,
+                    height: 45,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        width: 1,
-                        color: PeeroreumColor.white,
+                          width: 2,
+                          color: grade != null
+                              ? PeeroreumColor.gradeColor[int.parse(grade)]!
+                              : Color.fromARGB(255, 186, 188, 189)),
+                    ),
+                    child: Container(
+                      height: 42,
+                      width: 42,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          width: 1,
+                          color: PeeroreumColor.white,
+                        ),
+                        image: profileImage != null
+                            ? DecorationImage(
+                                image: NetworkImage(profileImage),
+                                fit: BoxFit.cover)
+                            : DecorationImage(
+                                image: AssetImage(
+                                'assets/images/user.jpg',
+                              )),
                       ),
-                      image: profileImage != null
-                          ? DecorationImage(
-                              image: NetworkImage(profileImage),
-                              fit: BoxFit.cover)
-                          : DecorationImage(
-                              image: AssetImage(
-                              'assets/images/user.jpg',
-                            )),
                     ),
                   ),
-                ),
-                Container(width: 11),
-                Text(
-                  '$nickname',
-                  style: TextStyle(
-                    color: PeeroreumColor.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Pretendard',
+                  Container(width: 11),
+                  Text(
+                    '$nickname',
+                    style: TextStyle(
+                      color: PeeroreumColor.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Pretendard',
+                    ),
                   ),
+                ])),
+                SvgPicture.asset(
+                  'assets/icons/right.svg',
+                  height: 24,
+                  color: PeeroreumColor.gray[600],
                 ),
-              ])),
-              SvgPicture.asset(
-                'assets/icons/right.svg',
-                height: 24,
-                color: PeeroreumColor.gray[600],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        SizedBox(
-          height: 17,
-        ),
+        // SizedBox(
+        //   height: 17,
+        // ),
         Container(
+          margin: EdgeInsets.symmetric(horizontal: 16),
           height: 1,
           color: PeeroreumColor.gray[100],
         ),
-        SizedBox(
-          height: 17,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/images/color_logo.png',
-              height: 24,
-            ),
-            Container(width: 4),
-            Text(
-              '+',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
+        // SizedBox(
+        //   height: 17,
+        // ),
+        Container(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/color_logo.png',
+                height: 24,
               ),
-            ),
-            Container(width: 2),
-            Text("$withPeerDay",
+              Container(width: 4),
+              Text(
+                '+',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
-                )),
-          ],
+                ),
+              ),
+              Container(width: 2),
+              Text("$withPeerDay",
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  )),
+            ],
+          ),
         ),
       ],
     );
@@ -240,73 +244,91 @@ class _MyPageState extends State<MyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextButton(
-          onPressed: () => {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => InWedu()))
           },
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '내 같이방',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
+          // style: TextButton.styleFrom(
+          //     minimumSize: Size.fromHeight(56),
+          //     padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '내 같이방',
+                  style: TextStyle(
+                    color: PeeroreumColor.gray[800],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        TextButton(
-          onPressed: () => {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => InIedu()))
           },
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '내 질의응답',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
+          // style: TextButton.styleFrom(
+          //     minimumSize: Size.fromHeight(56),
+          //     padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '내 질의응답',
+                  style: TextStyle(
+                    color: PeeroreumColor.gray[800],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        TextButton(
-          onPressed: () => {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => Scrap()))
           },
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '스크랩',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
+          // style: TextButton.styleFrom(
+          //     minimumSize: Size.fromHeight(56),
+          //     padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '스크랩',
+                  style: TextStyle(
+                    color: PeeroreumColor.gray[800],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -317,50 +339,62 @@ class _MyPageState extends State<MyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextButton(
-          onPressed: () => {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () => {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => MyPageNotification()))
           },
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '알림 설정',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
+          // style: TextButton.styleFrom(
+          //     minimumSize: Size.fromHeight(56),
+          //     padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '알림 설정',
+                  style: TextStyle(
+                    color: PeeroreumColor.gray[800],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        TextButton(
-          onPressed: () => {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
           },
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '계정 관리',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
+          // style: TextButton.styleFrom(
+          //     minimumSize: Size.fromHeight(56),
+          //     padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '계정 관리',
+                  style: TextStyle(
+                    color: PeeroreumColor.gray[800],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         // TextButton(
@@ -393,49 +427,61 @@ class _MyPageState extends State<MyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextButton(
-          onPressed: () => {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
           },
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '버전 정보',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
+          // style: TextButton.styleFrom(
+          //     minimumSize: Size.fromHeight(56),
+          //     padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '버전 정보',
+                  style: TextStyle(
+                    color: PeeroreumColor.gray[800],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        TextButton(
-          onPressed: () {
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[200],
+          onTap: () {
             logout();
           },
-          style: TextButton.styleFrom(
-              minimumSize: Size.fromHeight(56),
-              padding: EdgeInsets.symmetric(horizontal: 20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                '로그아웃',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
+          // style: TextButton.styleFrom(
+          //     minimumSize: Size.fromHeight(56),
+          //     padding: EdgeInsets.symmetric(horizontal: 20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '로그아웃',
+                  style: TextStyle(
+                    color: PeeroreumColor.gray[800],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
