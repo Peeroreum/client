@@ -61,7 +61,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
       print(successList[i]['nickname']);
       if (sendList.contains('(${successList[i]['nickname']})')) {
         setState(() {
-          isCheckedList[i] = true;
+          //isCheckedList[i] = true;
           isActiveList[i] = false;
         });
       } else {
@@ -235,26 +235,26 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
           child: SizedBox(
             height: 48,
             child: TextButton(
-              onPressed: () async {
-                await getChecklistData();
-                for (int i = 0; i < isCheckedList.length; i++) {
-                  if (isActiveList[i] == true) {
-                    if (isCheckedList[i]) {
-                      setState(() {
-                        // _isChecked 값이 true인 경우에만 isActive를 false로 설정
-                        isActiveList[i] = false;
-                        receiverList.add(successList[i]['nickname']);
-                      });
-                      callchecklist.add({
-                        successList[i]['nickname']:
-                            DateTime.now().toString().substring(0, 10)
-                      });
+              onPressed: () async{
+                if(isCheckedList.isNotEmpty){
+                  await getChecklistData();
+                  for (int i = 0; i < isCheckedList.length; i++) {
+                    if (isActiveList[i] == true) {
+                      if (isCheckedList[i]) {
+                        setState(() {
+                          // _isChecked 값이 true인 경우에만 isActive를 false로 설정
+                          isActiveList[i] = false;
+                          receiverList.add(successList[i]['nickname']);
+                        });
+                        callchecklist.add({successList[i]['nickname'] : DateTime.now().toString().substring(0, 10)});
+                      }
                     }
                   }
+                  CheckComplimentList.setComplimentCheck(id,callchecklist);
+                  sendNotification();
+                  Fluttertoast.showToast(msg: '칭찬하기 완료!');
+                  isCheckedList = List.generate(successList.length, (index) => false);
                 }
-                CheckComplimentList.setComplimentCheck(id, callchecklist);
-                sendNotification();
-                Fluttertoast.showToast(msg: '칭찬하기 완료!');
               },
               child: Text(
                 '칭찬하기',
