@@ -11,10 +11,7 @@ class Report extends StatefulWidget {
   //const Report({super.key});
   final dynamic data;
 
-  const Report({
-    Key? key,
-    required this.data
-    }): super(key: key);
+  const Report({Key? key, required this.data}) : super(key: key);
 
   @override
   State<Report> createState() => _ReportState(data);
@@ -36,21 +33,22 @@ class _ReportState extends State<Report> {
     });
   }
 
-  void sendMail() async{
+  void sendMail() async {
     String username = 'peeroreum.help@gmail.com';
     String password = 'djsgvbwgyvqesydk';
-    final smtpServer = gmail(username,password);
+    final smtpServer = gmail(username, password);
     final message = Message()
-    ..from = Address(username, 'Mail Service')
-    ..recipients.add('peeroreum.help@gmail.com')
-    ..subject = reason[3]==false ?'$selectedReason' :'$selectedReason-$otherReason' //신고 사유에 따른 이메일 제목 설정
-    ..text = '$data\n$detailReason';
+      ..from = Address(username, 'Mail Service')
+      ..recipients.add('peeroreum.help@gmail.com')
+      ..subject = reason[3] == false
+          ? '$selectedReason'
+          : '$selectedReason-$otherReason' //신고 사유에 따른 이메일 제목 설정
+      ..text = '$data\n$detailReason';
 
-    try{
+    try {
       await send(message, smtpServer);
-
-    }catch(e){
-      if(kDebugMode){
+    } catch (e) {
+      if (kDebugMode) {
         print(e.toString());
       }
     }
@@ -120,7 +118,9 @@ class _ReportState extends State<Report> {
                     ),
                   ),
                 ),
-                SizedBox(height: 8,),
+                SizedBox(
+                  height: 8,
+                ),
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () async {
@@ -138,7 +138,8 @@ class _ReportState extends State<Report> {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     width: double.infinity,
                     height: 40,
                     decoration: BoxDecoration(
@@ -172,37 +173,36 @@ class _ReportState extends State<Report> {
                   visible: reason[3],
                   child: Column(
                     children: [
-                      const SizedBox(height: 8,),
+                      const SizedBox(
+                        height: 8,
+                      ),
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         width: double.infinity,
                         height: 48,
                         decoration: BoxDecoration(
-                            border: Border.all(color: PeeroreumColor.gray[200]!),
+                            border:
+                                Border.all(color: PeeroreumColor.gray[200]!),
                             borderRadius: BorderRadius.circular(8)),
                         child: Center(
                           child: TextFormField(
                             inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(
-                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'
-                              )
-                                      )
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
                             ],
                             style: TextStyle(color: Colors.black),
                             cursorColor: PeeroreumColor.gray[600],
                             decoration: InputDecoration(
-                              hintText: '기타 사유를 입력해 주세요.',
-                              hintStyle: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: PeeroreumColor.gray[600]!
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none
-                            ),
+                                hintText: '기타 사유를 입력해 주세요.',
+                                hintStyle: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: PeeroreumColor.gray[600]!),
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                                border: InputBorder.none),
                             onChanged: (value) {
                               otherReason = value;
                             },
@@ -212,7 +212,9 @@ class _ReportState extends State<Report> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 40,),
+                const SizedBox(
+                  height: 40,
+                ),
                 Container(
                   alignment: Alignment.centerLeft,
                   height: 24,
@@ -229,17 +231,14 @@ class _ReportState extends State<Report> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   width: double.infinity,
-                  height: 427,
+                  height: MediaQuery.of(context).size.height - 397,
                   decoration: BoxDecoration(
                       border: Border.all(color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.circular(8)),
                   child: TextFormField(
                     inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                          RegExp(
-                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'
-                              )
-                              )
+                      FilteringTextInputFormatter.allow(RegExp(
+                          r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
                     ],
                     maxLines: null,
                     cursorColor: PeeroreumColor.gray[600],
@@ -258,48 +257,53 @@ class _ReportState extends State<Report> {
           ),
           //신고하기 버튼
           Container(
-              color: PeeroreumColor.white,
-              margin: EdgeInsets.fromLTRB(20, 66, 20, 8),
-              width: MediaQuery.of(context).size.width,
-              child: SizedBox(
-                height: 48,
-                child: TextButton(
-                  onPressed: (selectedReason != '신고사유를 선택해주세요' && detailReason != "" && selectedReason != '기타' 
-                  || selectedReason == '기타' && otherReason != "" && detailReason != "")
-                      ? () {
+            color: PeeroreumColor.white,
+            margin: EdgeInsets.fromLTRB(20, 66, 20, 8),
+            width: MediaQuery.of(context).size.width,
+            child: SizedBox(
+              height: 48,
+              child: TextButton(
+                onPressed: (selectedReason != '신고사유를 선택해주세요' &&
+                            detailReason != "" &&
+                            selectedReason != '기타' ||
+                        selectedReason == '기타' &&
+                            otherReason != "" &&
+                            detailReason != "")
+                    ? () {
                         sendMail();
                         Fluttertoast.showToast(msg: "신고 접수되었습니다. 감사합니다.");
                         Navigator.pop(context);
-                        }
-                      : null,
-                  style: ButtonStyle(
-                      backgroundColor: (selectedReason != '신고사유를 선택해주세요' && detailReason != "" && selectedReason != '기타' 
-                      || selectedReason == '기타' && otherReason != "" && detailReason != "")
-                          ? MaterialStateProperty.all(
-                              PeeroreumColor.primaryPuple[400])
-                          : MaterialStateProperty.all(
-                              PeeroreumColor.gray[300]),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(vertical: 12)),
-                      shape:
-                          MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                        borderRadius:
-                            MediaQuery.of(context).viewInsets.bottom > 0
-                                ? BorderRadius.zero
-                                : BorderRadius.circular(8.0),
-                      ))),
-                  child: Text(
-                    '신고하기',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.0,
-                        color: PeeroreumColor.white),
-                  ),
+                      }
+                    : null,
+                style: ButtonStyle(
+                    backgroundColor: (selectedReason != '신고사유를 선택해주세요' &&
+                                detailReason != "" &&
+                                selectedReason != '기타' ||
+                            selectedReason == '기타' &&
+                                otherReason != "" &&
+                                detailReason != "")
+                        ? MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400])
+                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
+                          ? BorderRadius.zero
+                          : BorderRadius.circular(8.0),
+                    ))),
+                child: Text(
+                  '신고하기',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      color: PeeroreumColor.white),
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
@@ -320,11 +324,11 @@ class reportReasonBottomSheet extends StatefulWidget {
   });
 
   @override
-  State<reportReasonBottomSheet> createState() => _reportReasonBottomSheetState();
+  State<reportReasonBottomSheet> createState() =>
+      _reportReasonBottomSheetState();
 }
 
 class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
-
   List<bool> reason = [false, false, false, false];
   String selectedReason = "신고사유를 선택해주세요";
 
@@ -339,6 +343,7 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
   Widget build(BuildContext context) {
     return selectReason();
   }
+
   selectReason() {
     return Container(
       width: double.infinity,
@@ -353,7 +358,9 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 16,),
+          const SizedBox(
+            height: 16,
+          ),
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -377,7 +384,6 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                 reason = [true, false, false, false];
                 selectedReason = '욕설 및 비방';
               });
-
             },
             child: Container(
               width: double.infinity,
@@ -416,7 +422,6 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                 reason = [false, true, false, false];
                 selectedReason = '음란물 및 불건전한 대화';
               });
-
             },
             child: Container(
               width: double.infinity,
@@ -555,7 +560,9 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
               ),
             ),
           ),
-          SizedBox(height: 21,),
+          SizedBox(
+            height: 21,
+          ),
         ],
       ),
     );
