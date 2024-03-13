@@ -145,7 +145,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
             color: PeeroreumColor.black,
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
             onPressed: () {
               Navigator.pop(context);
             },
