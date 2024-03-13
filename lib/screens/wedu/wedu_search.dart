@@ -268,41 +268,49 @@ class _searchWeduState extends State<searchWedu> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                  pageBuilder: (_, __, ___) => SearchResultWedu(
-                                      _searchHistory[index]['keyword']
-                                          .toString()),
-                                  transitionDuration:
-                                      const Duration(seconds: 0),
-                                  reverseTransitionDuration:
-                                      const Duration(seconds: 0)),
-                            );
-                          },
-                          child: Text(
-                            '${_searchHistory[index]['keyword']}',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Pretendard',
-                                color: PeeroreumColor.gray[600]),
+                        Expanded(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) =>
+                                        SearchResultWedu(_searchHistory[index]
+                                                ['keyword']
+                                            .toString()),
+                                    transitionDuration:
+                                        const Duration(seconds: 0),
+                                    reverseTransitionDuration:
+                                        const Duration(seconds: 0)),
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${_searchHistory[index]['keyword']}',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Pretendard',
+                                      color: PeeroreumColor.gray[600]),
+                                ),
+                                Text(
+                                  '${_searchHistory[index]['date']}',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[400]),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         Row(
                           children: [
-                            Text(
-                              '${_searchHistory[index]['date']}',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: PeeroreumColor.gray[400]),
-                            ),
                             SizedBox(
                               width: 8,
                             ),
