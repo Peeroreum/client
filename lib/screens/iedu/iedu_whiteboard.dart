@@ -509,98 +509,105 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
 
   Future<bool> onBackKey() async {
     return await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            backgroundColor: PeeroreumColor.white,
-            surfaceTintColor: Colors.transparent,
-            insetPadding: EdgeInsets.all(20),
-            iconPadding: EdgeInsets.zero,
-            content: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "정말 나가시겠습니까?",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Pretendard',
-                      color: PeeroreumColor.black,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "작성하신 내용이 삭제됩니다.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.gray[600],
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pop(context, false);
-                          },
-                          child: Text(
-                            '취소',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: PeeroreumColor.gray[600]),
-                          ),
-                          style: TextButton.styleFrom(
-                            backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16), // 패딩
-                            shape: RoundedRectangleBorder(
-                              // 모양
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+                        contentPadding: EdgeInsets.all(20),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        backgroundColor: PeeroreumColor.white,
+                        surfaceTintColor: Colors.transparent,
+                        content: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "이 화면을 나가시겠습니까?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: PeeroreumColor.gray[600],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Text(
+                                "작성하신 내용이 삭제됩니다.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: PeeroreumColor.gray[600],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 16), // 패딩
+                                        shape: RoundedRectangleBorder(
+                                          // 모양
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '취소',
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: PeeroreumColor.gray[600]),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: PeeroreumColor.primaryPuple[400],
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '나가기',
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: PeeroreumColor.white
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pop(context, true);
-                          },
-                          child: Text(
-                            '확인',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: PeeroreumColor.white),
-                          ),
-                          style: TextButton.styleFrom(
-                            backgroundColor: PeeroreumColor.primaryPuple[400],
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        });
+                      );
+                    },
+                  );
   }
 }
