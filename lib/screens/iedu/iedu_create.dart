@@ -13,8 +13,6 @@ import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
-import 'package:peeroreum_client/screens/bottomNaviBar.dart';
-import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 
 class CreateIedu extends StatefulWidget {
@@ -25,17 +23,17 @@ class CreateIedu extends StatefulWidget {
 }
 
 class _CreateIeduState extends State<CreateIedu> {
-  final grades = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+  final grades = ['중1', '중2', '중3', '고1', '고2', '고3'];
   final subjects = Subject.subject;
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
-  List<String> Subjects = ['전체'];
-  Map<String, List<String>> DetailMiddleSubjects = {
-    "전체": ["전체"]
-  };
-  Map<String, List<String>> DetailHighSubjects = {
-    "전체": ["전체"]
-  };
+  // List<String> Subjects = ['전체'];
+  // Map<String, List<String>> DetailMiddleSubjects = {
+  //   "전체": ["전체"]
+  // };
+  // Map<String, List<String>> DetailHighSubjects = {
+  //   "전체": ["전체"]
+  // };
   List<String> DetailSubjects = [];
   Color _nextColor = PeeroreumColor.gray[500]!;
   String titleCheck = "";
@@ -67,15 +65,15 @@ class _CreateIeduState extends State<CreateIedu> {
     // TODO: implement initState
     super.initState();
     initFuture = fetchStatus();
-    Subjects.addAll(subjects);
-    DetailMiddleSubjects.addAll(middleSubjects);
-    DetailHighSubjects.addAll(highSubjects);
+    // Subjects.addAll(subjects);
+    // DetailMiddleSubjects.addAll(middleSubjects);
+    // DetailHighSubjects.addAll(highSubjects);
   }
 
   Future<void> fetchStatus() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     my_grade = await FlutterSecureStorage().read(key: "grade");
-    _grade ??= int.parse(my_grade!);
+    _grade ??= int.parse(my_grade!) - 1;
   }
 
   @override
@@ -285,7 +283,7 @@ class _CreateIeduState extends State<CreateIedu> {
                       ? grades[_grade!]
                       : my_grade != null
                           ? grades[int.parse(my_grade!)]
-                          : grades[0],
+                          : "선택",
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
@@ -333,7 +331,7 @@ class _CreateIeduState extends State<CreateIedu> {
             child: Row(
               children: [
                 Text(
-                  _subject ?? '전체',
+                  _subject ?? '선택',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
@@ -383,7 +381,7 @@ class _CreateIeduState extends State<CreateIedu> {
             child: Row(
               children: [
                 Text(
-                  _detailSubject ?? '전체',
+                  _detailSubject ?? '선택',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
@@ -509,22 +507,22 @@ class _CreateIeduState extends State<CreateIedu> {
           Expanded(
             child: ListView.builder(
                 scrollDirection: Axis.vertical,
-                itemCount: Subjects.length,
+                itemCount: subjects.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         setState(() {
-                          _subject = Subjects[index];
+                          _subject = subjects[index];
                           subject = index;
-                          DetailSubjects = ['전체'];
-                          List<String> AddDetailSubjects;
-                          AddDetailSubjects = ((_grade! <= 3)
-                              ? DetailMiddleSubjects[_subject]
-                              : DetailHighSubjects[_subject])!;
-                          if (index != 0) {
-                            DetailSubjects.addAll(AddDetailSubjects);
-                          }
+                          // DetailSubjects = ['전체'];
+                          // List<String> AddDetailSubjects;
+                          DetailSubjects = ((index != 0 && _grade! < 3)
+                              ? middleSubjects[_subject]
+                              : highSubjects[_subject])!;
+                          // if (index != 0) {
+                          //   DetailSubjects.addAll(AddDetailSubjects);
+                          // }
                           _detailSubject = null;
                           detailSubject = 0;
                           focusColor['subject'] = PeeroreumColor.gray[200]!;
@@ -536,7 +534,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                         child: Text(
-                          Subjects[index],
+                          subjects[index],
                           style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
@@ -629,7 +627,7 @@ class _CreateIeduState extends State<CreateIedu> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           B4_14px_R(
-            text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
+            text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요.',
             color: PeeroreumColor.gray[600],
           ),
           Container(
@@ -848,13 +846,12 @@ class _CreateIeduState extends State<CreateIedu> {
 
   Future<void> postIedu() async {
     // await fetchStatus();
-
     var IeduMap = <String, dynamic>{
       'title': titleController.text,
       'content': contentController.text,
-      'subject': subject,
-      'detailSubject': detailSubject,
-      'grade': _grade,
+      'subject': subject + 1,
+      'detailSubject': detailSubject + 1,
+      'grade': _grade! + 1,
     };
 
     var dio = Dio();
