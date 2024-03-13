@@ -135,21 +135,24 @@ class _CreateIeduState extends State<CreateIedu> {
       ),
       centerTitle: true,
       actions: [
-        TextButton(
-          onPressed: () {
-            if (_nextColor == PeeroreumColor.primaryPuple[400]) {
-              postIedu();
-            } else {
-              return;
-            }
-          },
-          child: Text(
-            '완료',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-              color: _nextColor,
+        Container(
+          padding: EdgeInsets.only(right: 20),
+          child: GestureDetector(
+            onTap: () {
+              if (_nextColor == PeeroreumColor.primaryPuple[400]) {
+                postIedu();
+              } else {
+                return;
+              }
+            },
+            child: Text(
+              '완료',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: _nextColor,
+              ),
             ),
           ),
         ),

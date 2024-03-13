@@ -156,21 +156,24 @@ class _CreateWeduState extends State<CreateWedu> {
           ),
           centerTitle: true,
           actions: [
-            TextButton(
-              onPressed: () {
-                if (nameValue != "" && (dropdownChallenge != null)) {
-                  fetchWedu();
-                } else {
-                  return;
-                }
-              },
-              child: Text(
-                '다음',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: _nextColor,
+            Container(
+              padding: EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                onTap: () {
+                  if (nameValue != "" && (dropdownChallenge != null)) {
+                    fetchWedu();
+                  } else {
+                    return;
+                  }
+                },
+                child: Text(
+                  '다음',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: _nextColor,
+                  ),
                 ),
               ),
             ),
