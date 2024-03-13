@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
@@ -378,60 +379,44 @@ class _MyPageProfileState extends State<MyPageProfile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 16, top: 4),
-              child: Text(
-                '프로필 관리',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: PeeroreumColor.black,
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () {
+                profileImage_change(context);
+              },
+              child: Container(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3_18px_R(text: '프로필 변경'),
+                  ],
                 ),
               ),
             ),
-            TextButton(
-              onPressed: () {
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () {
                 setState(() {
                   nickname_change();
                 });
               },
-              style: TextButton.styleFrom(
-                minimumSize: Size.fromHeight(40),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all(0),
-              ),
-              child: Text(
-                '닉네임 변경',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.black,
+              child: Container(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3_18px_R(text: '닉네임 변경'),
+                  ],
                 ),
               ),
             ),
-            TextButton(
-              onPressed: () {
-                profileImage_change(context);
-              },
-              style: TextButton.styleFrom(
-                minimumSize: Size.fromHeight(40),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all(0),
-              ),
-              child: Text(
-                '프로필 사진 변경',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.black,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () async {
                 XFile? _image1;
                 final ImagePicker picker1 = ImagePicker();
                 final XFile? pickedFile1 =
@@ -448,18 +433,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   });
                 }
               },
-              style: TextButton.styleFrom(
-                minimumSize: Size.fromHeight(40),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all(0),
-              ),
-              child: Text(
-                '배경 사진 변경',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: PeeroreumColor.black,
+              child: Container(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3_18px_R(text: '배경 변경'),
+                  ],
                 ),
               ),
             ),
@@ -897,11 +877,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => 
-                      Report(data: "[프로필] 유저 신고\n"
-                                    +"유저 아이디 : $nickname\n"
-                                    )));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => Report(
+                          data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n")));
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
@@ -1110,17 +1088,18 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         fontWeight: FontWeight.w500),
                   ),
                   Container(width: 2),
-                  withPeerDay == null? Container()
-                  : Text(
-                    "$withPeerDay",
-                    style: TextStyle(
-                        color: backgroundImage != null
-                            ? PeeroreumColor.white
-                            : PeeroreumColor.black,
-                        fontFamily: 'Pretendard',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
-                  ),
+                  withPeerDay == null
+                      ? Container()
+                      : Text(
+                          "$withPeerDay",
+                          style: TextStyle(
+                              color: backgroundImage != null
+                                  ? PeeroreumColor.white
+                                  : PeeroreumColor.black,
+                              fontFamily: 'Pretendard',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500),
+                        ),
                 ],
               ),
               SizedBox(
