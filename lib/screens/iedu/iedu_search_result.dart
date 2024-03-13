@@ -289,7 +289,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               child: dropdown_body(),
                             ),
                             SizedBox(
-                              height: 69,
+                              height: 13,
                             ),
                             Image.asset('assets/images/no_wedu_oreum.png'),
                             Text(
