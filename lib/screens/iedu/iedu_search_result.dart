@@ -80,10 +80,12 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
   }
 
   Future<void> fetchDatas() async {
-    print('fetch~~/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage');
+    print(
+        'fetch~~/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage');
     token = await FlutterSecureStorage().read(key: "accessToken");
-    var weduResult = await http
-        .get(Uri.parse('${API.hostConnect}/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'), 
+    var weduResult = await http.get(
+        Uri.parse(
+            '${API.hostConnect}/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -256,7 +258,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                         child: Column(
                           children: [
                             Container(
-                              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 20),
                               child: Row(
                                 children: [
                                   Text(
@@ -267,7 +270,9 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600),
                                   ),
-                                  SizedBox(width: 4,),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
                                   Text(
                                     '${datas.length}',
                                     style: TextStyle(
@@ -310,8 +315,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                         ),
                       )
                     : Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
                           children: [
                             Container(
                               padding: EdgeInsets.symmetric(vertical: 16),
@@ -325,7 +330,9 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600),
                                   ),
-                                  SizedBox(width: 4,),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
                                   Text(
                                     '${datas.length}',
                                     style: TextStyle(
@@ -338,11 +345,13 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               ),
                             ),
                             dropdown_body(),
-                            SizedBox(height: 16,),
+                            SizedBox(
+                              height: 16,
+                            ),
                             Expanded(child: asks())
                           ],
                         ),
-                    );
+                      );
               }
             },
           )),
@@ -366,11 +375,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return gradeSelect();
-                  }).then((value){
-                    setState(() {
-                      focusColor["grade"] = PeeroreumColor.gray[200]!;
-                    });
-                  });
+                  }).then((value) {
+                setState(() {
+                  focusColor["grade"] = PeeroreumColor.gray[200]!;
+                });
+              });
             },
             child: Container(
               height: 40,
@@ -416,11 +425,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   backgroundColor: Colors.transparent,
                   builder: (context) {
                     return subjectSelect();
-                  }).then((value){
-                    setState(() {
-                      focusColor["subject"] = PeeroreumColor.gray[200]!;
-                    });
-                  });
+                  }).then((value) {
+                setState(() {
+                  focusColor["subject"] = PeeroreumColor.gray[200]!;
+                });
+              });
             },
             child: Container(
               height: 40,
@@ -428,7 +437,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: focusColor["subject"]?? PeeroreumColor.gray[200]!,
+                  color: focusColor["subject"] ?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -461,19 +470,19 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                 setState(() {
                   focusColor["detailSubject"] = PeeroreumColor.black;
                 });
-                  showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: false,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) {
-                        return detailSubjectSelect();
-                      }).then((value){
-                    setState(() {
-                      focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
-                    });
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: false,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return detailSubjectSelect();
+                    }).then((value) {
+                  setState(() {
+                    focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
                   });
-              } else{
-                Fluttertoast.showToast(msg: "학년과 과목을 모두 선택해주세요");
+                });
+              } else {
+                Fluttertoast.showToast(msg: "학년과 과목을 모두 선택해주세요.");
               }
             },
             child: Container(
@@ -482,7 +491,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
+                  color:
+                      focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
                 ),
                 color: Colors.transparent,
               ),
@@ -509,6 +519,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
       ),
     );
   }
+
   asks() {
     return ListView.separated(
       controller: _scrollController,
@@ -520,203 +531,205 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
         );
       },
       itemBuilder: (BuildContext context, int index) {
-      if (index < datas.length) {
-        return GestureDetector(
-          onTap: () async {
-            setState(() {
-              if (!isReadList.contains(datas[index]['id'].toString())) {
-                isReadList.add(datas[index]['id'].toString());
-                Read.saveRead(isReadList);
-              }
-            });
-            await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailIedu(
-                    datas[index]['id'], datas[index]['selected'])));
-          },
-          child: Container(
-            width: MediaQuery.of(context).size.width - 40,
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            decoration: BoxDecoration(
-                color: isReadList.contains(datas[index]['id'].toString())
-                    ? PeeroreumColor.gray[100]
-                    : PeeroreumColor.white,
-                border:
-                    Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: datas[index]['selected']
-                          ? MediaQuery.of(context).size.width - 142
-                          : MediaQuery.of(context).size.width - 133,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          UpCheck(datas[index]["createdTime"])
-                              ? Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 2, horizontal: 8),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFFFEBEA),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: SizedBox(
-                                    height: 16,
-                                    child: Center(
-                                      child: C2_10px_Sb(
-                                        text: 'UP',
-                                        color: Color(0xFFF03A2E),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          UpCheck(datas[index]["createdTime"])
-                              ? SizedBox(
-                                  width: 8,
-                                )
-                              : Container(),
-                          Flexible(
-                              child: T4_16px(text: datas[index]['title'],
-                              overflow: TextOverflow.ellipsis,)),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    datas[index]['selected']
-                        ? Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: PeeroreumColor.primaryPuple[200],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: SizedBox(
-                              height: 16,
-                              child: Center(
-                                child: C2_10px_Sb(
-                                  text: '채택완료',
-                                  color: PeeroreumColor.white,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 8),
-                            decoration: BoxDecoration(
-                              color: isReadList
-                                      .contains(datas[index]['id'].toString())
-                                  ? PeeroreumColor.gray[300]
-                                  : PeeroreumColor.gray[200],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: SizedBox(
-                              height: 16,
-                              child: Center(
-                                child: C2_10px_Sb(
-                                  text: '미채택',
-                                  color: PeeroreumColor.gray[600],
-                                ),
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 42,
-                  child: Row(
+        if (index < datas.length) {
+          return GestureDetector(
+            onTap: () async {
+              setState(() {
+                if (!isReadList.contains(datas[index]['id'].toString())) {
+                  isReadList.add(datas[index]['id'].toString());
+                  Read.saveRead(isReadList);
+                }
+              });
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DetailIedu(
+                      datas[index]['id'], datas[index]['selected'])));
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width - 40,
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              decoration: BoxDecoration(
+                  color: isReadList.contains(datas[index]['id'].toString())
+                      ? PeeroreumColor.gray[100]
+                      : PeeroreumColor.white,
+                  border:
+                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 1,
-                              color: datas[index]["memberProfileDto"]
-                                          ["grade"] !=
-                                      null
-                                  ? PeeroreumColor.gradeColor[datas[index]
-                                      ["memberProfileDto"]["grade"]]!
-                                  : Color.fromARGB(255, 186, 188, 189)),
+                        width: datas[index]['selected']
+                            ? MediaQuery.of(context).size.width - 142
+                            : MediaQuery.of(context).size.width - 133,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            UpCheck(datas[index]["createdTime"])
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFFFEBEA),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: SizedBox(
+                                      height: 16,
+                                      child: Center(
+                                        child: C2_10px_Sb(
+                                          text: 'UP',
+                                          color: Color(0xFFF03A2E),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            UpCheck(datas[index]["createdTime"])
+                                ? SizedBox(
+                                    width: 8,
+                                  )
+                                : Container(),
+                            Flexible(
+                                child: T4_16px(
+                              text: datas[index]['title'],
+                              overflow: TextOverflow.ellipsis,
+                            )),
+                          ],
                         ),
-                        child: Container(
-                          height: 24,
-                          width: 24,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      datas[index]['selected']
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: PeeroreumColor.primaryPuple[200],
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: SizedBox(
+                                height: 16,
+                                child: Center(
+                                  child: C2_10px_Sb(
+                                    text: '채택완료',
+                                    color: PeeroreumColor.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: isReadList
+                                        .contains(datas[index]['id'].toString())
+                                    ? PeeroreumColor.gray[300]
+                                    : PeeroreumColor.gray[200],
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: SizedBox(
+                                height: 16,
+                                child: Center(
+                                  child: C2_10px_Sb(
+                                    text: '미채택',
+                                    color: PeeroreumColor.gray[600],
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 42,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 26,
+                          height: 26,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              width: 2,
-                              color: PeeroreumColor.white,
+                                width: 1,
+                                color: datas[index]["memberProfileDto"]
+                                            ["grade"] !=
+                                        null
+                                    ? PeeroreumColor.gradeColor[datas[index]
+                                        ["memberProfileDto"]["grade"]]!
+                                    : Color.fromARGB(255, 186, 188, 189)),
+                          ),
+                          child: Container(
+                            height: 24,
+                            width: 24,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 2,
+                                color: PeeroreumColor.white,
+                              ),
+                              image: datas[index]["memberProfileDto"]
+                                          ["profileImage"] !=
+                                      null
+                                  ? DecorationImage(
+                                      image: NetworkImage(datas[index]
+                                          ["memberProfileDto"]["profileImage"]),
+                                      fit: BoxFit.cover)
+                                  : DecorationImage(
+                                      image:
+                                          AssetImage('assets/images/user.jpg')),
                             ),
-                            image: datas[index]["memberProfileDto"]
-                                        ["profileImage"] !=
-                                    null
-                                ? DecorationImage(
-                                    image: NetworkImage(datas[index]
-                                        ["memberProfileDto"]["profileImage"]),
-                                    fit: BoxFit.cover)
-                                : DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/user.jpg')),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Flexible(
-                        child: B4_14px_M(
-                            text: datas[index]["memberProfileDto"]
-                                ["nickname"],
-                            overflow: TextOverflow.ellipsis,),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      C1_12px_M(
-                        text: '${timeCheck(datas[index]["createdTime"])}전',
-                        color: PeeroreumColor.gray[400],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/dot.svg',
-                          color: PeeroreumColor.gray[600],
+                        SizedBox(
+                          width: 8,
                         ),
-                      ),
-                      C1_12px_M(
-                        text: '좋아요 ${datas[index]["likes"]}개',
-                        color: PeeroreumColor.gray[400],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/dot.svg',
-                          color: PeeroreumColor.gray[600],
+                        Flexible(
+                          child: B4_14px_M(
+                            text: datas[index]["memberProfileDto"]["nickname"],
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      C1_12px_M(
-                        text: '댓글 ${datas[index]["comments"]}개',
-                        color: PeeroreumColor.gray[400],
-                      ),
-                    ],
+                        SizedBox(
+                          width: 8,
+                        ),
+                        C1_12px_M(
+                          text: '${timeCheck(datas[index]["createdTime"])} 전',
+                          color: PeeroreumColor.gray[400],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/dot.svg',
+                            color: PeeroreumColor.gray[600],
+                          ),
+                        ),
+                        C1_12px_M(
+                          text: '좋아요 ${datas[index]["likes"]}개',
+                          color: PeeroreumColor.gray[400],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/dot.svg',
+                            color: PeeroreumColor.gray[600],
+                          ),
+                        ),
+                        C1_12px_M(
+                          text: '댓글 ${datas[index]["comments"]}개',
+                          color: PeeroreumColor.gray[400],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      }
+          );
+        }
       },
     );
   }
@@ -789,6 +802,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
       ),
     );
   }
+
   gradeSelect() {
     return Container(
       width: double.infinity,
@@ -831,10 +845,16 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                       onTap: () {
                         setState(() {
                           var checkGrade = index;
-                          if ( (1 <= _grade && _grade <= 3 &&  1<= checkGrade && checkGrade <= 3) ||
-                                (4 <= _grade && _grade <= 6 &&  4<= checkGrade && checkGrade <= 6)){
+                          if ((1 <= _grade &&
+                                  _grade <= 3 &&
+                                  1 <= checkGrade &&
+                                  checkGrade <= 3) ||
+                              (4 <= _grade &&
+                                  _grade <= 6 &&
+                                  4 <= checkGrade &&
+                                  checkGrade <= 6)) {
                             _grade = checkGrade;
-                          } else{
+                          } else {
                             _grade = index;
                             //_subject = null;
                             _detailSubject = null;
@@ -865,6 +885,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
       ),
     );
   }
+
   subjectSelect() {
     return Container(
       width: double.infinity,
