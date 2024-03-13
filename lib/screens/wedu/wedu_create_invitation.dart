@@ -145,7 +145,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
             color: PeeroreumColor.black,
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -160,23 +160,26 @@ class _CreateInvitationState extends State<CreateInvitation> {
           ),
           centerTitle: true,
           actions: [
-            TextButton(
-              onPressed: () {
-                if (nextbutton) {
-                  postWeduAndInvitation(weduMap);
-                } else {
-                  Fluttertoast.showToast(msg: '초대장 문구를 넣어주세요.');
-                }
-              },
-              child: Text(
-                '만들기',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: nextbutton
-                      ? PeeroreumColor.primaryPuple[400]
-                      : PeeroreumColor.gray[400],
+            Container(
+              padding: EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                onTap: () {
+                  if (nextbutton) {
+                    postWeduAndInvitation(weduMap);
+                  } else {
+                    Fluttertoast.showToast(msg: '초대장 문구를 넣어주세요.');
+                  }
+                },
+                child: Text(
+                  '만들기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: nextbutton
+                        ? PeeroreumColor.primaryPuple[400]
+                        : PeeroreumColor.gray[400],
+                  ),
                 ),
               ),
             ),
