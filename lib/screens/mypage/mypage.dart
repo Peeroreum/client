@@ -128,7 +128,7 @@ class _MyPageState extends State<MyPage> {
       children: [
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => MyPageProfile(nickname, true)));
@@ -246,7 +246,7 @@ class _MyPageState extends State<MyPage> {
       children: [
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => InWedu()))
@@ -275,7 +275,7 @@ class _MyPageState extends State<MyPage> {
         ),
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => InIedu()))
@@ -304,7 +304,7 @@ class _MyPageState extends State<MyPage> {
         ),
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => Scrap()))
@@ -341,7 +341,7 @@ class _MyPageState extends State<MyPage> {
       children: [
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => MyPageNotification()))
@@ -370,7 +370,7 @@ class _MyPageState extends State<MyPage> {
         ),
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
@@ -429,7 +429,7 @@ class _MyPageState extends State<MyPage> {
       children: [
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
@@ -458,7 +458,7 @@ class _MyPageState extends State<MyPage> {
         ),
         InkWell(
           splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[200],
+          highlightColor: PeeroreumColor.gray[100],
           onTap: () {
             logout();
           },

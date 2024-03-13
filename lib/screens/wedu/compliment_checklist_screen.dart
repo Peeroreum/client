@@ -6,6 +6,7 @@ import 'package:peeroreum_client/api/NotificationApi.dart';
 import 'package:peeroreum_client/data/Checklist.dart';
 import 'package:peeroreum_client/data/NotificationSetting.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 
 class ComplimentCheckList extends StatefulWidget {
   ComplimentCheckList(this.successList, this.id);
@@ -13,7 +14,8 @@ class ComplimentCheckList extends StatefulWidget {
   int id;
 
   @override
-  State<ComplimentCheckList> createState() => _ComplimentCheckListState(successList, id);
+  State<ComplimentCheckList> createState() =>
+      _ComplimentCheckListState(successList, id);
 }
 
 class _ComplimentCheckListState extends State<ComplimentCheckList> {
@@ -22,8 +24,8 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   int id;
 
   List<String> receiverList = [];
-  List<String> sendList=[];
-  List<Map<String,String>> callchecklist = [];
+  List<String> sendList = [];
+  List<Map<String, String>> callchecklist = [];
   late List<bool> isCheckedList =
       List.generate(successList.length, (index) => false);
   late List<bool> isActiveList =
@@ -41,6 +43,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     fetchStatus();
     fetchChecklistData();
   }
+
   fetchChecklistData() async {
     List<String>? data = await complimentChecklistData();
     if (data != null) {
@@ -48,10 +51,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
         sendList = data;
         updateChecklist();
       });
-    } else{
+    } else {
       print('리스트에 이름이 없습니다');
     }
   }
+
   void updateChecklist() {
     for (int i = 0; i < successList.length; i++) {
       print(successList[i]['nickname']);
@@ -65,8 +69,10 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
       }
     }
   }
-  getChecklistData() async{
-    List<Map<String, String>>? data = await CheckComplimentList.getComplimentCheck(id);
+
+  getChecklistData() async {
+    List<Map<String, String>>? data =
+        await CheckComplimentList.getComplimentCheck(id);
     print('get해서 callchecklist에 넣음');
     setState(() {
       callchecklist = data!;
@@ -80,18 +86,18 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   }
 
   fetchStatus() async {
-      sender = await FlutterSecureStorage().read(key: "nickname");
-      myimage = await FlutterSecureStorage().read(key: "profileImage");
-      mygrade = await FlutterSecureStorage().read(key: "grade");
-      //successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
-      var here_am_i =
-          successList.where((user) => user['nickname'] == sender).toList();
-      if (here_am_i.isNotEmpty) {
-        mycheck = true;
-      } else {
-        mycheck = false;
-      }
-      //successList = successList.where((user) => user['nickname'] != sender).toList();
+    sender = await FlutterSecureStorage().read(key: "nickname");
+    myimage = await FlutterSecureStorage().read(key: "profileImage");
+    mygrade = await FlutterSecureStorage().read(key: "grade");
+    //successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+    var here_am_i =
+        successList.where((user) => user['nickname'] == sender).toList();
+    if (here_am_i.isNotEmpty) {
+      mycheck = true;
+    } else {
+      mycheck = false;
+    }
+    //successList = successList.where((user) => user['nickname'] != sender).toList();
   }
 
   @override
@@ -174,8 +180,10 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             ),
                           ],
                         ),
-                        TextButton.icon(
-                          onPressed: () {
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: PeeroreumColor.gray[100],
+                          onTap: () {
                             for (int i = 0; i < isCheckedList.length; i++) {
                               if (isActiveList[i] == true) {
                                 if (isCheckedList[i] == false) {
@@ -186,20 +194,20 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                               }
                             }
                           },
-                          icon: SvgPicture.asset(
-                            'assets/icons/check.svg',
-                            color: PeeroreumColor.gray[500],
-                          ),
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.only(right: 0),
-                          ),
-                          label: Text(
-                            '전체선택',
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[500]),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/check.svg',
+                                color: PeeroreumColor.gray[500],
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              T5_14px(
+                                text: "전체선택",
+                                color: PeeroreumColor.gray[500],
+                              ),
+                            ],
                           ),
                         )
                       ],
@@ -401,7 +409,9 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             width: 8,
                           ),
                           Text(
-                            (successList[index]['nickname'] == sender)? '$sender (나)' : successList[index]['nickname'],
+                            (successList[index]['nickname'] == sender)
+                                ? '$sender (나)'
+                                : successList[index]['nickname'],
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w500,
@@ -456,19 +466,23 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 ),
             itemCount: successList.length));
   }
-  Future<List<String>?> complimentChecklistData() async{
+
+  Future<List<String>?> complimentChecklistData() async {
     String? me = await FlutterSecureStorage().read(key: "nickname");
-    List<String> namelist=['($me)'];
-    List<Map<String,String>>? checklistdata = await CheckComplimentList.getComplimentCheck(id);
+    List<String> namelist = ['($me)'];
+    List<Map<String, String>>? checklistdata =
+        await CheckComplimentList.getComplimentCheck(id);
     if (checklistdata != null) {
-      checklistdata.removeWhere((element) => element.values.any((value) => value != DateTime.now().toString().substring(0, 10)));
+      checklistdata.removeWhere((element) => element.values
+          .any((value) => value != DateTime.now().toString().substring(0, 10)));
       CheckComplimentList.setComplimentCheck(id, checklistdata);
     }
 
-    List<Map<String,String>>? listdata = await CheckComplimentList.getComplimentCheck(id);
-    if (listdata != null){
+    List<Map<String, String>>? listdata =
+        await CheckComplimentList.getComplimentCheck(id);
+    if (listdata != null) {
       print(listdata);
-      for (var map in listdata) { 
+      for (var map in listdata) {
         namelist.add(map.keys.toString());
       }
       print(namelist);
