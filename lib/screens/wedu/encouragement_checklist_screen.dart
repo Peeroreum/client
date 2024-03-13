@@ -57,7 +57,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
       print(notSuccessList[i]['nickname']);
       if (sendList.contains('(${notSuccessList[i]['nickname']})')) {
         setState(() {
-          isCheckedList[i] = true;
+          //isCheckedList[i] = true;
           isActiveList[i] = false;
         });
       } else {
@@ -230,23 +230,27 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                       width: double.infinity,
                       child: TextButton(
                         onPressed: () async{
-                          await getChecklistData();
-                          for (int i = 0; i < isCheckedList.length; i++) {
-                            if (isActiveList[i] == true) {
-                              if (isCheckedList[i]) {
-                                setState(() {
-                                  // _isChecked 값이 true인 경우에만 isActive를 false로 설정
-                                  isActiveList[i] = false;
-                                  receiverList.add(notSuccessList[i]['nickname']);
-                                });
-                                callchecklist.add({notSuccessList[i]['nickname'] : DateTime.now().toString().substring(0, 10)});
+                          if(isCheckedList.contains(true)){
+                            print(isCheckedList);
+                            await getChecklistData();
+                            for (int i = 0; i < isCheckedList.length; i++) {
+                              if (isActiveList[i] == true) {
+                                if (isCheckedList[i]) {
+                                  setState(() {
+                                    // _isChecked 값이 true인 경우에만 isActive를 false로 설정
+                                    isActiveList[i] = false;
+                                    receiverList.add(notSuccessList[i]['nickname']);
+                                  });
+                                  callchecklist.add({notSuccessList[i]['nickname'] : DateTime.now().toString().substring(0, 10)});
+                                }
                               }
                             }
+                            CheckEncouragementList.setEncouragementCheck(id,callchecklist);
+                            sendNotification();
+                            Fluttertoast.showToast(msg: "독려하기 완료!");
+                            isCheckedList = List.generate(notSuccessList.length, (index) => false);
+                            print(isCheckedList);
                           }
-                          CheckEncouragementList.setEncouragementCheck(id,callchecklist);
-                          print('set으로 리스트 저장');
-                          sendNotification();
-                          Fluttertoast.showToast(msg: "독려하기 완료!");
                         },
                         child: Text(
                           '독려하기',
@@ -479,15 +483,16 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                                   : PeeroreumColor.white)
                               : PeeroreumColor.gray[300]!,
                         ),
-                        child: isCheckedList[index]
-                            ? Center(
+                        child: //isCheckedList[index]
+                            //? 
+                            Center(
                                 child: Icon(
                                   Icons.check,
                                   color: Colors.white,
                                   size: 18,
                                 ),
                               )
-                            : null,
+                            //: null,
                       ),
                     ),
                   ],

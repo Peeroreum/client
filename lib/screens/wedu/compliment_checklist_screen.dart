@@ -57,7 +57,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
       print(successList[i]['nickname']);
       if (sendList.contains('(${successList[i]['nickname']})')) {
         setState(() {
-          isCheckedList[i] = true;
+          //isCheckedList[i] = true;
           isActiveList[i] = false;
         });
       } else {
@@ -228,7 +228,8 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
             height: 48,
             child: TextButton(
               onPressed: () async{
-                await getChecklistData();
+                if(isCheckedList.isNotEmpty){
+                  await getChecklistData();
                   for (int i = 0; i < isCheckedList.length; i++) {
                     if (isActiveList[i] == true) {
                       if (isCheckedList[i]) {
@@ -241,9 +242,11 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                       }
                     }
                   }
-                CheckComplimentList.setComplimentCheck(id,callchecklist);
-                sendNotification();
-                Fluttertoast.showToast(msg: '칭찬하기 완료!');
+                  CheckComplimentList.setComplimentCheck(id,callchecklist);
+                  sendNotification();
+                  Fluttertoast.showToast(msg: '칭찬하기 완료!');
+                  isCheckedList = List.generate(successList.length, (index) => false);
+                }
               },
               child: Text(
                 '칭찬하기',
