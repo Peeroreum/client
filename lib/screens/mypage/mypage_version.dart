@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/inquire.dart';
 
 class MyPageVersion extends StatefulWidget {
   const MyPageVersion({super.key});
@@ -80,8 +81,11 @@ class _MyPageVersionState extends State<MyPageVersion> {
             ),
             child: GestureDetector(
               onTap: () {
-                Clipboard.setData(ClipboardData(text: 'peeroreum.help@gmail.com'));
-                Fluttertoast.showToast(msg: '클립보드에 복사되었습니다.');
+                // Clipboard.setData(ClipboardData(text: 'peeroreum.help@gmail.com'));
+                // Fluttertoast.showToast(msg: '클립보드에 복사되었습니다.');
+                Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => 
+                      Inquire()));
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
