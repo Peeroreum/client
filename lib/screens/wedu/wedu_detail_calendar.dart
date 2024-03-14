@@ -200,16 +200,16 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     return FutureBuilder<void>(
       future: fetchDatas(),
       builder: (context, snapshot) {
-        // if (snapshot.connectionState == ConnectionState.waiting) {
-        //   // 데이터를 기다리는 동안 로딩 인디케이터를 보여줌
-        //   return Container(
-        //     color: PeeroreumColor.white,
-        //   );
-        // } else if (snapshot.hasError) {
-        //   // 에러 발생 시
-        //   return Center(child: Text('Error: ${snapshot.error}'));
-        // } else {
-        //   // 데이터 로드 성공 시
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // 데이터를 기다리는 동안 로딩 인디케이터를 보여줌
+          return Container(
+            color: PeeroreumColor.white,
+          );
+        } else if (snapshot.hasError) {
+          // 에러 발생 시
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          // 데이터 로드 성공 시
         return Scaffold(
           backgroundColor: PeeroreumColor.white,
           appBar: AppBar(
@@ -268,8 +268,11 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset('assets/icons/fire.svg'),
-                      Text(
+                      SvgPicture.asset((weduFire == 0)? 'assets/icons/fire_off.svg' : 'assets/icons/fire.svg'),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      (weduFire == 0)? Container() : Text(
                         '+',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -277,7 +280,19 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                             fontSize: 16,
                             color: PeeroreumColor.black),
                       ),
-                      Text(
+                      SizedBox(
+                        width: 2,
+                      ),
+                      (weduFire == 0) ? Text(
+                        '친구들이 기다리고 있어요!',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: PeeroreumColor.gray[600]
+                        ),
+                      )
+                          : Text(
                         '$weduFire',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -297,7 +312,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
           ),
           body: bodyWidget(),
         );
-        //}
+        }
       },
     );
   }
