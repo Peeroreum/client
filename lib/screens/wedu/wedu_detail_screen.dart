@@ -354,6 +354,12 @@ class _DetailWeduState extends State<DetailWedu> {
     return FutureBuilder<void>(
       future: fetchDatas(),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(backgroundColor: PeeroreumColor.white);
+        } else if (snapshot.hasError) {
+          // 에러 발생 시
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
         return Scaffold(
           backgroundColor: PeeroreumColor.white,
           appBar: AppBar(
@@ -413,8 +419,11 @@ class _DetailWeduState extends State<DetailWedu> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset('assets/icons/fire.svg'),
-                      Text(
+                      SvgPicture.asset((weduFire == 0)? 'assets/icons/fire_off.svg' : 'assets/icons/fire.svg'),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      (weduFire == 0)? Container() : Text(
                         '+',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -425,7 +434,16 @@ class _DetailWeduState extends State<DetailWedu> {
                       SizedBox(
                         width: 2,
                       ),
-                      Text(
+                      (weduFire == 0) ? Text(
+                          '친구들이 기다리고 있어요!',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: PeeroreumColor.gray[600]
+                        ),
+                      )
+                      : Text(
                         '$weduFire',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -474,6 +492,7 @@ class _DetailWeduState extends State<DetailWedu> {
             ),
           ),
         );
+        }
       },
     );
   }
