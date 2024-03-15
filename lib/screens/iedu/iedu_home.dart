@@ -296,7 +296,9 @@ class _HomeIeduState extends State<HomeIedu> {
           Column(
             children: [
               dropdown_body(),
-              datas.isEmpty ? noIedu() : Expanded(child: asks()),
+              datas.isEmpty
+                  ? Expanded(child: noIedu())
+                  : Expanded(child: asks()),
               Container(
                 height: 8,
               ),
@@ -948,9 +950,6 @@ class _HomeIeduState extends State<HomeIedu> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(
-          height: 69,
-        ),
         Image.asset(
           'assets/images/no_wedu_oreum.png',
           width: 150,
@@ -963,6 +962,9 @@ class _HomeIeduState extends State<HomeIedu> {
             fontWeight: FontWeight.w600,
             color: PeeroreumColor.black,
           ),
+        ),
+        SizedBox(
+          height: 56,
         ),
       ],
     );

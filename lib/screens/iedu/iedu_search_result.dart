@@ -263,7 +263,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               child: Row(
                                 children: [
                                   Text(
-                                    '검색된 내가해냄',
+                                    '검색된 질문',
                                     style: TextStyle(
                                         color: PeeroreumColor.gray[800],
                                         fontFamily: 'Pretendard',
@@ -288,28 +288,38 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: dropdown_body(),
                             ),
-                            SizedBox(
-                              height: 13,
-                            ),
-                            Image.asset('assets/images/no_wedu_oreum.png'),
-                            Text(
-                              '찾으시는 질문이 없어요 🥲',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.black),
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Text(
-                              '다른 검색어를 입력해 보세요!',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: PeeroreumColor.gray[700]),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/no_wedu_oreum.png',
+                                    width: 150,
+                                  ),
+                                  Text(
+                                    '찾으시는 질문이 없어요 🥲',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        color: PeeroreumColor.black),
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  Text(
+                                    '다른 검색어를 입력해 보세요!',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                        color: PeeroreumColor.gray[700]),
+                                  ),
+                                  SizedBox(
+                                    height: 56,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
