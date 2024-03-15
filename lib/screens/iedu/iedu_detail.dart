@@ -443,7 +443,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         Row(
                           children: [
                             Visibility(
-                              visible: false,
+                              visible: DateTime.now().year.toString() != date.substring(0,4),
                               child: Row(
                               children: [
                                 C1_12px_M(text: date.substring(0,4), color: PeeroreumColor.gray[400]),
@@ -1620,7 +1620,7 @@ class MakeComment extends StatefulWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Visibility(
-                          visible: widget.comment.toString().isNotEmpty ,
+                          visible: widget.isDeleted || (!widget.isDeleted && widget.comment.toString().isNotEmpty),
                           child: B4_14px_R(text: widget.isDeleted
                           ? '삭제된 댓글입니다.'
                           : widget.comment,
