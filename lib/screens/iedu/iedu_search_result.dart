@@ -85,7 +85,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
     token = await FlutterSecureStorage().read(key: "accessToken");
     var weduResult = await http.get(
         Uri.parse(
-            '${API.hostConnect}/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'),
+            '${API.hostConnect}/question/search?keyword=$keyword&grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -983,7 +983,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
     currentPage++;
     var IeduResult = await http.get(
         Uri.parse(
-            '${API.hostConnect}/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'),
+            '${API.hostConnect}/question/search?keyword=$keyword&grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
