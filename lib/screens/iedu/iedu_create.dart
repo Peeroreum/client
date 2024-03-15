@@ -127,7 +127,7 @@ class _CreateIeduState extends State<CreateIedu> {
         color: PeeroreumColor.black,
         icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
         onPressed: () async {
-          if(await onBackKey()) {
+          if (await onBackKey()) {
             Navigator.pop(context);
           }
         },
@@ -152,13 +152,16 @@ class _CreateIeduState extends State<CreateIedu> {
                 return;
               }
             },
-            child: Text(
-              '완료',
-              style: TextStyle(
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-                color: _nextColor,
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                '완료',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: _nextColor,
+                ),
               ),
             ),
           ),
@@ -177,10 +180,6 @@ class _CreateIeduState extends State<CreateIedu> {
             padding: EdgeInsets.symmetric(vertical: 16),
             child: TextFormField(
               controller: titleController,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(
-                    r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
-              ],
               maxLines: null,
               style: TextStyle(color: Colors.black),
               cursorColor: PeeroreumColor.gray[600],
@@ -216,10 +215,6 @@ class _CreateIeduState extends State<CreateIedu> {
                   TextFormField(
                     controller: contentController,
                     focusNode: ContentFocusNode,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(
-                          r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
-                    ],
                     maxLines: null,
                     minLines: 6,
                     // minLines: _images.isEmpty ? 20 : 16,
@@ -977,8 +972,7 @@ class _CreateIeduState extends State<CreateIedu> {
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
-                              color: PeeroreumColor.white
-                          ),
+                              color: PeeroreumColor.white),
                         ),
                       ),
                     ),
