@@ -223,14 +223,6 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                     thickness: 1,
                     height: 8,
                   ),
-                  //mycheck ? notOkMe() : Container(),
-                  // mycheck
-                  //     ? Divider(
-                  //         thickness: 1,
-                  //         color: PeeroreumColor.gray[100],
-                  //         height: 8,
-                  //       )
-                  //     : Container(),
                   notOkList(),
                   Container(
                     padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
@@ -329,86 +321,6 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
     );
   }
 
-  notOkMe() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          width: 2,
-                          color: mygrade != null
-                              ? PeeroreumColor.gradeColor[int.parse(mygrade)]!
-                              : PeeroreumColor.error),
-                    ),
-                    child: Container(
-                      height: 44,
-                      width: 44,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          width: 1,
-                          color: PeeroreumColor.white,
-                        ),
-                        image: myimage != null
-                            ? DecorationImage(
-                                image: NetworkImage(myimage), fit: BoxFit.cover)
-                            : DecorationImage(
-                                image: AssetImage('assets/images/user.jpg')),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    sender != null ? '$sender' : '',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[800]),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: PeeroreumColor.gray[200]!,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(4.0),
-                  color: PeeroreumColor.gray[300]!,
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   notOkList() {
     return Flexible(
         //width: MediaQuery.of(context).size.width,
@@ -484,7 +396,9 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                         height: 24,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: PeeroreumColor.gray[200]!,
+                            color: (isCheckedList[index]
+                                  ? PeeroreumColor.primaryPuple[400]!
+                                  : PeeroreumColor.gray[200]!),
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),
@@ -496,13 +410,12 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                         ),
                         child: //isCheckedList[index]
                             //? 
-                            Center(
-                                child: Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                              )
+                            // Center(
+                                SvgPicture.asset(
+                                'assets/icons/check.svg',
+                                color: PeeroreumColor.white,
+                              ),
+                              // )
                             //: null,
                       ),
                     ),
