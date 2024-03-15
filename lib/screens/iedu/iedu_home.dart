@@ -15,6 +15,7 @@ import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/screens/iedu/iedu_search.dart';
+import 'package:peeroreum_client/screens/iedu/iedu_skeleton.dart';
 
 class HomeIedu extends StatefulWidget {
   const HomeIedu({super.key});
@@ -136,7 +137,7 @@ class _HomeIeduState extends State<HomeIedu> {
         future: initFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container();
+            return SkeletonIedu();
           } else if (snapshot.hasError) {
             // 에러 발생 시
             return Center(child: Text('Error: ${snapshot.error}'));

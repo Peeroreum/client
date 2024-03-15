@@ -170,15 +170,18 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     Fluttertoast.showToast(msg: '초대장 문구를 넣어주세요.');
                   }
                 },
-                child: Text(
-                  '만들기',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: nextbutton
-                        ? PeeroreumColor.primaryPuple[400]
-                        : PeeroreumColor.gray[400],
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 20),
+                  child: Text(
+                    '만들기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: nextbutton
+                          ? PeeroreumColor.primaryPuple[400]
+                          : PeeroreumColor.gray[400],
+                    ),
                   ),
                 ),
               ),

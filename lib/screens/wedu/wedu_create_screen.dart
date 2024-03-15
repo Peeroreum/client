@@ -166,13 +166,16 @@ class _CreateWeduState extends State<CreateWedu> {
                     return;
                   }
                 },
-                child: Text(
-                  '다음',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: _nextColor,
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 20),
+                  child: Text(
+                    '다음',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: _nextColor,
+                    ),
                   ),
                 ),
               ),
@@ -405,20 +408,18 @@ class _CreateWeduState extends State<CreateWedu> {
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: () {
-                                      informChallengeDates();
-                                    },
-                                    child: Text(
-                                      ' ?⃝',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: PeeroreumColor.gray[500]
-                                      ),
-                                    )
-                                  )
+                                      onTap: () {
+                                        informChallengeDates();
+                                      },
+                                      child: Text(
+                                        ' ?⃝',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: PeeroreumColor.gray[500]),
+                                      ))
                                 ],
                               ),
                               SizedBox(
@@ -1160,7 +1161,8 @@ class _CreateWeduState extends State<CreateWedu> {
           return AlertDialog(
               insetPadding: EdgeInsets.symmetric(horizontal: 20),
               contentPadding: EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
               backgroundColor: PeeroreumColor.white,
               surfaceTintColor: Colors.transparent,
               content: SizedBox(
@@ -1171,7 +1173,9 @@ class _CreateWeduState extends State<CreateWedu> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        SizedBox(width: 24,),
+                        SizedBox(
+                          width: 24,
+                        ),
                         const Expanded(
                           child: Center(
                             child: Text(
@@ -1195,12 +1199,16 @@ class _CreateWeduState extends State<CreateWedu> {
                         )
                       ],
                     ),
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Image.asset(
-                        'assets/images/glasses_oreum.png',
+                      'assets/images/glasses_oreum.png',
                       width: 177,
                     ),
-                    const SizedBox(height: 16,),
+                    const SizedBox(
+                      height: 16,
+                    ),
                     const Text(
                       '습관 형성을 위해서는 66일이 걸린대요.\n오늘부터 같이방 챌린지를 시작해 볼까요?',
                       textAlign: TextAlign.center,
@@ -1208,15 +1216,14 @@ class _CreateWeduState extends State<CreateWedu> {
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w400,
                           fontSize: 16,
-                          color: PeeroreumColor.black
-                      ),
+                          color: PeeroreumColor.black),
                     ),
-                    const SizedBox(height: 20,)
+                    const SizedBox(
+                      height: 20,
+                    )
                   ],
                 ),
-          )
-          );
-        }
-    );
+              ));
+        });
   }
 }
