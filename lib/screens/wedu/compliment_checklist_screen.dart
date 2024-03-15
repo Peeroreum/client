@@ -444,15 +444,17 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                                   : PeeroreumColor.white)
                               : PeeroreumColor.gray[300]!,
                         ),
-                        child: isCheckedList[index]
-                            ? Center(
-                                child: Icon(
+                        child: 
+                        // isCheckedList[index]
+                        //     ? Center(
+                        //         child: 
+                                Icon(
                                   Icons.check,
                                   color: Colors.white,
                                   size: 18,
                                 ),
-                              )
-                            : null,
+                              // )
+                            // : null,
                       ),
                     ),
                   ],
