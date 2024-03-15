@@ -45,6 +45,7 @@ bool _isLeftButtonWork = startDate.isBefore(firstDayOfCurrentMonth);
 bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
 
 class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
+  late Future initFuture;
   var token;
   int id;
   String weduTitle;
@@ -76,6 +77,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       focusedDay = finalDate.day;
       savedFocusedDay = focusedDay;
     }
+    initFuture = fetchDatas();
   }
 
   void _updateCalendar() {
@@ -169,6 +171,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
     if (successList.isNotEmpty) {
       await fetchImages(successList);
     }
+
+    setState(() {
+
+    });
   }
 
   fetchImages(List<dynamic> successList) async {
@@ -198,7 +204,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
-      future: fetchDatas(),
+      future: initFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // 데이터를 기다리는 동안 로딩 인디케이터를 보여줌
