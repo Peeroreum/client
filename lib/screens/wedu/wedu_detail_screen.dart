@@ -34,6 +34,7 @@ double stackWidth = 0;
 double leftPosition = 0;
 
 class _DetailWeduState extends State<DetailWedu> {
+  late Future initFuture;
   int id;
 
   bool isExpanded = true;
@@ -73,7 +74,7 @@ class _DetailWeduState extends State<DetailWedu> {
   @override
   void initState() {
     super.initState();
-    fetchDatas();
+    initFuture = fetchDatas();
   }
 
   Future<void> fetchDatas() async {
@@ -159,6 +160,9 @@ class _DetailWeduState extends State<DetailWedu> {
 
     await fetchImages(successList);
     checkChallenge();
+    setState(() {
+
+    });
   }
 
   fetchImages(List<dynamic> successList) async {
@@ -352,7 +356,7 @@ class _DetailWeduState extends State<DetailWedu> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
-      future: fetchDatas(),
+      future: initFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(backgroundColor: PeeroreumColor.white);
