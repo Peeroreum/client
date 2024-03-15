@@ -208,11 +208,12 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                 return datas.isEmpty
                     ? Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              height: 69,
+                            Image.asset(
+                              'assets/images/no_wedu_oreum.png',
+                              width: 150,
                             ),
-                            Image.asset('assets/images/no_wedu_oreum.png'),
                             Text(
                               '찾으시는 같이방이 없어요 🥲',
                               style: TextStyle(
@@ -231,6 +232,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   fontSize: 18,
                                   fontWeight: FontWeight.w400,
                                   color: PeeroreumColor.gray[700]),
+                            ),
+                            SizedBox(
+                              height: 56,
                             ),
                           ],
                         ),
