@@ -863,6 +863,7 @@ class _DetailIeduState extends State<DetailIedu> {
                           }));
                           setState(() {
                             _image = whiteboardImage;
+                            isSubmittable = true;
                           });
                         } else{
                           Fluttertoast.showToast(msg: "댓글은 파일 최대 1개까지만 첨부 가능합니다.");
