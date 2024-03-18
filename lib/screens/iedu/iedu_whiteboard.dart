@@ -504,7 +504,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
     await file.writeAsBytes(bytes!);
     whiteboardImage = (XFile(file.path));
 
-    Navigator.pop(context, whiteboardImage);
+    if (mounted) {
+        Navigator.pop(context, whiteboardImage);
+    }
   }
 
   Future<bool> onBackKey() async {
