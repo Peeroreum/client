@@ -10,6 +10,7 @@ import 'package:peeroreum_client/data/IeduSearchHistory.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -297,7 +298,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                     width: 150,
                                   ),
                                   Text(
-                                    '찾으시는 질문이 없어요 🥲',
+                                    '검색된 질문이 없어요',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 20,
@@ -308,7 +309,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                     height: 16,
                                   ),
                                   Text(
-                                    '다른 검색어를 입력해 보세요!',
+                                    '질문을 작성해보세요!',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 18,
@@ -316,8 +317,37 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                         color: PeeroreumColor.gray[700]),
                                   ),
                                   SizedBox(
-                                    height: 56,
+                                    height: 32,
                                   ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return CreateIedu();
+                                      }));
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 12
+                                      ),
+                                      height: 48,
+                                      width: 207,
+                                      decoration: BoxDecoration(
+                                        color: PeeroreumColor.primaryPuple[400],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset('assets/icons/pencil_with_line.svg', color: PeeroreumColor.white,),
+                                          SizedBox(width: 8,),
+                                          T4_16px(text: '내가해냄 질문하러 가기', color: PeeroreumColor.white,)
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 56,)
                                 ],
                               ),
                             ),

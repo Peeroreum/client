@@ -8,6 +8,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../api/PeeroreumApi.dart';
@@ -226,12 +228,47 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               height: 16,
                             ),
                             Text(
-                              '다른 검색어를 입력해 보세요!',
+                              '같이방을 만들어보세요!',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 18,
                                   fontWeight: FontWeight.w400,
                                   color: PeeroreumColor.gray[700]),
+                            ),
+                            SizedBox(
+                                    height: 32,
+                                  ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                      pageBuilder: (_, __, ___) => CreateWedu(),
+                                      transitionDuration: const Duration(seconds: 0),
+                                      reverseTransitionDuration: const Duration(seconds: 0)),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12
+                                ),
+                                height: 48,
+                                width: 183,
+                                decoration: BoxDecoration(
+                                  color: PeeroreumColor.primaryPuple[400],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset('assets/icons/plus_square2.svg', color: PeeroreumColor.white,),
+                                    SizedBox(width: 8,),
+                                    T4_16px(text: '같이방 만들러 가기', color: PeeroreumColor.white,)
+                                  ],
+                                ),
+                              ),
                             ),
                             SizedBox(
                               height: 56,
