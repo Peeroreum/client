@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
+import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
 class WhiteboardIedu extends StatefulWidget {
@@ -39,7 +40,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
 
   longpressCheck() {
     if (isLongPressed[0]) {
-      penDetailTool();
+      straightDetailTool();
       print(isLongPressed);
     } else if (isLongPressed[1]) {
       highlighterDetailTool();
@@ -85,6 +86,8 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
   List<bool> highlighterStroke = [true, false, false];
   List<bool> highlighterColor = [true, false, false];
   List<bool> eraserStroke = [true, false, false];
+  int redo = 0;
+  int undo = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -120,23 +123,32 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
         color: PeeroreumColor.black,
         icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
         onPressed: () async {
-          if (await onBackKey()) {
+          if (undo > 0) {
+            if (await onBackKey()) {
+              Navigator.pop(context);
+            }
+          } else {
             Navigator.pop(context);
           }
         },
       ),
       actions: [
-        TextButton(
-          onPressed: () async {
-            postWhiteboard();
+        GestureDetector(
+          onTap: () async {
+            if (undo > 0) postWhiteboard();
           },
-          child: Text(
-            '완료',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-              color: PeeroreumColor.gray[500],
+          child: Container(
+            margin: EdgeInsets.all(20),
+            child: Text(
+              '완료',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: undo > 0
+                    ? PeeroreumColor.primaryPuple[400]
+                    : PeeroreumColor.gray[500],
+              ),
             ),
           ),
         ),
@@ -153,6 +165,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
             return WidgetsToImage(
               controller: _imageController,
               child: DrawingBoard(
+                onPointerUp: (pue) {
+                  setState(() {
+                    undo++;
+                  });
+                  print(undo);
+                },
                 controller: _drawingController,
                 background: Container(
                   width: constraints.maxWidth,
@@ -171,21 +189,21 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
           Positioned(
             bottom: 56,
             child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 128, 0),
-                child: penDetailTool()),
+                margin: EdgeInsets.fromLTRB(0, 0, 180, 0),
+                child: straightDetailTool()),
           ),
         if (isLongPressed[1])
           Positioned(
             bottom: 56,
             child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 128, 0),
+                margin: EdgeInsets.fromLTRB(0, 0, 180, 0),
                 child: highlighterDetailTool()),
           ),
         if (isLongPressed[2])
           Positioned(
             bottom: 56,
             child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 128, 0),
+                margin: EdgeInsets.fromLTRB(0, 0, 180, 0),
                 child: eraserDetailTool()),
           ),
       ],
@@ -199,7 +217,8 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
       children: [
         Container(
           color: Colors.transparent,
-          padding: EdgeInsets.fromLTRB(34, 8, 34, 24),
+          // padding: EdgeInsets.fromLTRB(34, 8, 34, 24),
+          padding: EdgeInsets.only(bottom: 24),
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             decoration: BoxDecoration(
@@ -214,10 +233,80 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 penTool(),
-                // SizedBox(
-                //   width: 20,
-                // ),
-                // straightColorTool(),
+                SizedBox(
+                  width: 16,
+                ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        if (undo > 0) {
+                          _drawingController.undo();
+                          setState(() {
+                            undo--;
+                            redo++;
+                          });
+                          print('redo: $redo');
+                        }
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(4.0),
+                        width: 24,
+                        height: 24,
+                        child: SvgPicture.asset(
+                          'assets/icons/arrow_bend_up_left.svg',
+                          color: undo > 0
+                              ? PeeroreumColor.gray[500]
+                              : PeeroreumColor.gray[200],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        if (redo > 0) {
+                          _drawingController.redo();
+                          setState(() {
+                            redo--;
+                            undo++;
+                          });
+                          print('undo: $undo');
+                        }
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(4.0),
+                        width: 24,
+                        height: 24,
+                        child: SvgPicture.asset(
+                          'assets/icons/arrow_bend_up_right.svg',
+                          color: redo > 0
+                              ? PeeroreumColor.gray[500]
+                              : PeeroreumColor.gray[200],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  width: 1,
+                  height: 32,
+                  color: PeeroreumColor.gray[100],
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    _drawingController.clear();
+                  },
+                  child: T5_14px(
+                    text: '모두 지우기',
+                    color: PeeroreumColor.gray[500],
+                  ),
+                ),
               ],
             ),
           ),
@@ -389,7 +478,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
     );
   }
 
-  penDetailTool() {
+  straightDetailTool() {
     return Stack(
       children: [
         Image.asset('assets/images/background_straight.png'),
@@ -421,7 +510,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           color: straightStroke[0]
                               ? PeeroreumColor.gray[200]
                               : PeeroreumColor.gray[50]),
-                      child: SvgPicture.asset('assets/images/straight_1.svg'),
+                      child: SvgPicture.asset(
+                        'assets/images/straight_1.svg',
+                        color: straightStroke[0]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600],
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -446,7 +540,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           color: straightStroke[1]
                               ? PeeroreumColor.gray[200]
                               : PeeroreumColor.gray[50]),
-                      child: SvgPicture.asset('assets/images/straight_2.svg'),
+                      child: SvgPicture.asset(
+                        'assets/images/straight_2.svg',
+                        color: straightStroke[1]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600],
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -471,7 +570,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           color: straightStroke[2]
                               ? PeeroreumColor.gray[200]
                               : PeeroreumColor.gray[50]),
-                      child: SvgPicture.asset('assets/images/straight_3.svg'),
+                      child: SvgPicture.asset(
+                        'assets/images/straight_3.svg',
+                        color: straightStroke[2]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600],
+                      ),
                     ),
                   ),
                 ],
@@ -519,7 +623,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           color: highlighterStroke[0]
                               ? PeeroreumColor.gray[200]
                               : PeeroreumColor.gray[50]),
-                      child: SvgPicture.asset('assets/images/straight_1.svg'),
+                      child: SvgPicture.asset(
+                        'assets/images/straight_1.svg',
+                        color: highlighterStroke[0]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600],
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -544,7 +653,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           color: highlighterStroke[1]
                               ? PeeroreumColor.gray[200]
                               : PeeroreumColor.gray[50]),
-                      child: SvgPicture.asset('assets/images/straight_2.svg'),
+                      child: SvgPicture.asset(
+                        'assets/images/straight_2.svg',
+                        color: highlighterStroke[1]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600],
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -569,7 +683,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           color: highlighterStroke[2]
                               ? PeeroreumColor.gray[200]
                               : PeeroreumColor.gray[50]),
-                      child: SvgPicture.asset('assets/images/straight_3.svg'),
+                      child: SvgPicture.asset(
+                        'assets/images/straight_3.svg',
+                        color: highlighterStroke[2]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600],
+                      ),
                     ),
                   ),
                 ],
@@ -613,7 +732,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       color: eraserStroke[0]
                           ? PeeroreumColor.gray[200]
                           : PeeroreumColor.gray[50]),
-                  child: SvgPicture.asset('assets/images/straight_1.svg'),
+                  child: SvgPicture.asset(
+                    'assets/images/straight_1.svg',
+                    color: eraserStroke[0]
+                        ? PeeroreumColor.black
+                        : PeeroreumColor.gray[600],
+                  ),
                 ),
               ),
               SizedBox(
@@ -638,7 +762,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       color: eraserStroke[1]
                           ? PeeroreumColor.gray[200]
                           : PeeroreumColor.gray[50]),
-                  child: SvgPicture.asset('assets/images/straight_2.svg'),
+                  child: SvgPicture.asset(
+                    'assets/images/straight_2.svg',
+                    color: eraserStroke[1]
+                        ? PeeroreumColor.black
+                        : PeeroreumColor.gray[600],
+                  ),
                 ),
               ),
               SizedBox(
@@ -663,7 +792,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       color: eraserStroke[2]
                           ? PeeroreumColor.gray[200]
                           : PeeroreumColor.gray[50]),
-                  child: SvgPicture.asset('assets/images/straight_3.svg'),
+                  child: SvgPicture.asset(
+                    'assets/images/straight_3.svg',
+                    color: eraserStroke[2]
+                        ? PeeroreumColor.black
+                        : PeeroreumColor.gray[600],
+                  ),
                 ),
               ),
             ],
@@ -928,7 +1062,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                           GestureDetector(
                                             onTap: () {
                                               setState(() {
-                                                _straightColor =
+                                                _highlighterColor =
                                                     _highlighterSavedColor!;
                                                 _drawingController.setStyle(
                                                     color: _highlighterColor
