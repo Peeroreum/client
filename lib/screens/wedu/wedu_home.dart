@@ -246,13 +246,17 @@ class _HomeWeduState extends State<HomeWedu> {
                 ),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => CreateWedu(),
-                      transitionDuration: const Duration(seconds: 0),
-                      reverseTransitionDuration: const Duration(seconds: 0)),
-                );
+                if (inroom_datas.length < 10) {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => CreateWedu(),
+                        transitionDuration: const Duration(seconds: 0),
+                        reverseTransitionDuration: const Duration(seconds: 0)),
+                  );
+                } else {
+                  Fluttertoast.showToast(msg: '같이방은 10개까지만 참여 가능해요.');
+                }
               },
             ),
             GestureDetector(
@@ -1217,7 +1221,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        if (inroom_datas.length <= 10) {
+                        if (inroom_datas.length < 10) {
                           Navigator.pop(context);
                           datas[index]['locked'].toString() == "true"
                               ? insertPassword(index)
