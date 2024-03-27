@@ -164,6 +164,10 @@ class _InWeduState extends State<InWedu> {
       },
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailWedu(complete_group[index]["id"])));
+          },
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
@@ -277,7 +281,7 @@ class _InWeduState extends State<InWedu> {
                                 ),
                               ),
                               Text(
-                                'D-${complete_group[index]["dday"]!}',
+                                'D+${complete_group[index]["dday"].toString().substring(1)}',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
