@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
-import 'package:peeroreum_client/screens/iedu/iedu_detail_image.dart';
+import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -488,7 +488,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ImageDetailIedu(imageList: questionImage, initialPage: selectedIndex,),
+                                        ImageDetail(imageList: questionImage, initialPage: selectedIndex,),
                                   ));
                               },
                               child: Container(
@@ -1640,7 +1640,7 @@ class MakeComment extends StatefulWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                ImageDetailIedu(imageList: widget.commentImage!),
+                                ImageDetail(imageList: widget.commentImage!),
                           ));
                       },
                       child: Container(

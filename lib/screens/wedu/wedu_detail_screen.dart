@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/encouragement_checklist_screen.dart';
@@ -739,34 +740,45 @@ class _DetailWeduState extends State<DetailWedu> {
                 var imageUrl = i.toString();
                 return Builder(
                   builder: (BuildContext context) {
-                    return Container(
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: PeeroreumColor.gray[100],
-                          image: i != null
-                              ? DecorationImage(
-                                  image: NetworkImage(imageUrl),
-                                  fit: BoxFit.cover)
-                              : null),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Container(
-                            margin: EdgeInsets.all(12),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Color.fromARGB(60, 0, 0, 0),
-                            ),
-                            child: Text(
-                              '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  color: PeeroreumColor.white),
-                            )),
+                    return GestureDetector(
+                      onTap: () {
+                        int selectedIndex = challengeImage.indexOf(i);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ImageDetail(imageList: challengeImage, initialPage: selectedIndex,),
+                                  ));
+                      },
+                      child: Container(
+                        width: double.maxFinite,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: PeeroreumColor.gray[100],
+                            image: i != null
+                                ? DecorationImage(
+                                    image: NetworkImage(imageUrl),
+                                    fit: BoxFit.cover)
+                                : null),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                              margin: EdgeInsets.all(12),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color.fromARGB(60, 0, 0, 0),
+                              ),
+                              child: Text(
+                                '${challengeImage.indexOf(i) + 1} / ${challengeImage.length}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: PeeroreumColor.white),
+                              )),
+                        ),
                       ),
                     );
                   },
@@ -775,7 +787,7 @@ class _DetailWeduState extends State<DetailWedu> {
               options: CarouselOptions(
                 enableInfiniteScroll: false,
                 viewportFraction: 1,
-                height: 380,
+                height: (MediaQuery.of(context).size.width-40)*4/3,
                 enlargeCenterPage: false,
               ),
             ),
