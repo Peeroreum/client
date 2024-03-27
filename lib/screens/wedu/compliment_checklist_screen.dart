@@ -34,6 +34,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   var mygrade;
   var myimage;
   bool mycheck = false;
+  bool isSelectAll = false;
 
   @override
   void initState() {
@@ -42,6 +43,22 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     receiverList = [];
     fetchStatus();
     fetchChecklistData();
+  }
+
+  bool controlAllSelect() {
+    bool hasUncheckedActiveItem = false;
+    for (int i = 0; i < isCheckedList.length; i++) {
+      if (isActiveList[i] == true && isCheckedList[i] == false) {
+        hasUncheckedActiveItem = true;
+        break;
+      }
+    }
+    if (hasUncheckedActiveItem) {
+      return false;
+    } else {
+      // 모든 항목이 isActiveList[i] == true && isCheckedList[i] == true인 경우
+      return true;
+    }
   }
 
   fetchChecklistData() async {
@@ -184,14 +201,24 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                           splashColor: Colors.transparent,
                           highlightColor: PeeroreumColor.gray[100],
                           onTap: () {
-                            for (int i = 0; i < isCheckedList.length; i++) {
-                              if (isActiveList[i] == true) {
-                                if (isCheckedList[i] == false) {
-                                  setState(() {
-                                    isCheckedList[i] = true;
-                                  });
+                            if(isSelectAll == false){
+                              for (int i = 0; i < isCheckedList.length; i++) {
+                                if (isActiveList[i] == true) {
+                                  if (isCheckedList[i] == false) {
+                                    setState(() {
+                                      isCheckedList[i] = true;
+                                    });
+                                  }
                                 }
                               }
+                              setState(() {
+                                isSelectAll = true;
+                              });
+                            } else{
+                              isCheckedList = List.generate(successList.length, (index) => false);
+                              setState(() {
+                                isSelectAll = false;
+                              });
                             }
                           },
                           child: Row(
@@ -340,6 +367,9 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             isCheckedList[index] = !isCheckedList[index];
                           });
                         }
+                        setState(() {
+                          isSelectAll = controlAllSelect();
+                        });
                       },
                       child: Container(
                         width: 24,
