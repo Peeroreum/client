@@ -136,19 +136,16 @@ class _DetailWeduState extends State<DetailWedu> {
               ['failMembers'];
 
       var me = successList.firstWhere(
-              (member) => member['nickname'] == nickname,
-          orElse: () => null
-      );
+          (member) => member['nickname'] == nickname,
+          orElse: () => null);
 
       if (me != null) {
         successList.remove(me);
         successList.insert(0, me);
       }
 
-      me = notSuccessList.firstWhere(
-              (member) => member['nickname'] == nickname,
-          orElse: () => null
-      );
+      me = notSuccessList.firstWhere((member) => member['nickname'] == nickname,
+          orElse: () => null);
 
       if (me != null) {
         notSuccessList.remove(me);
@@ -160,9 +157,7 @@ class _DetailWeduState extends State<DetailWedu> {
 
     await fetchImages(successList);
     checkChallenge();
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   fetchImages(List<dynamic> successList) async {
@@ -364,138 +359,142 @@ class _DetailWeduState extends State<DetailWedu> {
           // 에러 발생 시
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-        return Scaffold(
-          backgroundColor: PeeroreumColor.white,
-          appBar: AppBar(
+          return Scaffold(
             backgroundColor: PeeroreumColor.white,
-            shadowColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-            leading: IconButton(
-              icon: SvgPicture.asset(
-                'assets/icons/arrow-left.svg',
-                color: PeeroreumColor.gray[800],
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: CustomWidgetMarquee(
-                    child: Text(
-                      weduTitle,
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
-                          color: PeeroreumColor.black),
-                    ),
-                  ),
+            appBar: AppBar(
+              backgroundColor: PeeroreumColor.white,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+              leading: IconButton(
+                icon: SvgPicture.asset(
+                  'assets/icons/arrow-left.svg',
+                  color: PeeroreumColor.gray[800],
                 ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                  onPressed: () async {
-                    await showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) {
-                          return changeDetailWedu();
-                        });
-                  },
-                  icon: SvgPicture.asset(
-                    'assets/icons/icon_dots_mono.svg',
-                    width: 24,
-                    height: 24,
-                    color: PeeroreumColor.gray[800],
-                  ))
-            ],
-            bottom: PreferredSize(
-              preferredSize: Size.fromHeight(40),
-              child: Column(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset((weduFire == 0)? 'assets/icons/fire_off.svg' : 'assets/icons/fire.svg'),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      (weduFire == 0)? Container() : Text(
-                        '+',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: PeeroreumColor.black),
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      (weduFire == 0) ? Text(
-                          '친구들이 기다리고 있어요!',
+                  Flexible(
+                    child: CustomWidgetMarquee(
+                      child: Text(
+                        weduTitle,
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: PeeroreumColor.gray[600]
-                        ),
-                      )
-                      : Text(
-                        '$weduFire',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                            fontSize: 20,
                             color: PeeroreumColor.black),
-                      )
-                    ],
+                      ),
+                    ),
                   ),
-                  Divider(
-                    thickness: 1,
-                    color: PeeroreumColor.gray[100],
-                  )
                 ],
               ),
-            ),
-          ),
-          body: bodyWidget(),
-          bottomNavigationBar: Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-            child: SizedBox(
-              height: 48,
-              child: TextButton(
-                onPressed: () {
-                  showDoChallengeBottomSheet();
-                },
-                child: Text(
-                  '인증하기',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.white,
-                  ),
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      await showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return changeDetailWedu();
+                          });
+                    },
+                    icon: SvgPicture.asset(
+                      'assets/icons/icon_dots_mono.svg',
+                      width: 24,
+                      height: 24,
+                      color: PeeroreumColor.gray[800],
+                    ))
+              ],
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(40),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset((weduFire == 0)
+                            ? 'assets/icons/fire_off.svg'
+                            : 'assets/icons/fire.svg'),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        (weduFire == 0)
+                            ? Container()
+                            : Text(
+                                '+',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: PeeroreumColor.black),
+                              ),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        (weduFire == 0)
+                            ? Text(
+                                '친구들이 기다리고 있어요!',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    color: PeeroreumColor.gray[600]),
+                              )
+                            : Text(
+                                '$weduFire',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: PeeroreumColor.black),
+                              )
+                      ],
+                    ),
+                    Divider(
+                      thickness: 1,
+                      color: PeeroreumColor.gray[100],
+                    )
+                  ],
                 ),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
-          ),
-        );
+            body: bodyWidget(),
+            bottomNavigationBar: Container(
+              padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+              child: SizedBox(
+                height: 48,
+                child: TextButton(
+                  onPressed: () {
+                    showDoChallengeBottomSheet();
+                  },
+                  child: Text(
+                    '인증하기',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.white,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400]),
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(vertical: 12)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ))),
+                ),
+              ),
+            ),
+          );
         }
       },
     );
@@ -895,27 +894,29 @@ class _DetailWeduState extends State<DetailWedu> {
                                             SizedBox(
                                               width: 4,
                                             ),
-                                            Text(
-                                              '-',
-                                              style: TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18,
-                                                  color:
-                                                      PeeroreumColor.gray[800]),
-                                            ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                            Text(
-                                              '${weduDday}',
-                                              style: TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18,
-                                                  color:
-                                                      PeeroreumColor.gray[800]),
-                                            ),
+                                            weduDday > 0
+                                                ? Text(
+                                                    '- ${weduDday}',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'Pretendard',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 18,
+                                                        color: PeeroreumColor
+                                                            .gray[800]),
+                                                  )
+                                                : Text(
+                                                    '+ ${weduDday.toString().substring(1)}',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'Pretendard',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 18,
+                                                        color: PeeroreumColor
+                                                            .gray[800]),
+                                                  ),
                                           ],
                                         ),
                                       ],
@@ -1387,12 +1388,13 @@ class _DetailWeduState extends State<DetailWedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => 
-                      Report(data: "[같이해냄] 챌린지 이미지 신고\n"
-                                    +"날짜 : ${DateTime.now().toString().substring(0,10)}\n"
-                                    +"같이방 아이디 : $id\n"
-                                    +"업로드한 사람 : $successOneNickname\n",)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Report(
+                          data: "[같이해냄] 챌린지 이미지 신고\n" +
+                              "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
+                              "같이방 아이디 : $id\n" +
+                              "업로드한 사람 : $successOneNickname\n",
+                        )));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),

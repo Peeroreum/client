@@ -565,12 +565,20 @@ class _HomeWeduState extends State<HomeWedu> {
                               color: PeeroreumColor.gray[600],
                             ),
                           ),
-                          Text('D-${inroom_datas[rindex]["dday"]!}',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: PeeroreumColor.gray[600])),
+                          inroom_datas[rindex]["dday"] > 0
+                              ? Text('D-${inroom_datas[rindex]["dday"]!}',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600]))
+                              : Text(
+                                  'D+${inroom_datas[rindex]["dday"].toString().substring(1)}',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
                         ],
                       ),
                       SizedBox(
@@ -912,12 +920,20 @@ class _HomeWeduState extends State<HomeWedu> {
                                   color: PeeroreumColor.gray[600],
                                 ),
                               ),
-                              Text('D-${datas[index]["dday"]!}',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: PeeroreumColor.gray[600])),
+                              datas[index]["dday"] > 0
+                                  ? Text('D-${datas[index]["dday"]!}',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: PeeroreumColor.gray[600]))
+                                  : Text(
+                                      'D+${datas[index]["dday"].toString().substring(1)}',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: PeeroreumColor.gray[600])),
                             ],
                           )
                         ]),
@@ -1077,12 +1093,20 @@ class _HomeWeduState extends State<HomeWedu> {
                                   color: PeeroreumColor.gray[600],
                                 ),
                               ),
-                              Text('D-${datas[index]["dday"]!}',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: PeeroreumColor.gray[600])),
+                              datas[index]["dday"] > 0
+                                  ? Text('D-${datas[index]["dday"]!}',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: PeeroreumColor.gray[600]))
+                                  : Text(
+                                      'D+${datas[index]["dday"].toString().substring(1)}',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: PeeroreumColor.gray[600])),
                             ],
                           )
                         ],
