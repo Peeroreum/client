@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/data/Onboarding_check.dart';
@@ -85,7 +86,7 @@ class PeeroreumApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       builder: (context, child) {
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
@@ -105,23 +106,77 @@ class PeeroreumApp extends StatelessWidget {
           ? OnBoarding()
           : (isLoggedIn ? bottomNaviBar(firebaseToken, 1) : EmailSignIn()),
       // initialRoute: isLoggedIn? '/home' : '/signIn/email',
-      routes: {
-        '/signIn': (context) => SignIn(),
-        '/signIn/email': (context) => EmailSignIn(),
-        '/signUp/email': (context) => EmailSignUp(),
-        '/home': (context) => bottomNaviBar(firebaseToken, 1),
-        '/wedu': (context) => HomeWedu(),
-        '/wedu/create_invitaion': (context) => CreateInvitation(),
-        'wedu/my': (context) => InWedu(),
-        '/wedu/challenge/ok': (context) => ComplimentList(),
-        '/wedu/challenge/notok': (context) => EncouragementList(),
-        //'/wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
-        //'/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
-        'signUp/onBoarding': (context) => OnBoarding(),
-        'signUp/Complete': (context) => SignUpComplete(),
-        '/report': (context) => Report(data: "상세 data 아직 추가 안 됨",),
-        '/home/iedu': (context) => bottomNaviBar(firebaseToken, 2),
-      },
+      // routes: {
+      //   '/signIn': (context) => SignIn(),
+      //   '/signIn/email': (context) => EmailSignIn(),
+      //   '/signUp/email': (context) => EmailSignUp(),
+      //   '/home': (context) => bottomNaviBar(firebaseToken, 1),
+      //   '/wedu': (context) => HomeWedu(),
+      //   '/wedu/create_invitaion': (context) => CreateInvitation(),
+      //   'wedu/my': (context) => InWedu(),
+      //   '/wedu/challenge/ok': (context) => ComplimentList(),
+      //   '/wedu/challenge/notok': (context) => EncouragementList(),
+      //   //'/wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
+      //   //'/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
+      //   'signUp/onBoarding': (context) => OnBoarding(),
+      //   'signUp/Complete': (context) => SignUpComplete(),
+      //   '/report': (context) => Report(data: "상세 data 아직 추가 안 됨",),
+      //   '/home/iedu': (context) => bottomNaviBar(firebaseToken, 2),
+      // },
+      getPages: [
+    	GetPage(
+        	name: '/signIn',
+            page: () => SignIn(),
+        ),
+        GetPage(
+        	name: '/signIn/email',
+            page: () => EmailSignIn(),
+        ),
+        GetPage(
+        	name: '/signUp/email',
+            page: () => EmailSignUp(),
+        ),
+        GetPage(
+        	name: '/home',
+            page: () => bottomNaviBar(firebaseToken, 1),
+        ),
+        GetPage(
+        	name: '/wedu',
+            page: () => HomeWedu(),
+        ),
+        GetPage(
+        	name: '/wedu/create_invitaion',
+            page: () => CreateInvitation(),
+        ),
+        GetPage(
+        	name: '/wedu/my',
+            page: () => InWedu(),
+        ),
+        GetPage(
+        	name: '/wedu/challenge/ok',
+            page: () => ComplimentList(),
+        ),
+        GetPage(
+        	name: '/wedu/challenge/notok',
+            page: () => EncouragementList(),
+        ),
+        GetPage(
+        	name: '/signUp/onBoarding',
+            page: () => OnBoarding(),
+        ),
+        GetPage(
+        	name: '/signUp/Complete',
+            page: () => SignUpComplete(),
+        ),
+        GetPage(
+        	name: '/report',
+            page: () => Report(data: "상세 data 아직 추가 안 됨",),
+        ),
+        GetPage(
+        	name: '/home/iedu',
+            page: () => bottomNaviBar(firebaseToken, 2),
+        ),
+    	],
       debugShowCheckedModeBanner: false,
     );
   }
