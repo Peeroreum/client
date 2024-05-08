@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
@@ -151,7 +152,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (am_i) {
         await storage.write(key: 'nickname', value: nickname);
       }
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
+      Get.back();
       Fluttertoast.showToast(msg: "닉네임이 성공적으로 변경되었습니다.");
     } else {
       print("닉네임변경 에러${change_my_nickname.statusCode}");
@@ -222,12 +224,17 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (nickname_controller.text == nickname) {
         Fluttertoast.showToast(msg: "자신은 영원한 친구입니다.");
       } else {
-        Navigator.of(context).pop();
-        Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (context) =>
-                    MyPageProfile(nickname_controller.text, false)))
-            .then((value) {
+        // Navigator.of(context).pop();
+        Get.back();
+        // Navigator.of(context)
+        //     .push(MaterialPageRoute(
+        //         builder: (context) =>
+        //             MyPageProfile(nickname_controller.text, false)))
+        //     .then((value) {
+        //   setState(() {});
+        //   nickname_controller.clear();
+        // });
+        Get.to(MyPageProfile(nickname_controller.text, false))?.then((value) {
           setState(() {});
           nickname_controller.clear();
         });
@@ -288,7 +295,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
       ),
       title: Text(
@@ -427,7 +435,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     if (_image1 != null) {
                       setState(() {
                         backgroundImageAPI(_image1);
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
+                        Get.back();
                       });
                     }
                   });
@@ -559,7 +568,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         Expanded(
                           child: TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              // Navigator.of(context).pop();
+                              Get.back();
                             },
                             style: TextButton.styleFrom(
                               backgroundColor:
@@ -588,8 +598,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               if (_image != null) {
                                 setState(() {
                                   profileImageAPI(_image);
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
+                                  // Navigator.of(context).pop();
+                                  // Navigator.of(context).pop();
+                                  Get.back();
+                                  Get.back();
                                 });
                               }
                             },
@@ -777,7 +789,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           Expanded(
                             child: TextButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
+                                Get.back();
                               },
                               style: TextButton.styleFrom(
                                 backgroundColor:
@@ -877,9 +890,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => Report(
-                          data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n")));
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) => Report(
+                  //         data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n")));
+                  Get.to(
+                      Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.fromHeight(40),
@@ -962,7 +977,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
+                          Get.back();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -1270,8 +1286,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MyPageProfileFriend(nickname)));
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (context) => MyPageProfileFriend(nickname)));
+            Get.to(MyPageProfileFriend(nickname));
           },
           child: Container(
             width: 87,
@@ -1436,8 +1453,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
             GestureDetector(
               onTap: () {
                 if (am_i == true) {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => InWedu()));
+                  // Navigator.of(context)
+                  //     .push(MaterialPageRoute(builder: (context) => InWedu()));
+                  Get.to(InWedu());
                 }
               },
               child: Text(
@@ -1601,9 +1619,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
           ),
           onTap: () {
             am_i
-                ? Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        DetailWedu(inroom_datas[rindex]["id"])))
+                // ? Navigator.of(context).push(MaterialPageRoute(
+                //     builder: (context) =>
+                //         DetailWedu(inroom_datas[rindex]["id"])))
+                ? Get.to(DetailWedu(inroom_datas[rindex]["id"]))
                 : null;
           },
         );

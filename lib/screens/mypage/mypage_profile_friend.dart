@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:http/http.dart' as http;
@@ -69,7 +70,8 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
       ),
       title: Text(
@@ -157,9 +159,10 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                 if (mynickname == myfriends[index]["nickname"]) {
                   am_i = true;
                 }
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        MyPageProfile(myfriends[index]["nickname"], am_i)));
+                // Navigator.of(context).push(MaterialPageRoute(
+                //     builder: (context) =>
+                //         MyPageProfile(myfriends[index]["nickname"], am_i)));
+                Get.to(MyPageProfile(myfriends[index]["nickname"], am_i));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),

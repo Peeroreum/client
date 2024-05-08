@@ -52,7 +52,12 @@ class _MyPageNotificationState extends State<MyPageNotification> {
   }
 
   setNotificationSetting() {
-    List<String> setTypes = [_allChecked.toString(), _weduChecked.toString(), _iduChecked.toString(), _rankChecked.toString()];
+    List<String> setTypes = [
+      _allChecked.toString(),
+      _weduChecked.toString(),
+      _iduChecked.toString(),
+      _rankChecked.toString()
+    ];
     NotificationSetting.setNotificationType(setTypes);
   }
 
@@ -73,7 +78,8 @@ class _MyPageNotificationState extends State<MyPageNotification> {
       leading: IconButton(
         onPressed: () {
           setNotificationSetting();
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',

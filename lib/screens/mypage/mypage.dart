@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, non_constant_identifier_names
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
@@ -130,8 +131,9 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MyPageProfile(nickname, true)));
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (context) => MyPageProfile(nickname, true)));
+            Get.to(MyPageProfile(nickname, true));
           },
           // style: ElevatedButton.styleFrom(
           //   minimumSize: Size.fromHeight(56),
@@ -248,8 +250,9 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => InWedu()))
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => InWedu()))
+            Get.to(InWedu())
           },
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
@@ -277,8 +280,9 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => InIedu()))
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => InIedu()))
+            Get.to(InIedu())
           },
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
@@ -306,8 +310,9 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => Scrap()))
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => Scrap()))
+            Get.to(Scrap())
           },
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
@@ -343,8 +348,9 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => MyPageNotification()))
+            // Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => MyPageNotification()))
+            Get.to(MyPageNotification())
           },
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
@@ -372,8 +378,9 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
+            Get.to(MyPageAccount())
           },
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
@@ -431,8 +438,9 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
+            Get.to(MyPageVersion())
           },
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
@@ -538,7 +546,8 @@ class _MyPageState extends State<MyPage> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
+                          Get.back();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -563,8 +572,9 @@ class _MyPageState extends State<MyPage> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/signIn/email', (route) => false);
+                          // Navigator.pushNamedAndRemoveUntil(
+                          //     context, '/signIn/email', (route) => false);
+                          Get.offAllNamed('/signIn/email');
                           FlutterSecureStorage().deleteAll();
                         },
                         style: TextButton.styleFrom(
