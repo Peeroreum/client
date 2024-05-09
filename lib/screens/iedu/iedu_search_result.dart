@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/data/IeduRead.dart';
@@ -165,7 +166,6 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
   Widget build(BuildContext context) {
     final TextEditingController textEditingController = TextEditingController();
     textEditingController.text = keyword;
-    //keyword = textEditingController.text;
 
     return GestureDetector(
       onTap: () {
@@ -187,7 +187,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   color: PeeroreumColor.gray[800],
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop(_searchHistory);
+                  Get.back(result: _searchHistory);
                 },
               ),
               titleSpacing: 0,
@@ -196,7 +196,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                 child: SearchBar(
                   controller: textEditingController,
                   onTap: () {
-                    Navigator.of(context).pop(_searchHistory);
+                    Get.back(result: _searchHistory);
                   },
                   backgroundColor:
                       MaterialStateProperty.all(PeeroreumColor.gray[100]),
@@ -320,10 +320,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                     height: 32,
                                   ),
                                   GestureDetector(
-                                    onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                        return CreateIedu();
-                                      }));
+                                    onTap: () {
+                                      Get.to(() => CreateIedu());
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
@@ -580,9 +578,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   Read.saveRead(isReadList);
                 }
               });
-              await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DetailIedu(
-                      datas[index]['id'], datas[index]['selected'])));
+              await Get.to(() => DetailIedu(
+                  datas[index]['id'], datas[index]['selected']));
             },
             child: Container(
               width: MediaQuery.of(context).size.width - 40,
@@ -819,7 +816,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           detailSubject = index;
                           currentPage = 0;
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                         fetchDatas();
                       },
                       child: Container(
@@ -896,13 +893,12 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             _grade = checkGrade;
                           } else {
                             _grade = index;
-                            //_subject = null;
                             _detailSubject = null;
                           }
                           currentPage = 0;
                           focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                         fetchDatas();
                       },
                       child: Container(
@@ -981,7 +977,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           currentPage = 0;
                           focusColor['subject'] = PeeroreumColor.gray[200]!;
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                         fetchDatas();
                       },
                       child: Container(
