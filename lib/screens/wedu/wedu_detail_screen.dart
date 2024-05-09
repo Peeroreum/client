@@ -744,13 +744,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     return GestureDetector(
                       onTap: () {
                         int selectedIndex = challengeImage.indexOf(i);
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         ImageDetail(imageList: challengeImage, initialPage: selectedIndex,),
-                                //   ));
-                                  Get.to(ImageDetail(imageList: challengeImage, initialPage: selectedIndex,));
+                        Get.to(ImageDetail(imageList: challengeImage, initialPage: selectedIndex,));
                       },
                       child: Container(
                         width: double.maxFinite,
@@ -947,9 +941,6 @@ class _DetailWeduState extends State<DetailWedu> {
                                   color: PeeroreumColor.gray[500],
                                 ),
                                 onTap: () {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) => DetailWeduCalendar(
-                                  //         id, weduTitle.toString())));
                                   Get.to(DetailWeduCalendar(id, weduTitle.toString()));
                                 },
                               ),
@@ -1174,11 +1165,6 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Navigator.push(context, MaterialPageRoute(
-                    //   builder: (context) {
-                    //     return ComplimentCheckList(successList, id);
-                    //   },
-                    // ));
                     Get.to(ComplimentCheckList(successList, id));
                   },
                   child: Text(
@@ -1224,11 +1210,6 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Navigator.push(context, MaterialPageRoute(
-                    //   builder: (context) {
-                    //     return EncouragementCheckList(notSuccessList, id);
-                    //   },
-                    // ));
                     Get.to(EncouragementCheckList(notSuccessList, id));
                   },
                   child: Text(
@@ -1280,20 +1261,6 @@ class _DetailWeduState extends State<DetailWedu> {
                     ),
                     TextButton(
                       onPressed: () {
-                        //wedu_change(context);
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //     builder: (context) => ModifyWedu(
-                        //         id,
-                        //         weduTitle,
-                        //         weduImage,
-                        //         weduDday,
-                        //         weduSubject,
-                        //         weduGrade,
-                        //         weduAttendingPeopleNum,
-                        //         weduMaxPeopleNum,
-                        //         weduHashTags,
-                        //         weduLocked,
-                        //         weduPassword)));
                                 Get.to(ModifyWedu(
                                 id,
                                 weduTitle,
@@ -1413,13 +1380,6 @@ class _DetailWeduState extends State<DetailWedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (context) => Report(
-                //           data: "[같이해냄] 챌린지 이미지 신고\n" +
-                //               "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
-                //               "같이방 아이디 : $id\n" +
-                //               "업로드한 사람 : $successOneNickname\n",
-                //         )));
                   Get.to(Report(
                     data: "[같이해냄] 챌린지 이미지 신고\n" +
                         "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
@@ -1531,9 +1491,6 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          deleteWedu();
-                          // Navigator.pushNamedAndRemoveUntil(
-                          //     context, '/home', (route) => false);
                           Get.offAll('/home');
                         },
                         style: TextButton.styleFrom(
@@ -1649,8 +1606,6 @@ class _DetailWeduState extends State<DetailWedu> {
                       child: TextButton(
                         onPressed: () {
                           outWedu();
-                          // Navigator.pushNamedAndRemoveUntil(
-                          //     context, '/home', (route) => false);
                           Get.offAll('/home');
                         },
                         style: TextButton.styleFrom(
