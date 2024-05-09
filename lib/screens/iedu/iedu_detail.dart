@@ -6,17 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
-import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/report.dart';
+
+import 'iedu_home.dart';
 
 class DetailIedu extends StatefulWidget {
   final int id;
@@ -131,15 +133,7 @@ class _DetailIeduState extends State<DetailIedu> {
       commentsNum = questionDatas['comments'];
       print(questionImage);
     } else if(inIeduQuestionResult.statusCode == 404){
-      // profileImage = null;
-      // grade = null;
-      // name = "(삭제)";
-      // title = "작성자에 의해 삭제된 질문입니다";
-      // contents = "(삭제)";
-      // questionImage = [];
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/home/iedu', (route) => false);
-      //Fluttertoast.showToast(msg: "존재하지 않는 질문입니다.");
+      Get.offAllNamed('/home/iedu');
       print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
     }
     else{
@@ -282,8 +276,7 @@ class _DetailIeduState extends State<DetailIedu> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-         // Navigator.pushNamedAndRemoveUntil(context, '/home/iedu', (route) => false);
-         Navigator.pop(context);
+          Get.back();
         },
       ),
       actions: [
@@ -305,9 +298,6 @@ class _DetailIeduState extends State<DetailIedu> {
                           color: PeeroreumColor.black),
                 ),
                 onTap: () {
-                  // setState(() {
-                  //   isBookmarked = !isBookmarked;
-                  // });
                   print(isBookmarked);
                   postBookmark();
                 },
@@ -378,9 +368,7 @@ class _DetailIeduState extends State<DetailIedu> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          MyPageProfile(name, nickname == name)));
+                                  Get.to(() => MyPageProfile(name, nickname == name));
                                 },
                               child: Container(
                               width: 28,
@@ -484,12 +472,7 @@ class _DetailIeduState extends State<DetailIedu> {
                             return GestureDetector(
                               onTap: () {
                                 int selectedIndex = questionImage.indexOf(i);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ImageDetail(imageList: questionImage, initialPage: selectedIndex,),
-                                  ));
+                                Get.to(() => ImageDetail(imageList: questionImage, initialPage: selectedIndex));
                               },
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 16),
@@ -544,14 +527,6 @@ class _DetailIeduState extends State<DetailIedu> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            // setState(() {
-                            //   if (isLiked) {
-                            //     likesNum -= 1;
-                            //   } else {
-                            //     likesNum += 1;
-                            //   }
-                            //   isLiked = !isLiked;
-                            // });
                             postQLike();
                             setState(() {
                               
@@ -767,7 +742,6 @@ class _DetailIeduState extends State<DetailIedu> {
                                       focusNode: _focusNode,
                                       controller: _textController,
                                       style: TextStyle(
-                                        //height: 1.0,
                                         fontFamily: 'Pretendard',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400
@@ -784,7 +758,6 @@ class _DetailIeduState extends State<DetailIedu> {
                                           fontFamily: 'Pretendard',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
-                                          //height: 24/14,
                                         )
                                       ),
                                       onChanged: (value) {
@@ -858,9 +831,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     GestureDetector(
                       onTap: () async{
                         if(_image == null){
-                          final dynamic whiteboardImage = await Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return WhiteboardIedu();
-                          }));
+                          final dynamic whiteboardImage = await Get.to(() => WhiteboardIedu());
                           setState(() {
                             _image = whiteboardImage;
                             isSubmittable = true;
@@ -943,7 +914,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         child: TextButton(
                           onPressed: () {
                             takeFromCamera();
-                            Navigator.pop(context);
+                            Get.back();
                           },
                           child: Text(
                             '카메라',
@@ -971,7 +942,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         child: TextButton(
                           onPressed: () {
                             takeFromGallery();
-                            Navigator.pop(context);
+                            Get.back();
                           },
                           child: Text(
                             '갤러리',
@@ -1042,13 +1013,10 @@ class _DetailIeduState extends State<DetailIedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                //Fluttertoast.showToast(msg: '준비 중입니다.');
-                Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => 
-                      Report(data: "[내가해냄] 내가 해냄 질문 신고\n"
-                                    +"날짜 : $date\n"
-                                    +"질문 아이디 : $id\n"
-                                    +"업로드한 사람 : $name\n",)));
+                Get.to(() => Report(data: "[내가해냄] 내가 해냄 질문 신고\n"
+                    +"날짜 : $date\n"
+                    +"질문 아이디 : $id\n"
+                    +"업로드한 사람 : $name\n",));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -1109,11 +1077,12 @@ class _DetailIeduState extends State<DetailIedu> {
                       child: TextButton(
                         onPressed: () {
                           int count = 0;
-                          Navigator.of(context).popUntil((route) {
-                            // pop할 경로의 개수를 count 변수를 사용하여 관리
-                            bool shouldPop = count == 2;
+                          Get.until((route) {
+                            if (count >= 2) {
+                              return true;
+                            }
                             count++;
-                            return shouldPop;
+                            return false;
                           });
                         },
                         style: TextButton.styleFrom(
@@ -1140,7 +1109,7 @@ class _DetailIeduState extends State<DetailIedu> {
                       child: TextButton(
                         onPressed: () {
                           deleteQuestion();
-                           Navigator.pushNamedAndRemoveUntil(context, '/home/iedu', (route) => false);
+                          Get.offAllNamed('/home/iedu');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
@@ -1171,8 +1140,8 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   Future<void> postAnswer() async {
-    var dio = Dio();
-    var formData = FormData();
+    var dio1 = dio.Dio();
+    var formData = dio.FormData();
 
     var IeduAnswerMap = <String, dynamic>{
       'content': _textController.text,
@@ -1180,17 +1149,17 @@ class _DetailIeduState extends State<DetailIedu> {
       'parentAnswerId': '$selectedParent'
     };
 
-    formData = FormData.fromMap(IeduAnswerMap);
+    formData = dio.FormData.fromMap(IeduAnswerMap);
 
     if(_image != null){
-      var file = await MultipartFile.fromFile(_image!.path);
+      var file = await dio.MultipartFile.fromFile(_image!.path);
       formData.files.add(MapEntry('files', file));
     }
 
-    dio.options.contentType = 'multipart/form-data';
-    dio.options.headers = {'Authorization': 'Bearer $token'};
+    dio1.options.contentType = 'multipart/form-data';
+    dio1.options.headers = {'Authorization': 'Bearer $token'};
 
-    var response = await dio.post('${API.hostConnect}/answer', data: formData);
+    var response = await dio1.post('${API.hostConnect}/answer', data: formData);
 
     if (response.statusCode == 200) {
       fetchDatas();
@@ -1335,12 +1304,11 @@ class _DetailIeduState extends State<DetailIedu> {
       if (response.statusCode == 200) {
           print('질문 삭제 요청이 성공했습니다.');
           print('응답: ${response.body}');
-
-          fetchDatas();
       } else if(response.statusCode == 404){
         Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
         print(response.body);
       }else {
+        Fluttertoast.showToast(msg: '채택 완료 질문은 삭제할 수 없습니다.');
         print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
       }
     }).catchError((error) {
@@ -1479,9 +1447,7 @@ class MakeComment extends StatefulWidget {
                                 GestureDetector(
                                   onTap: () {
                                     if(widget.isDeleted == false){
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            MyPageProfile(widget.name, nickname == widget.name)));
+                                      Get.to(() => MyPageProfile(widget.name, nickname == widget.name));
                                     }
                                   },
                                   child: Container(
@@ -1636,12 +1602,7 @@ class MakeComment extends StatefulWidget {
                   if(widget.commentImage != null && widget.commentImage!.isNotEmpty)
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ImageDetail(imageList: widget.commentImage!),
-                          ));
+                        Get.to(() => ImageDetail(imageList: widget.commentImage!));
                       },
                       child: Container(
                         width: widget.hasParent == -1
@@ -1804,13 +1765,10 @@ class MakeComment extends StatefulWidget {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                //Fluttertoast.showToast(msg: '준비 중입니다.');
-                Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => 
-                      Report(data: "[내가해냄] 내가 해냄 답변 신고\n"
-                                    +"날짜 : ${widget.createdTime}\n"
-                                    +"답변 아이디 : ${widget.id}\n"
-                                    +"업로드한 사람 : ${widget.name}\n",)));
+                Get.to(() => Report(data: "[내가해냄] 내가 해냄 답변 신고\n"
+                    +"날짜 : ${widget.createdTime}\n"
+                    +"답변 아이디 : ${widget.id}\n"
+                    +"업로드한 사람 : ${widget.name}\n",));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -1871,11 +1829,12 @@ class MakeComment extends StatefulWidget {
                       child: TextButton(
                         onPressed: () {
                           int count = 0;
-                          Navigator.of(context).popUntil((route) {
-                            // pop할 경로의 개수를 count 변수를 사용하여 관리
-                            bool shouldPop = count == 2;
+                          Get.until((route) {
+                            if (count >= 2) {
+                              return true;
+                            }
                             count++;
-                            return shouldPop;
+                            return false;
                           });
                         },
                         style: TextButton.styleFrom(
@@ -1904,11 +1863,12 @@ class MakeComment extends StatefulWidget {
                           deleteAnswer(commentID);
                           widget.updateData();
                           int count = 0;
-                          Navigator.of(context).popUntil((route) {
-                            // pop할 경로의 개수를 count 변수를 사용하여 관리
-                            bool shouldPop = count == 2;
+                          Get.until((route) {
+                            if (count >= 2) {
+                              return true;
+                            }
                             count++;
-                            return shouldPop;
+                            return false;
                           });
                         },
                         style: TextButton.styleFrom(
@@ -2099,7 +2059,7 @@ class MakeComment extends StatefulWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context, false);
+                          Get.back(result: false);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -2124,7 +2084,7 @@ class MakeComment extends StatefulWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context, true);
+                          Get.back(result: true);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],

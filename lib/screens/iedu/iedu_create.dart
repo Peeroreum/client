@@ -2,7 +2,8 @@
 
 import 'dart:io';
 
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,7 +14,10 @@ import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
+
+import 'iedu_home.dart';
 
 class CreateIedu extends StatefulWidget {
   const CreateIedu({super.key});
@@ -27,13 +31,6 @@ class _CreateIeduState extends State<CreateIedu> {
   final subjects = Subject.subject;
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
-  // List<String> Subjects = ['전체'];
-  // Map<String, List<String>> DetailMiddleSubjects = {
-  //   "전체": ["전체"]
-  // };
-  // Map<String, List<String>> DetailHighSubjects = {
-  //   "전체": ["전체"]
-  // };
   List<String> DetailSubjects = [];
   Color _nextColor = PeeroreumColor.gray[500]!;
   String titleCheck = "";
@@ -65,9 +62,6 @@ class _CreateIeduState extends State<CreateIedu> {
     // TODO: implement initState
     super.initState();
     initFuture = fetchStatus();
-    // Subjects.addAll(subjects);
-    // DetailMiddleSubjects.addAll(middleSubjects);
-    // DetailHighSubjects.addAll(highSubjects);
   }
 
   Future<void> fetchStatus() async {
@@ -128,7 +122,7 @@ class _CreateIeduState extends State<CreateIedu> {
         icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
         onPressed: () async {
           if (await onBackKey()) {
-            Navigator.pop(context);
+            Get.back();
           }
         },
       ),
@@ -217,7 +211,6 @@ class _CreateIeduState extends State<CreateIedu> {
                     focusNode: ContentFocusNode,
                     maxLines: null,
                     minLines: 6,
-                    // minLines: _images.isEmpty ? 20 : 16,
                     style: TextStyle(color: Colors.black),
                     cursorColor: PeeroreumColor.gray[600],
                     decoration: InputDecoration(
@@ -453,7 +446,7 @@ class _CreateIeduState extends State<CreateIedu> {
                           detailSubject = 0;
                           focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -520,19 +513,14 @@ class _CreateIeduState extends State<CreateIedu> {
                         setState(() {
                           _subject = subjects[index];
                           subject = index;
-                          // DetailSubjects = ['전체'];
-                          // List<String> AddDetailSubjects;
                           DetailSubjects = ((index != 0 && _grade! < 3)
                               ? middleSubjects[_subject]
                               : highSubjects[_subject])!;
-                          // if (index != 0) {
-                          //   DetailSubjects.addAll(AddDetailSubjects);
-                          // }
                           _detailSubject = null;
                           detailSubject = 0;
                           focusColor['subject'] = PeeroreumColor.gray[200]!;
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -602,7 +590,7 @@ class _CreateIeduState extends State<CreateIedu> {
                           print(
                               '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -788,12 +776,7 @@ class _CreateIeduState extends State<CreateIedu> {
                 GestureDetector(
                   onTap: () async {
                     if (_images.length < 5) {
-                      final dynamic whiteboardImage =
-                          await Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return WhiteboardIedu();
-                        },
-                      ));
+                      final dynamic whiteboardImage = await Get.to(() => WhiteboardIedu());
                       setState(() {
                         if (whiteboardImage != null) {
                           _images.add(whiteboardImage);
@@ -840,17 +823,10 @@ class _CreateIeduState extends State<CreateIedu> {
         }
       });
     }
-
-    // postImages();
   }
 
-  // fetchStatus() async {
-  //   token = await FlutterSecureStorage().read(key: "accessToken");
-  //   grade = await FlutterSecureStorage().read(key: "grade");
-  // }
 
   Future<void> postIedu() async {
-    // await fetchStatus();
     var IeduMap = <String, dynamic>{
       'title': titleController.text,
       'content': contentController.text,
@@ -859,25 +835,24 @@ class _CreateIeduState extends State<CreateIedu> {
       'grade': _grade! + 1,
     };
 
-    var dio = Dio();
-    var formData = FormData();
+    var dio1 = dio.Dio();
+    var formData = dio.FormData();
 
-    dio.options.contentType = 'multipart/form-data';
-    dio.options.headers = {'Authorization': 'Bearer $token'};
-    formData = FormData.fromMap(IeduMap);
+    dio1.options.contentType = 'multipart/form-data';
+    dio1.options.headers = {'Authorization': 'Bearer $token'};
+    formData = dio.FormData.fromMap(IeduMap);
 
     for (var image in _images) {
-      var file = await MultipartFile.fromFile(image.path);
+      var file = await dio.MultipartFile.fromFile(image.path);
       formData.files.add(MapEntry('files', file));
     }
 
     var response =
-        await dio.post('${API.hostConnect}/question', data: formData);
+        await dio1.post('${API.hostConnect}/question', data: formData);
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: '질문 작성 성공');
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/home/iedu', (route) => false);
+      Get.offAllNamed('/home/iedu');
     } else {
       Fluttertoast.showToast(msg: '잠시 후에 다시 시작해 주세요.');
     }
@@ -931,7 +906,7 @@ class _CreateIeduState extends State<CreateIedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context, false);
+                          Get.back(result: false);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -956,7 +931,7 @@ class _CreateIeduState extends State<CreateIedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context, true);
+                          Get.back(result: true);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],

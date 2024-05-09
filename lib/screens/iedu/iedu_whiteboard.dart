@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_drawing_board/paint_contents.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -125,10 +125,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
         onPressed: () async {
           if (undo > 0) {
             if (await onBackKey()) {
-              Navigator.pop(context);
+              Get.back();
             }
           } else {
-            Navigator.pop(context);
+            Get.back();
           }
         },
       ),
@@ -217,7 +217,6 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
       children: [
         Container(
           color: Colors.transparent,
-          // padding: EdgeInsets.fromLTRB(34, 8, 34, 24),
           padding: EdgeInsets.only(bottom: 24),
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
@@ -879,7 +878,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                         children: [
                                           GestureDetector(
                                             onTap: () {
-                                              Navigator.pop(context);
+                                              Get.back();
                                             },
                                             child: Text(
                                               '취소',
@@ -901,7 +900,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                                     color: _straightColor
                                                         .withOpacity(_opacity));
                                               });
-                                              Navigator.pop(context);
+                                              Get.back();
                                             },
                                             child: Text(
                                               '확인',
@@ -1046,7 +1045,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                         children: [
                                           GestureDetector(
                                             onTap: () {
-                                              Navigator.pop(context);
+                                              Get.back();
                                             },
                                             child: Text(
                                               '취소',
@@ -1068,7 +1067,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                                     color: _highlighterColor
                                                         .withOpacity(_opacity));
                                               });
-                                              Navigator.pop(context);
+                                              Get.back();
                                             },
                                             child: Text(
                                               '확인',
@@ -1149,7 +1148,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
     whiteboardImage = (XFile(file.path));
 
     if (mounted) {
-      Navigator.pop(context, whiteboardImage);
+      Get.back(result: whiteboardImage);
     }
   }
 
@@ -1201,7 +1200,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context, false);
+                          Get.back(result: false);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상

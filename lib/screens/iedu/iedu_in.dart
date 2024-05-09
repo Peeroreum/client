@@ -3,12 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
-import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -127,7 +126,7 @@ class _InIeduState extends State<InIedu> {
       elevation: 0,
       leading: IconButton(
         onPressed: () {
-          Navigator.of(context).pop();
+          Get.back();
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
@@ -290,9 +289,8 @@ class _InIeduState extends State<InIedu> {
               if (index < question.length) {
                 return GestureDetector(
                   onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DetailIedu(question[index]['id'],
-                            question[index]['selected'])));
+                    await Get.to(() => DetailIedu(question[index]['id'],
+                        question[index]['selected']));
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
@@ -448,9 +446,8 @@ class _InIeduState extends State<InIedu> {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DetailIedu(
-                            answer[index]['id'], answer[index]['selected'])));
+                    await Get.to(() => DetailIedu(question[index]['id'],
+                        question[index]['selected']));
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,

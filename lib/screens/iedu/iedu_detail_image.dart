@@ -67,7 +67,7 @@ class _ImageDetailIeduState extends State<ImageDetailIedu> {
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: Container(
                     width: 18,

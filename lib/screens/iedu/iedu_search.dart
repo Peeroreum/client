@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/data/IeduSearchHistory.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_search_result.dart';
@@ -49,15 +50,13 @@ class _SearchIeduState extends State<SearchIedu> {
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        // leadingWidth: 36,
         leading: IconButton(
-          // iconSize: 24,
           icon: SvgPicture.asset(
             'assets/icons/arrow-left.svg',
             color: PeeroreumColor.gray[800],
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            Get.back();
           },
         ),
         titleSpacing: 0,
@@ -145,11 +144,6 @@ class _SearchIeduState extends State<SearchIedu> {
       backgroundColor: PeeroreumColor.white,
       body: Column(
         children: [
-          // realtimeSearch(),
-          // Container(
-          //   height: 8,
-          //   color: PeeroreumColor.gray[100],
-          // ),
           Expanded(child: recentSearch())
         ],
       ),
@@ -203,18 +197,7 @@ class _SearchIeduState extends State<SearchIedu> {
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) =>
-                                        SearchResultIedu(_searchHistory[index]
-                                                ['keyword']
-                                            .toString()),
-                                    transitionDuration:
-                                        const Duration(seconds: 0),
-                                    reverseTransitionDuration:
-                                        const Duration(seconds: 0)),
-                              );
+                              Get.to(() => SearchResultIedu(_searchHistory[index]['keyword'].toString()));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -292,13 +275,7 @@ class _SearchIeduState extends State<SearchIedu> {
   }
 
   Future<void> goToSearchResult(String text) async {
-    var result = await Navigator.push(
-      context,
-      PageRouteBuilder(
-          pageBuilder: (_, __, ___) => SearchResultIedu(_searchController.text),
-          transitionDuration: const Duration(seconds: 0),
-          reverseTransitionDuration: const Duration(seconds: 0)),
-    );
+    var result = await Get.to(() => SearchResultIedu(_searchController.text));
 
     if (result != null) {
       _loadSearchHistory();

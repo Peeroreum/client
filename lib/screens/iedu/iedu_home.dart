@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/IeduRead.dart';
 import 'package:peeroreum_client/data/Subject.dart';
@@ -226,8 +227,7 @@ class _HomeIeduState extends State<HomeIedu> {
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => SearchIedu()));
+                  Get.to(() => SearchIedu());
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -310,9 +310,7 @@ class _HomeIeduState extends State<HomeIedu> {
             child: FloatingActionButton(
               shape: CircleBorder(),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return CreateIedu();
-                }));
+                Get.to(() => CreateIedu());
               },
               elevation: 5,
               backgroundColor: PeeroreumColor.primaryPuple[400],
@@ -542,7 +540,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
                         fetchIeduData();
-                        Navigator.of(context).pop();
+                        Get.back();
                         if (datas.isNotEmpty) {
                           _scrollController.animateTo(0,
                               duration: Duration(milliseconds: 750),
@@ -627,7 +625,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           focusColor['subject'] = PeeroreumColor.gray[200]!;
                           fetchIeduData();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                         if (datas.isNotEmpty) {
                           _scrollController.animateTo(0,
                               duration: Duration(milliseconds: 750),
@@ -703,7 +701,7 @@ class _HomeIeduState extends State<HomeIedu> {
                               '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
                           fetchIeduData();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                         if (datas.isNotEmpty) {
                           _scrollController.animateTo(0,
                               duration: Duration(milliseconds: 750),
@@ -751,9 +749,7 @@ class _HomeIeduState extends State<HomeIedu> {
                   Read.saveRead(isReadList);
                 }
               });
-              await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DetailIedu(
-                      datas[index]['id'], datas[index]['selected'])));
+              await Get.to(() => DetailIedu(datas[index]['id'], datas[index]['selected']));
               fetchIeduData();
             },
             child: Container(
