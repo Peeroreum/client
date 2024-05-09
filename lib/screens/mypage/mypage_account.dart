@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_acount_ps.dart';
 
@@ -42,7 +43,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
       elevation: 0.2,
       leading: IconButton(
         onPressed: () {
-          Navigator.of(context).pop();
+          Get.back();
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
@@ -134,8 +135,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MyPageAccountPS()));
+                          Get.to(MyPageAccountPS());
                         },
                         // style: TextButton.styleFrom(minimumSize: Size(24, 24)),
                         child: Text(
@@ -165,8 +165,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     fontFamily: 'Pretendard',
                     fontWeight: FontWeight.w400,
                     fontSize: 14.0,
-                    color: PeeroreumColor.gray[500]
-                ),
+                    color: PeeroreumColor.gray[500]),
               ),
             ),
           ),
@@ -212,7 +211,9 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(height: 4,),
+                SizedBox(
+                  height: 4,
+                ),
                 Text(
                   "현재까지의 모든 활동 데이터가 삭제됩니다.",
                   textAlign: TextAlign.center,
@@ -232,7 +233,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Get.back();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -257,12 +258,12 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(context, '/signIn/email', (route) => false);
+                          Get.offAllNamed('/signIn/email');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
-                          padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

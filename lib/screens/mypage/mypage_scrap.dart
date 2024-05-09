@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -108,7 +109,7 @@ class _ScrapState extends State<Scrap> {
       elevation: 0,
       leading: IconButton(
         onPressed: () {
-          Navigator.of(context).pop();
+          Get.back();
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
@@ -271,9 +272,8 @@ class _ScrapState extends State<Scrap> {
               if (index < QnA.length) {
                 return GestureDetector(
                   onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DetailIedu(
-                            QnA[index]['id'], QnA[index]['selected'])));
+                    await Get.to(
+                        DetailIedu(QnA[index]['id'], QnA[index]['selected']));
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
@@ -394,9 +394,10 @@ class _ScrapState extends State<Scrap> {
                               ),
                               Flexible(
                                 child: B4_14px_M(
-                                    text:
-                                        '${QnA[index]["memberProfileDto"]["nickname"]}',
-                                    overflow: TextOverflow.ellipsis,),
+                                  text:
+                                      '${QnA[index]["memberProfileDto"]["nickname"]}',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                               SizedBox(
                                 width: 8,

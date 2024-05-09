@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
@@ -77,7 +78,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
       elevation: 0.2,
       leading: IconButton(
         onPressed: () {
-          Navigator.of(context).pop();
+          Get.back();
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
@@ -504,7 +505,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
         });
     if (result.statusCode == 200) {
       Fluttertoast.showToast(msg: "비밀번호가 성공적으로 변경되었습니다.");
-      Navigator.of(context).pop();
+      Get.back();
     } else {
       print(result.statusCode);
       Fluttertoast.showToast(msg: "비밀번호 변경 실패");
