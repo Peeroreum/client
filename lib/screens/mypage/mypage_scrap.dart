@@ -109,7 +109,6 @@ class _ScrapState extends State<Scrap> {
       elevation: 0,
       leading: IconButton(
         onPressed: () {
-          // Navigator.of(context).pop();
           Get.back();
         },
         icon: SvgPicture.asset(
@@ -273,9 +272,6 @@ class _ScrapState extends State<Scrap> {
               if (index < QnA.length) {
                 return GestureDetector(
                   onTap: () async {
-                    // await Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) => DetailIedu(
-                    //         QnA[index]['id'], QnA[index]['selected'])));
                     await Get.to(
                         DetailIedu(QnA[index]['id'], QnA[index]['selected']));
                   },

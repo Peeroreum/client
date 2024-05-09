@@ -78,7 +78,6 @@ class _MyPageNotificationState extends State<MyPageNotification> {
       leading: IconButton(
         onPressed: () {
           setNotificationSetting();
-          // Navigator.of(context).pop();
           Get.back();
         },
         icon: SvgPicture.asset(

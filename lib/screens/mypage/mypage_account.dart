@@ -43,7 +43,6 @@ class _MyPageAccountState extends State<MyPageAccount> {
       elevation: 0.2,
       leading: IconButton(
         onPressed: () {
-          // Navigator.of(context).pop();
           Get.back();
         },
         icon: SvgPicture.asset(
@@ -136,8 +135,6 @@ class _MyPageAccountState extends State<MyPageAccount> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) => MyPageAccountPS()));
                           Get.to(MyPageAccountPS());
                         },
                         // style: TextButton.styleFrom(minimumSize: Size(24, 24)),
@@ -236,7 +233,6 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          // Navigator.pop(context);
                           Get.back();
                         },
                         style: TextButton.styleFrom(
@@ -262,8 +258,6 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          // Navigator.pushNamedAndRemoveUntil(
-                          //     context, '/signIn/email', (route) => false);
                           Get.offAllNamed('/signIn/email');
                         },
                         style: TextButton.styleFrom(

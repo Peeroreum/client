@@ -131,8 +131,6 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () {
-            // Navigator.of(context).push(MaterialPageRoute(
-            //     builder: (context) => MyPageProfile(nickname, true)));
             Get.to(MyPageProfile(nickname, true));
           },
           // style: ElevatedButton.styleFrom(
@@ -249,11 +247,7 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => InWedu()))
-            Get.to(InWedu())
-          },
+          onTap: () => {Get.to(InWedu())},
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
           //     padding: EdgeInsets.symmetric(horizontal: 20)),
@@ -279,11 +273,7 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => InIedu()))
-            Get.to(InIedu())
-          },
+          onTap: () => {Get.to(InIedu())},
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
           //     padding: EdgeInsets.symmetric(horizontal: 20)),
@@ -309,11 +299,7 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => Scrap()))
-            Get.to(Scrap())
-          },
+          onTap: () => {Get.to(Scrap())},
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
           //     padding: EdgeInsets.symmetric(horizontal: 20)),
@@ -347,11 +333,7 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {
-            // Navigator.of(context).push(
-            //     MaterialPageRoute(builder: (context) => MyPageNotification()))
-            Get.to(MyPageNotification())
-          },
+          onTap: () => {Get.to(MyPageNotification())},
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
           //     padding: EdgeInsets.symmetric(horizontal: 20)),
@@ -377,11 +359,7 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => MyPageAccount()))
-            Get.to(MyPageAccount())
-          },
+          onTap: () => {Get.to(MyPageAccount())},
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
           //     padding: EdgeInsets.symmetric(horizontal: 20)),
@@ -437,11 +415,7 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => MyPageVersion()))
-            Get.to(MyPageVersion())
-          },
+          onTap: () => {Get.to(MyPageVersion())},
           // style: TextButton.styleFrom(
           //     minimumSize: Size.fromHeight(56),
           //     padding: EdgeInsets.symmetric(horizontal: 20)),
@@ -546,7 +520,6 @@ class _MyPageState extends State<MyPage> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          // Navigator.pop(context);
                           Get.back();
                         },
                         style: TextButton.styleFrom(
@@ -572,8 +545,6 @@ class _MyPageState extends State<MyPage> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          // Navigator.pushNamedAndRemoveUntil(
-                          //     context, '/signIn/email', (route) => false);
                           Get.offAllNamed('/signIn/email');
                           FlutterSecureStorage().deleteAll();
                         },

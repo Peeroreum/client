@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -91,13 +91,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   profileImageAPI(var _image) async {
-    var image = await MultipartFile.fromFile(_image!.path);
+    var image = await dio.MultipartFile.fromFile(_image!.path);
     var imageMap = <String, dynamic>{'profileImage': image};
-    var dio = Dio();
-    dio.options.contentType = 'multipart/form-data';
-    dio.options.headers = {'Authorization': 'Bearer $token'};
-    FormData imageData = FormData.fromMap(imageMap);
-    var profileChange = await dio
+    var dio1 = dio.Dio();
+    dio1.options.contentType = 'multipart/form-data';
+    dio1.options.headers = {'Authorization': 'Bearer $token'};
+    dio.FormData imageData = dio.FormData.fromMap(imageMap);
+    var profileChange = await dio1
         .put('${API.hostConnect}/member/change/profileImage', data: imageData);
     if (profileChange.statusCode == 200) {
       print("프로필이미지 성공 ${profileChange.statusMessage}");
@@ -115,13 +115,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   backgroundImageAPI(var _image1) async {
-    var image1 = await MultipartFile.fromFile(_image1!.path);
+    var image1 = await dio.MultipartFile.fromFile(_image1!.path);
     var imageMap1 = <String, dynamic>{'profileImage': image1};
-    var dio = Dio();
-    dio.options.contentType = 'multipart/form-data';
-    dio.options.headers = {'Authorization': 'Bearer $token'};
-    FormData imageData = FormData.fromMap(imageMap1);
-    var backgroundChange = await dio.put(
+    var dio1 = dio.Dio();
+    dio1.options.contentType = 'multipart/form-data';
+    dio1.options.headers = {'Authorization': 'Bearer $token'};
+    dio.FormData imageData = dio.FormData.fromMap(imageMap1);
+    var backgroundChange = await dio1.put(
         '${API.hostConnect}/member/change/backgroundImage',
         data: imageData);
     if (backgroundChange.statusCode == 200) {
@@ -152,7 +152,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (am_i) {
         await storage.write(key: 'nickname', value: nickname);
       }
-      // Navigator.of(context).pop();
       Get.back();
       Fluttertoast.showToast(msg: "닉네임이 성공적으로 변경되었습니다.");
     } else {
@@ -224,17 +223,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (nickname_controller.text == nickname) {
         Fluttertoast.showToast(msg: "자신은 영원한 친구입니다.");
       } else {
-        // Navigator.of(context).pop();
         Get.back();
-        // Navigator.of(context)
-        //     .push(MaterialPageRoute(
-        //         builder: (context) =>
-        //             MyPageProfile(nickname_controller.text, false)))
-        //     .then((value) {
-        //   setState(() {});
-        //   nickname_controller.clear();
-        // });
-        Get.to(MyPageProfile(nickname_controller.text, false))?.then((value) {
+        Get.to(MyPageProfile(nickname_controller.text, false),
+                preventDuplicates: false)
+            ?.then((value) {
           setState(() {});
           nickname_controller.clear();
         });
@@ -295,7 +287,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          // Navigator.of(context).pop();
           Get.back();
         },
       ),
@@ -435,7 +426,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     if (_image1 != null) {
                       setState(() {
                         backgroundImageAPI(_image1);
-                        // Navigator.of(context).pop();
                         Get.back();
                       });
                     }
@@ -568,7 +558,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         Expanded(
                           child: TextButton(
                             onPressed: () {
-                              // Navigator.of(context).pop();
                               Get.back();
                             },
                             style: TextButton.styleFrom(
@@ -598,8 +587,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               if (_image != null) {
                                 setState(() {
                                   profileImageAPI(_image);
-                                  // Navigator.of(context).pop();
-                                  // Navigator.of(context).pop();
                                   Get.back();
                                   Get.back();
                                 });
@@ -789,7 +776,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           Expanded(
                             child: TextButton(
                               onPressed: () {
-                                // Navigator.pop(context);
                                 Get.back();
                               },
                               style: TextButton.styleFrom(
@@ -890,9 +876,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => Report(
-                  //         data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n")));
                   Get.to(
                       Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
                 },
@@ -977,7 +960,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          // Navigator.pop(context);
                           Get.back();
                         },
                         style: TextButton.styleFrom(
@@ -1286,8 +1268,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
       children: [
         GestureDetector(
           onTap: () {
-            // Navigator.of(context).push(MaterialPageRoute(
-            //     builder: (context) => MyPageProfileFriend(nickname)));
             Get.to(MyPageProfileFriend(nickname));
           },
           child: Container(
@@ -1453,8 +1433,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
             GestureDetector(
               onTap: () {
                 if (am_i == true) {
-                  // Navigator.of(context)
-                  //     .push(MaterialPageRoute(builder: (context) => InWedu()));
                   Get.to(InWedu());
                 }
               },
@@ -1618,12 +1596,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
           onTap: () {
-            am_i
-                // ? Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (context) =>
-                //         DetailWedu(inroom_datas[rindex]["id"])))
-                ? Get.to(DetailWedu(inroom_datas[rindex]["id"]))
-                : null;
+            am_i ? Get.to(DetailWedu(inroom_datas[rindex]["id"])) : null;
           },
         );
       },

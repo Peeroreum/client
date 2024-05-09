@@ -70,7 +70,6 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
           color: PeeroreumColor.gray[800],
         ),
         onPressed: () {
-          // Navigator.of(context).pop();
           Get.back();
         },
       ),
@@ -159,9 +158,6 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                 if (mynickname == myfriends[index]["nickname"]) {
                   am_i = true;
                 }
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (context) =>
-                //         MyPageProfile(myfriends[index]["nickname"], am_i)));
                 Get.to(MyPageProfile(myfriends[index]["nickname"], am_i));
               },
               child: Container(

@@ -32,7 +32,6 @@ class _MyPageVersionState extends State<MyPageVersion> {
       elevation: 0.2,
       leading: IconButton(
         onPressed: () {
-          // Navigator.of(context).pop();
           Get.back();
         },
         icon: SvgPicture.asset(
@@ -85,8 +84,6 @@ class _MyPageVersionState extends State<MyPageVersion> {
               onTap: () {
                 // Clipboard.setData(ClipboardData(text: 'peeroreum.help@gmail.com'));
                 // Fluttertoast.showToast(msg: '클립보드에 복사되었습니다.');
-                // Navigator.of(context)
-                //     .push(MaterialPageRoute(builder: (context) => Inquire()));
                 Get.to(Inquire());
               },
               child: Row(

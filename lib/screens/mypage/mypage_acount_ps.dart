@@ -78,7 +78,6 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
       elevation: 0.2,
       leading: IconButton(
         onPressed: () {
-          // Navigator.of(context).pop();
           Get.back();
         },
         icon: SvgPicture.asset(
@@ -506,7 +505,6 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
         });
     if (result.statusCode == 200) {
       Fluttertoast.showToast(msg: "비밀번호가 성공적으로 변경되었습니다.");
-      // Navigator.of(context).pop();
       Get.back();
     } else {
       print(result.statusCode);
