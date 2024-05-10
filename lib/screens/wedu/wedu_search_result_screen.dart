@@ -241,7 +241,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   ),
                             GestureDetector(
                               onTap: () {
-                                Get.to(CreateWedu());
+                                Get.to(()=>CreateWedu());
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(

@@ -134,7 +134,7 @@ class _EncouragementListState extends State<EncouragementList> {
                   if (mynickname == notSuccessList[index]['nickname']) {
                     am_i = true;
                   }
-                  Get.to(MyPageProfile(notSuccessList[index]['nickname'], am_i));
+                  Get.to(()=>MyPageProfile(notSuccessList[index]['nickname'], am_i));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),

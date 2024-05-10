@@ -132,7 +132,7 @@ class _ComplimentListState extends State<ComplimentList> {
                   if (mynickname == successList[index]['nickname']) {
                     am_i = true;
                   }
-                  Get.to(MyPageProfile(successList[index]['nickname'], am_i));
+                  Get.to(()=>MyPageProfile(successList[index]['nickname'], am_i));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),

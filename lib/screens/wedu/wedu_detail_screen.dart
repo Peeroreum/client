@@ -744,7 +744,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     return GestureDetector(
                       onTap: () {
                         int selectedIndex = challengeImage.indexOf(i);
-                        Get.to(ImageDetail(imageList: challengeImage, initialPage: selectedIndex,));
+                        Get.to(()=>ImageDetail(imageList: challengeImage, initialPage: selectedIndex,));
                       },
                       child: Container(
                         width: double.maxFinite,
@@ -941,7 +941,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                   color: PeeroreumColor.gray[500],
                                 ),
                                 onTap: () {
-                                  Get.to(DetailWeduCalendar(id, weduTitle.toString()));
+                                  Get.to(()=>DetailWeduCalendar(id, weduTitle.toString()));
                                 },
                               ),
                             ),
@@ -1165,7 +1165,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(ComplimentCheckList(successList, id));
+                    Get.to(()=>ComplimentCheckList(successList, id));
                   },
                   child: Text(
                     '전체보기',
@@ -1210,7 +1210,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(EncouragementCheckList(notSuccessList, id));
+                    Get.to(()=>EncouragementCheckList(notSuccessList, id));
                   },
                   child: Text(
                     '전체보기',
@@ -1261,7 +1261,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     ),
                     TextButton(
                       onPressed: () {
-                                Get.to(ModifyWedu(
+                                Get.to(()=>ModifyWedu(
                                 id,
                                 weduTitle,
                                 weduImage,
@@ -1380,7 +1380,7 @@ class _DetailWeduState extends State<DetailWedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                  Get.to(Report(
+                  Get.to(()=>Report(
                     data: "[같이해냄] 챌린지 이미지 신고\n" +
                         "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
                         "같이방 아이디 : $id\n" +

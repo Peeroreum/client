@@ -746,7 +746,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     if (mynickname == notSuccessList[index]['nickname']) {
                       am_i = true;
                     }
-                    Get.to(MyPageProfile(notSuccessList[index]['nickname'], am_i));
+                    Get.to(()=>MyPageProfile(notSuccessList[index]['nickname'], am_i));
                   },
                   child: Container(
                     //padding: EdgeInsets.all(3.5),
@@ -898,7 +898,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                         if (mynickname == successOne["nickname"]) {
                           am_i = true;
                         }
-                        Get.to(MyPageProfile(successOne["nickname"], am_i));
+                        Get.to(()=>MyPageProfile(successOne["nickname"], am_i));
                       },
                       child: Container(
                         width: 48,
