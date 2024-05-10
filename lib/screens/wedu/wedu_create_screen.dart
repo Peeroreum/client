@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as diop;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +12,7 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 
 DateTime date = DateTime.now().add(const Duration(days: 66));
 const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
@@ -143,7 +144,7 @@ class _CreateWeduState extends State<CreateWedu> {
             color: PeeroreumColor.black,
             icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
           title: Text(
@@ -1147,11 +1148,10 @@ class _CreateWeduState extends State<CreateWedu> {
       'hashTags': _tag,
     };
     if (_image != null) {
-      file = await MultipartFile.fromFile(_image!.path);
+      file = await diop.MultipartFile.fromFile(_image!.path);
       weduMap.addAll({"file": file});
     }
-
-    Navigator.pushNamed(context, '/wedu/create_invitaion', arguments: weduMap);
+    Get.toNamed('/wedu/create_invitaion', arguments: weduMap);
   }
 
   Future informChallengeDates() {
@@ -1190,7 +1190,7 @@ class _CreateWeduState extends State<CreateWedu> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pop();
+                            Get.back();
                           },
                           child: SvgPicture.asset(
                             'assets/icons/x.svg',

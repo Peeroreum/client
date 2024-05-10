@@ -61,7 +61,7 @@ class _searchWeduState extends State<searchWedu> {
             color: PeeroreumColor.gray[800],
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            Get.back();
           },
         ),
         titleSpacing: 0,
@@ -273,18 +273,9 @@ class _searchWeduState extends State<searchWedu> {
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) =>
-                                        SearchResultWedu(_searchHistory[index]
+                              Get.to(()=>SearchResultWedu(_searchHistory[index]
                                                 ['keyword']
-                                            .toString()),
-                                    transitionDuration:
-                                        const Duration(seconds: 0),
-                                    reverseTransitionDuration:
-                                        const Duration(seconds: 0)),
-                              );
+                                            .toString()));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -362,14 +353,7 @@ class _searchWeduState extends State<searchWedu> {
   }
 
   Future<void> goToSearchResult(String text) async {
-    var result = await Navigator.push(
-      context,
-      PageRouteBuilder(
-          pageBuilder: (_, __, ___) => SearchResultWedu(_searchController.text),
-          transitionDuration: const Duration(seconds: 0),
-          reverseTransitionDuration: const Duration(seconds: 0)),
-    );
-
+    var result = await Get.to(()=>SearchResultWedu(_searchController.text));
     if (result != null) {
       _loadSearchHistory();
     }

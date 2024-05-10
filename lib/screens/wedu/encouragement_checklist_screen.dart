@@ -8,6 +8,7 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import '../../api/NotificationApi.dart';
 import '../../data/NotificationSetting.dart';
 import '../../designs/PeeroreumColor.dart';
+import 'package:get/get.dart';
 
 class EncouragementCheckList extends StatefulWidget {
   EncouragementCheckList(this.notSuccessList, this.id);
@@ -136,7 +137,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
             width: 18,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            Get.back();
           },
         ),
         title: Text(
@@ -306,53 +307,11 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
               ),
             );
           }),
-      // bottomNavigationBar: Container(
-      //   padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-      //   child: SizedBox(
-      //     height: 48,
-      //     child: TextButton(
-      //       onPressed: () {
-      //         for (int i = 0; i < isCheckedList.length; i++) {
-      //           if (isActiveList[i] == true) {
-      //             if (isCheckedList[i]) {
-      //               setState(() {
-      //                 // _isChecked 값이 true인 경우에만 isActive를 false로 설정
-      //                 isActiveList[i] = false;
-      //                 receiverList.add(notSuccessList[i]['nickname']);
-      //               });
-      //             }
-      //           }
-      //         }
-      //         sendNotification();
-      //       },
-      //       child: Text(
-      //         '독려하기',
-      //         style: TextStyle(
-      //           fontFamily: 'Pretendard',
-      //           fontSize: 16,
-      //           fontWeight: FontWeight.w600,
-      //           color: PeeroreumColor.white,
-      //         ),
-      //       ),
-      //       style: ButtonStyle(
-      //           backgroundColor: MaterialStateProperty.all(
-      //               PeeroreumColor.primaryPuple[400]),
-      //           padding: MaterialStateProperty.all(
-      //               EdgeInsets.symmetric(vertical: 12)),
-      //           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-      //               RoundedRectangleBorder(
-      //             borderRadius: BorderRadius.circular(8.0),
-      //           ))),
-      //     ),
-      //   ),
-      // )
     );
   }
 
   notOkList() {
     return Flexible(
-        //width: MediaQuery.of(context).size.width,
-        //height: MediaQuery.of(context).size.height-301,
         child: ListView.separated(
             itemBuilder: (BuildContext context, int index) {
               return Container(
@@ -363,7 +322,6 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                       child: Row(
                         children: [
                           Container(
-                            //padding: EdgeInsets.all(3.5),
                             width: 48,
                             height: 48,
                             decoration: BoxDecoration(

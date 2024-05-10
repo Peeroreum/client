@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -140,7 +141,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   color: PeeroreumColor.gray[800],
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop(_searchHistory);
+                  Get.back(result: _searchHistory);
                 },
               ),
               titleSpacing: 0,
@@ -149,7 +150,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                 child: SearchBar(
                   controller: textEditingController,
                   onTap: () {
-                    Navigator.of(context).pop(_searchHistory);
+                    Get.back(result: _searchHistory);
                   },
                   backgroundColor:
                       MaterialStateProperty.all(PeeroreumColor.gray[100]),
@@ -240,13 +241,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                      pageBuilder: (_, __, ___) => CreateWedu(),
-                                      transitionDuration: const Duration(seconds: 0),
-                                      reverseTransitionDuration: const Duration(seconds: 0)),
-                                );
+                                Get.to(CreateWedu());
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -658,7 +653,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Get.back();
                       },
                       child: Text(
                         '닫기',
@@ -689,7 +684,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Get.back();
                         datas[index]['locked'].toString() == "true"
                             ? insertPassword(index)
                             : enrollWedu(index);
@@ -848,7 +843,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Get.back();
                       },
                       child: Text(
                         '취소',
@@ -876,7 +871,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                         passwordController.text == datas[index]['password']
                             ? enrollWedu(index)
                             : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
-                        Navigator.pop(context);
+                        Get.back();
                       },
                       child: Text(
                         '확인',

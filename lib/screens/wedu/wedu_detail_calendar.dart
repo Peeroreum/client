@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -230,7 +231,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 color: PeeroreumColor.gray[800],
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.back();
               },
             ),
             title: Row(
@@ -569,8 +570,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/wedu/challenge/ok',
-                      arguments: successList);
+                  Get.toNamed('/wedu/challenge/ok', arguments: successList);
                 },
                 child: Text(
                   '전체보기',
@@ -615,8 +615,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/wedu/challenge/notok',
-                      arguments: notSuccessList);
+                  Get.toNamed('/wedu/challenge/notok', arguments: notSuccessList);
                 },
                 child: Text(
                   '전체보기',
@@ -747,9 +746,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     if (mynickname == notSuccessList[index]['nickname']) {
                       am_i = true;
                     }
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MyPageProfile(
-                            notSuccessList[index]['nickname'], am_i)));
+                    Get.to(MyPageProfile(notSuccessList[index]['nickname'], am_i));
                   },
                   child: Container(
                     //padding: EdgeInsets.all(3.5),
@@ -761,9 +758,6 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                           width: 2,
                           color: PeeroreumColor
                               .gradeColor[notSuccessList[index]['grade']]!),
-                      // image: DecorationImage(
-                      //   image: AssetImage('assets/images/user.jpg')
-                      // ),
                     ),
                     child: Container(
                       height: 44,
@@ -818,7 +812,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               behavior: HitTestBehavior.translucent,
               onTap: () async {
                 //await confirmChallengeDeleteMessage();
-                Navigator.pop(context);
+                Get.back();
               },
               child: Container(
                   margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -844,16 +838,13 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async{
-                await Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => 
-                       Report(data: "[같이해냄] 챌린지 이미지 신고\n"
+                await Get.to(()=>Report(data: "[같이해냄] 챌린지 이미지 신고\n"
                                     +"날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0,10)}\n"
                                     +"같이방 아이디 : $id\n"
                                     +"같이방 이름 : $weduTitle\n"
-                                    +"업로드한 사람 : ${successOneNickname}\n",)));
+                                    +"업로드한 사람 : ${successOneNickname}\n",));
                 int count = 0;
-                Navigator.of(context).popUntil((route) {
-                  // pop할 경로의 개수를 count 변수를 사용하여 관리
+                Get.until((route) {
                   bool shouldPop = count == 2;
                   count++;
                   return shouldPop;
@@ -907,9 +898,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                         if (mynickname == successOne["nickname"]) {
                           am_i = true;
                         }
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                MyPageProfile(successOne["nickname"], am_i)));
+                        Get.to(MyPageProfile(successOne["nickname"], am_i));
                       },
                       child: Container(
                         width: 48,
@@ -1027,7 +1016,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               width: double.maxFinite,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Get.back();
                 },
                 child: Text(
                   '닫기',

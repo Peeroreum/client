@@ -1491,7 +1491,8 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Get.offAll('/home');
+                          deleteWedu();
+                          Get.offAllNamed('/home');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
@@ -1606,7 +1607,7 @@ class _DetailWeduState extends State<DetailWedu> {
                       child: TextButton(
                         onPressed: () {
                           outWedu();
-                          Get.offAll('/home');
+                          Get.offAllNamed('/home');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,

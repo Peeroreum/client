@@ -3,12 +3,14 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 class InWedu extends StatefulWidget {
   const InWedu({super.key});
@@ -66,7 +68,7 @@ class _InWeduState extends State<InWedu> {
       elevation: 0,
       leading: IconButton(
         onPressed: () {
-          Navigator.of(context).pop();
+          Get.back();
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
@@ -165,8 +167,7 @@ class _InWeduState extends State<InWedu> {
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(complete_group[index]["id"])));
+            Get.to(() => DetailWedu(complete_group[index]["id"]));
           },
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -343,8 +344,7 @@ class _InWeduState extends State<InWedu> {
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailWedu(ing_group[index]["id"])));
+            Get.to(() => DetailWedu(ing_group[index]["id"]));
           },
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),

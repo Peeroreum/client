@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
+import 'package:get/get.dart';
 
 class ComplimentList extends StatefulWidget {
   @override
@@ -38,7 +39,7 @@ class _ComplimentListState extends State<ComplimentList> {
                   width: 18,
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Get.back();
                 },
               ),
               title: Text(
@@ -131,9 +132,7 @@ class _ComplimentListState extends State<ComplimentList> {
                   if (mynickname == successList[index]['nickname']) {
                     am_i = true;
                   }
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          MyPageProfile(successList[index]['nickname'], am_i)));
+                  Get.to(MyPageProfile(successList[index]['nickname'], am_i));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
