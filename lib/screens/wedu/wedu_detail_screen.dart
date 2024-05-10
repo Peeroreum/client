@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:custom_widget_marquee/custom_widget_marquee.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as diop;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +22,7 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 
 import '../../api/PeeroreumApi.dart';
+import 'package:get/get.dart';
 
 class DetailWedu extends StatefulWidget {
   DetailWedu(this.id);
@@ -228,7 +229,7 @@ class _DetailWeduState extends State<DetailWedu> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.of(context).pop();
+                              Get.back();
                             },
                             child: SvgPicture.asset(
                               'assets/icons/x.svg',
@@ -269,7 +270,7 @@ class _DetailWeduState extends State<DetailWedu> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context).pop();
+                          Get.back();
                           showDoChallengeBottomSheet();
                         },
                         child: Container(
@@ -327,14 +328,14 @@ class _DetailWeduState extends State<DetailWedu> {
   }
 
   Future<void> postImages() async {
-    var dio = Dio();
-    var formData = FormData();
+    var dio = diop.Dio();
+    var formData = diop.FormData();
 
     dio.options.contentType = 'multipart/form-data';
     dio.options.headers = {'Authorization': 'Bearer $token'};
 
     for (var image in _images) {
-      var file = await MultipartFile.fromFile(image.path);
+      var file = await diop.MultipartFile.fromFile(image.path);
       formData.files.add(MapEntry('files', file));
     }
     var response =
@@ -374,7 +375,7 @@ class _DetailWeduState extends State<DetailWedu> {
                   color: PeeroreumColor.gray[800],
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Get.back();
                 },
               ),
               title: Row(
@@ -729,7 +730,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         builder: (context) {
                           return aboutImageWedu(successOne["nickname"]);
                         });
-                    Navigator.pop(context);
+                    Get.back();
                   },
                 )
               ],
@@ -743,12 +744,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     return GestureDetector(
                       onTap: () {
                         int selectedIndex = challengeImage.indexOf(i);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ImageDetail(imageList: challengeImage, initialPage: selectedIndex,),
-                                  ));
+                        Get.to(()=>ImageDetail(imageList: challengeImage, initialPage: selectedIndex,));
                       },
                       child: Container(
                         width: double.maxFinite,
@@ -802,7 +798,7 @@ class _DetailWeduState extends State<DetailWedu> {
               width: double.maxFinite,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Get.back();
                 },
                 child: Text(
                   '닫기',
@@ -945,9 +941,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                   color: PeeroreumColor.gray[500],
                                 ),
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => DetailWeduCalendar(
-                                          id, weduTitle.toString())));
+                                  Get.to(()=>DetailWeduCalendar(id, weduTitle.toString()));
                                 },
                               ),
                             ),
@@ -1171,13 +1165,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Navigator.pushNamed(context, '/wedu/challenge/ok/compliment',
-                    //     arguments: successList);
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return ComplimentCheckList(successList, id);
-                      },
-                    ));
+                    Get.to(()=>ComplimentCheckList(successList, id));
                   },
                   child: Text(
                     '전체보기',
@@ -1222,13 +1210,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Navigator.pushNamed(context, '/wedu/challenge/notok/encouragement',
-                    //     arguments: notSuccessList);
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return EncouragementCheckList(notSuccessList, id);
-                      },
-                    ));
+                    Get.to(()=>EncouragementCheckList(notSuccessList, id));
                   },
                   child: Text(
                     '전체보기',
@@ -1260,7 +1242,7 @@ class _DetailWeduState extends State<DetailWedu> {
         ),
         child: isCreator
             ? Container(
-                padding: EdgeInsets.all(20),
+               padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -1279,9 +1261,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     ),
                     TextButton(
                       onPressed: () {
-                        //wedu_change(context);
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ModifyWedu(
+                                Get.to(()=>ModifyWedu(
                                 id,
                                 weduTitle,
                                 weduImage,
@@ -1292,7 +1272,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                 weduMaxPeopleNum,
                                 weduHashTags,
                                 weduLocked,
-                                weduPassword)));
+                                weduPassword));
                       },
                       style: TextButton.styleFrom(
                         minimumSize: Size.fromHeight(40),
@@ -1374,7 +1354,7 @@ class _DetailWeduState extends State<DetailWedu> {
               behavior: HitTestBehavior.translucent,
               onTap: () async {
                 await confirmChallengeDeleteMessage();
-                Navigator.pop(context);
+                Get.back();
               },
               child: Container(
                   margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -1400,13 +1380,12 @@ class _DetailWeduState extends State<DetailWedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Report(
-                          data: "[같이해냄] 챌린지 이미지 신고\n" +
-                              "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
-                              "같이방 아이디 : $id\n" +
-                              "업로드한 사람 : $successOneNickname\n",
-                        )));
+                  Get.to(()=>Report(
+                    data: "[같이해냄] 챌린지 이미지 신고\n" +
+                        "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
+                        "같이방 아이디 : $id\n" +
+                        "업로드한 사람 : $successOneNickname\n",
+                  ));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -1487,7 +1466,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Get.back();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -1513,8 +1492,7 @@ class _DetailWeduState extends State<DetailWedu> {
                       child: TextButton(
                         onPressed: () {
                           deleteWedu();
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/home', (route) => false);
+                          Get.offAllNamed('/home');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
@@ -1603,7 +1581,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Get.back();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -1629,8 +1607,7 @@ class _DetailWeduState extends State<DetailWedu> {
                       child: TextButton(
                         onPressed: () {
                           outWedu();
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/home', (route) => false);
+                          Get.offAllNamed('/home');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
@@ -1708,7 +1685,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Get.back();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300], // 배경 색상
@@ -1733,7 +1710,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Get.back();
                           deleteChallenge();
                         },
                         style: TextButton.styleFrom(
@@ -1845,7 +1822,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         child: TextButton(
                           onPressed: () {
                             takeFromCamera();
-                            Navigator.pop(context);
+                            Get.back();
                           },
                           child: Text(
                             '카메라',
@@ -1873,7 +1850,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         child: TextButton(
                           onPressed: () {
                             takeFromGallery();
-                            Navigator.pop(context);
+                            Get.back();
                           },
                           child: Text(
                             '갤러리',

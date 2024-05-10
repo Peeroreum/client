@@ -2,13 +2,14 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as diop; 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
@@ -17,6 +18,7 @@ import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 class ModifyWedu extends StatefulWidget {
   ModifyWedu(
@@ -187,7 +189,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
         color: PeeroreumColor.black,
         icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
         onPressed: () {
-          Navigator.pop(context);
+          Get.back();
         },
       ),
       title: Text(
@@ -889,27 +891,26 @@ class _ModifyWeduState extends State<ModifyWedu> {
       'password': weduPassword,
     };
     if (_image != null) {
-      file = await MultipartFile.fromFile(_image!.path);
+      file = await diop.MultipartFile.fromFile(_image!.path);
       weduMap.addAll({"image": file});
     }
     modifyAPI(weduMap);
   }
 
   modifyAPI(weduMap) async {
-    var dio = Dio();
+    var dio = diop.Dio();
     final token = await const FlutterSecureStorage().read(key: "accessToken");
-    FormData formData = FormData.fromMap(weduMap);
+    diop.FormData formData = diop.FormData.fromMap(weduMap);
     dio.options.contentType = 'multipart/form-data';
     dio.options.headers = {'Authorization': 'Bearer $token'};
     var weduModify =
         await dio.put('${API.hostConnect}/wedu/$id', data: formData);
     if (weduModify.statusCode == 200) {
       Fluttertoast.showToast(msg: '같이방 수정을 완료했어요.');
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => DetailWedu(id)));
+      Get.back();
+      Get.back();
+      Get.back();
+      Get.to(()=> DetailWedu(id));
     } else {
       print("에러${weduModify.statusCode}");
       Fluttertoast.showToast(msg: '같이방 수정 실패');

@@ -7,6 +7,7 @@ import 'package:peeroreum_client/data/Checklist.dart';
 import 'package:peeroreum_client/data/NotificationSetting.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:get/get.dart';
 
 class ComplimentCheckList extends StatefulWidget {
   ComplimentCheckList(this.successList, this.id);
@@ -131,7 +132,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
               width: 18,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
           title: Text(

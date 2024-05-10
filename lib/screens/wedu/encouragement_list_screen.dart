@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 
 import '../../designs/PeeroreumColor.dart';
+import 'package:get/get.dart';
 
 class EncouragementList extends StatefulWidget {
   @override
@@ -41,7 +42,7 @@ class _EncouragementListState extends State<EncouragementList> {
                   width: 18,
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Get.back();
                 },
               ),
               title: Text(
@@ -133,9 +134,7 @@ class _EncouragementListState extends State<EncouragementList> {
                   if (mynickname == notSuccessList[index]['nickname']) {
                     am_i = true;
                   }
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => MyPageProfile(
-                          notSuccessList[index]['nickname'], am_i)));
+                  Get.to(()=>MyPageProfile(notSuccessList[index]['nickname'], am_i));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),

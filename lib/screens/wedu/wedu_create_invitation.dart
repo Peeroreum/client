@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as diop;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,6 +12,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
 import '../../api/PeeroreumApi.dart';
+import 'package:get/get.dart';
 
 class CreateInvitation extends StatefulWidget {
   const CreateInvitation({super.key});
@@ -147,7 +148,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
             color: PeeroreumColor.black,
             icon: SvgPicture.asset('assets/icons/arrow-left.svg'),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
           title: const Text(
@@ -408,8 +409,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
-                                                          Navigator.pop(
-                                                              context);
+                                                          Get.back();
                                                           updateColor();
                                                         },
                                                         child: Text(
@@ -435,8 +435,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                             _fontColor =
                                                                 _savedFontColor!;
                                                           });
-                                                          Navigator.pop(
-                                                              context);
+                                                          Get.back();
                                                           updateColor();
                                                         },
                                                         child: Text(
@@ -664,8 +663,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
-                                                          Navigator.pop(
-                                                              context);
+                                                          Get.back();
                                                           updateColor();
                                                         },
                                                         child: Text(
@@ -691,8 +689,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                             _fontColor =
                                                                 _savedFontColor!;
                                                           });
-                                                          Navigator.pop(
-                                                              context);
+                                                          Get.back();
                                                           updateColor();
                                                         },
                                                         child: Text(
@@ -784,19 +781,19 @@ class _CreateInvitationState extends State<CreateInvitation> {
   }
 
   postWeduAndInvitation(weduMap) async {
-    var dio = Dio();
+    var dio = diop.Dio();
     final token = await const FlutterSecureStorage().read(key: "accessToken");
     bytes = await controller.capture();
     var byteList = bytes?.toList();
     weduMap.addAll({
-      "inviFile": MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")
+      "inviFile": diop.MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")
     });
-    FormData formData = FormData.fromMap(weduMap);
+    diop.FormData formData = diop.FormData.fromMap(weduMap);
     dio.options.contentType = 'multipart/form-data';
     dio.options.headers = {'Authorization': 'Bearer $token'};
     var inviResult = await dio.post('${API.hostConnect}/wedu', data: formData);
     if (inviResult.statusCode == 200) {
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      Get.offAllNamed('/home');
     } else {
       print("초대장 ${inviResult.statusMessage}");
     }

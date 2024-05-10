@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
@@ -18,6 +19,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_skeleton.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
+import 'package:get/get.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -193,8 +195,7 @@ class _HomeWeduState extends State<HomeWedu> {
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => searchWedu()));
+                  Get.to(()=>searchWedu());
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -247,13 +248,7 @@ class _HomeWeduState extends State<HomeWedu> {
               ),
               onTap: () {
                 if (inroom_datas.length < 10) {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => CreateWedu(),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)),
-                  );
+                  Get.to(()=> CreateWedu());
                 } else {
                   Fluttertoast.showToast(msg: '같이방은 10개까지만 참여 가능해요.');
                 }
@@ -418,8 +413,7 @@ class _HomeWeduState extends State<HomeWedu> {
             ),
             GestureDetector(
                 onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => InWedu()));
+                  Get.to(()=>InWedu());
                 },
                 child: Text('전체보기',
                     style: TextStyle(
@@ -596,9 +590,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   ),
                 ),
                 onTap: () async {
-                  await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          DetailWedu(inroom_datas[rindex]["id"])));
+                  await Get.to(()=>DetailWedu(inroom_datas[rindex]["id"]));
                   fetchDatas();
                 },
               );
@@ -1214,7 +1206,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Get.back();
                       },
                       child: Text(
                         '닫기',
@@ -1246,7 +1238,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     child: TextButton(
                       onPressed: () {
                         if (inroom_datas.length < 10) {
-                          Navigator.pop(context);
+                          Get.back();
                           datas[index]['locked'].toString() == "true"
                               ? insertPassword(index)
                               : enrollWedu(index);
@@ -1456,7 +1448,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       Expanded(
                         child: TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Get.back();
                           },
                           child: Text(
                             '취소',
@@ -1485,7 +1477,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 ? enrollWedu(index)
                                 : Fluttertoast.showToast(
                                     msg: '비밀번호가 일치하지 않습니다.');
-                            Navigator.pop(context);
+                            Get.back();
                           },
                           child: Text(
                             '확인',
