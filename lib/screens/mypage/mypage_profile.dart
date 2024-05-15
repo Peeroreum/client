@@ -224,7 +224,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         Fluttertoast.showToast(msg: "자신은 영원한 친구입니다.");
       } else {
         Get.back();
-        Get.to(MyPageProfile(nickname_controller.text, false),
+        Get.to(() => MyPageProfile(nickname_controller.text, false),
                 preventDuplicates: false)
             ?.then((value) {
           setState(() {});
@@ -876,7 +876,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
               TextButton(
                 onPressed: () {
-                  Get.to(
+                  Get.to(() =>
                       Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
                 },
                 style: TextButton.styleFrom(
@@ -1268,7 +1268,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(MyPageProfileFriend(nickname));
+            Get.to(() => MyPageProfileFriend(nickname));
           },
           child: Container(
             width: 87,
@@ -1596,7 +1596,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
           onTap: () {
-            am_i ? Get.to(DetailWedu(inroom_datas[rindex]["id"])) : null;
+            am_i ? Get.to(() => DetailWedu(inroom_datas[rindex]["id"])) : null;
           },
         );
       },

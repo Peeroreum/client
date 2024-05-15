@@ -272,7 +272,7 @@ class _ScrapState extends State<Scrap> {
               if (index < QnA.length) {
                 return GestureDetector(
                   onTap: () async {
-                    await Get.to(
+                    await Get.to(() =>
                         DetailIedu(QnA[index]['id'], QnA[index]['selected']));
                   },
                   child: Container(
