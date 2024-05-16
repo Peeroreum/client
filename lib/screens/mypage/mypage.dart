@@ -131,7 +131,7 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () {
-            Get.to(MyPageProfile(nickname, true));
+            Get.to(() => MyPageProfile(nickname, true));
           },
           // style: ElevatedButton.styleFrom(
           //   minimumSize: Size.fromHeight(56),
