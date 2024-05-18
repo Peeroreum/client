@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -95,7 +96,7 @@ class _SignInState extends State<SignIn> {
                     height: 48.0,
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/signIn/email');
+                        Get.toNamed('/signIn/email');
                       },
                       child: Text(
                         '이메일 로그인',
@@ -162,18 +163,11 @@ class _SignInState extends State<SignIn> {
     if(result.statusCode == 200) {
       var accessToken = jsonDecode(result.body)['data'];
       storage.write(key: "memberInfo", value: accessToken);
-      Navigator.pushNamedAndRemoveUntil(context, '/wedu', (route) => false);
+      Get.offAllNamed('/wedu');
     } else if(result.statusCode == 404) {
       Member member = Member();
       member.username = socialAccount;
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-            pageBuilder: (_, __, ___) => SignUpNickname(member),
-            transitionDuration: const Duration(seconds: 0),
-            reverseTransitionDuration:
-            const Duration(seconds: 0)),
-      );
+      Get.to(() => SignUpNickname(member), transition: Transition.noTransition);
     } else {
       print("소셜 로그인 실패");
     }

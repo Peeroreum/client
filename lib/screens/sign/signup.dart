@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
@@ -428,17 +429,8 @@ class _serviceTermsState extends State<serviceTerms> {
                 child: TextButton(
                   onPressed: button
                       ? () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                                pageBuilder: (_, __, ___) =>
-                                    SignUpNickname(member),
-                                transitionDuration:
-                                    const Duration(seconds: 0),
-                                reverseTransitionDuration:
-                                    const Duration(seconds: 0)),
-                          );
-                        }
+                    Get.to(() => SignUpNickname(member), transition: Transition.noTransition);
+                  }
                       : null,
                   style: ButtonStyle(
                       backgroundColor: button

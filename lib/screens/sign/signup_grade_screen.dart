@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
@@ -47,7 +48,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
           leading: IconButton(
             icon: SvgPicture.asset('assets/icons/arrow-left.svg', color: PeeroreumColor.gray[800]),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
         ),
@@ -143,13 +144,8 @@ class _SignUpGradeState extends State<SignUpGrade> {
                   member.grade = (_school == "중학교")
                       ? _grades.indexOf(_grade!) + 1
                       : _grades.indexOf(_grade!) + 4;
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => SignUpSubject(member),
-                        transitionDuration: const Duration(seconds: 0),
-                        reverseTransitionDuration: const Duration(seconds: 0)),
-                  );
+                  Get.to(() => SignUpSubject(member),
+                      transition: Transition.noTransition);
                 }
               },
               child: Text(

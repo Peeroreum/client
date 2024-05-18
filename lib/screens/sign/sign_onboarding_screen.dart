@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/data/Onboarding_check.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 
 class OnBoarding extends StatefulWidget {
   const OnBoarding({Key? key}) : super(key: key);
@@ -134,7 +134,7 @@ class _OnBoardingState extends State<OnBoarding> {
               child: TextButton(
                 onPressed: () async{
                   await OnboardingCheck.setUserType(false);
-                  Navigator.pushReplacementNamed(context, '/signIn/email');
+                  Get.offNamed('/signIn/email');
                 },
                 child: Text(
                   '확인',

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
@@ -80,7 +81,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                 Expanded(
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -162,7 +163,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
               color: Colors.grey[800],
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
         ),
@@ -365,14 +366,8 @@ class _SignUpSchoolState extends State<SignUpSchool> {
         body: jsonEncode(member),
         headers: {'Content-Type': 'application/json'});
     if (result.statusCode == 200) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(
-              pageBuilder: (_, __, ___) => EmailSignIn(),
-              transitionDuration: const Duration(seconds: 0),
-              reverseTransitionDuration:
-              const Duration(seconds: 0)),
-              (route) => false);
+      Get.to(() => EmailSignIn(),
+          transition: Transition.noTransition);
     } else {
       print(result.statusCode);
     }
