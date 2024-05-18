@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -12,11 +13,8 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
-import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
-import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../api/PeeroreumApi.dart';
 import '../../model/Member.dart';
@@ -272,8 +270,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   secureStorage.write(
                                       key: "grade",
                                       value: data['grade'].toString());
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context, '/home', (route) => false);
+                                  Get.offAllNamed('/home');
                                 } else if (result.statusCode == 404 ||
                                     result.statusCode == 401) {
                                   Fluttertoast.showToast(
@@ -341,15 +338,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                         ),
                         TextButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => EmailSignUp(),
-                                    transitionDuration:
-                                        const Duration(seconds: 0),
-                                    reverseTransitionDuration:
-                                        const Duration(seconds: 0)),
-                              );
+                              Get.to(() => EmailSignUp());
                             },
                             child: Text(
                               '회원가입',
@@ -522,17 +511,11 @@ class _EmailSignInState extends State<EmailSignIn> {
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);
       secureStorage.write(key: "grade", value: data['grade'].toString());
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      Get.offAllNamed('/home');
     } else if (result.statusCode == 404) {
       Member member = Member();
       member.username = socialAccount;
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-            pageBuilder: (_, __, ___) => SignUp(member),
-            transitionDuration: const Duration(seconds: 0),
-            reverseTransitionDuration: const Duration(seconds: 0)),
-      );
+      Get.to(() => SignUp(member), transition: Transition.noTransition);
     } else {
       print("소셜 로그인 실패");
     }

@@ -7,7 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumButton.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/data/Subject.dart';
@@ -85,7 +84,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
             icon: SvgPicture.asset('assets/icons/arrow-left.svg',
                 color: PeeroreumColor.gray[800]),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
         ),
@@ -552,13 +551,6 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       badDetailSubjects.indexOf(_selectedDetailBadSubject!);
                   member.badLevel = _levels.indexOf(_badLevel!);
                   signUpAPI();
-                  // Navigator.push(
-                  //   context,
-                  //   PageRouteBuilder(
-                  //       pageBuilder: (_, __, ___) => SignUpSchool(member),
-                  //       transitionDuration: const Duration(seconds: 0),
-                  //       reverseTransitionDuration: const Duration(seconds: 0)),
-                  // );
                 }
               },
               child: Text(
@@ -636,7 +628,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _goodLevel = null;
                           _checkInput();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -705,7 +697,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _goodLevel = null;
                           _checkInput();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -772,7 +764,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _goodLevel = _levels[index];
                           _checkInput();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -844,7 +836,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _badLevel = null;
                           _checkInput();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -912,7 +904,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _badLevel = null;
                           _checkInput();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -979,7 +971,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _badLevel = _levels[index];
                           _checkInput();
                         });
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Container(
                         width: double.infinity,
@@ -1014,8 +1006,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);
       secureStorage.write(key: "grade", value: data['grade'].toString());
-      Navigator.pushNamedAndRemoveUntil(
-          context, 'signUp/Complete', (route) => false);
+      Get.offAllNamed('signUp/Complete');
     } else {
       print(result.statusCode);
     }

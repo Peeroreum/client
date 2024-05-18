@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_grade_screen.dart';
@@ -63,7 +64,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
             icon: SvgPicture.asset('assets/icons/arrow-left.svg',
                 color: PeeroreumColor.gray[800]),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
         ),
@@ -276,14 +277,8 @@ class _SignUpNicknameState extends State<SignUpNickname> {
               onPressed: checkNickname && !isDuplicateNickname
                   ? () {
                       member.nickname = nicknameController.text;
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => SignUpGrade(member),
-                            transitionDuration: const Duration(seconds: 0),
-                            reverseTransitionDuration:
-                                const Duration(seconds: 0)),
-                      );
+                      Get.to(() => SignUpGrade(member),
+                          transition: Transition.noTransition);
                     }
                   : null,
               child: Text(

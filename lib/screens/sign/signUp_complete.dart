@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 
@@ -73,7 +74,7 @@ class _SignUpCompleteState extends State<SignUpComplete> {
                   height: 48,
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                      Get.offAllNamed('/home');
                     },
                     child: Text(
                       '피어오름 사용하러 가기',

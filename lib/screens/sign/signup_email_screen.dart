@@ -1,11 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup.dart';
-import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
 import '../../api/PeeroreumApi.dart';
 
@@ -80,7 +80,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
           centerTitle: true,
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
             icon: Icon(
               Icons.arrow_back,
@@ -560,14 +560,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
                     ? () {
                         member.username = id_controller.text;
                         member.password = pw_controller.text;
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => SignUp(member),
-                              transitionDuration: const Duration(seconds: 0),
-                              reverseTransitionDuration:
-                                  const Duration(seconds: 0)),
-                        );
+                        Get.to(() => SignUp(member),
+                            transition: Transition.noTransition);
                       }
                     : null,
                 child: Text(
