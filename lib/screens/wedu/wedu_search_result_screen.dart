@@ -249,7 +249,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   vertical: 12
                                 ),
                                 height: 48,
-                                width: 183,
+                                width: 185,
                                 decoration: BoxDecoration(
                                   color: PeeroreumColor.primaryPuple[400],
                                   borderRadius: BorderRadius.circular(8),

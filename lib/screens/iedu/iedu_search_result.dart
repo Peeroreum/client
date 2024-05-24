@@ -329,7 +329,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                         vertical: 12
                                       ),
                                       height: 48,
-                                      width: 207,
+                                      width: 208,
                                       decoration: BoxDecoration(
                                         color: PeeroreumColor.primaryPuple[400],
                                         borderRadius: BorderRadius.circular(8),
