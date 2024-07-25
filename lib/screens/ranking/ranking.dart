@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/screens/ranking/ranking_controller.dart';
 
 class Ranking extends StatefulWidget {
   const Ranking({super.key});
@@ -14,6 +16,12 @@ class Ranking extends StatefulWidget {
 }
 
 class _RankingState extends State<Ranking> {
+  final RankingController _rankingController = Get.put(RankingController());
+
+  var mynickname = FlutterSecureStorage().read(key: "nickname");
+  var myrank;
+  var mypoints;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,90 +35,112 @@ class _RankingState extends State<Ranking> {
         surfaceTintColor: Colors.transparent,
         backgroundColor: PeeroreumColor.white,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-            border: Border(
-          top: BorderSide(color: PeeroreumColor.gray[100]!, width: 1.0),
-        )),
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 16,
-            ),
-            Row(
+      body: Obx(() {
+        if (_rankingController.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        } else if (_rankingController.errorMessage.isNotEmpty) {
+          return Center(
+            // child: Text('Error: ${_rankingController.errorMessage}')
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    rankingHelp();
-                  },
-                  child: T5_14px(
-                    text: "ⓘ 랭킹 안내",
-                    color: PeeroreumColor.gray[500],
-                  ),
-                )
+                Image.asset(
+                  'assets/images/no_wedu_oreum.png',
+                  width: 150,
+                ),
+                T2_20px(text: "경쟁자가 없어요 지금이에요!!")
               ],
             ),
-            SizedBox(
-              height: 16,
-            ),
-            Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Ranker(
-                    name: "우리",
-                    image: "assets/images/silvermedal.png",
-                    rank: "2위",
-                    height: 48.0,
+          );
+        } else {
+          return Container(
+            decoration: BoxDecoration(
+                border: Border(
+              top: BorderSide(color: PeeroreumColor.gray[100]!, width: 1.0),
+            )),
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  children: [
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        rankingHelp();
+                      },
+                      child: T5_14px(
+                        text: "ⓘ 랭킹 안내",
+                        color: PeeroreumColor.gray[500],
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Ranker(
+                        name: "${_rankingController.ranking[1].nickname}",
+                        image: "assets/images/silvermedal.png",
+                        rank: "2위",
+                        height: 48.0,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Ranker(
+                        name: "${_rankingController.ranking[0].nickname}",
+                        image: "assets/images/goldmedal.png",
+                        rank: "1위",
+                        height: 64.0,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Ranker(
+                        name: "${_rankingController.ranking[2].nickname}",
+                        image: "assets/images/bronzemedal.png",
+                        rank: "3위",
+                        height: 40.0,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 8,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                myranking(),
+                SizedBox(
+                  height: 8,
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    controller: _rankingController.scrollController,
+                    shrinkWrap: true,
+                    itemCount: _rankingController.ranking.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 8,
+                      );
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      final ranks = _rankingController.ranking[index];
+                      return rankings(ranks);
+                    },
                   ),
-                  Ranker(
-                    name: "귀여운",
-                    image: "assets/images/goldmedal.png",
-                    rank: "1위",
-                    height: 64.0,
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Ranker(
-                    name: "오르미",
-                    image: "assets/images/bronzemedal.png",
-                    rank: "3위",
-                    height: 40.0,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 20,
-            ),
-            myranking(),
-            SizedBox(
-              height: 8,
-            ),
-            Expanded(
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: 7,
-                separatorBuilder: (BuildContext context, int index) {
-                  return Container(
-                    height: 8,
-                  );
-                },
-                itemBuilder: (BuildContext context, int index) {
-                  return rankings();
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+          );
+        }
+      }),
     );
   }
 
@@ -172,6 +202,18 @@ class _RankingState extends State<Ranking> {
         });
   }
 
+  findMyRanking() {
+    for (var i = 0; i < _rankingController.ranking.length; i++) {
+      if (mynickname == _rankingController.ranking[i].nickname) {
+        myrank = _rankingController.ranking[i].rank;
+        mypoints = _rankingController.ranking[i].points;
+      } else {
+        myrank = "-";
+        mypoints = "-";
+      }
+    }
+  }
+
   myranking() {
     return Container(
       height: 60,
@@ -189,7 +231,7 @@ class _RankingState extends State<Ranking> {
               Container(
                 height: 25,
                 child: Center(
-                  child: T3_18px(text: "N 위"),
+                  child: T3_18px(text: "${myrank} 위"),
                 ),
               ),
               SizedBox(
@@ -221,18 +263,18 @@ class _RankingState extends State<Ranking> {
               ),
               Container(width: 8),
               B4_14px_M(
-                text: "nickname (나)",
+                text: "${mynickname} (나)",
                 color: PeeroreumColor.gray[800],
               ),
             ],
           ),
-          B4_14px_M(text: "N 점"),
+          B4_14px_M(text: "${mypoints} 점"),
         ],
       ),
     );
   }
 
-  rankings() {
+  rankings(ranks) {
     return Container(
       height: 60,
       width: MediaQuery.of(context).size.width,
@@ -249,7 +291,7 @@ class _RankingState extends State<Ranking> {
               Container(
                 height: 25,
                 child: Center(
-                  child: T3_18px(text: "N 위"),
+                  child: T3_18px(text: "${ranks.rank} 위"),
                 ),
               ),
               SizedBox(
@@ -272,21 +314,25 @@ class _RankingState extends State<Ranking> {
                       width: 1,
                       color: PeeroreumColor.white,
                     ),
-                    image: DecorationImage(
-                        image: AssetImage(
-                      'assets/images/user.jpg',
-                    )),
+                    image: ranks.profileImage != null
+                        ? DecorationImage(
+                            image: NetworkImage(ranks.profileImage),
+                            fit: BoxFit.cover)
+                        : DecorationImage(
+                            image: AssetImage(
+                            'assets/images/user.jpg',
+                          )),
                   ),
                 ),
               ),
               Container(width: 8),
               B4_14px_M(
-                text: "nickname",
+                text: "${ranks.nickname}",
                 color: PeeroreumColor.gray[800],
               ),
             ],
           ),
-          B4_14px_M(text: "N 점"),
+          B4_14px_M(text: "${ranks.points} 점"),
         ],
       ),
     );

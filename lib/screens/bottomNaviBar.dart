@@ -13,7 +13,7 @@ import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
 import 'package:peeroreum_client/screens/prepare.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
-import 'package:peeroreum_client/screens/ranking.dart';
+import 'package:peeroreum_client/screens/ranking/ranking.dart';
 import 'package:http/http.dart' as http;
 
 import '../api/PeeroreumApi.dart';
