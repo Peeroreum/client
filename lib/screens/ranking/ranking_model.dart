@@ -12,8 +12,8 @@ class RankingModel {
   factory RankingModel.fromJson(Map<String, dynamic> json) => RankingModel(
         nickname: json['nickname'],
         profileImage: json['profileImage'],
-        points: json['points'],
-        rank: json['rank'],
+        points: json['points'].toInt().toString(),
+        rank: json['rank'].toString(),
       );
 
   Map<String, dynamic> toJson() => {

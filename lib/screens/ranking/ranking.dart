@@ -18,7 +18,8 @@ class Ranking extends StatefulWidget {
 class _RankingState extends State<Ranking> {
   final RankingController _rankingController = Get.put(RankingController());
 
-  var mynickname = FlutterSecureStorage().read(key: "nickname");
+  var mynickname;
+  var myprofileImage;
   var myrank;
   var mypoints;
 
@@ -203,10 +204,13 @@ class _RankingState extends State<Ranking> {
   }
 
   findMyRanking() {
+    mynickname = _rankingController.mynickname.value;
+    myprofileImage = _rankingController.myprofileImage.value;
     for (var i = 0; i < _rankingController.ranking.length; i++) {
       if (mynickname == _rankingController.ranking[i].nickname) {
         myrank = _rankingController.ranking[i].rank;
         mypoints = _rankingController.ranking[i].points;
+        break;
       } else {
         myrank = "-";
         mypoints = "-";
@@ -215,6 +219,7 @@ class _RankingState extends State<Ranking> {
   }
 
   myranking() {
+    findMyRanking();
     return Container(
       height: 60,
       width: MediaQuery.of(context).size.width,
@@ -254,10 +259,14 @@ class _RankingState extends State<Ranking> {
                       width: 1,
                       color: PeeroreumColor.white,
                     ),
-                    image: DecorationImage(
-                        image: AssetImage(
-                      'assets/images/user.jpg',
-                    )),
+                    image: myprofileImage != null
+                        ? DecorationImage(
+                            image: NetworkImage(myprofileImage),
+                            fit: BoxFit.cover)
+                        : DecorationImage(
+                            image: AssetImage(
+                            'assets/images/user.jpg',
+                          )),
                   ),
                 ),
               ),
