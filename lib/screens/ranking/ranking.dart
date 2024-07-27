@@ -125,14 +125,14 @@ class _RankingState extends State<Ranking> {
                   child: ListView.separated(
                     controller: _rankingController.scrollController,
                     shrinkWrap: true,
-                    itemCount: _rankingController.ranking.length,
+                    itemCount: _rankingController.ranking.length - 3,
                     separatorBuilder: (BuildContext context, int index) {
                       return Container(
                         height: 8,
                       );
                     },
                     itemBuilder: (BuildContext context, int index) {
-                      final ranks = _rankingController.ranking[index];
+                      final ranks = _rankingController.ranking[index + 3];
                       return rankings(ranks);
                     },
                   ),
