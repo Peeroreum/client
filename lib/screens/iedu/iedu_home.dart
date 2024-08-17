@@ -46,7 +46,6 @@ class _HomeIeduState extends State<HomeIedu> {
   var token;
   var nickname;
   var profileImage;
-  var my_grade;
   int? _grade;
   String? _subject;
   String? _detailSubject;
@@ -156,10 +155,9 @@ class _HomeIeduState extends State<HomeIedu> {
 
   Future<void> fetchStatus() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
-    my_grade = await FlutterSecureStorage().read(key: "grade");
     nickname = await FlutterSecureStorage().read(key: "nickname");
     profileImage = await FlutterSecureStorage().read(key: "profileImage");
-    _grade ??= int.parse(my_grade!);
+    _grade = 0;
 
     await fetchIeduData();
     await getReadlistData();
@@ -364,11 +362,7 @@ class _HomeIeduState extends State<HomeIedu> {
               child: Row(
                 children: [
                   Text(
-                    _grade != null
-                        ? grades[_grade!]
-                        : my_grade != null
-                            ? grades[int.parse(my_grade!)]
-                            : grades[0],
+                    _grade != null ? grades[_grade!] : grades[0],
                     style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
@@ -749,7 +743,8 @@ class _HomeIeduState extends State<HomeIedu> {
                   Read.saveRead(isReadList);
                 }
               });
-              await Get.to(() => DetailIedu(datas[index]['id'], datas[index]['selected']));
+              await Get.to(() =>
+                  DetailIedu(datas[index]['id'], datas[index]['selected']));
               fetchIeduData();
             },
             child: Container(

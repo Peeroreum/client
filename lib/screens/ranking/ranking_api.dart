@@ -8,7 +8,7 @@ class RankingProvider extends GetConnect implements GetxService {
   var token;
   Future<List<RankingModel>?> getRanking() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
-    final String url = '${API.hostConnect}/rank/daily';
+    final String url = '${API.hostConnect}/rank/weekly';
     final Response response = await get(url, headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'

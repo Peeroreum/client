@@ -88,27 +88,36 @@ class _RankingState extends State<Ranking> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Ranker(
-                        name: "${_rankingController.ranking[1].nickname}",
+                        name: _rankingController.ranking.length > 1
+                            ? "${_rankingController.ranking[1].nickname}"
+                            : "-",
                         image: "assets/images/silvermedal.png",
-                        rank: "2위",
+                        rank:
+                            _rankingController.ranking.length > 1 ? "2위" : "-",
                         height: 48.0,
                       ),
                       SizedBox(
                         width: 8,
                       ),
                       Ranker(
-                        name: "${_rankingController.ranking[0].nickname}",
+                        name: _rankingController.ranking.isNotEmpty
+                            ? "${_rankingController.ranking[0].nickname}"
+                            : "-",
                         image: "assets/images/goldmedal.png",
-                        rank: "1위",
+                        rank:
+                            _rankingController.ranking.isNotEmpty ? "1위" : "-",
                         height: 64.0,
                       ),
                       SizedBox(
                         width: 8,
                       ),
                       Ranker(
-                        name: "${_rankingController.ranking[2].nickname}",
+                        name: _rankingController.ranking.length > 2
+                            ? "${_rankingController.ranking[2].nickname}"
+                            : "-",
                         image: "assets/images/bronzemedal.png",
-                        rank: "3위",
+                        rank:
+                            _rankingController.ranking.length > 2 ? "3위" : "-",
                         height: 40.0,
                       ),
                     ],
@@ -125,7 +134,9 @@ class _RankingState extends State<Ranking> {
                   child: ListView.separated(
                     controller: _rankingController.scrollController,
                     shrinkWrap: true,
-                    itemCount: _rankingController.ranking.length - 3,
+                    itemCount: _rankingController.ranking.length < 3
+                        ? 0
+                        : _rankingController.ranking.length - 3,
                     separatorBuilder: (BuildContext context, int index) {
                       return Container(
                         height: 8,
@@ -259,7 +270,7 @@ class _RankingState extends State<Ranking> {
                       width: 1,
                       color: PeeroreumColor.white,
                     ),
-                    image: myprofileImage != null
+                    image: myprofileImage != ""
                         ? DecorationImage(
                             image: NetworkImage(myprofileImage),
                             fit: BoxFit.cover)
@@ -300,7 +311,7 @@ class _RankingState extends State<Ranking> {
               Container(
                 height: 25,
                 child: Center(
-                  child: T3_18px(text: "${ranks.rank} 위"),
+                  child: T3_18px(text: "${int.parse(ranks.rank) + 2} 위"),
                 ),
               ),
               SizedBox(
