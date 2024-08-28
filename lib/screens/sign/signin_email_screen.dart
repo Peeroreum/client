@@ -15,6 +15,7 @@ import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
 import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../api/PeeroreumApi.dart';
 import '../../model/Member.dart';
@@ -421,26 +422,26 @@ class _EmailSignInState extends State<EmailSignIn> {
                           googleSignIn();
                         },
                       ),
-                      // SizedBox(
-                      //   width: 16,
-                      // ),
-                      // GestureDetector(
-                      //   child: Container(
-                      //       height: 48,
-                      //       width: 48,
-                      //       decoration: BoxDecoration(
-                      //           border: Border.all(
-                      //               color: PeeroreumColor.gray[200]!),
-                      //           shape: BoxShape.circle,
-                      //           color: PeeroreumColor.white,
-                      //           image: DecorationImage(
-                      //             image: AssetImage(
-                      //                 'assets/images/apple_logo.png'),
-                      //           ))),
-                      //   onTap: () {
-                      //     appleSignIn();
-                      //   },
-                      // )
+                      SizedBox(
+                        width: 16,
+                      ),
+                      GestureDetector(
+                        child: Container(
+                            height: 48,
+                            width: 48,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: PeeroreumColor.gray[200]!),
+                                shape: BoxShape.circle,
+                                color: PeeroreumColor.white,
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/apple_logo.png'),
+                                ))),
+                        onTap: () {
+                          appleSignIn();
+                        },
+                      )
                     ],
                   ),
                 )
@@ -521,16 +522,16 @@ class _EmailSignInState extends State<EmailSignIn> {
     }
   }
 
-  // void appleSignIn() async {
-  //   final credential = await SignInWithApple.getAppleIDCredential(
-  //       scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName]
-  //   );
-  //
-  //   if(credential != null) {
-  //     fetchSocialLogin(credential.userIdentifier!);
-  //   }
-  //   else {
-  //     print("애플 로그인 실패");
-  //   }
-  // }
+  void appleSignIn() async {
+    final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName]
+    );
+
+    if(credential != null) {
+      fetchSocialLogin(credential.userIdentifier!);
+    }
+    else {
+      print("애플 로그인 실패");
+    }
+  }
 }
