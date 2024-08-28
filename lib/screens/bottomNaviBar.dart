@@ -33,7 +33,7 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
   var selectedIndex;
 
   List _pages = [
-    Prepare(),
+    // Prepare(),
     HomeWedu(),
     HomeIedu(),
     Ranking(),
@@ -79,16 +79,16 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
       ),
       child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/home.svg',
-                  color: PeeroreumColor.gray[400],
-                ),
-                activeIcon: SvgPicture.asset(
-                  'assets/icons/home_fill.svg',
-                  color: PeeroreumColor.primaryPuple[400],
-                ),
-                label: '홈'),
+            // BottomNavigationBarItem(
+            //     icon: SvgPicture.asset(
+            //       'assets/icons/home.svg',
+            //       color: PeeroreumColor.gray[400],
+            //     ),
+            //     activeIcon: SvgPicture.asset(
+            //       'assets/icons/home_fill.svg',
+            //       color: PeeroreumColor.primaryPuple[400],
+            //     ),
+            //     label: '홈'),
             BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   'assets/icons/user_three.svg',

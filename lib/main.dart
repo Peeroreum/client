@@ -104,7 +104,7 @@ class PeeroreumApp extends StatelessWidget {
       title: 'Peeroreum',
       home: isNewUser
           ? OnBoarding()
-          : (isLoggedIn ? bottomNaviBar(firebaseToken, 1) : EmailSignIn()),
+          : (isLoggedIn ? bottomNaviBar(firebaseToken, 0) : EmailSignIn()),
       // initialRoute: isLoggedIn? '/home' : '/signIn/email',
       // routes: {
       //   '/signIn': (context) => SignIn(),
@@ -138,7 +138,7 @@ class PeeroreumApp extends StatelessWidget {
         ),
         GetPage(
         	name: '/home',
-            page: () => bottomNaviBar(firebaseToken, 1),
+            page: () => bottomNaviBar(firebaseToken, 0),
         ),
         GetPage(
         	name: '/wedu',
@@ -174,7 +174,7 @@ class PeeroreumApp extends StatelessWidget {
         ),
         GetPage(
         	name: '/home/iedu',
-            page: () => bottomNaviBar(firebaseToken, 2),
+            page: () => bottomNaviBar(firebaseToken, 1),
         ),
     	],
       debugShowCheckedModeBanner: false,
