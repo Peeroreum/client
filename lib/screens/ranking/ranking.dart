@@ -199,7 +199,7 @@ class _RankingState extends State<Ranking> {
                   SizedBox(
                     height: 40,
                   ),
-                  B3_18px_M(text: "매일 자정마다 오늘의 랭킹이 업데이트됩니다."),
+                  B3_18px_M(text: "매주 월요일마다 랭킹이 업데이트됩니다."),
                   SizedBox(
                     height: 12,
                   ),

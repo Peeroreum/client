@@ -149,7 +149,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
                   height: 4,
                 ),
                 Text(
-                  '1.2.1',
+                  '1.3.0',
                   style: TextStyle(
                       color: PeeroreumColor.gray[600],
                       fontFamily: 'Pretendard',
