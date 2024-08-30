@@ -19,7 +19,7 @@ import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
-import 'package:peeroreum_client/screens/mypage/mypage_profile_friend.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/mypage_profile_friend.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

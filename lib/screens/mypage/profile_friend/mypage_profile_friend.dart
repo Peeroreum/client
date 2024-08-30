@@ -86,69 +86,227 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
   }
 
   Widget bodyWidget() {
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          TabBar(
+              indicatorColor: PeeroreumColor.primaryPuple[400],
+              indicatorSize: TabBarIndicatorSize.label,
+              labelColor: PeeroreumColor.primaryPuple[400],
+              unselectedLabelColor: PeeroreumColor.gray[800],
+              unselectedLabelStyle: TextStyle(
+                color: PeeroreumColor.gray[800],
+                fontFamily: 'Pretendard',
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+              ),
+              labelStyle: TextStyle(
+                color: PeeroreumColor.primaryPuple[400],
+                fontFamily: 'Pretendard',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+              tabs: [
+                Tab(
+                  text: '팔로워',
+                ),
+                Tab(
+                  text: '팔로잉',
+                )
+              ]),
+          Container(
+            height: 1,
+            color: PeeroreumColor.gray[100],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  child: follower(),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  child: following(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget follower() {
     return Column(
       children: [
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 13, horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    '전체',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[500]),
-                  ),
-                  SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    '${myfriends.length}',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[500]),
-                  ),
-                  SizedBox(
-                    width: 2,
-                  ),
-                  Text(
-                    '명',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[500]),
-                  ),
-                ],
-              ),
-            ],
-          ),
+        Row(
+          children: [
+            Text(
+              '전체 팔로워',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500]),
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              '${myfriends.length}',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500]),
+            ),
+            SizedBox(
+              width: 2,
+            ),
+            Text(
+              '명',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500]),
+            ),
+          ],
         ),
         Divider(
           color: PeeroreumColor.gray[100],
           thickness: 1,
           height: 8,
         ),
-        friends(),
-        // Divider(
-        //   color: PeeroreumColor.gray[100],
-        //   thickness: 1,
-        //   height: 8,
-        // ),
+        followers(),
       ],
     );
   }
 
-  Widget friends() {
+  Widget following() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              '전체 팔로잉',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500]),
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              '${myfriends.length}',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500]),
+            ),
+            SizedBox(
+              width: 2,
+            ),
+            Text(
+              '명',
+              style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: PeeroreumColor.gray[500]),
+            ),
+          ],
+        ),
+        Divider(
+          color: PeeroreumColor.gray[100],
+          thickness: 1,
+          height: 8,
+        ),
+        followings(),
+      ],
+    );
+  }
+
+  Widget followers() {
     return Flexible(
-      // width: MediaQuery.of(context).size.width,
-      // height: MediaQuery.of(context).size.height-140,
+      child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                if (mynickname == myfriends[index]["nickname"]) {
+                  am_i = true;
+                }
+                Get.to(() => MyPageProfile(myfriends[index]["nickname"], am_i));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: 2,
+                            color: PeeroreumColor
+                                .gradeColor[myfriends[index]['grade']]!),
+                      ),
+                      child: Container(
+                        height: 44,
+                        width: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            width: 1,
+                            color: PeeroreumColor.white,
+                          ),
+                          image: myfriends[index]["profileImage"] != null
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      myfriends[index]["profileImage"]),
+                                  fit: BoxFit.cover)
+                              : DecorationImage(
+                                  image: AssetImage('assets/images/user.jpg')),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      myfriends[index]['nickname'],
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[800]),
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) => Divider(
+                color: PeeroreumColor.gray[100],
+                thickness: 1,
+                height: 8,
+              ),
+          itemCount: myfriends.length),
+    );
+  }
+
+  Widget followings() {
+    return Flexible(
       child: ListView.separated(
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
