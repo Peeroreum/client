@@ -1,60 +1,42 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_api.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_controller.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_api.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_controller.dart';
 
-class MyPageProfileFriend extends StatefulWidget {
+class MyPageProfileFriend extends StatelessWidget {
   var nickname;
   MyPageProfileFriend(this.nickname);
 
-  @override
-  State<MyPageProfileFriend> createState() =>
-      _MyPageProfileFriendState(nickname);
-}
-
-class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
-  var nickname;
   var mynickname;
-  _MyPageProfileFriendState(this.nickname);
-  var token;
-  var myfriends = [];
+
   bool am_i = false;
 
-  Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
-    mynickname = await FlutterSecureStorage().read(key: "nickname");
-    print("##################${mynickname}");
-    var friend = await http
-        .get(Uri.parse('${API.hostConnect}/member/friend/$nickname'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    });
-    if (friend.statusCode == 200) {
-      myfriends = jsonDecode(utf8.decode(friend.bodyBytes))['data'];
-      print("친구 성공");
-    } else {
-      print("친구 에러 ${friend.statusCode}, $nickname");
-    }
-  }
+  final FollowerController follower_controller =
+      Get.put(FollowerController(FollowerProvider()));
+
+  final FollowingController following_controller =
+      Get.put(FollowingController(FollowingProvider()));
 
   @override
   Widget build(BuildContext context) {
+    // 상태 변경을 빌드 후에 수행
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      follower_controller.fetchFriends(nickname);
+      following_controller.fetchFriends(nickname);
+      follower_controller.fetchMyNickname();
+    });
+
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       appBar: appbarWidget(),
-      body: FutureBuilder<void>(
-          future: fetchDatas(),
-          builder: (context, snapshot) {
-            return bodyWidget();
-          }),
+      body: bodyWidget(),
     );
   }
 
@@ -125,12 +107,32 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  child: follower(),
+                  child: Obx(() {
+                    if (follower_controller.isLoading.value) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (follower_controller.followers.isEmpty) {
+                      return Center(child: Text("팔로워 목록이 없습니다."));
+                    }
+
+                    return follower();
+                  }),
                 ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  child: following(),
+                  child: Obx(() {
+                    if (following_controller.isLoading.value) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (following_controller.followings.isEmpty) {
+                      return Center(child: Text("팔로잉 목록이 없습니다."));
+                    }
+
+                    return following();
+                  }),
                 ),
               ],
             ),
@@ -157,7 +159,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
               width: 4,
             ),
             Text(
-              '${myfriends.length}',
+              '${follower_controller.followers.length}',
               style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w500,
@@ -204,7 +206,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
               width: 4,
             ),
             Text(
-              '${myfriends.length}',
+              '${following_controller.followings.length}',
               style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w500,
@@ -239,13 +241,14 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
       child: ListView.separated(
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
+            final follower = follower_controller.followers[index];
             return GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                if (mynickname == myfriends[index]["nickname"]) {
+                if (mynickname == follower.nickname) {
                   am_i = true;
                 }
-                Get.to(() => MyPageProfile(myfriends[index]["nickname"], am_i));
+                Get.to(() => MyPageProfile(follower.nickname!, am_i));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -258,8 +261,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                         shape: BoxShape.circle,
                         border: Border.all(
                             width: 2,
-                            color: PeeroreumColor
-                                .gradeColor[myfriends[index]['grade']]!),
+                            color: PeeroreumColor.gradeColor[follower.grade]!),
                       ),
                       child: Container(
                         height: 44,
@@ -270,10 +272,9 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                             width: 1,
                             color: PeeroreumColor.white,
                           ),
-                          image: myfriends[index]["profileImage"] != null
+                          image: follower.profileImage != null
                               ? DecorationImage(
-                                  image: NetworkImage(
-                                      myfriends[index]["profileImage"]),
+                                  image: NetworkImage(follower.profileImage!),
                                   fit: BoxFit.cover)
                               : DecorationImage(
                                   image: AssetImage('assets/images/user.jpg')),
@@ -284,7 +285,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                       width: 8,
                     ),
                     Text(
-                      myfriends[index]['nickname'],
+                      follower.nickname!,
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w500,
@@ -301,7 +302,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                 thickness: 1,
                 height: 8,
               ),
-          itemCount: myfriends.length),
+          itemCount: follower_controller.followers.length),
     );
   }
 
@@ -310,13 +311,14 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
       child: ListView.separated(
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
+            final following = following_controller.followings[index];
             return GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                if (mynickname == myfriends[index]["nickname"]) {
+                if (mynickname == following.nickname) {
                   am_i = true;
                 }
-                Get.to(() => MyPageProfile(myfriends[index]["nickname"], am_i));
+                Get.to(() => MyPageProfile(following.nickname!, am_i));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -329,8 +331,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                         shape: BoxShape.circle,
                         border: Border.all(
                             width: 2,
-                            color: PeeroreumColor
-                                .gradeColor[myfriends[index]['grade']]!),
+                            color: PeeroreumColor.gradeColor[following.grade]!),
                       ),
                       child: Container(
                         height: 44,
@@ -341,10 +342,9 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                             width: 1,
                             color: PeeroreumColor.white,
                           ),
-                          image: myfriends[index]["profileImage"] != null
+                          image: following.profileImage != null
                               ? DecorationImage(
-                                  image: NetworkImage(
-                                      myfriends[index]["profileImage"]),
+                                  image: NetworkImage(following.profileImage!),
                                   fit: BoxFit.cover)
                               : DecorationImage(
                                   image: AssetImage('assets/images/user.jpg')),
@@ -355,7 +355,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                       width: 8,
                     ),
                     Text(
-                      myfriends[index]['nickname'],
+                      following.nickname!,
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w500,
@@ -372,81 +372,7 @@ class _MyPageProfileFriendState extends State<MyPageProfileFriend> {
                 thickness: 1,
                 height: 8,
               ),
-          itemCount: myfriends.length),
+          itemCount: following_controller.followings.length),
     );
-    // return ListView.separated(
-    //     shrinkWrap: true,
-    //     itemBuilder: (BuildContext context, int index) {
-    //       return ElevatedButton(
-    //         onPressed: () {
-    //           Navigator.of(context).push(MaterialPageRoute(
-    //               builder: (context) =>
-    //                   MyPageProfile(myfriends[index]["nickname"], false)));
-    //         },
-    //         style: ElevatedButton.styleFrom(
-    //           minimumSize: Size.fromHeight(56),
-    //           backgroundColor: PeeroreumColor.white,
-    //           elevation: 0,
-    //           padding: EdgeInsets.all(0),
-    //         ),
-    //         child: Container(
-    //           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-    //           child: Row(
-    //             children: [
-    //               Container(
-    //                 width: 40,
-    //                 height: 40,
-    //                 decoration: BoxDecoration(
-    //                   shape: BoxShape.circle,
-    //                   border: Border.all(
-    //                       width: 2,
-    //                       color: PeeroreumColor
-    //                           .gradeColor[myfriends[index]["grade"]]!),
-    //                 ),
-    //                 child: Container(
-    //                   height: 36,
-    //                   width: 36,
-    //                   decoration: BoxDecoration(
-    //                     shape: BoxShape.circle,
-    //                     border: Border.all(
-    //                       width: 2,
-    //                       color: PeeroreumColor.white,
-    //                     ),
-    //                     image: myfriends[index]["profileImage"] != null
-    //                         ? DecorationImage(
-    //                             image: NetworkImage(
-    //                                 myfriends[index]["profileImage"]),
-    //                             fit: BoxFit.cover)
-    //                         : DecorationImage(
-    //                             image: AssetImage(
-    //                             'assets/images/user.jpg',
-    //                           )),
-    //                   ),
-    //                 ),
-    //               ),
-    //               SizedBox(
-    //                 width: 8,
-    //               ),
-    //               Text(
-    //                 myfriends[index]["nickname"],
-    //                 style: TextStyle(
-    //                   fontFamily: 'Pretendard',
-    //                   fontSize: 14,
-    //                   fontWeight: FontWeight.w500,
-    //                   color: PeeroreumColor.gray[800],
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       );
-    //     },
-    //     separatorBuilder: (BuildContext context, int index) {
-    //       return Container(
-    //         height: 1,
-    //         color: PeeroreumColor.gray[200],
-    //       );
-    //     },
-    //     itemCount: myfriends.length);
   }
 }
