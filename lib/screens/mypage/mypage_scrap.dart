@@ -137,7 +137,7 @@ class _ScrapState extends State<Scrap> {
           children: [
             TabBar(
                 indicatorColor: PeeroreumColor.primaryPuple[400],
-                indicatorSize: TabBarIndicatorSize.label,
+                indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: PeeroreumColor.primaryPuple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
