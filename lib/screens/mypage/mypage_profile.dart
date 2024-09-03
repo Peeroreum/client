@@ -19,7 +19,7 @@ import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
-import 'package:peeroreum_client/screens/mypage/mypage_profile_friend.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/mypage_profile_friend.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -1264,12 +1264,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget friends() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        GestureDetector(
-          onTap: () {
-            Get.to(() => MyPageProfileFriend(nickname));
-          },
+        Expanded(
           child: Container(
             width: 87,
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -1281,25 +1277,53 @@ class _MyPageProfileState extends State<MyPageProfile> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '친구',
-                    style: TextStyle(
-                      color: PeeroreumColor.gray[800],
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Pretendard',
+                  InkWell(
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      Get.to(() => MyPageProfileFriend(nickname));
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        T3_18px(
+                          text: '팔로워',
+                          color: PeeroreumColor.gray[800],
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        B4_14px_M(
+                          text: friendNumber != null ? '$friendNumber' : '0',
+                          color: PeeroreumColor.gray[600],
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    width: 4,
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 12),
+                    width: 1,
+                    color: PeeroreumColor.gray[200],
                   ),
-                  Text(
-                    friendNumber != null ? '$friendNumber' : '0',
-                    style: TextStyle(
-                      color: PeeroreumColor.gray[600],
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Pretendard',
+                  InkWell(
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      Get.to(() => MyPageProfileFriend(nickname));
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        T3_18px(
+                          text: '팔로잉',
+                          color: PeeroreumColor.gray[800],
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        B4_14px_M(
+                          text: friendNumber != null ? '$friendNumber' : '0',
+                          color: PeeroreumColor.gray[600],
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1310,53 +1334,48 @@ class _MyPageProfileState extends State<MyPageProfile> {
         SizedBox(
           width: 8,
         ),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              // Fluttertoast.showToast(msg: "준비 중입니다.");
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                  border:
-                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
-              child: Row(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '배지',
-                        style: TextStyle(
-                          color: PeeroreumColor.gray[800],
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Pretendard',
-                        ),
+        GestureDetector(
+          onTap: () {
+            // Fluttertoast.showToast(msg: "준비 중입니다.");
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                borderRadius: BorderRadius.all(Radius.circular(8))),
+            child: Row(
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      '배지',
+                      style: TextStyle(
+                        color: PeeroreumColor.gray[800],
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Pretendard',
                       ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      Text(
-                        '${badges.length}개',
-                        style: TextStyle(
-                          color: PeeroreumColor.gray[600],
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Pretendard',
-                        ),
-                      ),
-                    ],
-                  ),
-                  Flexible(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 20),
-                      height: 52,
-                      child: Badge(),
                     ),
-                  )
-                ],
-              ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      '${badges.length}개',
+                      style: TextStyle(
+                        color: PeeroreumColor.gray[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Pretendard',
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 16),
+                  height: 52,
+                  child: Badge(),
+                )
+              ],
             ),
           ),
         ),

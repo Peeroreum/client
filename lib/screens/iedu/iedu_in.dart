@@ -154,7 +154,7 @@ class _InIeduState extends State<InIedu> {
           children: [
             TabBar(
                 indicatorColor: PeeroreumColor.primaryPuple[400],
-                indicatorSize: TabBarIndicatorSize.label,
+                indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: PeeroreumColor.primaryPuple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
@@ -289,8 +289,8 @@ class _InIeduState extends State<InIedu> {
               if (index < question.length) {
                 return GestureDetector(
                   onTap: () async {
-                    await Get.to(() => DetailIedu(question[index]['id'],
-                        question[index]['selected']));
+                    await Get.to(() => DetailIedu(
+                        question[index]['id'], question[index]['selected']));
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
@@ -446,8 +446,8 @@ class _InIeduState extends State<InIedu> {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () async {
-                    await Get.to(() => DetailIedu(question[index]['id'],
-                        question[index]['selected']));
+                    await Get.to(() => DetailIedu(
+                        question[index]['id'], question[index]['selected']));
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
