@@ -18,7 +18,7 @@ class RankingController extends GetxController {
     selectedIndex(index);
   }
 
-  void fetchRanking() async {
+  Future<void> fetchRanking() async {
     try {
       isLoading(true);
       final response = await rankingProvider.getRanking();

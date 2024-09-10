@@ -36,102 +36,112 @@ class _RankingState extends State<Ranking> {
         surfaceTintColor: Colors.transparent,
         backgroundColor: PeeroreumColor.white,
       ),
-      body: Obx(() {
-        if (_rankingController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        } else if (_rankingController.errorMessage.isNotEmpty) {
-          return Center(
-            // child: Text('Error: ${_rankingController.errorMessage}')
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: RefreshIndicator(
+        onRefresh: _rankingController.fetchRanking,
+        color: PeeroreumColor.primaryPuple[400],
+        child: Obx(() {
+          if (_rankingController.isLoading.value) {
+            return Center(child: CircularProgressIndicator());
+          } else if (_rankingController.errorMessage.isNotEmpty) {
+            return ListView(
               children: [
-                Image.asset(
-                  'assets/images/no_wedu_oreum.png',
-                  width: 150,
-                ),
-                T2_20px(text: "경쟁자가 없어요 지금이에요!!")
-              ],
-            ),
-          );
-        } else {
-          return Container(
-            decoration: BoxDecoration(
-                border: Border(
-              top: BorderSide(color: PeeroreumColor.gray[100]!, width: 1.0),
-            )),
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        rankingHelp();
-                      },
-                      child: T5_14px(
-                        text: "ⓘ 랭킹 안내",
-                        color: PeeroreumColor.gray[500],
-                      ),
-                    )
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 4,
+                    ),
+                    Image.asset(
+                      'assets/images/no_wedu_oreum.png',
+                      width: 150,
+                    ),
+                    T2_20px(text: "경쟁자가 없어요 지금이에요!!"),
                   ],
                 ),
-                SizedBox(
-                  height: 16,
-                ),
-                Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
+              ],
+            );
+          } else {
+            return Container(
+              decoration: BoxDecoration(
+                  border: Border(
+                top: BorderSide(color: PeeroreumColor.gray[100]!, width: 1.0),
+              )),
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
                     children: [
-                      Ranker(
-                        name: _rankingController.ranking.length > 1
-                            ? "${_rankingController.ranking[1].nickname}"
-                            : "-",
-                        image: "assets/images/silvermedal.png",
-                        rank:
-                            _rankingController.ranking.length > 1 ? "2위" : "-",
-                        height: 48.0,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Ranker(
-                        name: _rankingController.ranking.isNotEmpty
-                            ? "${_rankingController.ranking[0].nickname}"
-                            : "-",
-                        image: "assets/images/goldmedal.png",
-                        rank:
-                            _rankingController.ranking.isNotEmpty ? "1위" : "-",
-                        height: 64.0,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Ranker(
-                        name: _rankingController.ranking.length > 2
-                            ? "${_rankingController.ranking[2].nickname}"
-                            : "-",
-                        image: "assets/images/bronzemedal.png",
-                        rank:
-                            _rankingController.ranking.length > 2 ? "3위" : "-",
-                        height: 40.0,
-                      ),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          rankingHelp();
+                        },
+                        child: T5_14px(
+                          text: "ⓘ 랭킹 안내",
+                          color: PeeroreumColor.gray[500],
+                        ),
+                      )
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                myranking(),
-                SizedBox(
-                  height: 8,
-                ),
-                Expanded(
-                  child: ListView.separated(
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Container(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Ranker(
+                          name: _rankingController.ranking.length > 1
+                              ? "${_rankingController.ranking[1].nickname}"
+                              : "-",
+                          image: "assets/images/silvermedal.png",
+                          rank: _rankingController.ranking.length > 1
+                              ? "2위"
+                              : "-",
+                          height: 48.0,
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Ranker(
+                          name: _rankingController.ranking.isNotEmpty
+                              ? "${_rankingController.ranking[0].nickname}"
+                              : "-",
+                          image: "assets/images/goldmedal.png",
+                          rank: _rankingController.ranking.isNotEmpty
+                              ? "1위"
+                              : "-",
+                          height: 64.0,
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Ranker(
+                          name: _rankingController.ranking.length > 2
+                              ? "${_rankingController.ranking[2].nickname}"
+                              : "-",
+                          image: "assets/images/bronzemedal.png",
+                          rank: _rankingController.ranking.length > 2
+                              ? "3위"
+                              : "-",
+                          height: 40.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  myranking(),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  ListView.separated(
                     controller: _rankingController.scrollController,
                     shrinkWrap: true,
                     itemCount: _rankingController.ranking.length < 3
@@ -147,12 +157,12 @@ class _RankingState extends State<Ranking> {
                       return rankings(ranks);
                     },
                   ),
-                ),
-              ],
-            ),
-          );
-        }
-      }),
+                ],
+              ),
+            );
+          }
+        }),
+      ),
     );
   }
 
