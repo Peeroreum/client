@@ -1266,67 +1266,32 @@ class _MyPageProfileState extends State<MyPageProfile> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Container(
-            width: 87,
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: SizedBox(
-              height: 52,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      Get.to(() => MyPageProfileFriend(nickname));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        T3_18px(
-                          text: '팔로워',
-                          color: PeeroreumColor.gray[800],
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        B4_14px_M(
-                          text: friendNumber != null ? '$friendNumber' : '0',
-                          color: PeeroreumColor.gray[600],
-                        ),
-                      ],
+          child: InkWell(
+            splashColor: Colors.transparent,
+            onTap: () {
+              Get.to(() => MyPageProfileFriend(nickname));
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              decoration: BoxDecoration(
+                  border:
+                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              child: SizedBox(
+                height: 25,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    T3_18px(
+                      text: '팔로워',
+                      color: PeeroreumColor.gray[800],
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 12),
-                    width: 1,
-                    color: PeeroreumColor.gray[200],
-                  ),
-                  InkWell(
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      Get.to(() => MyPageProfileFriend(nickname));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        T3_18px(
-                          text: '팔로잉',
-                          color: PeeroreumColor.gray[800],
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        B4_14px_M(
-                          text: friendNumber != null ? '$friendNumber' : '0',
-                          color: PeeroreumColor.gray[600],
-                        ),
-                      ],
+                    B3_18px_M(
+                      text: friendNumber != null ? '$friendNumber' : '0',
+                      color: PeeroreumColor.gray[600],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -1334,51 +1299,86 @@ class _MyPageProfileState extends State<MyPageProfile> {
         SizedBox(
           width: 8,
         ),
-        GestureDetector(
-          onTap: () {
-            // Fluttertoast.showToast(msg: "준비 중입니다.");
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Row(
-              children: [
-                Column(
+        Expanded(
+          child: InkWell(
+            splashColor: Colors.transparent,
+            onTap: () {
+              Get.to(() => MyPageProfileFriend(nickname));
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              decoration: BoxDecoration(
+                  border:
+                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              child: SizedBox(
+                height: 25,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '배지',
-                      style: TextStyle(
-                        color: PeeroreumColor.gray[800],
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Pretendard',
-                      ),
+                    T3_18px(
+                      text: '팔로잉',
+                      color: PeeroreumColor.gray[800],
                     ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      '${badges.length}개',
-                      style: TextStyle(
-                        color: PeeroreumColor.gray[600],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Pretendard',
-                      ),
+                    B3_18px_M(
+                      text: friendNumber != null ? '$friendNumber' : '0',
+                      color: PeeroreumColor.gray[600],
                     ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 16),
-                  height: 52,
-                  child: Badge(),
-                )
-              ],
+              ),
             ),
           ),
         ),
+        // 뱃지
+        // SizedBox(
+        //   width: 8,
+        // ),
+        // GestureDetector(
+        //   onTap: () {
+        //     // Fluttertoast.showToast(msg: "준비 중입니다.");
+        //   },
+        //   child: Container(
+        //     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        //     decoration: BoxDecoration(
+        //         border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+        //         borderRadius: BorderRadius.all(Radius.circular(8))),
+        //     child: Row(
+        //       children: [
+        //         Column(
+        //           children: [
+        //             Text(
+        //               '배지',
+        //               style: TextStyle(
+        //                 color: PeeroreumColor.gray[800],
+        //                 fontSize: 18,
+        //                 fontWeight: FontWeight.w600,
+        //                 fontFamily: 'Pretendard',
+        //               ),
+        //             ),
+        //             SizedBox(
+        //               height: 4,
+        //             ),
+        //             Text(
+        //               '${badges.length}개',
+        //               style: TextStyle(
+        //                 color: PeeroreumColor.gray[600],
+        //                 fontSize: 14,
+        //                 fontWeight: FontWeight.w500,
+        //                 fontFamily: 'Pretendard',
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //         Container(
+        //           padding: EdgeInsets.only(left: 16),
+        //           height: 52,
+        //           child: Badge(),
+        //         )
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
