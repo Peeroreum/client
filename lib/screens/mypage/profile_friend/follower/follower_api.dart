@@ -7,7 +7,7 @@ class FollowerProvider extends GetConnect {
   var token;
   Future<List<FollowerModel>?> getFriends(String nickname) async {
     token = await FlutterSecureStorage().read(key: "accessToken");
-    final String url = '${API.hostConnect}/member/friend/$nickname';
+    final String url = '${API.hostConnect}/member/friend/$nickname/follower';
     final Response response = await get(url, headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
