@@ -6,6 +6,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/data/Onboarding_check.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
+import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/report.dart';
@@ -175,6 +176,10 @@ class PeeroreumApp extends StatelessWidget {
         GetPage(
         	name: '/home/iedu',
             page: () => bottomNaviBar(firebaseToken, 1),
+        ),
+        GetPage(
+        	name: '/home/alert',
+            page: () => Alert(),
         ),
     	],
       debugShowCheckedModeBanner: false,
