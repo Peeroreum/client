@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search.dart';
@@ -260,7 +261,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 color: PeeroreumColor.gray[800],
               ),
               onTap: () {
-                Fluttertoast.showToast(msg: "준비중입니다.");
+                Get.to(()=>Alert());
               },
             ),
             SizedBox(
