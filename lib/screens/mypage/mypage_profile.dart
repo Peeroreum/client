@@ -47,7 +47,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
   var grade;
   var profileImage;
   var backgroundImage;
-  var friendNumber;
+  var followerNumber;
+  var followingNumber;
   var withPeerDay;
   Member member = Member();
   final change_nickname_controller = TextEditingController();
@@ -82,7 +83,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
     if (profileinfo.statusCode == 200) {
       var data = jsonDecode(utf8.decode(profileinfo.bodyBytes))['data'];
       grade = data["grade"];
-      friendNumber = data["friendNumber"];
+      followerNumber = data["followerNumber"];
+      followingNumber = data["followingNumber"];
       profileImage = data["profileImage"];
       backgroundImage = data["backgroundImage"];
       is_friend = data['following'];
@@ -1269,7 +1271,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
           child: InkWell(
             splashColor: Colors.transparent,
             onTap: () {
-              Get.to(() => MyPageProfileFriend(nickname));
+              Get.to(() => MyPageProfileFriend(
+                    nickname,
+                    index: 0,
+                  ));
             },
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -1287,7 +1292,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       color: PeeroreumColor.gray[800],
                     ),
                     B3_18px_M(
-                      text: friendNumber != null ? '$friendNumber' : '0',
+                      text: followerNumber != null ? '$followerNumber' : '0',
                       color: PeeroreumColor.gray[600],
                     ),
                   ],
@@ -1303,7 +1308,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
           child: InkWell(
             splashColor: Colors.transparent,
             onTap: () {
-              Get.to(() => MyPageProfileFriend(nickname));
+              Get.to(() => MyPageProfileFriend(
+                    nickname,
+                    index: 1,
+                  ));
             },
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -1321,7 +1329,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       color: PeeroreumColor.gray[800],
                     ),
                     B3_18px_M(
-                      text: friendNumber != null ? '$friendNumber' : '0',
+                      text: followingNumber != null ? '$followingNumber' : '0',
                       color: PeeroreumColor.gray[600],
                     ),
                   ],

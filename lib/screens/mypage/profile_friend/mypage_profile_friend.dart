@@ -12,7 +12,8 @@ import 'package:peeroreum_client/screens/mypage/profile_friend/following/followi
 
 class MyPageProfileFriend extends StatelessWidget {
   var nickname;
-  MyPageProfileFriend(this.nickname);
+  int index;
+  MyPageProfileFriend(this.nickname, {this.index = 0});
 
   var mynickname;
 
@@ -70,6 +71,7 @@ class MyPageProfileFriend extends StatelessWidget {
   Widget bodyWidget() {
     return DefaultTabController(
       length: 2,
+      initialIndex: index,
       child: Column(
         children: [
           TabBar(
