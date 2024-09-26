@@ -321,7 +321,7 @@ class _RankingState extends State<Ranking> {
               Container(
                 height: 25,
                 child: Center(
-                  child: T3_18px(text: "${int.parse(ranks.rank) + 2} 위"),
+                  child: T3_18px(text: "${int.parse(ranks.rank)} 위"),
                 ),
               ),
               SizedBox(

@@ -325,9 +325,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12
-                                      ),
+                                          horizontal: 16, vertical: 12),
                                       height: 48,
                                       width: 208,
                                       decoration: BoxDecoration(
@@ -335,17 +333,29 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
-                                          SvgPicture.asset('assets/icons/pencil_with_line.svg', color: PeeroreumColor.white,),
-                                          SizedBox(width: 8,),
-                                          T4_16px(text: '내가해냄 질문하러 가기', color: PeeroreumColor.white,)
+                                          SvgPicture.asset(
+                                            'assets/icons/pencil_with_line.svg',
+                                            color: PeeroreumColor.white,
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          T4_16px(
+                                            text: '질의응답 질문하러 가기',
+                                            color: PeeroreumColor.white,
+                                          )
                                         ],
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 56,)
+                                  SizedBox(
+                                    height: 56,
+                                  )
                                 ],
                               ),
                             ),
@@ -361,7 +371,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               child: Row(
                                 children: [
                                   Text(
-                                    '검색된 내가해냄',
+                                    '검색된 질의응답',
                                     style: TextStyle(
                                         color: PeeroreumColor.gray[800],
                                         fontFamily: 'Pretendard',
@@ -578,8 +588,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   Read.saveRead(isReadList);
                 }
               });
-              await Get.to(() => DetailIedu(
-                  datas[index]['id'], datas[index]['selected']));
+              await Get.to(() =>
+                  DetailIedu(datas[index]['id'], datas[index]['selected']));
             },
             child: Container(
               width: MediaQuery.of(context).size.width - 40,
