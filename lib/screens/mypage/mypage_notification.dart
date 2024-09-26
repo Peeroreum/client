@@ -233,7 +233,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '내가해냄 알림',
+              '질의응답 알림',
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 14,
