@@ -166,7 +166,7 @@ class AlertListView extends StatelessWidget {
             ],
           ),
           SizedBox(height: 8,),
-          B3_18px_M(text: description),
+          B4_14px_R(text: description),
         ],
       ),
     );
