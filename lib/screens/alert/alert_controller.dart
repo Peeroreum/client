@@ -20,8 +20,8 @@ class AlertController extends GetxController{
   Future<void> fetchData() async{
     final getConnect = GetConnect();
     token = await const FlutterSecureStorage().read(key: "accessToken");
-    const String activityUrl = '${API.hostConnect}**************';
-    const String serviceUrl = '${API.hostConnect}**************';
+    const String activityUrl = '${API.hostConnect}/notification/activity';
+    const String serviceUrl = '${API.hostConnect}/notification/service';
     
     try {
 
