@@ -52,10 +52,12 @@ class AlertModel {
 }
 
 // class AlertModel {
+//   final String title;
 //   final String description;
 //   final String timeago;
 
 //   AlertModel({
+//     required this.title,
 //     required this.description,
 //     required this.timeago,
 //   });
@@ -63,6 +65,7 @@ class AlertModel {
 //   // 더미 데이터를 위한 팩토리 메서드
 //   factory AlertModel.fromJson(Map<String, dynamic> json) {
 //     return AlertModel(
+//       title: json['title'],
 //       description: json['description'],
 //       timeago: json['timeago'],
 //     );
@@ -71,7 +74,8 @@ class AlertModel {
 
 // List<AlertModel> generateDummyAlerts() {
 //   return List.generate(10, (index) => AlertModel(
-//     description: '알림 ${index+1} 설명 어쩌고 와랄라',
+//     title: '전교 ${index+1}등 지망생',
+//     description: '개발자님이 칭찬을 보냈어요!',
 //     timeago: '10분 전',
 //   ));
 // }
