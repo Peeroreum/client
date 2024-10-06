@@ -6,23 +6,24 @@ import 'package:peeroreum_client/data/Checklist.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 
 import '../../api/NotificationApi.dart';
-import '../../data/NotificationSetting.dart';
 import '../../designs/PeeroreumColor.dart';
 import 'package:get/get.dart';
 
 class EncouragementCheckList extends StatefulWidget {
-  EncouragementCheckList(this.notSuccessList, this.id);
+  EncouragementCheckList(this.notSuccessList, this.title, this.id);
   List<dynamic> notSuccessList;
+  String title;
   int id;
 
   @override
   State<EncouragementCheckList> createState() =>
-      _EncouragementCheckListState(notSuccessList, id);
+      _EncouragementCheckListState(notSuccessList, title, id);
 }
 
 class _EncouragementCheckListState extends State<EncouragementCheckList> {
-  _EncouragementCheckListState(this.notSuccessList, this.id);
+  _EncouragementCheckListState(this.notSuccessList, this.title, this.id);
   List<dynamic> notSuccessList;
+  String title;
   int id;
 
   List<String> receiverList = [];
@@ -101,7 +102,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
   sendNotification() async {
     for (String receiver in receiverList) {
       if (sender != receiver) {
-        NotificationApi.sendEncouragement(sender!, receiver);
+        NotificationApi.sendEncouragement(sender!, receiver, title, id.toString());
         print("$receiver 님에게 알림 전송");
       }
     }

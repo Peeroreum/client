@@ -8,31 +8,35 @@ import 'PeeroreumApi.dart';
 
 class NotificationApi {
 
-  static sendFriendAdd(String sender, String receiver) {
-    NotificationRequest notificationRequest = NotificationRequest(
-        nickname: receiver,
-        title: "마이페이지",
-        body: "$sender 님이 $receiver 님을 친구로 추가했어요!"
-    );
+  // static sendFriendAdd(String sender, String receiver) {
+  //   NotificationRequest notificationRequest = NotificationRequest(
+  //       nickname: receiver,
+  //       title: "마이페이지",
+  //       body: "$sender 님이 $receiver 님을 친구로 추가했어요!"
+  //   );
+  //
+  //   postApi(notificationRequest);
+  // }
 
-    postApi(notificationRequest);
-  }
-
-  static sendCompliment(String sender, String receiver) {
+  static sendCompliment(String sender, String receiver, String title, String data) {
     NotificationRequest notificationRequest = NotificationRequest(
       nickname: receiver,
-      title: "같이해냄",
-      body: "$sender 님이 칭찬을 보냈어요!"
+      title: title,
+      body: "$sender 님이 칭찬을 보냈어요!",
+      type: 0,
+      data: data
     );
 
     postApi(notificationRequest);
   }
 
-  static sendEncouragement(String sender, String receiver) {
+  static sendEncouragement(String sender, String receiver, String title, String data) {
     NotificationRequest notificationRequest = NotificationRequest(
         nickname: receiver,
-        title: "같이해냄",
-        body: "$sender 님이 챌린지 인증을 기다려요!"
+        title: title,
+        body: "$sender 님이 챌린지 인증을 기다려요!",
+        type: 0,
+        data: data
     );
 
     postApi(notificationRequest);

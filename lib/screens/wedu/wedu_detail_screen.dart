@@ -1165,7 +1165,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(()=>ComplimentCheckList(successList, id));
+                    Get.to(()=>ComplimentCheckList(successList, weduTitle, id));
                   },
                   child: Text(
                     '전체보기',
@@ -1210,7 +1210,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(()=>EncouragementCheckList(notSuccessList, id));
+                    Get.to(()=>EncouragementCheckList(notSuccessList, weduTitle, id));
                   },
                   child: Text(
                     '전체보기',

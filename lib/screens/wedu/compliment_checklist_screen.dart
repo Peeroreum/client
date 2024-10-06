@@ -4,24 +4,25 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:peeroreum_client/api/NotificationApi.dart';
 import 'package:peeroreum_client/data/Checklist.dart';
-import 'package:peeroreum_client/data/NotificationSetting.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:get/get.dart';
 
 class ComplimentCheckList extends StatefulWidget {
-  ComplimentCheckList(this.successList, this.id);
+  ComplimentCheckList(this.successList, this.title, this.id);
   List<dynamic> successList;
+  String title;
   int id;
 
   @override
   State<ComplimentCheckList> createState() =>
-      _ComplimentCheckListState(successList, id);
+      _ComplimentCheckListState(successList, title, id);
 }
 
 class _ComplimentCheckListState extends State<ComplimentCheckList> {
-  _ComplimentCheckListState(this.successList, this.id);
+  _ComplimentCheckListState(this.successList, this.title, this.id);
   List<dynamic> successList;
+  String title;
   int id;
 
   List<String> receiverList = [];
@@ -99,7 +100,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
 
   sendNotification() async {
     for (String receiver in receiverList) {
-      NotificationApi.sendCompliment(sender!, receiver);
+      NotificationApi.sendCompliment(sender!, receiver, title, id.toString());
     }
   }
 
