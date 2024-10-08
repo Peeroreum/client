@@ -110,7 +110,9 @@ class Alert extends GetView<AlertController> {
       ),
     );
   }
+
   Widget buildAlertListView(List<AlertModel> alerts) {
+    print(alerts);
     return ListView.separated(
       itemCount: alerts.length,
       separatorBuilder: (context, index) => const Divider(), // 구분선 추가
@@ -118,7 +120,8 @@ class Alert extends GetView<AlertController> {
         final alert = alerts[index];
         return AlertListView(
           title: alert.title!,
-          description: alert.description!, // AlertModel에서 적절한 필드 사용
+          body: alert.body!, // AlertModel에서 적절한 필드 사용
+          type: alert.type!,
           timeago: alert.timeago!, // AlertModel에서 적절한 필드 사용
         );
       },
@@ -140,14 +143,16 @@ class Alert extends GetView<AlertController> {
 
 class AlertListView extends StatelessWidget {
   final String title;
-  final String description;
+  final String body;
+  final String type;
   final String timeago;
 
-  const AlertListView({
-    required this.title,
-    required this.description,
-    required this.timeago,
-    super.key});
+  const AlertListView(
+      {required this.title,
+      required this.body,
+      required this.type,
+      required this.timeago,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -165,11 +170,12 @@ class AlertListView extends StatelessWidget {
               C1_12px_M(text: timeago, color: PeeroreumColor.gray[600])
             ],
           ),
-          SizedBox(height: 8,),
-          B4_14px_R(text: description),
+          SizedBox(
+            height: 8,
+          ),
+          B4_14px_R(text: body),
         ],
       ),
     );
   }
 }
-

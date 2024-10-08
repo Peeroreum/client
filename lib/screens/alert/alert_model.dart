@@ -1,22 +1,26 @@
 class AlertModel {
   String? title;
-  String? description;
+  String? body;
+  String? type;
   DateTime? createdTime;
   String? timeago;
 
-  AlertModel({this.title, this.description, this.createdTime}) {
-    timeago = timeCheck(createdTime!);  // 생성자에서 timeago 계산
+  AlertModel({this.title, this.body, this.type, this.createdTime}) {
+    timeago = timeCheck(createdTime!); // 생성자에서 timeago 계산
   }
 
   factory AlertModel.fromJson(Map<String, dynamic> json) => AlertModel(
-    title: json['title'],
-    description: json['description'],
-    createdTime: DateTime.parse(json['createdTime']),  // JSON에서 createdTime 파싱
-  );
+        title: json['title'],
+        body: json['body'],
+        type: json['type'].toString() ?? "0",
+        createdTime:
+            DateTime.parse(json['createdTime']), // JSON에서 createdTime 파싱
+      );
 
   Map<String, dynamic> toJson() => {
         'title': title,
-        'description': description,
+        'body': body,
+        'type': type,
         'createdTime': createdTime?.toIso8601String(),
         'timeago': timeago,
       };
