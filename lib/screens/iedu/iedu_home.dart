@@ -12,6 +12,7 @@ import 'package:peeroreum_client/data/IeduRead.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 import 'package:http/http.dart' as http;
@@ -271,7 +272,8 @@ class _HomeIeduState extends State<HomeIedu> {
                   color: PeeroreumColor.gray[800],
                 ),
                 onTap: () {
-                  Fluttertoast.showToast(msg: "준비중입니다.");
+                  // Fluttertoast.showToast(msg: "준비중입니다.");
+                  Get.to(() => Alert());
                 },
               ),
             ),
