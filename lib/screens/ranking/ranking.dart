@@ -407,7 +407,7 @@ class Ranker extends StatelessWidget {
           Container(
             width: 88,
             height: height ?? 48,
-            padding: EdgeInsets.fromLTRB(32, 0, 32, 8),
+            padding: EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: PeeroreumColor.gray[100],
