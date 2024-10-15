@@ -166,9 +166,9 @@ class _InWeduState extends State<InWedu> {
       },
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () {
-            Get.to(() => DetailWedu(complete_group[index]["id"]));
-          },
+          // onTap: () {
+          //   Get.to(() => DetailWedu(complete_group[index]["id"]));
+          // },
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
