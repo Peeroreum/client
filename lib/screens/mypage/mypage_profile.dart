@@ -1,9 +1,6 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, deprecated_member_use, non_constant_identifier_names, avoid_print, sized_box_for_whitespace, must_be_immutable, prefer_typing_uninitialized_variables
-
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1547,28 +1544,28 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 4,
                     ),
-                    Flexible(
-                      child: CustomWidgetMarquee(
-                        animationDuration: Duration(seconds: 5),
-                        pauseDuration: Duration(seconds: 1),
-                        directionOption: DirectionOption.oneDirection,
+                    SizedBox(
+                      width: 90,
+                      height: 24,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
                         child: Text(
                           inroom_datas[rindex]["title"]!,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.black),
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.black,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Row(
