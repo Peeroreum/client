@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -527,25 +526,42 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               datas[index]['locked'].toString() == "true"
                                   ? SizedBox(width: 4)
                                   : SizedBox(),
+                              // SizedBox(
+                              //   width: datas[index]['locked'].toString() ==
+                              //           "true"
+                              //       ? MediaQuery.of(context).size.width * 0.42
+                              //       : MediaQuery.of(context).size.width * 0.48,
+                              //   child: CustomWidgetMarquee(
+                              //     animationDuration: Duration(seconds: 3),
+                              //     pauseDuration: Duration(seconds: 1),
+                              //     directionOption: DirectionOption.oneDirection,
+                              //     child: Text(
+                              //       datas[index]["title"]!,
+                              //       style: TextStyle(
+                              //           fontFamily: 'Pretendard',
+                              //           fontSize: 18,
+                              //           fontWeight: FontWeight.w600,
+                              //           color: PeeroreumColor.black),
+                              //     ),
+                              //   ),
+                              // ),
                               SizedBox(
-                                width: datas[index]['locked'].toString() ==
-                                        "true"
+                                width: datas[index]['locked'].toString() == "true"
                                     ? MediaQuery.of(context).size.width * 0.42
                                     : MediaQuery.of(context).size.width * 0.48,
-                                child: CustomWidgetMarquee(
-                                  animationDuration: Duration(seconds: 3),
-                                  pauseDuration: Duration(seconds: 1),
-                                  directionOption: DirectionOption.oneDirection,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
                                   child: Text(
-                                    datas[index]["title"]!,
+                                    datas[index]["title"] ?? "",
                                     style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: PeeroreumColor.black),
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: PeeroreumColor.black,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                           // SizedBox(

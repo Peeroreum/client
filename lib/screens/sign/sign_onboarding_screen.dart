@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/data/Onboarding_check.dart';
@@ -13,7 +14,7 @@ class OnBoarding extends StatefulWidget {
 }
 
 class _OnBoardingState extends State<OnBoarding> {
-  final CarouselController _controller = CarouselController();
+  final _controller = CarouselSliderController();
   int totalItems = 3;
   int pageIndex = 0;
   bool _isVisible = true;

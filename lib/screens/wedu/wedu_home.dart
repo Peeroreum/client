@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'dart:convert';
-import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -507,20 +506,20 @@ class _HomeWeduState extends State<HomeWedu> {
                           SizedBox(
                             width: 4,
                           ),
-                          Flexible(
-                            child: CustomWidgetMarquee(
-                              animationDuration: Duration(seconds: 5),
-                              pauseDuration: Duration(seconds: 1),
-                              directionOption: DirectionOption.oneDirection,
+                          SizedBox(
+                            width: 90,
+                            height: 24,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
                               child: Text(
                                 inroom_datas[rindex]["title"]!,
-                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: PeeroreumColor.black),
-                              ),
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.black,
+                                ),
+                              )
                             ),
                           ),
                         ],
@@ -1033,21 +1032,19 @@ class _HomeWeduState extends State<HomeWedu> {
                                     )
                                   : SizedBox(),
                               SizedBox(
-                                width: datas[index]['locked'].toString() ==
-                                        "true"
+                                width: datas[index]['locked'].toString() == "true"
                                     ? MediaQuery.of(context).size.width * 0.42
                                     : MediaQuery.of(context).size.width * 0.48,
-                                child: CustomWidgetMarquee(
-                                  animationDuration: Duration(seconds: 3),
-                                  pauseDuration: Duration(seconds: 1),
-                                  directionOption: DirectionOption.oneDirection,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
                                   child: Text(
-                                    datas[index]["title"]!,
-                                    style: TextStyle(
+                                      datas[index]["title"]!,
+                                      style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
-                                        color: PeeroreumColor.black),
+                                        color: PeeroreumColor.black,
+                                      )
                                   ),
                                 ),
                               ),

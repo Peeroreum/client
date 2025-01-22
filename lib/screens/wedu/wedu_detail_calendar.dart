@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:custom_widget_marquee/custom_widget_marquee.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -237,15 +236,27 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Flexible(
-                  child: CustomWidgetMarquee(
-                    child: Text(
-                      weduTitle,
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
-                          color: PeeroreumColor.black),
+                // Flexible(
+                //   child: CustomWidgetMarquee(
+                //     child: Text(
+                //       weduTitle,
+                //       style: TextStyle(
+                //           fontFamily: 'Pretendard',
+                //           fontWeight: FontWeight.w500,
+                //           fontSize: 20,
+                //           color: PeeroreumColor.black),
+                //     ),
+                //   ),
+                // ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    weduTitle,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: PeeroreumColor.black,
                     ),
                   ),
                 ),
