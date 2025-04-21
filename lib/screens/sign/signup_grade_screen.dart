@@ -6,6 +6,10 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_subject_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:http/http.dart' as http;
+import '../../api/PeeroreumApi.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 
 class SignUpGrade extends StatefulWidget {
   Member member;
@@ -18,7 +22,7 @@ class SignUpGrade extends StatefulWidget {
 class _SignUpGradeState extends State<SignUpGrade> {
   Member member;
   _SignUpGradeState(this.member);
-  final _schools = ['중학교', '고등학교'];
+  final _schools = ['중학교', '고등학교', '대학교'];
   final _grades = ['1학년', '2학년', '3학년'];
   String? _school;
   String? _grade;
@@ -26,7 +30,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
   bool is_Enabled = false;
 
   void _checkInput() {
-    if (_school != null && _grade != null) {
+    if ((_school != null && _grade != null) || _school == '대학교') {
       setState(() {
         is_Enabled = true;
       });
@@ -46,7 +50,8 @@ class _SignUpGradeState extends State<SignUpGrade> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           leading: IconButton(
-            icon: SvgPicture.asset('assets/icons/arrow-left.svg', color: PeeroreumColor.gray[800]),
+            icon: SvgPicture.asset('assets/icons/arrow-left.svg',
+                color: PeeroreumColor.gray[800]),
             onPressed: () {
               Get.back();
             },
@@ -63,7 +68,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
                   child: LinearPercentIndicator(
                     animateFromLastPercent: true,
                     lineHeight: 8.0,
-                    percent: 0.66,
+                    percent: _school == '대학교' ? 1.0 : 0.66,
                     progressColor: Color.fromARGB(255, 114, 96, 248),
                     backgroundColor: Colors.grey[100],
                     barRadius: Radius.circular(10),
@@ -95,28 +100,30 @@ class _SignUpGradeState extends State<SignUpGrade> {
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.15),
               Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: PeeroreumButton<String>(
-                            width: double.infinity,
-                            items: _schools,
-                            value: _school,
-                            onChanged: (value) {
-                              setState(() {
-                                _school = value;
-                                _checkInput();
-                              });
-                            },
-                            hintText: '학교',
-                          ),
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: PeeroreumButton<String>(
+                          width: double.infinity,
+                          items: _schools,
+                          value: _school,
+                          onChanged: (value) {
+                            setState(() {
+                              _school = value;
+                              _checkInput();
+                            });
+                          },
+                          hintText: '학교',
                         ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Visibility(
+                        visible: _school != '대학교',
+                        child: Expanded(
                           child: PeeroreumButton<String>(
                             width: double.infinity,
                             items: _grades,
@@ -130,7 +137,9 @@ class _SignUpGradeState extends State<SignUpGrade> {
                             hintText: '학년',
                           ),
                         ),
-                      ])),
+                      ),
+                    ]),
+              ),
             ],
           ),
         ),
@@ -140,7 +149,10 @@ class _SignUpGradeState extends State<SignUpGrade> {
             height: 48,
             child: TextButton(
               onPressed: () {
-                if (_school != null && _grade != null) {
+                if (_school == "대학교") {
+                  member.grade = 7;
+                  signUpAPI();
+                } else if (_school != null && _grade != null) {
                   member.grade = (_school == "중학교")
                       ? _grades.indexOf(_grade!) + 1
                       : _grades.indexOf(_grade!) + 4;
@@ -172,5 +184,23 @@ class _SignUpGradeState extends State<SignUpGrade> {
         ),
       ),
     );
+  }
+
+  Future<void> signUpAPI() async {
+    var result = await http.post(Uri.parse('${API.hostConnect}/signup'),
+        body: jsonEncode(member),
+        headers: {'Content-Type': 'application/json'});
+    if (result.statusCode == 200) {
+      var data = jsonDecode(utf8.decode(result.bodyBytes))['data'];
+      FlutterSecureStorage secureStorage = FlutterSecureStorage();
+      secureStorage.write(key: "accessToken", value: data['accessToken']);
+      secureStorage.write(key: "email", value: data['email']);
+      secureStorage.write(key: "nickname", value: data['nickname']);
+      secureStorage.write(key: "profileImage", value: data['profileImage']);
+      secureStorage.write(key: "grade", value: data['grade'].toString());
+      Get.offAllNamed('signUp/Complete');
+    } else {
+      print(result.statusCode);
+    }
   }
 }
