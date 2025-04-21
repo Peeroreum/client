@@ -27,7 +27,7 @@ class HomeIedu extends StatefulWidget {
 }
 
 class _HomeIeduState extends State<HomeIedu> {
-  final grades = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+  final grades = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   final subjects = Subject.subject;
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
@@ -384,49 +384,54 @@ class _HomeIeduState extends State<HomeIedu> {
             width: 8,
           ),
           // 과목
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                focusColor["subject"] = PeeroreumColor.black;
-              });
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    return subjectSelect();
-                  }).then((value) {
+          AbsorbPointer(
+            absorbing: _grade == 7,
+            child: GestureDetector(
+              onTap: () {
                 setState(() {
-                  focusColor["subject"] = PeeroreumColor.gray[200]!;
+                  focusColor["subject"] = PeeroreumColor.black;
                 });
-              });
-            },
-            child: Container(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: focusColor["subject"] ?? PeeroreumColor.gray[200]!,
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return subjectSelect();
+                    }).then((value) {
+                  setState(() {
+                    focusColor["subject"] = PeeroreumColor.gray[200]!;
+                  });
+                });
+              },
+              child: Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: focusColor["subject"] ?? PeeroreumColor.gray[200]!,
+                  ),
+                  color: _grade == 7
+                      ? PeeroreumColor.gray[100]
+                      : Colors.transparent,
                 ),
-                color: Colors.transparent,
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    _subject ?? '전체',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w400,
-                        color: _subject != null
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600]),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  SvgPicture.asset('assets/icons/down.svg'),
-                ],
+                child: Row(
+                  children: [
+                    Text(
+                      _subject ?? '전체',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w400,
+                          color: _subject != null
+                              ? PeeroreumColor.black
+                              : PeeroreumColor.gray[600]),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    SvgPicture.asset('assets/icons/down.svg'),
+                  ],
+                ),
               ),
             ),
           ),
@@ -434,52 +439,57 @@ class _HomeIeduState extends State<HomeIedu> {
             width: 8,
           ),
           // 상세 과목
-          GestureDetector(
-            onTap: () {
-              if (_subject != null && _grade != 0) {
-                setState(() {
-                  focusColor["detailSubject"] = PeeroreumColor.black;
-                });
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) {
-                      return detailSubjectSelect();
-                    }).then((value) {
+          AbsorbPointer(
+            absorbing: _grade == 7,
+            child: GestureDetector(
+              onTap: () {
+                if (_subject != null && _grade != 0) {
                   setState(() {
-                    focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
+                    focusColor["detailSubject"] = PeeroreumColor.black;
                   });
-                });
-              }
-            },
-            child: Container(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color:
-                      focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return detailSubjectSelect();
+                      }).then((value) {
+                    setState(() {
+                      focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
+                    });
+                  });
+                }
+              },
+              child: Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: focusColor["detailSubject"] ??
+                        PeeroreumColor.gray[200]!,
+                  ),
+                  color: _grade == 7
+                      ? PeeroreumColor.gray[100]
+                      : Colors.transparent,
                 ),
-                color: Colors.transparent,
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    _detailSubject ?? '전체',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w400,
-                        color: _detailSubject != null
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600]),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  SvgPicture.asset('assets/icons/down.svg'),
-                ],
+                child: Row(
+                  children: [
+                    Text(
+                      _detailSubject ?? '전체',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w400,
+                          color: _detailSubject != null
+                              ? PeeroreumColor.black
+                              : PeeroreumColor.gray[600]),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    SvgPicture.asset('assets/icons/down.svg'),
+                  ],
+                ),
               ),
             ),
           ),
@@ -534,6 +544,10 @@ class _HomeIeduState extends State<HomeIedu> {
                           _detailSubject = null;
                           detailSubject = 0;
                           focusColor["grade"] = PeeroreumColor.gray[200]!;
+                          if (_grade == 7) {
+                            _subject = null;
+                            subject = 0;
+                          }
                         });
                         fetchIeduData();
                         Get.back();
