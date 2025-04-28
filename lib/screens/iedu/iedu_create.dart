@@ -27,7 +27,7 @@ class CreateIedu extends StatefulWidget {
 }
 
 class _CreateIeduState extends State<CreateIedu> {
-  final grades = ['중1', '중2', '중3', '고1', '고2', '고3'];
+  final grades = ['중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   final subjects = Subject.subject;
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
@@ -299,47 +299,51 @@ class _CreateIeduState extends State<CreateIedu> {
           width: 8,
         ),
         // 과목
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              focusColor["subject"] = PeeroreumColor.black;
-            });
-            showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) {
-                  return subjectSelect();
-                }).then((value) {
+        AbsorbPointer(
+          absorbing: _grade == 6,
+          child: GestureDetector(
+            onTap: () {
               setState(() {
-                focusColor["subject"] = PeeroreumColor.gray[200]!;
+                focusColor["subject"] = PeeroreumColor.black;
               });
-            });
-          },
-          child: Container(
-            height: 40,
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: focusColor["subject"] ?? PeeroreumColor.gray[200]!,
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return subjectSelect();
+                  }).then((value) {
+                setState(() {
+                  focusColor["subject"] = PeeroreumColor.gray[200]!;
+                });
+              });
+            },
+            child: Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: focusColor["subject"] ?? PeeroreumColor.gray[200]!,
+                ),
+                color:
+                    _grade == 6 ? PeeroreumColor.gray[100] : Colors.transparent,
               ),
-              color: Colors.transparent,
-            ),
-            child: Row(
-              children: [
-                Text(
-                  _subject ?? '선택',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.black),
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                SvgPicture.asset('assets/icons/down.svg'),
-              ],
+              child: Row(
+                children: [
+                  Text(
+                    _subject ?? '선택',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.black),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  SvgPicture.asset('assets/icons/down.svg'),
+                ],
+              ),
             ),
           ),
         ),
@@ -347,49 +351,54 @@ class _CreateIeduState extends State<CreateIedu> {
           width: 8,
         ),
         // 상세 과목
-        GestureDetector(
-          onTap: () {
-            if (_subject != null) {
-              setState(() {
-                focusColor["detailSubject"] = PeeroreumColor.black;
-              });
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) {
-                    return detailSubjectSelect();
-                  }).then((value) {
+        AbsorbPointer(
+          absorbing: _grade == 6,
+          child: GestureDetector(
+            onTap: () {
+              if (_subject != null) {
                 setState(() {
-                  focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
+                  focusColor["detailSubject"] = PeeroreumColor.black;
                 });
-              });
-            }
-          },
-          child: Container(
-            height: 40,
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return detailSubjectSelect();
+                    }).then((value) {
+                  setState(() {
+                    focusColor["detailSubject"] = PeeroreumColor.gray[200]!;
+                  });
+                });
+              }
+            },
+            child: Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color:
+                      focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
+                ),
+                color:
+                    _grade == 6 ? PeeroreumColor.gray[100] : Colors.transparent,
               ),
-              color: Colors.transparent,
-            ),
-            child: Row(
-              children: [
-                Text(
-                  _detailSubject ?? '선택',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.black),
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                SvgPicture.asset('assets/icons/down.svg'),
-              ],
+              child: Row(
+                children: [
+                  Text(
+                    _detailSubject ?? '선택',
+                    style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.black),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  SvgPicture.asset('assets/icons/down.svg'),
+                ],
+              ),
             ),
           ),
         ),
@@ -776,7 +785,8 @@ class _CreateIeduState extends State<CreateIedu> {
                 GestureDetector(
                   onTap: () async {
                     if (_images.length < 5) {
-                      final dynamic whiteboardImage = await Get.to(() => WhiteboardIedu());
+                      final dynamic whiteboardImage =
+                          await Get.to(() => WhiteboardIedu());
                       setState(() {
                         if (whiteboardImage != null) {
                           _images.add(whiteboardImage);
@@ -824,7 +834,6 @@ class _CreateIeduState extends State<CreateIedu> {
       });
     }
   }
-
 
   Future<void> postIedu() async {
     var IeduMap = <String, dynamic>{
