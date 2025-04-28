@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart' as diop; 
+import 'package:dio/dio.dart' as diop;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,8 +62,26 @@ class ModifyWedu extends StatefulWidget {
 }
 
 List<int> headcount = <int>[10, 30, 50, 70, 100];
-const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
-const List<String> grade = <String>['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+const List<String> subject = <String>[
+  '전체',
+  '국어',
+  '영어',
+  '수학',
+  '사회',
+  '과학',
+  '기타',
+  '대학'
+];
+const List<String> grade = <String>[
+  '전체',
+  '중1',
+  '중2',
+  '중3',
+  '고1',
+  '고2',
+  '고3',
+  '대학'
+];
 
 class _ModifyWeduState extends State<ModifyWedu> {
   _ModifyWeduState(
@@ -226,6 +244,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
 
   Widget bodyWidget() {
     return Scaffold(
+      backgroundColor: PeeroreumColor.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -910,7 +929,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
       Get.back();
       Get.back();
       Get.back();
-      Get.to(()=> DetailWedu(id));
+      Get.to(() => DetailWedu(id));
     } else {
       print("에러${weduModify.statusCode}");
       Fluttertoast.showToast(msg: '같이방 수정 실패');

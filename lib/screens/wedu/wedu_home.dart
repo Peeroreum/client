@@ -36,8 +36,26 @@ class _HomeWeduState extends State<HomeWedu> {
   Map<dynamic, dynamic> inviDatas = {};
   Map<dynamic, List<dynamic>> hashTags = {};
   List<Map<String, String>> searchData = [];
-  List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
-  List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
+  List<String> dropdownGradeList = [
+    '전체',
+    '중1',
+    '중2',
+    '중3',
+    '고1',
+    '고2',
+    '고3',
+    '대학'
+  ];
+  List<String> dropdownSubjectList = [
+    '전체',
+    '국어',
+    '영어',
+    '수학',
+    '사회',
+    '과학',
+    '기타',
+    '대학'
+  ];
   List<String> dropdownSortTypeList = ['최신순', '추천순', '인기순'];
   String selectedGrade = '전체';
   String selectedSubject = '전체';
@@ -195,7 +213,7 @@ class _HomeWeduState extends State<HomeWedu> {
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () {
-                  Get.to(()=>searchWedu());
+                  Get.to(() => searchWedu());
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -248,7 +266,7 @@ class _HomeWeduState extends State<HomeWedu> {
               ),
               onTap: () {
                 if (inroom_datas.length < 10) {
-                  Get.to(()=> CreateWedu());
+                  Get.to(() => CreateWedu());
                 } else {
                   Fluttertoast.showToast(msg: '같이방은 10개까지만 참여 가능해요.');
                 }
@@ -260,7 +278,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 color: PeeroreumColor.gray[800],
               ),
               onTap: () {
-                Get.to(()=>Alert());
+                Get.to(() => Alert());
               },
             ),
             SizedBox(
@@ -413,7 +431,7 @@ class _HomeWeduState extends State<HomeWedu> {
             ),
             GestureDetector(
                 onTap: () {
-                  Get.to(()=>InWedu());
+                  Get.to(() => InWedu());
                 },
                 child: Text('전체보기',
                     style: TextStyle(
@@ -510,17 +528,16 @@ class _HomeWeduState extends State<HomeWedu> {
                             width: 90,
                             height: 24,
                             child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Text(
-                                inroom_datas[rindex]["title"]!,
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.black,
-                                ),
-                              )
-                            ),
+                                scrollDirection: Axis.horizontal,
+                                child: Text(
+                                  inroom_datas[rindex]["title"]!,
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: PeeroreumColor.black,
+                                  ),
+                                )),
                           ),
                         ],
                       ),
@@ -590,7 +607,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   ),
                 ),
                 onTap: () async {
-                  await Get.to(()=>DetailWedu(inroom_datas[rindex]["id"]));
+                  await Get.to(() => DetailWedu(inroom_datas[rindex]["id"]));
                   fetchDatas();
                 },
               );
@@ -1032,20 +1049,19 @@ class _HomeWeduState extends State<HomeWedu> {
                                     )
                                   : SizedBox(),
                               SizedBox(
-                                width: datas[index]['locked'].toString() == "true"
+                                width: datas[index]['locked'].toString() ==
+                                        "true"
                                     ? MediaQuery.of(context).size.width * 0.42
                                     : MediaQuery.of(context).size.width * 0.48,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                      datas[index]["title"]!,
+                                  child: Text(datas[index]["title"]!,
                                       style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                         color: PeeroreumColor.black,
-                                      )
-                                  ),
+                                      )),
                                 ),
                               ),
                             ],

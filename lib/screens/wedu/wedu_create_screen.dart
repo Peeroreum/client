@@ -15,10 +15,9 @@ import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 
 DateTime date = DateTime.now().add(const Duration(days: 66));
-const List<String> subject = <String>['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
-const List<String> grade = <String>['중1', '중2', '중3', '고1', '고2', '고3'];
+const List<String> subject = <String>['국어', '영어', '수학', '사회', '과학', '기타', '대학'];
+const List<String> grade = <String>['중1', '중2', '중3', '고1', '고2', '고3', '대학'];
 const List<int> headcount = <int>[10, 30, 50, 70, 100];
-//const List<String> gender = <String>['전체', '여자', '남자'];
 List<String> challenge = <String>['문제 30개 풀기', '공부 2시간', '기타'];
 
 class CreateWedu extends StatefulWidget {
@@ -1137,7 +1136,7 @@ class _CreateWeduState extends State<CreateWedu> {
     var file;
     var weduMap = <String, dynamic>{
       'title': nameValue,
-      'subject': subject.indexOf(dropdownSubject),
+      'subject': subject.indexOf(dropdownSubject) + 1,
       'targetDate': '$date'.substring(0, 10),
       'grade': grade.indexOf(dropdownGrade) + 1,
       'maximumPeople': dropdownHeadcount,
