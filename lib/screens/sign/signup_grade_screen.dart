@@ -89,7 +89,8 @@ class _SignUpGradeState extends State<SignUpGrade> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text("친구가 있는 같이방과 답변을 기다리는 질문을 추천해 드릴게요.",
+                    Text(
+                        "학년은 매년 3월 1일에 자동으로 올라가요.\n예비 학년이 아닌, 현재(2월까지) 학년을 선택해주세요!",
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 14,
