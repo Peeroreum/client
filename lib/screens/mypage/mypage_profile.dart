@@ -37,7 +37,16 @@ class _MyPageProfileState extends State<MyPageProfile> {
   var token;
   final nickname_controller = TextEditingController();
   List<dynamic> inroom_datas = [];
-  List<String> dropdownGradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+  List<String> dropdownGradeList = [
+    '전체',
+    '중1',
+    '중2',
+    '중3',
+    '고1',
+    '고2',
+    '고3',
+    '대학'
+  ];
   List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
   bool is_friend = false;
   List<dynamic> badges = [];

@@ -25,7 +25,7 @@ class _InWeduState extends State<InWedu> {
 
   var token;
   dynamic datas = '';
-  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
 
   @override
