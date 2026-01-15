@@ -474,21 +474,27 @@ class _HomeWeduState extends State<HomeWedu> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                          height: 48,
-                          width: 48,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1, color: PeeroreumColor.gray[200]!),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                              image: (inroom_datas[rindex]['imagePath'] != null)
-                                  ? DecorationImage(
-                                      image: NetworkImage(
-                                          inroom_datas[rindex]['imagePath']),
-                                      fit: BoxFit.cover)
-                                  : DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/example_logo.png')))),
+                        height: 48,
+                        width: 48,
+                        decoration: BoxDecoration(
+                          color: PeeroreumColor.gray[50],
+                          border: Border.all(
+                              width: 1, color: PeeroreumColor.gray[200]!),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: (inroom_datas[rindex]['imagePath'] != null)
+                              ? Image.network(
+                                  inroom_datas[rindex]['imagePath'],
+                                  fit: BoxFit.cover,
+                                )
+                              : SvgPicture.asset(
+                                  'assets/images/default.svg',
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
                       SizedBox(
                         height: 16,
                       ),
@@ -825,16 +831,23 @@ class _HomeWeduState extends State<HomeWedu> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        image: (datas[index]["imagePath"] != null)
-                            ? DecorationImage(
-                                image: NetworkImage(datas[index]["imagePath"]),
-                                fit: BoxFit.cover)
-                            : DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/example_logo.png'))),
+                      color: PeeroreumColor.gray[50],
+                      border: Border.all(
+                          width: 1, color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: (datas[index]["imagePath"] != null)
+                          ? Image.network(
+                              datas[index]["imagePath"],
+                              fit: BoxFit.cover,
+                            )
+                          : SvgPicture.asset(
+                              'assets/images/default.svg',
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
                   SizedBox(
                     width: 16,
@@ -991,17 +1004,29 @@ class _HomeWeduState extends State<HomeWedu> {
                       width: 72,
                       height: 72,
                       decoration: BoxDecoration(
-                          image: (datas[index]['imagePath'] != null)
-                              ? DecorationImage(
-                                  image:
-                                      NetworkImage(datas[index]['imagePath']),
-                                  fit: BoxFit.cover)
-                              : DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/example_logo.png')),
-                          border: Border.all(
-                              width: 1, color: PeeroreumColor.gray[200]!),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                        color: PeeroreumColor.gray[50],
+                        border: Border.all(
+                            width: 1, color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: (datas[index]['imagePath'] != null)
+                            ? Image.network(
+                                datas[index]['imagePath'],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return SvgPicture.asset(
+                                    'assets/images/default.svg',
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
+                            : SvgPicture.asset(
+                                'assets/images/default.svg',
+                                fit: BoxFit.cover,
+                              ),
+                      ),
                     ),
                     Container(
                       height: 72,

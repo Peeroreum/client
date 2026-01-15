@@ -1501,20 +1501,27 @@ class _MyPageProfileState extends State<MyPageProfile> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        image: (inroom_datas[rindex]['imagePath'] != null)
-                            ? DecorationImage(
-                                image: NetworkImage(
-                                    inroom_datas[rindex]['imagePath']),
-                                fit: BoxFit.cover)
-                            : DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/example_logo.png')))),
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    color: PeeroreumColor.gray[50],
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: (inroom_datas[rindex]['imagePath'] != null)
+                        ? Image.network(
+                            inroom_datas[rindex]['imagePath'],
+                            fit: BoxFit.cover,
+                          )
+                        : SvgPicture.asset(
+                            'assets/images/default.svg',
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
                 SizedBox(
                   height: 16,
                 ),

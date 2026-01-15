@@ -11,7 +11,7 @@ class VisitCount {
   static const String _visitCountKey = 'visitCount';
 
   static Future<void> incrementVisitCount() async {
-    int visitCount = 0;
+    int? visitCount = 0;
     final prefs = await SharedPreferences.getInstance();
     final lastVisitDateStr = prefs.getString('lastVisitDate');
     final todayStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -22,7 +22,7 @@ class VisitCount {
     } else {
       visitCount = await fetchVisitCount();
     }
-    await prefs.setInt(_visitCountKey, visitCount);
+    await prefs.setInt(_visitCountKey, visitCount ?? 0);
   }
 
   static getVisitCount() async {
