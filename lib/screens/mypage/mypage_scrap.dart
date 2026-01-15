@@ -154,7 +154,7 @@ class _ScrapState extends State<Scrap> {
                 ),
                 tabs: [
                   Tab(
-                    text: '질의응답',
+                    text: '내가해냄',
                   ),
                   //Tab(
                   //  text: '컨텐츠',
