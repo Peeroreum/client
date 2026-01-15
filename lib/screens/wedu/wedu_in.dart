@@ -288,7 +288,7 @@ class _InWeduState extends State<InWedu> {
                                 ),
                               ),
                               Text(
-                                'D+${complete_group[index]["dday"].toString().substring(1)}',
+                                '${complete_group[index]["dday"].toString().substring(1)}일 전',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -297,35 +297,8 @@ class _InWeduState extends State<InWedu> {
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "${complete_group[index]["progress"]}% 달성",
-                            style: TextStyle(
-                                color: PeeroreumColor.primaryPuple[400],
-                                fontFamily: 'Pretendard',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600),
-                          ),
                         ],
                       ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      LinearPercentIndicator(
-                        padding: EdgeInsets.all(0),
-                        lineHeight: 8,
-                        percent: double.parse(
-                                complete_group[index]["progress"].toString()) /
-                            100,
-                        backgroundColor: PeeroreumColor.gray[200],
-                        linearGradient: LinearGradient(colors: [
-                          PeeroreumColor.primaryPuple[400]!,
-                          PeeroreumColor.primaryPuple[200]!
-                        ]),
-                        barRadius: Radius.circular(8),
-                      )
                     ],
                   ),
                 )
