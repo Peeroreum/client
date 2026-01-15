@@ -68,10 +68,10 @@ final class PeeroreumColor extends Color {
   static const Map<int, Color> gradeColor = <int, Color>{
     1: Color.fromARGB(255, 224, 0, 0),
     2: Color.fromARGB(255, 253, 121, 0),
-    3: Color.fromARGB(255, 10, 168, 64),
-    4: Color.fromARGB(255, 0, 181, 238),
-    5: Color.fromARGB(255, 0, 89, 167),
-    6: Color.fromARGB(255, 186, 188, 189),
+    3: Color.fromARGB(255, 253, 213, 0),
+    4: Color.fromARGB(255, 10, 168, 64),
+    5: Color.fromARGB(255, 0, 181, 238),
+    6: Color.fromARGB(255, 0, 89, 167),
     7: Color.fromARGB(255, 255, 130, 157),
   };
 }
