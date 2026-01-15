@@ -1501,7 +1501,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         return GestureDetector(
           child: Container(
             width: 150,
-            padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
                 borderRadius: BorderRadius.all(Radius.circular(8.0))),
@@ -1532,7 +1532,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                 ),
                 SizedBox(
-                  height: 16,
+                  height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1622,7 +1622,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ],
                 ),
                 SizedBox(
-                  height: 8,
+                  height: 4,
                 ),
                 Text(
                   '${inroom_datas[rindex]["progress"]}% 달성', //이후 퍼센티지 수정

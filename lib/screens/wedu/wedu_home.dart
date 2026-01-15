@@ -464,7 +464,7 @@ class _HomeWeduState extends State<HomeWedu> {
               return GestureDetector(
                 child: Container(
                   width: 150,
-                  padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                   decoration: BoxDecoration(
                       border: Border.all(
                           width: 1, color: PeeroreumColor.gray[200]!),
@@ -496,7 +496,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         ),
                       ),
                       SizedBox(
-                        height: 16,
+                        height: 10,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -599,7 +599,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         ],
                       ),
                       SizedBox(
-                        height: 8,
+                        height: 4,
                       ),
                       Text(
                         '${inroom_datas[rindex]["progress"]}% 달성', //이후 퍼센티지 수정
