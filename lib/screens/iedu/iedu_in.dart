@@ -134,7 +134,7 @@ class _InIeduState extends State<InIedu> {
         ),
       ),
       title: Text(
-        "내 질의응답",
+        "내 내가해냄",
         style: TextStyle(
             color: PeeroreumColor.black,
             fontFamily: 'Pretendard',

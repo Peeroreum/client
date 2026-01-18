@@ -308,58 +308,62 @@ class _ModifyWeduState extends State<ModifyWedu> {
 
   Widget imageWidget() {
     return Container(
-      padding: EdgeInsets.all(4),
       constraints: BoxConstraints(
         maxHeight: 120,
         maxWidth: 120,
       ),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: PeeroreumColor.gray[50]!,
-            width: 1,
-          ),
-          image: weduImage != null
-              ? _image != null
-                  ? DecorationImage(
-                      image: FileImage(File(_image!.path)),
-                      fit: BoxFit.cover,
-                    )
-                  : DecorationImage(
-                      image: NetworkImage(weduImage),
-                      fit: BoxFit.cover,
-                    )
-              : _image != null
-                  ? DecorationImage(
-                      image: FileImage(File(_image!.path)),
-                      fit: BoxFit.cover,
-                    )
-                  : DecorationImage(
-                      image: AssetImage(
-                        'assets/images/wedu_default_image.png',
-                      ),
-                      fit: BoxFit.cover,
-                    )),
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          getImage(ImageSource.gallery);
-          check_validation();
-        },
-        child: Align(
-          alignment: Alignment.bottomRight,
-          child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: PeeroreumColor.gray[200],
-                border: Border.all(
-                  color: PeeroreumColor.gray[100]!,
-                  width: 1,
-                ),
-              ),
-              child: SvgPicture.asset('assets/icons/camera.svg')),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: PeeroreumColor.gray[100]!,
+          width: 2,
         ),
+        color: PeeroreumColor.gray[50],
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: _image != null
+                  ? Image.file(
+                      File(_image!.path),
+                      fit: BoxFit.cover,
+                    )
+                  : weduImage != null
+                      ? Image.network(
+                          weduImage,
+                          fit: BoxFit.cover,
+                        )
+                      : SvgPicture.asset(
+                          'assets/images/default.svg',
+                          fit: BoxFit.cover,
+                        ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                getImage(ImageSource.gallery);
+                check_validation();
+              },
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: PeeroreumColor.gray[200],
+                  border: Border.all(
+                    color: PeeroreumColor.gray[100]!,
+                    width: 1,
+                  ),
+                ),
+                child: SvgPicture.asset('assets/icons/camera.svg'),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

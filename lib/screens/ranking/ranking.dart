@@ -96,6 +96,9 @@ class _RankingState extends State<Ranking> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Ranker(
+                          points: _rankingController.ranking.length > 1
+                              ? _rankingController.ranking[1].points
+                              : "-",
                           name: _rankingController.ranking.length > 1
                               ? "${_rankingController.ranking[1].nickname}"
                               : "-",
@@ -109,6 +112,9 @@ class _RankingState extends State<Ranking> {
                           width: 8,
                         ),
                         Ranker(
+                          points: _rankingController.ranking.isNotEmpty
+                              ? _rankingController.ranking[0].points
+                              : "-",
                           name: _rankingController.ranking.isNotEmpty
                               ? "${_rankingController.ranking[0].nickname}"
                               : "-",
@@ -122,6 +128,9 @@ class _RankingState extends State<Ranking> {
                           width: 8,
                         ),
                         Ranker(
+                          points: _rankingController.ranking.length > 2
+                              ? _rankingController.ranking[2].points
+                              : "-",
                           name: _rankingController.ranking.length > 2
                               ? "${_rankingController.ranking[2].nickname}"
                               : "-",
@@ -370,6 +379,7 @@ class _RankingState extends State<Ranking> {
 }
 
 class Ranker extends StatelessWidget {
+  final dynamic points;
   final dynamic name;
   final dynamic image;
   final dynamic rank;
@@ -377,7 +387,8 @@ class Ranker extends StatelessWidget {
 
   const Ranker({
     Key? key,
-    this.name,
+    required this.points,
+    required this.name,
     required this.image,
     required this.rank,
     required this.height,
@@ -388,11 +399,18 @@ class Ranker extends StatelessWidget {
     return Container(
       child: Column(
         children: [
+          B4_14px_M(
+            text: '$points점',
+            color: PeeroreumColor.primaryPuple[400],
+          ),
+          SizedBox(
+            height: 2,
+          ),
           Container(
               height: 24,
               child: Center(
                   child: B4_14px_M(
-                text: name ?? "name",
+                text: name,
                 color: PeeroreumColor.gray[800],
               ))),
           Container(

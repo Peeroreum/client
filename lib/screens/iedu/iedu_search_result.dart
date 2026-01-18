@@ -346,7 +346,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                             width: 8,
                                           ),
                                           T4_16px(
-                                            text: '질의응답 질문하러 가기',
+                                            text: '내가해냄 질문하러 가기',
                                             color: PeeroreumColor.white,
                                           )
                                         ],
@@ -371,7 +371,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               child: Row(
                                 children: [
                                   Text(
-                                    '검색된 질의응답',
+                                    '검색된 내가해냄',
                                     style: TextStyle(
                                         color: PeeroreumColor.gray[800],
                                         fontFamily: 'Pretendard',
