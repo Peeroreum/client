@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_scrap.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -80,7 +81,6 @@ class _MyPageState extends State<MyPage> {
           child: Column(
             children: [
               Container(
-                  // padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       border: Border.all(
@@ -133,12 +133,6 @@ class _MyPageState extends State<MyPage> {
           onTap: () {
             Get.to(() => MyPageProfile(nickname, true));
           },
-          // style: ElevatedButton.styleFrom(
-          //   minimumSize: Size.fromHeight(56),
-          //   backgroundColor: PeeroreumColor.white,
-          //   elevation: 0,
-          //   padding: EdgeInsets.all(0),
-          // ),
           child: Container(
             padding: EdgeInsets.all(16),
             child: Row(
@@ -197,17 +191,11 @@ class _MyPageState extends State<MyPage> {
             ),
           ),
         ),
-        // SizedBox(
-        //   height: 17,
-        // ),
         Container(
           margin: EdgeInsets.symmetric(horizontal: 16),
           height: 1,
           color: PeeroreumColor.gray[100],
         ),
-        // SizedBox(
-        //   height: 17,
-        // ),
         Container(
           padding: EdgeInsets.all(16),
           child: Row(
@@ -248,23 +236,19 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {Get.to(InWedu())},
-          // style: TextButton.styleFrom(
-          //     minimumSize: Size.fromHeight(56),
-          //     padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '내 같이방',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+                SvgPicture.asset('assets/icons/UsersThree.svg'),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '내 같이방',
+                  color: PeeroreumColor.gray[800],
                 ),
               ],
             ),
@@ -274,23 +258,19 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {Get.to(InIedu())},
-          // style: TextButton.styleFrom(
-          //     minimumSize: Size.fromHeight(56),
-          //     padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '내 내가해냄',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+                SvgPicture.asset('assets/icons/ChatsTeardrop.svg'),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '내 질의응답',
+                  color: PeeroreumColor.gray[800],
                 ),
               ],
             ),
@@ -300,23 +280,19 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {Get.to(Scrap())},
-          // style: TextButton.styleFrom(
-          //     minimumSize: Size.fromHeight(56),
-          //     padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '스크랩',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+                SvgPicture.asset('assets/icons/BookmarkSimple.svg'),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '스크랩',
+                  color: PeeroreumColor.gray[800],
                 ),
               ],
             ),
@@ -334,23 +310,19 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {Get.to(MyPageNotification())},
-          // style: TextButton.styleFrom(
-          //     minimumSize: Size.fromHeight(56),
-          //     padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '알림 설정',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+                SvgPicture.asset('assets/icons/bell.svg'),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '알림 설정',
+                  color: PeeroreumColor.gray[800],
                 ),
               ],
             ),
@@ -360,23 +332,21 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {Get.to(MyPageAccount())},
-          // style: TextButton.styleFrom(
-          //     minimumSize: Size.fromHeight(56),
-          //     padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '계정 관리',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+                SvgPicture.asset(
+                  'assets/icons/User2.svg',
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '계정 관리',
+                  color: PeeroreumColor.gray[800],
                 ),
               ],
             ),
@@ -416,23 +386,41 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () => {Get.to(MyPageVersion())},
-          // style: TextButton.styleFrom(
-          //     minimumSize: Size.fromHeight(56),
-          //     padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '버전 정보',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+                SvgPicture.asset('assets/icons/Headset.svg'),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '문의하기',
+                  color: PeeroreumColor.gray[800],
+                ),
+              ],
+            ),
+          ),
+        ),
+        InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: PeeroreumColor.gray[100],
+          onTap: () => {Get.to(MyPageVersion())},
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SvgPicture.asset('assets/icons/Info.svg'),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '버전 정보',
+                  color: PeeroreumColor.gray[800],
                 ),
               ],
             ),
@@ -444,23 +432,19 @@ class _MyPageState extends State<MyPage> {
           onTap: () {
             logout();
           },
-          // style: TextButton.styleFrom(
-          //     minimumSize: Size.fromHeight(56),
-          //     padding: EdgeInsets.symmetric(horizontal: 20)),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '로그아웃',
-                  style: TextStyle(
-                    color: PeeroreumColor.gray[800],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Pretendard',
-                  ),
+                SvgPicture.asset('assets/icons/SignOut.svg'),
+                SizedBox(
+                  width: 12,
+                ),
+                T4_16px(
+                  text: '로그아웃',
+                  color: PeeroreumColor.gray[800],
                 ),
               ],
             ),
@@ -523,11 +507,10 @@ class _MyPageState extends State<MyPage> {
                           Get.back();
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
+                          backgroundColor: PeeroreumColor.gray[300],
                           padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
-                            // 모양
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
