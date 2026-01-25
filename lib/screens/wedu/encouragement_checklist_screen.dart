@@ -27,8 +27,6 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
   int id;
 
   List<String> receiverList = [];
-  List<String> sendList = [];
-  late List<Map<String, String>> callchecklist = [];
   late List<bool> isCheckedList =
       List.generate(notSuccessList.length, (index) => false);
   late List<bool> isActiveList =
@@ -44,9 +42,9 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
     // TODO: implement initState
     super.initState();
     receiverList = [];
-    fetchChecklistData();
+    fetchStatus();
   }
-  
+
   bool controlAllSelect() {
     bool hasUncheckedActiveItem = false;
     for (int i = 0; i < isCheckedList.length; i++) {
@@ -62,47 +60,12 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
       return true;
     }
   }
-  
-
-  fetchChecklistData() async {
-    List<String>? data = await encouragementChecklistData();
-    if (data != null) {
-      setState(() {
-        sendList = data;
-        updateChecklist();
-      });
-    } else {
-      print('리스트에 이름이 없습니다');
-    }
-  }
-
-  void updateChecklist() {
-    for (int i = 0; i < notSuccessList.length; i++) {
-      print(notSuccessList[i]['nickname']);
-      if (sendList.contains('(${notSuccessList[i]['nickname']})')) {
-        setState(() {
-          //isCheckedList[i] = true;
-          isActiveList[i] = false;
-        });
-      } else {
-        print('이름 포함하지 않음');
-      }
-    }
-  }
-
-  getChecklistData() async {
-    List<Map<String, String>>? data =
-        await CheckEncouragementList.getEncouragementCheck(id);
-    print('get해서 callchecklist에 넣음');
-    setState(() {
-      callchecklist = data!;
-    });
-  }
 
   sendNotification() async {
     for (String receiver in receiverList) {
       if (sender != receiver) {
-        NotificationApi.sendEncouragement(sender!, receiver, title, id.toString());
+        NotificationApi.sendEncouragement(
+            sender!, receiver, title, id.toString());
         print("$receiver 님에게 알림 전송");
       }
     }
@@ -209,7 +172,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                           splashColor: Colors.transparent,
                           highlightColor: PeeroreumColor.gray[100],
                           onTap: () {
-                            if(isSelectAll == false){
+                            if (isSelectAll == false) {
                               for (int i = 0; i < isCheckedList.length; i++) {
                                 if (isActiveList[i] == true) {
                                   if (isCheckedList[i] == false) {
@@ -222,8 +185,9 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                               setState(() {
                                 isSelectAll = true;
                               });
-                            } else{
-                              isCheckedList = List.generate(notSuccessList.length, (index) => false);
+                            } else {
+                              isCheckedList = List.generate(
+                                  notSuccessList.length, (index) => false);
                               setState(() {
                                 isSelectAll = false;
                               });
@@ -260,26 +224,28 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                       height: 48,
                       width: double.infinity,
                       child: TextButton(
-                        onPressed: () async{
-                          if(isCheckedList.contains(true)){
+                        onPressed: () async {
+                          if (isCheckedList.contains(true)) {
                             print(isCheckedList);
-                            await getChecklistData();
+                            receiverList = [];
                             for (int i = 0; i < isCheckedList.length; i++) {
                               if (isActiveList[i] == true) {
                                 if (isCheckedList[i]) {
-                                  setState(() {
-                                    // _isChecked 값이 true인 경우에만 isActive를 false로 설정
-                                    isActiveList[i] = false;
-                                    receiverList.add(notSuccessList[i]['nickname']);
-                                  });
-                                  callchecklist.add({notSuccessList[i]['nickname'] : DateTime.now().toString().substring(0, 10)});
+                                  receiverList
+                                      .add(notSuccessList[i]['nickname']);
                                 }
                               }
                             }
-                            CheckEncouragementList.setEncouragementCheck(id,callchecklist);
-                            sendNotification();
-                            Fluttertoast.showToast(msg: "독려하기 완료!");
-                            isCheckedList = List.generate(notSuccessList.length, (index) => false);
+
+                            if (receiverList.isNotEmpty) {
+                              await sendNotification();
+                              Fluttertoast.showToast(msg: "독려하기 완료!");
+                            }
+                            setState(() {
+                              isCheckedList = List.generate(
+                                  notSuccessList.length, (index) => false);
+                              isSelectAll = false;
+                            });
                             print(isCheckedList);
                           }
                         },
@@ -387,8 +353,8 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: (isCheckedList[index]
-                                  ? PeeroreumColor.primaryPuple[400]!
-                                  : PeeroreumColor.gray[200]!),
+                                ? PeeroreumColor.primaryPuple[400]!
+                                : PeeroreumColor.gray[200]!),
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),
@@ -399,14 +365,14 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                               : PeeroreumColor.gray[300]!,
                         ),
                         child: //isCheckedList[index]
-                            //? 
+                            //?
                             // Center(
-                                SvgPicture.asset(
-                                'assets/icons/check.svg',
-                                color: PeeroreumColor.white,
-                              ),
-                              // )
-                            //: null,
+                            SvgPicture.asset(
+                          'assets/icons/check.svg',
+                          color: PeeroreumColor.white,
+                        ),
+                        // )
+                        //: null,
                       ),
                     ),
                   ],
@@ -419,28 +385,5 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                   height: 8,
                 ),
             itemCount: notSuccessList.length));
-  }
-
-  Future<List<String>?> encouragementChecklistData() async {
-    String? me = await FlutterSecureStorage().read(key: "nickname");
-    List<String> namelist = ['($me)'];
-    List<Map<String, String>>? checklistdata =
-        await CheckEncouragementList.getEncouragementCheck(id);
-    if (checklistdata != null) {
-      checklistdata.removeWhere((element) => element.values
-          .any((value) => value != DateTime.now().toString().substring(0, 10)));
-      CheckEncouragementList.setEncouragementCheck(id, checklistdata);
-    }
-
-    List<Map<String, String>>? listdata =
-        await CheckEncouragementList.getEncouragementCheck(id);
-    if (listdata != null) {
-      print(listdata);
-      for (var map in listdata) {
-        namelist.add(map.keys.toString());
-      }
-      print(namelist);
-    }
-    return namelist;
   }
 }
