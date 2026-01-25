@@ -1,12 +1,7 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/screens/inquire.dart';
 
 class MyPageVersion extends StatefulWidget {
   const MyPageVersion({super.key});
@@ -68,47 +63,6 @@ class _MyPageVersionState extends State<MyPageVersion> {
             ),
             child: peer_version(),
           ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                width: 1,
-                color: PeeroreumColor.gray[200]!,
-              ),
-            ),
-            child: GestureDetector(
-              onTap: () {
-                // Clipboard.setData(ClipboardData(text: 'peeroreum.help@gmail.com'));
-                // Fluttertoast.showToast(msg: '클립보드에 복사되었습니다.');
-                Get.to(Inquire());
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '문의하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.gray[800],
-                    ),
-                  ),
-                  Text('peeroreum.help@gmail.com',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: PeeroreumColor.gray[600],
-                      ))
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -118,13 +72,11 @@ class _MyPageVersionState extends State<MyPageVersion> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        //SvgPicture.asset('assets/images/default.png'),
         Row(
           children: [
             Container(
               height: 48,
               width: 48,
-              // color: PeeroreumColor.gray[100],
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14.4),
                   image: DecorationImage(

@@ -8,6 +8,7 @@ import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_inquiry.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_scrap.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
@@ -385,7 +386,7 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(MyPageVersion())},
+          onTap: () => {Get.to(MyPageInquiry())},
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             height: 56,
