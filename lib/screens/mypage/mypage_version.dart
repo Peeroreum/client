@@ -118,7 +118,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        //SvgPicture.asset('assets/images/example_logo.png'),
+        //SvgPicture.asset('assets/images/default.png'),
         Row(
           children: [
             Container(

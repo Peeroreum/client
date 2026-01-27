@@ -236,17 +236,15 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   color: PeeroreumColor.gray[700]),
                             ),
                             SizedBox(
-                                    height: 32,
-                                  ),
+                              height: 32,
+                            ),
                             GestureDetector(
                               onTap: () {
-                                Get.to(()=>CreateWedu());
+                                Get.to(() => CreateWedu());
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12
-                                ),
+                                    horizontal: 16, vertical: 12),
                                 height: 48,
                                 width: 185,
                                 decoration: BoxDecoration(
@@ -257,9 +255,17 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    SvgPicture.asset('assets/icons/plus_square2.svg', color: PeeroreumColor.white,),
-                                    SizedBox(width: 8,),
-                                    T4_16px(text: '같이방 만들러 가기', color: PeeroreumColor.white,)
+                                    SvgPicture.asset(
+                                      'assets/icons/plus_square2.svg',
+                                      color: PeeroreumColor.white,
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    T4_16px(
+                                      text: '같이방 만들러 가기',
+                                      color: PeeroreumColor.white,
+                                    )
                                   ],
                                 ),
                               ),
@@ -330,16 +336,23 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      image: (datas[index]["imagePath"] != null)
-                          ? DecorationImage(
-                              image: NetworkImage(datas[index]["imagePath"]),
-                              fit: BoxFit.cover)
-                          : DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/example_logo.png'))),
+                    color: PeeroreumColor.gray[50],
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: (datas[index]["imagePath"] != null)
+                        ? Image.network(
+                            datas[index]["imagePath"],
+                            fit: BoxFit.cover,
+                          )
+                        : SvgPicture.asset(
+                            'assets/images/default.svg',
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
                 SizedBox(
                   width: 16,
@@ -473,17 +486,23 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                       width: 72,
                       height: 72,
                       decoration: BoxDecoration(
-                          image: (datas[index]['imagePath'] != null)
-                              ? DecorationImage(
-                                  image:
-                                      NetworkImage(datas[index]['imagePath']),
-                                  fit: BoxFit.cover)
-                              : DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/example_logo.png')),
-                          border: Border.all(
-                              width: 1, color: PeeroreumColor.gray[200]!),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                        color: PeeroreumColor.gray[50],
+                        border: Border.all(
+                            width: 1, color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: (datas[index]['imagePath'] != null)
+                            ? Image.network(
+                                datas[index]['imagePath'],
+                                fit: BoxFit.cover,
+                              )
+                            : SvgPicture.asset(
+                                'assets/images/default.svg',
+                                fit: BoxFit.cover,
+                              ),
+                      ),
                     ),
                     Container(
                       height: 72,
@@ -546,7 +565,8 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               //   ),
                               // ),
                               SizedBox(
-                                width: datas[index]['locked'].toString() == "true"
+                                width: datas[index]['locked'].toString() ==
+                                        "true"
                                     ? MediaQuery.of(context).size.width * 0.42
                                     : MediaQuery.of(context).size.width * 0.48,
                                 child: SingleChildScrollView(

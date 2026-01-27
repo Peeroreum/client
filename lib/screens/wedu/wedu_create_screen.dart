@@ -189,53 +189,57 @@ class _CreateWeduState extends State<CreateWedu> {
                 height: 25,
               ),
               Container(
-                padding: EdgeInsets.all(4),
                 constraints: BoxConstraints(
                   maxHeight: 120,
                   maxWidth: 120,
                 ),
-                decoration: _image != null
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: PeeroreumColor.gray[50]!,
-                          width: 1,
-                        ),
-                        image: DecorationImage(
-                          image: FileImage(File(_image!.path)),
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: PeeroreumColor.gray[50],
-                        border: Border.all(
-                          color: PeeroreumColor.gray[100]!,
-                          width: 1,
-                        ),
-                        image: DecorationImage(
-                            image: AssetImage(
-                          'assets/images/wedu_default_image.png',
-                        ))),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    getImage(ImageSource.gallery);
-                  },
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: PeeroreumColor.gray[200],
-                          border: Border.all(
-                            color: PeeroreumColor.gray[100]!,
-                            width: 1,
-                          ),
-                        ),
-                        child: SvgPicture.asset('assets/icons/camera.svg')),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: PeeroreumColor.gray[50],
+                  border: Border.all(
+                    color: _image != null
+                        ? PeeroreumColor.gray[50]!
+                        : PeeroreumColor.gray[100]!,
+                    width: 2,
                   ),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: _image != null
+                            ? Image.file(
+                                File(_image!.path),
+                                fit: BoxFit.cover,
+                              )
+                            : SvgPicture.asset(
+                                'assets/images/default.svg',
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        getImage(ImageSource.gallery);
+                      },
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: PeeroreumColor.gray[200],
+                              border: Border.all(
+                                color: PeeroreumColor.gray[100]!,
+                                width: 1,
+                              ),
+                            ),
+                            child: SvgPicture.asset('assets/icons/camera.svg')),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(

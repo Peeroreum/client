@@ -25,7 +25,7 @@ class _InWeduState extends State<InWedu> {
 
   var token;
   dynamic datas = '';
-  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
+  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
 
   @override
@@ -181,17 +181,23 @@ class _InWeduState extends State<InWedu> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      image: complete_group[index]["imagePath"] != null
-                          ? DecorationImage(
-                              image: NetworkImage(
-                                  complete_group[index]["imagePath"]),
-                              fit: BoxFit.cover)
-                          : DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/example_logo.png'))),
+                    color: PeeroreumColor.gray[50],
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: complete_group[index]["imagePath"] != null
+                        ? Image.network(
+                            complete_group[index]["imagePath"],
+                            fit: BoxFit.cover,
+                          )
+                        : SvgPicture.asset(
+                            'assets/images/default.svg',
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
                 Expanded(
                   child: Column(
@@ -282,7 +288,7 @@ class _InWeduState extends State<InWedu> {
                                 ),
                               ),
                               Text(
-                                'D+${complete_group[index]["dday"].toString().substring(1)}',
+                                '${complete_group[index]["dday"].toString().substring(1)}일 전',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -291,35 +297,8 @@ class _InWeduState extends State<InWedu> {
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "${complete_group[index]["progress"]}% 달성",
-                            style: TextStyle(
-                                color: PeeroreumColor.primaryPuple[400],
-                                fontFamily: 'Pretendard',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600),
-                          ),
                         ],
                       ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      LinearPercentIndicator(
-                        padding: EdgeInsets.all(0),
-                        lineHeight: 8,
-                        percent: double.parse(
-                                complete_group[index]["progress"].toString()) /
-                            100,
-                        backgroundColor: PeeroreumColor.gray[200],
-                        linearGradient: LinearGradient(colors: [
-                          PeeroreumColor.primaryPuple[400]!,
-                          PeeroreumColor.primaryPuple[200]!
-                        ]),
-                        barRadius: Radius.circular(8),
-                      )
                     ],
                   ),
                 )
@@ -358,17 +337,23 @@ class _InWeduState extends State<InWedu> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      image: ing_group[index]["imagePath"] != null
-                          ? DecorationImage(
-                              image:
-                                  NetworkImage(ing_group[index]["imagePath"]),
-                              fit: BoxFit.cover)
-                          : DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/example_logo.png'))),
+                    color: PeeroreumColor.gray[50],
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: ing_group[index]["imagePath"] != null
+                        ? Image.network(
+                            ing_group[index]["imagePath"],
+                            fit: BoxFit.cover,
+                          )
+                        : SvgPicture.asset(
+                            'assets/images/default.svg',
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
                 Expanded(
                   child: Column(

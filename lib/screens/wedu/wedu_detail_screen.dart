@@ -755,7 +755,10 @@ class _DetailWeduState extends State<DetailWedu> {
                     return GestureDetector(
                       onTap: () {
                         int selectedIndex = challengeImage.indexOf(i);
-                        Get.to(()=>ImageDetail(imageList: challengeImage, initialPage: selectedIndex,));
+                        Get.to(() => ImageDetail(
+                              imageList: challengeImage,
+                              initialPage: selectedIndex,
+                            ));
                       },
                       child: Container(
                         width: double.maxFinite,
@@ -794,7 +797,7 @@ class _DetailWeduState extends State<DetailWedu> {
               options: CarouselOptions(
                 enableInfiniteScroll: false,
                 viewportFraction: 1,
-                height: (MediaQuery.of(context).size.width-40)*4/3,
+                height: (MediaQuery.of(context).size.width - 40) * 4 / 3,
                 enlargeCenterPage: false,
               ),
             ),
@@ -864,17 +867,23 @@ class _DetailWeduState extends State<DetailWedu> {
                                     width: 64,
                                     height: 64,
                                     decoration: BoxDecoration(
-                                      image: weduImage != null
-                                          ? DecorationImage(
-                                              image: NetworkImage(weduImage),
-                                              fit: BoxFit.cover)
-                                          : DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/example_logo.png')),
+                                      color: PeeroreumColor.gray[50],
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                           width: 1,
                                           color: PeeroreumColor.gray[100]!),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: weduImage != null
+                                          ? Image.network(
+                                              weduImage,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : SvgPicture.asset(
+                                              'assets/images/default.svg',
+                                              fit: BoxFit.cover,
+                                            ),
                                     ),
                                   ),
                                   SizedBox(
@@ -952,7 +961,8 @@ class _DetailWeduState extends State<DetailWedu> {
                                   color: PeeroreumColor.gray[500],
                                 ),
                                 onTap: () {
-                                  Get.to(()=>DetailWeduCalendar(id, weduTitle.toString()));
+                                  Get.to(() => DetailWeduCalendar(
+                                      id, weduTitle.toString()));
                                 },
                               ),
                             ),
@@ -1176,7 +1186,8 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(()=>ComplimentCheckList(successList, weduTitle, id));
+                    Get.to(
+                        () => ComplimentCheckList(successList, weduTitle, id));
                   },
                   child: Text(
                     '전체보기',
@@ -1221,7 +1232,8 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(()=>EncouragementCheckList(notSuccessList, weduTitle, id));
+                    Get.to(() =>
+                        EncouragementCheckList(notSuccessList, weduTitle, id));
                   },
                   child: Text(
                     '전체보기',
@@ -1253,7 +1265,7 @@ class _DetailWeduState extends State<DetailWedu> {
         ),
         child: isCreator
             ? Container(
-               padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -1272,18 +1284,18 @@ class _DetailWeduState extends State<DetailWedu> {
                     ),
                     TextButton(
                       onPressed: () {
-                                Get.to(()=>ModifyWedu(
-                                id,
-                                weduTitle,
-                                weduImage,
-                                weduDday,
-                                weduSubject,
-                                weduGrade,
-                                weduAttendingPeopleNum,
-                                weduMaxPeopleNum,
-                                weduHashTags,
-                                weduLocked,
-                                weduPassword));
+                        Get.to(() => ModifyWedu(
+                            id,
+                            weduTitle,
+                            weduImage,
+                            weduDday,
+                            weduSubject,
+                            weduGrade,
+                            weduAttendingPeopleNum,
+                            weduMaxPeopleNum,
+                            weduHashTags,
+                            weduLocked,
+                            weduPassword));
                       },
                       style: TextButton.styleFrom(
                         minimumSize: Size.fromHeight(40),
@@ -1391,12 +1403,12 @@ class _DetailWeduState extends State<DetailWedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                  Get.to(()=>Report(
-                    data: "[같이해냄] 챌린지 이미지 신고\n" +
-                        "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
-                        "같이방 아이디 : $id\n" +
-                        "업로드한 사람 : $successOneNickname\n",
-                  ));
+                Get.to(() => Report(
+                      data: "[같이해냄] 챌린지 이미지 신고\n" +
+                          "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
+                          "같이방 아이디 : $id\n" +
+                          "업로드한 사람 : $successOneNickname\n",
+                    ));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),

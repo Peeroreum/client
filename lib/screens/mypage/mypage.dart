@@ -284,7 +284,7 @@ class _MyPageState extends State<MyPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  '내 질의응답',
+                  '내 내가해냄',
                   style: TextStyle(
                     color: PeeroreumColor.gray[800],
                     fontSize: 16,
