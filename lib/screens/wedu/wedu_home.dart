@@ -1239,79 +1239,111 @@ class _HomeWeduState extends State<HomeWedu> {
             Container(
               margin: EdgeInsets.fromLTRB(0, 8, 0, 32),
               width: double.maxFinite,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: Text(
-                        '닫기',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.gray[600],
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 12)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        if (inroom_datas.length < 10) {
+              child: inroom_datas
+                      .any((item) => item['id'] == datas[index]['id'])
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () {
                           Get.back();
-                          datas[index]['locked'].toString() == "true"
-                              ? insertPassword(index)
-                              : enrollWedu(index);
-                          fetchDatas();
-                          setState(() {});
-                        } else {
-                          Fluttertoast.showToast(msg: '같이방은 10개까지만 참여 가능해요.');
-                        }
-                      },
-                      child: Text(
-                        '참여하기',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.white,
+                        },
+                        child: Text(
+                          '이미 참여 중인 같이방이에요.',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.gray[600],
+                          ),
                         ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400]),
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 12)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[300]),
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(vertical: 12)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
                         ),
                       ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            child: Text(
+                              '닫기',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.gray[600],
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.gray[300]),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(vertical: 12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              if (inroom_datas.length < 10) {
+                                Get.back();
+                                datas[index]['locked'].toString() == "true"
+                                    ? insertPassword(index)
+                                    : enrollWedu(index);
+                                fetchDatas();
+                                setState(() {});
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: '같이방은 10개까지만 참여 가능해요.');
+                              }
+                            },
+                            child: Text(
+                              '참여하기',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.primaryPuple[400]),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(vertical: 12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
