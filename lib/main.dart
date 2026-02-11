@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -29,6 +30,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -125,63 +127,65 @@ class PeeroreumApp extends StatelessWidget {
       //   '/home/iedu': (context) => bottomNaviBar(firebaseToken, 2),
       // },
       getPages: [
-    	GetPage(
-        	name: '/signIn',
-            page: () => SignIn(),
+        GetPage(
+          name: '/signIn',
+          page: () => SignIn(),
         ),
         GetPage(
-        	name: '/signIn/email',
-            page: () => EmailSignIn(),
+          name: '/signIn/email',
+          page: () => EmailSignIn(),
         ),
         GetPage(
-        	name: '/signUp/email',
-            page: () => EmailSignUp(),
+          name: '/signUp/email',
+          page: () => EmailSignUp(),
         ),
         GetPage(
-        	name: '/home',
-            page: () => bottomNaviBar(firebaseToken, 0),
+          name: '/home',
+          page: () => bottomNaviBar(firebaseToken, 0),
         ),
         GetPage(
-        	name: '/wedu',
-            page: () => HomeWedu(),
+          name: '/wedu',
+          page: () => HomeWedu(),
         ),
         GetPage(
-        	name: '/wedu/create_invitaion',
-            page: () => CreateInvitation(),
+          name: '/wedu/create_invitaion',
+          page: () => CreateInvitation(),
         ),
         GetPage(
-        	name: '/wedu/my',
-            page: () => InWedu(),
+          name: '/wedu/my',
+          page: () => InWedu(),
         ),
         GetPage(
-        	name: '/wedu/challenge/ok',
-            page: () => ComplimentList(),
+          name: '/wedu/challenge/ok',
+          page: () => ComplimentList(),
         ),
         GetPage(
-        	name: '/wedu/challenge/notok',
-            page: () => EncouragementList(),
+          name: '/wedu/challenge/notok',
+          page: () => EncouragementList(),
         ),
         GetPage(
-        	name: '/signUp/onBoarding',
-            page: () => OnBoarding(),
+          name: '/signUp/onBoarding',
+          page: () => OnBoarding(),
         ),
         GetPage(
-        	name: '/signUp/Complete',
-            page: () => SignUpComplete(),
+          name: '/signUp/Complete',
+          page: () => SignUpComplete(),
         ),
         GetPage(
-        	name: '/report',
-            page: () => Report(data: "상세 data 아직 추가 안 됨",),
+          name: '/report',
+          page: () => Report(
+            data: "상세 data 아직 추가 안 됨",
+          ),
         ),
         GetPage(
-        	name: '/home/iedu',
-            page: () => bottomNaviBar(firebaseToken, 1),
+          name: '/home/iedu',
+          page: () => bottomNaviBar(firebaseToken, 1),
         ),
         GetPage(
-        	name: '/home/alert',
-            page: () => Alert(),
+          name: '/home/alert',
+          page: () => Alert(),
         ),
-    	],
+      ],
       debugShowCheckedModeBanner: false,
     );
   }
