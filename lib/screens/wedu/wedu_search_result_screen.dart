@@ -33,13 +33,15 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   List<dynamic> datas = [];
   Map<dynamic, dynamic> inviDatas = {};
   Map<dynamic, List<dynamic>> hashTags = {};
-  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3'];
-  List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
+  List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
+  List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
+  List<dynamic> inroom_datas = [];
 
   @override
   void initState() {
     super.initState();
     fetchDatas();
+    fetchInRoomDatas();
   }
 
   Future<void> fetchDatas() async {
@@ -90,6 +92,25 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   _saveSearchHistory(String value) async {
     await SearchHistory.addSearchItem(value);
     _loadSearchHistory();
+  }
+
+  fetchInRoomDatas() async {
+    String? nickname = await FlutterSecureStorage().read(key: "nickname");
+
+    var result = await http.get(
+        Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+
+    if (result.statusCode == 200) {
+      if (mounted) {
+        setState(() {
+          inroom_datas = json.decode(result.body)['data'];
+        });
+      }
+    }
   }
 
   Future<String> getShortLink(String screenName, String id) async {
@@ -683,75 +704,105 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
             Container(
               margin: EdgeInsets.fromLTRB(0, 8, 0, 32),
               width: double.maxFinite,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: Text(
-                        '닫기',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.gray[600],
+              // inroom_datas(참여 중인 방 리스트)에 현재 방 ID가 있는지 확인
+              child: inroom_datas
+                      .any((item) => item['id'] == datas[index]['id'])
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: Text(
+                          '이미 참여 중인 같이방이에요.',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.gray[600],
+                          ),
                         ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 12)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[300]),
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(vertical: 12)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        Get.back();
-                        datas[index]['locked'].toString() == "true"
-                            ? insertPassword(index)
-                            : enrollWedu(index);
-                        fetchDatas();
-                        setState(() {});
-                      },
-                      child: Text(
-                        '참여하기',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.white,
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400]),
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 12)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            child: Text(
+                              '닫기',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.gray[600],
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.gray[300]),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(vertical: 12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Get.back();
+                              datas[index]['locked'].toString() == "true"
+                                  ? insertPassword(index)
+                                  : enrollWedu(index);
+                            },
+                            child: Text(
+                              '참여하기',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.primaryPuple[400]),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(vertical: 12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
