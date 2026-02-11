@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 class MyPageVersion extends StatefulWidget {
@@ -11,6 +12,21 @@ class MyPageVersion extends StatefulWidget {
 }
 
 class _MyPageVersionState extends State<MyPageVersion> {
+  PackageInfo? packageInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      packageInfo = info;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +77,11 @@ class _MyPageVersionState extends State<MyPageVersion> {
                 color: PeeroreumColor.gray[200]!,
               ),
             ),
-            child: peer_version(),
+            child: packageInfo != null
+                ? peer_version()
+                : Center(
+                    child: CircularProgressIndicator(
+                        color: PeeroreumColor.primaryPuple[400])),
           ),
         ],
       ),
@@ -101,7 +121,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
                   height: 4,
                 ),
                 Text(
-                  '1.5.0',
+                  packageInfo?.version ?? '0.0.0',
                   style: TextStyle(
                       color: PeeroreumColor.gray[600],
                       fontFamily: 'Pretendard',
