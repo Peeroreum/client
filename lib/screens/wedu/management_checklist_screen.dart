@@ -9,6 +9,7 @@ import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:get/get.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 
 class ManagementCheckList extends StatefulWidget {
   ManagementCheckList(this.memberList, this.title, this.id);
@@ -60,6 +61,25 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
 
   fetchStatus() async {
     myNickname = await FlutterSecureStorage().read(key: "nickname");
+    String? token = await FlutterSecureStorage().read(key: "accessToken");
+    var response = await http.get(
+      Uri.parse('${API.hostConnect}/wedu/$id/members'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(utf8.decode(response.bodyBytes))['data'];
+      for (var m in data) {
+        for (int i = 0; i < memberList.length; i++) {
+          if (memberList[i]['nickname'] == m['nickname']) {
+            memberList[i]['memberId'] = m['memberId'];
+          }
+        }
+      }
+    }
 
     setState(() {
       for (int i = 0; i < memberList.length; i++) {
@@ -74,31 +94,42 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
 
   void kickMember(List<String> nicknameList) async {
     String? token = await FlutterSecureStorage().read(key: "accessToken");
+    bool allSuccess = true;
 
-    var result = await http.put(
-      Uri.parse('${API.hostConnect}/wedu/$id/dismiss'), // TODO: 실제 API로 변경
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
-      body: jsonEncode({"nickname": nicknameList}),
-    );
+    for (var nickname in nicknameList) {
+      var member = memberList.firstWhere((m) => m['nickname'] == nickname,
+          orElse: () => null);
+      if (member == null) continue;
 
-    if (result.statusCode == 200) {
-      print("참여 종료 성공");
-      Fluttertoast.showToast(msg: "선택한 참여자의 참여를 종료했습니다.");
-      setState(() {
-        for (var nickname in nicknameList) {
-          memberList.removeWhere((member) => member['nickname'] == nickname);
-        }
-        isCheckedList = List.generate(memberList.length, (index) => false);
-        isSelectAll = false;
-        selectedUserList.clear();
-      });
-    } else {
-      print("참여 종료 실패 ${result.statusCode} : ${result.body}");
-      Fluttertoast.showToast(msg: "오류가 발생했습니다. 다시 시도해 주세요.");
+      var memberId = member['memberId'];
+      var result = await http.delete(
+        Uri.parse('${API.hostConnect}/wedu/$id/kick/$memberId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (result.statusCode == 200) {
+        setState(() {
+          memberList.removeWhere((m) => m['nickname'] == nickname);
+        });
+      } else {
+        allSuccess = false;
+      }
     }
+
+    if (allSuccess) {
+      Fluttertoast.showToast(msg: "선택한 참여자의 참여를 종료했습니다.");
+    } else {
+      Fluttertoast.showToast(msg: "일부 참여자의 종료에 실패했습니다.");
+    }
+
+    setState(() {
+      isCheckedList = List.generate(memberList.length, (index) => false);
+      isSelectAll = false;
+      selectedUserList.clear();
+    });
   }
 
   showKickDialog() {
@@ -117,17 +148,6 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "참여 종료",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.black,
-                  ),
-                ),
-                SizedBox(height: 8),
                 Text(
                   "이 사용자의 같이방 참여를 종료할까요?",
                   textAlign: TextAlign.center,
@@ -232,6 +252,8 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
             ),
             onPressed: () {
               Get.back();
+              Get.back();
+              Get.to(() => DetailWedu(id));
             },
           ),
           title: Text(
@@ -243,15 +265,6 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                 color: PeeroreumColor.black),
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(
-                  'assets/icons/icon_dots_mono.svg',
-                  color: PeeroreumColor.gray[800],
-                  width: 24,
-                ))
-          ],
         ),
         body: FutureBuilder<void>(
             future: fetchStatus(),
