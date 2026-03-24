@@ -15,6 +15,7 @@ import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/encouragement_checklist_screen.dart';
+import 'package:peeroreum_client/screens/wedu/management_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_calendar.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_modify_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -1301,9 +1302,39 @@ class _DetailWeduState extends State<DetailWedu> {
                         minimumSize: Size.fromHeight(40),
                         alignment: Alignment.centerLeft,
                         padding: EdgeInsets.all(0),
+                      ).copyWith(
+                        overlayColor:
+                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: Text(
                         '같이방 수정',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: PeeroreumColor.black,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        List<dynamic> allMembers = [
+                          ...successList,
+                          ...notSuccessList
+                        ];
+                        Get.to(() =>
+                            ManagementCheckList(allMembers, weduTitle, id));
+                      },
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.fromHeight(40),
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.all(0),
+                      ).copyWith(
+                        overlayColor:
+                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                      ),
+                      child: Text(
+                        '참여자 관리',
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 18,
@@ -1320,6 +1351,9 @@ class _DetailWeduState extends State<DetailWedu> {
                         minimumSize: Size.fromHeight(40),
                         alignment: Alignment.centerLeft,
                         padding: EdgeInsets.all(0),
+                      ).copyWith(
+                        overlayColor:
+                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: Text(
                         '같이방 삭제',
