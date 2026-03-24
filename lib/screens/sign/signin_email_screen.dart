@@ -13,6 +13,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
+import 'package:peeroreum_client/screens/sign/password_change/email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -324,7 +325,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                         //   style: TextStyle(color: Colors.grey[200]),
                         // ),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(() => EmailSearch());
+                            },
                             child: Text(
                               '비밀번호 재설정',
                               style: TextStyle(
@@ -523,14 +526,14 @@ class _EmailSignInState extends State<EmailSignIn> {
   }
 
   void appleSignIn() async {
-    final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName]
-    );
+    final credential = await SignInWithApple.getAppleIDCredential(scopes: [
+      AppleIDAuthorizationScopes.email,
+      AppleIDAuthorizationScopes.fullName
+    ]);
 
-    if(credential != null) {
+    if (credential != null) {
       fetchSocialLogin(credential.userIdentifier!);
-    }
-    else {
+    } else {
       print("애플 로그인 실패");
     }
   }
