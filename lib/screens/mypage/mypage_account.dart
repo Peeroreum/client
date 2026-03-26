@@ -3,9 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_acount_ps.dart';
+import 'package:http/http.dart' as http;
+import '../../api/PeeroreumApi.dart';
 
 class MyPageAccount extends StatefulWidget {
   const MyPageAccount({super.key});
@@ -21,6 +25,25 @@ class _MyPageAccountState extends State<MyPageAccount> {
   fetchStatus() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     email = await FlutterSecureStorage().read(key: "email");
+  }
+
+  Future<int> deleteAllMember() async {
+    var token = await FlutterSecureStorage().read(key: "accessToken");
+    var result = await http.delete(
+      Uri.parse('${API.hostConnect}/member'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    if (result.statusCode == 200) {
+      print("회원 탈퇴 성공");
+    } else {
+      print("회원 탈퇴 실패 ${result.statusCode}");
+    }
+
+    return result.statusCode;
   }
 
   @override
@@ -257,8 +280,15 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
-                        onPressed: () {
-                          Get.offAllNamed('/signIn/email');
+                        onPressed: () async {
+                          int statusCode = await deleteAllMember();
+                          if (statusCode == 200) {
+                            await FlutterSecureStorage().deleteAll();
+                            Get.offAllNamed('/signIn/email');
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "탈퇴에 실패했습니다. 다시 시도해 주세요.");
+                          }
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
