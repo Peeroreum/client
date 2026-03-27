@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 class PeeroreumToast {
+  static OverlayEntry? _currentOverlay;
+  static Timer? _timer;
+
   static void show(
     BuildContext context,
     String message, {
@@ -12,7 +16,13 @@ class PeeroreumToast {
   }) {
     final overlay = Overlay.of(context);
 
-    final overlayEntry = OverlayEntry(
+    // Cancel existing timer and remove existing toast
+    _timer?.cancel();
+    if (_currentOverlay != null && _currentOverlay!.mounted) {
+      _currentOverlay!.remove();
+    }
+
+    _currentOverlay = OverlayEntry(
       builder: (context) => Positioned(
         top: MediaQuery.of(context).size.height * 0.1,
         left: 0,
@@ -71,13 +81,12 @@ class PeeroreumToast {
       ),
     );
 
-    overlay.insert(overlayEntry);
+    overlay.insert(_currentOverlay!);
 
-    Future.delayed(
-      Duration(seconds: duration),
-    ).then((_) {
-      if (overlayEntry.mounted) {
-        overlayEntry.remove();
+    _timer = Timer(Duration(seconds: duration), () {
+      if (_currentOverlay != null && _currentOverlay!.mounted) {
+        _currentOverlay!.remove();
+        _currentOverlay = null;
       }
     });
   }
