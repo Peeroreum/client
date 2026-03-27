@@ -8,16 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
-import 'package:peeroreum_client/screens/bottomNaviBar.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
-
-import 'iedu_home.dart';
 
 class CreateIedu extends StatefulWidget {
   const CreateIedu({super.key});
@@ -760,7 +757,8 @@ class _CreateIeduState extends State<CreateIedu> {
                     if (_images.length < 5) {
                       takeFromGallery();
                     } else {
-                      Fluttertoast.showToast(msg: '사진 첨부는 5장까지 가능해요.');
+                      PeeroreumToast.show(context, '사진 첨부는 5장까지 가능해요.',
+                          isError: true);
                     }
                   },
                   child: Row(
@@ -793,8 +791,9 @@ class _CreateIeduState extends State<CreateIedu> {
                         }
                       });
                     } else {
-                      Fluttertoast.showToast(
-                          msg: '화이트보드는 첨부한 사진이 5장 미만이어야 쓸 수 있어요.');
+                      PeeroreumToast.show(
+                          context, '화이트보드는 첨부한 사진이 5장 미만이어야 쓸 수 있어요.',
+                          isError: true);
                     }
                   },
                   child: Row(
@@ -829,7 +828,7 @@ class _CreateIeduState extends State<CreateIedu> {
         if (selectedImages.length + _images.length < 6) {
           _images.addAll(selectedImages);
         } else {
-          Fluttertoast.showToast(msg: '사진 첨부는 5장까지 가능합니다.');
+          PeeroreumToast.show(context, '사진 첨부는 5장까지 가능해요.');
         }
       });
     }
@@ -860,10 +859,10 @@ class _CreateIeduState extends State<CreateIedu> {
         await dio1.post('${API.hostConnect}/question', data: formData);
 
     if (response.statusCode == 200) {
-      Fluttertoast.showToast(msg: '질문 작성 성공');
+      PeeroreumToast.show(context, '질문 작성이 완료되었어요.');
       Get.offAllNamed('/home/iedu');
     } else {
-      Fluttertoast.showToast(msg: '잠시 후에 다시 시작해 주세요.');
+      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
 

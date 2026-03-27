@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/api/NotificationApi.dart';
 import 'package:peeroreum_client/data/Checklist.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -232,7 +232,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
 
                   if (receiverList.isNotEmpty) {
                     await sendNotification();
-                    Fluttertoast.showToast(msg: '칭찬하기 완료!');
+                    PeeroreumToast.show(context, '칭찬하기에 성공했어요.');
                   }
 
                   setState(() {

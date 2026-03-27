@@ -13,7 +13,7 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 
 class SearchResultIedu extends StatefulWidget {
   final String keyword;
@@ -530,7 +530,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   });
                 });
               } else {
-                Fluttertoast.showToast(msg: "학년과 과목을 모두 선택해주세요.");
+                PeeroreumToast.show(context, "학년과 과목을 모두 선택해주세요.",
+                    isError: true);
               }
             },
             child: Container(

@@ -7,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -275,11 +275,13 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   Get.offAllNamed('/home');
                                 } else if (result.statusCode == 404 ||
                                     result.statusCode == 401) {
-                                  Fluttertoast.showToast(
-                                      msg: "이메일 혹은 비밀번호가 일치하지 않습니다.");
+                                  PeeroreumToast.show(
+                                      context, "이메일 혹은 비밀번호가 일치하지 않아요.",
+                                      isError: true);
                                 } else {
-                                  Fluttertoast.showToast(
-                                      msg: '잠시 후에 다시 시도해 주세요.');
+                                  PeeroreumToast.show(
+                                      context, '잠시 후에 다시 시도해 주세요.',
+                                      isError: true);
                                 }
                               }
                             : null,

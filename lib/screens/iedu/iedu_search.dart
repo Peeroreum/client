@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/data/IeduSearchHistory.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -76,7 +76,7 @@ class _SearchIeduState extends State<SearchIedu> {
                 _saveSearchHistory(_searchController.text);
                 goToSearchResult(_searchController.text);
               } else {
-                Fluttertoast.showToast(msg: '검색어를 입력하세요.');
+                PeeroreumToast.show(context, '검색어를 입력하세요.');
               }
             },
             onChanged: (value) {
@@ -123,7 +123,7 @@ class _SearchIeduState extends State<SearchIedu> {
                     _saveSearchHistory(_searchController.text);
                     goToSearchResult(_searchController.text);
                   } else {
-                    Fluttertoast.showToast(msg: '검색어를 입력하세요.');
+                    PeeroreumToast.show(context, '검색어를 입력하세요.');
                   }
                 },
                 child: SvgPicture.asset(
@@ -143,9 +143,7 @@ class _SearchIeduState extends State<SearchIedu> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: Column(
-        children: [
-          Expanded(child: recentSearch())
-        ],
+        children: [Expanded(child: recentSearch())],
       ),
     );
   }
@@ -197,7 +195,8 @@ class _SearchIeduState extends State<SearchIedu> {
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
-                              Get.to(() => SearchResultIedu(_searchHistory[index]['keyword'].toString()));
+                              Get.to(() => SearchResultIedu(
+                                  _searchHistory[index]['keyword'].toString()));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

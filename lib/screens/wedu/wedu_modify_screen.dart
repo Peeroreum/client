@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, no_logic_in_create_state, must_be_immutable, avoid_init_to_null, non_constant_identifier_names
 
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart' as diop;
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,8 +16,6 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
-import 'package:http/http.dart' as http;
-import 'package:get/get.dart';
 
 class ModifyWedu extends StatefulWidget {
   ModifyWedu(
@@ -625,7 +622,8 @@ class _ModifyWeduState extends State<ModifyWedu> {
               }).toList(),
               onChanged: (int? value) {
                 if (weduAttendingPeopleNum > value) {
-                  Fluttertoast.showToast(msg: '참여중인 인원보다 적은 인원은 선택할 수 없습니다.');
+                  PeeroreumToast.show(context, '참여중인 인원보다 적은 인원은 선택할 수 없어요.',
+                      isError: true);
                 } else {
                   setState(() {
                     dropdownHeadcount = value!;
@@ -664,7 +662,8 @@ class _ModifyWeduState extends State<ModifyWedu> {
               if (_controller.getTags!.contains(tag)) {
                 return 'you already entered that';
               } else if (_controller.getTags!.length >= 5) {
-                Fluttertoast.showToast(msg: '해시태그는 최대 5개까지 적을 수 있어요.');
+                PeeroreumToast.show(context, '해시태그는 최대 5개까지 적을 수 있어요.',
+                    isError: true);
                 return '태그 5개 제한';
               } else {
                 weduHashTags.add(tag);
@@ -929,14 +928,14 @@ class _ModifyWeduState extends State<ModifyWedu> {
     var weduModify =
         await dio.put('${API.hostConnect}/wedu/$id', data: formData);
     if (weduModify.statusCode == 200) {
-      Fluttertoast.showToast(msg: '같이방 수정을 완료했어요.');
+      PeeroreumToast.show(context, '같이방 수정을 완료했어요.');
       Get.back();
       Get.back();
       Get.back();
       Get.to(() => DetailWedu(id));
     } else {
       print("에러${weduModify.statusCode}");
-      Fluttertoast.showToast(msg: '같이방 수정 실패');
+      PeeroreumToast.show(context, '같이방 수정을 실패했어요.', isError: true);
     }
   }
 }

@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
@@ -230,8 +230,9 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                         builder: (context) {
                                           return goodDetail();
                                         })
-                                    : Fluttertoast.showToast(
-                                        msg: '과목을 먼저 선택해주세요.');
+                                    : PeeroreumToast.show(
+                                        context, '과목을 먼저 선택해주세요.',
+                                        isError: true);
                               },
                               child: Container(
                                 height: 40,
@@ -293,8 +294,9 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                   builder: (context) {
                                     return goodLevel();
                                   })
-                              : Fluttertoast.showToast(
-                                  msg: '세부 과목을 먼저 선택해주세요.');
+                              : PeeroreumToast.show(
+                                  context, '세부 과목을 먼저 선택해주세요.',
+                                  isError: true);
                         },
                         child: Container(
                           height: 40,
@@ -434,8 +436,9 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                       builder: (context) {
                                         return badDetail();
                                       })
-                                  : Fluttertoast.showToast(
-                                      msg: '과목을 먼저 선택해주세요.');
+                                  : PeeroreumToast.show(
+                                      context, '과목을 먼저 선택해주세요.',
+                                      isError: true);
                             },
                             child: Container(
                               height: 40,
@@ -496,7 +499,8 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                 builder: (context) {
                                   return badLevel();
                                 })
-                            : Fluttertoast.showToast(msg: '세부 과목을 먼저 선택해주세요.');
+                            : PeeroreumToast.show(context, '세부 과목을 먼저 선택해주세요.',
+                                isError: true);
                       },
                       child: Container(
                         height: 40,

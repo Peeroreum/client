@@ -5,7 +5,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
@@ -116,7 +116,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (am_i) {
         await storage.write(key: 'profileImage', value: profileImage);
       }
-      Fluttertoast.showToast(msg: "프로필 이미지가 성공적으로 변경되었습니다.");
+      PeeroreumToast.show(context, "프로필 이미지가 변경되었어요.");
     } else {
       print("프로필이미지 ${profileChange.statusMessage}");
     }
@@ -138,7 +138,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         backgroundImage = data;
       });
-      Fluttertoast.showToast(msg: "배경이미지가 성공적으로 변경되었습니다.");
+      PeeroreumToast.show(context, "배경 이미지가 변경되었어요.");
     } else {
       print("배경이미지 ${backgroundChange.statusMessage}");
     }
@@ -161,7 +161,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         await storage.write(key: 'nickname', value: nickname);
       }
       Get.back();
-      Fluttertoast.showToast(msg: "닉네임이 성공적으로 변경되었습니다.");
+      PeeroreumToast.show(context, "닉네임이 변경되었어요.");
     } else {
       print("닉네임변경 에러${change_my_nickname.statusCode}");
     }
@@ -179,13 +179,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
       setState(() {
         is_friend = true;
       });
-      Fluttertoast.showToast(msg: "친구 추가를 완료했어요!");
+      PeeroreumToast.show(context, "친구 추가를 완료했어요.");
     } else if (friendName.statusCode == 404) {
-      Fluttertoast.showToast(msg: "존재하지 않는 회원입니다.");
+      PeeroreumToast.show(context, "존재하지 않는 회원이에요.", isError: true);
     } else if (friendName.statusCode == 400) {
-      Fluttertoast.showToast(msg: "본인은 팔로우할 수 없습니다.");
+      PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
     } else if (friendName.statusCode == 409) {
-      Fluttertoast.showToast(msg: "이미 팔로우 중인 회원입니다.");
+      PeeroreumToast.show(context, "이미 팔로우 중인 회원이에요.", isError: true);
     } else {
       setState(() {
         is_friend = false;
@@ -209,7 +209,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         is_friend = false;
       });
 
-      Fluttertoast.showToast(msg: "친구 삭제를 완료했어요!");
+      PeeroreumToast.show(context, "친구 삭제를 완료했어요.");
     } else {
       setState(() {
         is_friend = true;
@@ -229,7 +229,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     if (friendName.statusCode == 200) {
       //check_friend(nickname_controller.text);
       if (nickname_controller.text == nickname) {
-        Fluttertoast.showToast(msg: "자신은 영원한 친구입니다.");
+        PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
       } else {
         Get.back();
         Get.to(() => MyPageProfile(nickname_controller.text, false),
@@ -240,7 +240,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         });
       }
     } else if (friendName.statusCode == 404) {
-      Fluttertoast.showToast(msg: "존재하지 않는 회원입니다.");
+      PeeroreumToast.show(context, "존재하지 않는 회원이에요.");
     } else {
       print("친구찾기 에러${friendName.statusCode}");
     }
@@ -1179,7 +1179,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   print('친구 팔로우 프린트 메세지 입니다');
                 } else if ((is_friend == false) && (am_i == true)) {
                   print('프로필 공유');
-                  //Fluttertoast.showToast(msg: "복사되었습니다");
+                  //PeeroreumToast.show(context, "복사되었습니다");
                   final UserName = nickname;
                   int templateId = 102993;
                   // 카카오톡 실행 가능 여부 확인
@@ -1350,7 +1350,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         // ),
         // GestureDetector(
         //   onTap: () {
-        //     // Fluttertoast.showToast(msg: "준비 중입니다.");
+        //     // PeeroreumToast.show(context, "준비 중입니다.");
         //   },
         //   child: Container(
         //     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),

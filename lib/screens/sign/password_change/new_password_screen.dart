@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -411,7 +411,8 @@ class _NewPasswordState extends State<NewPassword> {
                         if (pw2_check) {
                           resetPassword();
                         } else {
-                          Fluttertoast.showToast(msg: "비밀번호가 일치하지 않아요");
+                          PeeroreumToast.show(context, "비밀번호가 일치하지 않아요",
+                              isError: true);
                         }
                       }
                     : null,
@@ -472,10 +473,10 @@ class _NewPasswordState extends State<NewPassword> {
       if (data['status'] == 'success') {
         Get.to(() => CompletePassword(), transition: Transition.noTransition);
       } else {
-        Fluttertoast.showToast(msg: "비밀번호 변경에 실패했습니다.");
+        PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
       }
     } else {
-      Fluttertoast.showToast(msg: "비밀번호 변경에 실패했습니다.");
+      PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
     }
   }
 

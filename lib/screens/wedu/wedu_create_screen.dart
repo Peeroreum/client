@@ -4,7 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -839,8 +839,8 @@ class _CreateWeduState extends State<CreateWedu> {
                                     if (_controller.getTags!.contains(tag))
                                       return 'you already entered that';
                                     else if (_controller.getTags!.length >= 5) {
-                                      Fluttertoast.showToast(
-                                          msg: '해시태그는 최대 5개까지 적을 수 있어요.');
+                                      PeeroreumToast.show(
+                                          context, '해시태그는 3개까지만 가능해요.');
                                       return '태그 15개 제한';
                                     } else {
                                       _tag.add(tag);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -85,14 +85,9 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                 ),
                 onTap: () {},
               ),
-              GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/icons/bell_none.svg',
-                  color: PeeroreumColor.gray[800],
-                ),
-                onTap: () {
-                  Fluttertoast.showToast(msg: "준비중입니다.");
-                },
+              SvgPicture.asset(
+                'assets/icons/bell_none.svg',
+                color: PeeroreumColor.gray[800],
               )
             ],
           ),

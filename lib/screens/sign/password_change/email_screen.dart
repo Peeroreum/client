@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -198,7 +198,8 @@ class _EmailSearchState extends State<EmailSearch> {
                         if (await isExistingEmail()) {
                           sendEmail();
                         } else {
-                          Fluttertoast.showToast(msg: "해당 이메일로 가입된 계정이 없어요");
+                          PeeroreumToast.show(context, "해당 이메일로 가입된 계정이 없어요",
+                              isError: true);
                         }
                       }
                     : null,
@@ -268,10 +269,10 @@ class _EmailSearchState extends State<EmailSearch> {
         Get.to(() => EmailValidate(email_controller.text),
             transition: Transition.noTransition);
       } else {
-        Fluttertoast.showToast(msg: "메일 전송에 실패했습니다.");
+        PeeroreumToast.show(context, "메일 전송에 실패했어요.", isError: true);
       }
     } else {
-      Fluttertoast.showToast(msg: "메일을 전송할 수 없습니다. 다시 시도해 주세요.");
+      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.", isError: true);
     }
   }
 }

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -120,9 +120,9 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
     }
 
     if (allSuccess) {
-      Fluttertoast.showToast(msg: "선택한 참여자의 참여를 종료했습니다.");
+      PeeroreumToast.show(context, "참여를 종료했어요.");
     } else {
-      Fluttertoast.showToast(msg: "일부 참여자의 종료에 실패했습니다.");
+      PeeroreumToast.show(context, "참여 종료에 실패한 사용자가 있어요.", isError: true);
     }
 
     setState(() {
@@ -205,7 +205,6 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                       child: TextButton(
                         onPressed: () async {
                           print("강퇴할 유저 목록: $selectedUserList");
-                          Fluttertoast.showToast(msg: '선택한 참여자의 참여를 종료했습니다.');
                           Get.back();
                           kickMember(selectedUserList);
                         },
@@ -378,8 +377,6 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
 
                 if (selectedUserList.isNotEmpty) {
                   showKickDialog();
-                } else {
-                  Fluttertoast.showToast(msg: '선택된 참여자가 없습니다.');
                 }
               },
               child: Text(
