@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -276,10 +276,18 @@ class _EmailValidateState extends State<EmailValidate> {
         Get.to(() => NewPassword(widget.email, token),
             transition: Transition.noTransition);
       } else {
-        Fluttertoast.showToast(msg: "인증번호가 일치하지 않아요");
+        PeeroreumToast.show(
+          context,
+          "인증번호가 일치하지 않아요",
+          isError: true,
+        );
       }
     } else {
-      Fluttertoast.showToast(msg: "인증번호가 일치하지 않아요");
+      PeeroreumToast.show(
+        context,
+        "인증번호가 일치하지 않아요",
+        isError: true,
+      );
     }
   }
 
@@ -299,12 +307,20 @@ class _EmailValidateState extends State<EmailValidate> {
       if (data['status'] == 'success') {
         _timer.cancel();
         startTimer();
-        Fluttertoast.showToast(msg: "인증코드가 재발송되었습니다.");
+        PeeroreumToast.show(context, "인증코드가 재발송되었어요.");
       } else {
-        Fluttertoast.showToast(msg: "재발송 실패");
+        PeeroreumToast.show(
+          context,
+          "재발송 실패",
+          isError: true,
+        );
       }
     } else {
-      Fluttertoast.showToast(msg: "오류가 발생했습니다.");
+      PeeroreumToast.show(
+        context,
+        "오류가 발생했습니다.",
+        isError: true,
+      );
     }
   }
 }

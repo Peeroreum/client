@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search_result_screen.dart';
@@ -81,7 +81,7 @@ class _searchWeduState extends State<searchWedu> {
                 _saveSearchHistory(_searchController.text);
                 goToSearchResult(_searchController.text);
               } else {
-                Fluttertoast.showToast(msg: '검색어를 입력하세요.');
+                PeeroreumToast.show(context, '검색어를 입력하세요.', isError: true);
               }
             },
             onChanged: (value) {
@@ -128,7 +128,7 @@ class _searchWeduState extends State<searchWedu> {
                     _saveSearchHistory(_searchController.text);
                     goToSearchResult(_searchController.text);
                   } else {
-                    Fluttertoast.showToast(msg: '검색어를 입력하세요.');
+                    PeeroreumToast.show(context, '검색어를 입력하세요.', isError: true);
                   }
                 },
                 child: SvgPicture.asset(
@@ -273,9 +273,8 @@ class _searchWeduState extends State<searchWedu> {
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
-                              Get.to(()=>SearchResultWedu(_searchHistory[index]
-                                                ['keyword']
-                                            .toString()));
+                              Get.to(() => SearchResultWedu(
+                                  _searchHistory[index]['keyword'].toString()));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -353,7 +352,7 @@ class _searchWeduState extends State<searchWedu> {
   }
 
   Future<void> goToSearchResult(String text) async {
-    var result = await Get.to(()=>SearchResultWedu(_searchController.text));
+    var result = await Get.to(() => SearchResultWedu(_searchController.text));
     if (result != null) {
       _loadSearchHistory();
     }

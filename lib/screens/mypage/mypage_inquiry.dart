@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 
 class MyPageInquiry extends StatefulWidget {
   const MyPageInquiry({super.key});
@@ -267,7 +266,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                                 detailInquiry != "")
                         ? () {
                             sendMail();
-                            Fluttertoast.showToast(msg: "문의 접수되었습니다. 감사합니다.");
+                            PeeroreumToast.show(context, "문의가 접수되었어요.");
                             Get.back();
                           }
                         : null,

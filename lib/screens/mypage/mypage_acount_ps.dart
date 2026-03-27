@@ -6,12 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/screens/bottomNaviBar.dart';
-import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:http/http.dart' as http;
-import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import '../../api/PeeroreumApi.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 
 class MyPageAccountPS extends StatefulWidget {
   const MyPageAccountPS({super.key});
@@ -504,11 +501,11 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           'Authorization': 'Bearer $token'
         });
     if (result.statusCode == 200) {
-      Fluttertoast.showToast(msg: "비밀번호가 성공적으로 변경되었습니다.");
+      PeeroreumToast.show(context, "비밀번호가 변경되었어요.");
       Get.back();
     } else {
       print(result.statusCode);
-      Fluttertoast.showToast(msg: "비밀번호 변경 실패");
+      PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.");
     }
   }
 }

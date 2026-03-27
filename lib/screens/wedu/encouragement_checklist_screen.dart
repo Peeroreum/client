@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/data/Checklist.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 
@@ -239,7 +239,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
 
                             if (receiverList.isNotEmpty) {
                               await sendNotification();
-                              Fluttertoast.showToast(msg: "독려하기 완료!");
+                              PeeroreumToast.show(context, '재촉하기에 성공했어요.');
                             }
                             setState(() {
                               isCheckedList = List.generate(

@@ -4,7 +4,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -873,11 +873,11 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
       'Authorization': 'Bearer $token'
     });
     if (enrollResult.statusCode == 200) {
-      Fluttertoast.showToast(msg: "같이방 참여 완료!");
+      PeeroreumToast.show(context, "같이방에 참여했어요!");
     } else if (enrollResult.statusCode == 409) {
-      Fluttertoast.showToast(msg: '이미 참여 중인 같이방입니다.');
+      PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
     } else {
-      Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
+      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.');
       print('에러${enrollResult.statusCode}${enrollResult.body}');
     }
   }
@@ -957,7 +957,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                       onPressed: () {
                         passwordController.text == datas[index]['password']
                             ? enrollWedu(index)
-                            : Fluttertoast.showToast(msg: '비밀번호가 일치하지 않습니다.');
+                            : PeeroreumToast.show(context, '비밀번호가 일치하지 않아요.');
                         Get.back();
                       },
                       child: Text(

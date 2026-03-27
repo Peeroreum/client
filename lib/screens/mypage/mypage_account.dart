@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -286,8 +286,8 @@ class _MyPageAccountState extends State<MyPageAccount> {
                             await FlutterSecureStorage().deleteAll();
                             Get.offAllNamed('/signIn/email');
                           } else {
-                            Fluttertoast.showToast(
-                                msg: "탈퇴에 실패했습니다. 다시 시도해 주세요.");
+                            PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.",
+                                isError: true);
                           }
                         },
                         style: TextButton.styleFrom(

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
@@ -271,7 +271,7 @@ class _ReportState extends State<Report> {
                             detailReason != "")
                     ? () {
                         sendMail();
-                        Fluttertoast.showToast(msg: "신고 접수되었습니다. 감사합니다.");
+                        PeeroreumToast.show(context, "신고가 접수되었어요.");
                         Navigator.pop(context);
                       }
                     : null,

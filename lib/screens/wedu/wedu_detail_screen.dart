@@ -7,7 +7,7 @@ import 'package:dio/dio.dart' as diop;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -342,11 +342,11 @@ class _DetailWeduState extends State<DetailWedu> {
         await dio.post('${API.hostConnect}/wedu/$id/challenge', data: formData);
 
     if (response.statusCode == 200) {
-      Fluttertoast.showToast(msg: '오늘의 챌린지 인증 성공!');
+      PeeroreumToast.show(context, '오늘의 챌린지 인증 완료!');
       fetchDatas();
       setState(() {});
     } else {
-      Fluttertoast.showToast(msg: '잠시 후에 다시 시작해 주세요.');
+      PeeroreumToast.show(context, '잠시 후에 다시 시작해 주세요.');
     }
   }
 

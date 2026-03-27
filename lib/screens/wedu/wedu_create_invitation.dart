@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -168,7 +168,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                   if (nextbutton) {
                     postWeduAndInvitation(weduMap);
                   } else {
-                    Fluttertoast.showToast(msg: '초대장 문구를 넣어주세요.');
+                    PeeroreumToast.show(context, '초대장 문구를 넣어주세요.');
                   }
                 },
                 child: Container(
@@ -306,7 +306,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               for (int i = 1; i < value.length + 1; i++) {
                                 if (value == ' ' * i) {
                                   nextbutton = false;
-                                  Fluttertoast.showToast(msg: '공백으로 만들 수 없어요.');
+                                  PeeroreumToast.show(
+                                      context, '공백으로 만들 수 없어요.');
                                 }
                                 if (value != ' ' * i) {
                                   nextbutton = true;
@@ -786,7 +787,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
     bytes = await controller.capture();
     var byteList = bytes?.toList();
     weduMap.addAll({
-      "inviFile": diop.MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")
+      "inviFile":
+          diop.MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")
     });
     diop.FormData formData = diop.FormData.fromMap(weduMap);
     dio.options.contentType = 'multipart/form-data';

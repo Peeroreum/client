@@ -5,7 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -18,15 +18,10 @@ import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/report.dart';
 
-import 'iedu_home.dart';
-
 class DetailIedu extends StatefulWidget {
   final int id;
   final bool isQselected;
-  const DetailIedu(
-    this.id,
-    this.isQselected
-  );
+  const DetailIedu(this.id, this.isQselected);
 
   @override
   State<DetailIedu> createState() => _DetailIeduState(id, isQselected);
@@ -34,7 +29,7 @@ class DetailIedu extends StatefulWidget {
 
 class _DetailIeduState extends State<DetailIedu> {
   _DetailIeduState(this.id, this.isQselected);
-  
+
   var id, token, nickname;
   TextEditingController _textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
@@ -46,10 +41,10 @@ class _DetailIeduState extends State<DetailIedu> {
   int? _maxLines = 1; // 현재 줄 수
   int _visibleLines = 1; // 화면에 보이는 줄 수
 
-  dynamic selectedDatas ;
+  dynamic selectedDatas;
   dynamic sltProfileDatas;
-  dynamic questionDatas='';
-  dynamic profileDatas ='';
+  dynamic questionDatas = '';
+  dynamic profileDatas = '';
 
   dynamic profileImage;
   dynamic grade;
@@ -76,12 +71,11 @@ class _DetailIeduState extends State<DetailIedu> {
   //----------------
   List<dynamic> commentDatas = [];
 
-  void updateData(){
-    setState(() {
-    });
+  void updateData() {
+    setState(() {});
   }
-  
-  Future<void>fetchDatas() async {
+
+  Future<void> fetchDatas() async {
     token = await FlutterSecureStorage().read(key: "accessToken");
     nickname = await FlutterSecureStorage().read(key: "nickname");
 
@@ -90,35 +84,33 @@ class _DetailIeduState extends State<DetailIedu> {
     await fetchSelectedQuestion(isQselected);
   }
 
-  fetchSelectedQuestion(bool selectExist) async{
-    if(selectExist == true){
-      var selectedQuestionResult = await http.get(
-      Uri.parse('${API.hostConnect}/answer/$id/selected'),
-      headers: {
+  fetchSelectedQuestion(bool selectExist) async {
+    if (selectExist == true) {
+      var selectedQuestionResult = await http
+          .get(Uri.parse('${API.hostConnect}/answer/$id/selected'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       });
-      if (selectedQuestionResult.statusCode == 200){
-        selectedDatas = jsonDecode(utf8.decode(selectedQuestionResult.bodyBytes))['data'];
+      if (selectedQuestionResult.statusCode == 200) {
+        selectedDatas =
+            jsonDecode(utf8.decode(selectedQuestionResult.bodyBytes))['data'];
         sltProfileDatas = selectedDatas['memberProfileDto'];
-      } else{
+      } else {
         print("fetchIeduQuestionData에러${selectedQuestionResult.statusCode}");
       }
     }
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
-  fetchIeduQuestionData() async{
-    var inIeduQuestionResult = await http.get(
-      Uri.parse('${API.hostConnect}/question/$id'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      });
-    if (inIeduQuestionResult.statusCode == 200){
-      questionDatas = jsonDecode(utf8.decode(inIeduQuestionResult.bodyBytes))['data'];
+  fetchIeduQuestionData() async {
+    var inIeduQuestionResult = await http
+        .get(Uri.parse('${API.hostConnect}/question/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    if (inIeduQuestionResult.statusCode == 200) {
+      questionDatas =
+          jsonDecode(utf8.decode(inIeduQuestionResult.bodyBytes))['data'];
       profileDatas = questionDatas['memberProfileDto'];
       profileImage = profileDatas['profileImage'];
       grade = profileDatas['grade'];
@@ -132,16 +124,13 @@ class _DetailIeduState extends State<DetailIedu> {
       likesNum = questionDatas['likes'];
       commentsNum = questionDatas['comments'];
       print(questionImage);
-    } else if(inIeduQuestionResult.statusCode == 404){
+    } else if (inIeduQuestionResult.statusCode == 404) {
       Get.offAllNamed('/home/iedu');
       print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
-    }
-    else{
+    } else {
       print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
     }
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   fetchIeduAnswerData() async {
@@ -154,75 +143,69 @@ class _DetailIeduState extends State<DetailIedu> {
           'Authorization': 'Bearer $token'
         });
     if (inIeduAnswerResult.statusCode == 200) {
-      commentDatas = jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
+      commentDatas =
+          jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
       print(commentDatas);
-      setState(() {
-        
-      });
+      setState(() {});
     } else {
       print("fetchIeduAnswerData에러${inIeduAnswerResult.statusCode}");
     }
-    setState(() {
-      
-    });
+    setState(() {});
   }
-
 
   @override
   void initState() {
     super.initState();
     initFuture = fetchDatas();
-    _textController= TextEditingController();
+    _textController = TextEditingController();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
           !_isLoading) {
         loadmoreData();
-      }}
-    );
+      }
+    });
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(
-      loadmoreData
-      );
+    _scrollController.removeListener(loadmoreData);
     _scrollController.dispose();
     _textController.dispose();
     page = 0;
     super.dispose();
   }
 
-  void loadmoreData() async{
-      setState(() {
-        _isLoading = true;
-      });
+  void loadmoreData() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-      List<dynamic> addedDatas = [];
-      page++;
-      var inIeduAnswerResult = await http.get(
+    List<dynamic> addedDatas = [];
+    page++;
+    var inIeduAnswerResult = await http.get(
         Uri.parse('${API.hostConnect}/answer?questionId=$id&page=$page'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         });
-      if (inIeduAnswerResult.statusCode == 200) {
-        addedDatas = jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
-        setState(() {
-          commentDatas.addAll(addedDatas);
-          _isLoading = false;
-        });
-      } else {
-        print("에러${inIeduAnswerResult.statusCode}");
-      }
-    
+    if (inIeduAnswerResult.statusCode == 200) {
+      addedDatas =
+          jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
+      setState(() {
+        commentDatas.addAll(addedDatas);
+        _isLoading = false;
+      });
+    } else {
+      print("에러${inIeduAnswerResult.statusCode}");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
-         if (selectedParent != -1) {
+      onWillPop: () async {
+        if (selectedParent != -1) {
           setState(() {
             selectedParent = -1;
           });
@@ -238,8 +221,8 @@ class _DetailIeduState extends State<DetailIedu> {
           FocusScope.of(context).unfocus();
         },
         child: FutureBuilder(
-            future: initFuture, 
-            builder: (context, snapshot){
+            future: initFuture,
+            builder: (context, snapshot) {
               // if (snapshot.connectionState == ConnectionState.waiting) {
               // return Scaffold(
               //   body: RefreshIndicator(
@@ -257,13 +240,14 @@ class _DetailIeduState extends State<DetailIedu> {
               //           );
               // }
               return Scaffold(
-                          appBar: appbarWidget(),
-                          body: bodyWidget(),
-                        );
+                appBar: appbarWidget(),
+                body: bodyWidget(),
+              );
             }),
       ),
     );
   }
+
   PreferredSizeWidget appbarWidget() {
     return AppBar(
       backgroundColor: PeeroreumColor.white,
@@ -291,10 +275,10 @@ class _DetailIeduState extends State<DetailIedu> {
                   height: 24,
                   margin: EdgeInsets.only(right: 4),
                   constraints: BoxConstraints(),
-                  child: isBookmarked != null && isBookmarked 
-                      ?SvgPicture.asset('assets/icons/bookmark_fill.svg',
+                  child: isBookmarked != null && isBookmarked
+                      ? SvgPicture.asset('assets/icons/bookmark_fill.svg',
                           color: PeeroreumColor.primaryPuple[400])
-                      :SvgPicture.asset('assets/icons/bookmark.svg',
+                      : SvgPicture.asset('assets/icons/bookmark.svg',
                           color: PeeroreumColor.black),
                 ),
                 onTap: () {
@@ -332,45 +316,51 @@ class _DetailIeduState extends State<DetailIedu> {
       ],
     );
   }
-  bodyWidget(){
+
+  bodyWidget() {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.symmetric(vertical: 16,),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          T2_20px(text: title),
-                        ],
-                      ),
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 16,
                     ),
-                    Container(
-                      width: double.infinity,
-                      height: 1,
-                      color: PeeroreumColor.gray[100],
-                    ),
-                    SizedBox(height: 16,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                  Get.to(() => MyPageProfile(name, nickname == name));
-                                },
-                              child: Container(
+                        T2_20px(text: title),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 1,
+                    color: PeeroreumColor.gray[100],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(
+                                  () => MyPageProfile(name, nickname == name));
+                            },
+                            child: Container(
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
@@ -388,7 +378,8 @@ class _DetailIeduState extends State<DetailIedu> {
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       width: 2,
-                                      color: PeeroreumColor.white.withOpacity(0.0),
+                                      color:
+                                          PeeroreumColor.white.withOpacity(0.0),
                                     )),
                                 child: Container(
                                   height: 24,
@@ -397,11 +388,14 @@ class _DetailIeduState extends State<DetailIedu> {
                                     shape: BoxShape.circle,
                                     image: profileImage != null
                                         ? DecorationImage(
-                                            image: Image.network(profileImage).image,
+                                            image: Image.network(profileImage)
+                                                .image,
                                             fit: BoxFit.cover,
                                             onError: (exception, stackTrace) {
-                                        print('Error loading image: $exception');
-                                      },)
+                                              print(
+                                                  'Error loading image: $exception');
+                                            },
+                                          )
                                         : DecorationImage(
                                             image: AssetImage(
                                             'assets/images/user.jpg',
@@ -409,62 +403,94 @@ class _DetailIeduState extends State<DetailIedu> {
                                   ),
                                 ),
                               ),
-                                                      ),
                             ),
-                          const SizedBox(width: 8,),
-                          Text(name,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          ),),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            name,
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500),
+                          ),
                           if (nickname == name)
-                            Text(' (나)',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          ),),
-                          
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Visibility(
-                              visible: DateTime.now().year.toString() != date.substring(0,4),
+                            Text(
+                              ' (나)',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Visibility(
+                              visible: DateTime.now().year.toString() !=
+                                  date.substring(0, 4),
                               child: Row(
-                              children: [
-                                C1_12px_M(text: date.substring(0,4), color: PeeroreumColor.gray[400]),
-                                SizedBox(width: 2,),
-                                C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
-                                SizedBox(width: 2,),
-                              ],
-                            )),
-                            C1_12px_M(text: date.substring(5,7), color: PeeroreumColor.gray[400]),
-                            SizedBox(width: 2,),
-                            C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
-                            SizedBox(width: 2,),
-                            C1_12px_M(text: date.substring(8,10), color: PeeroreumColor.gray[400]),
-                            SizedBox(width: 4,),
-                            C1_12px_M(text: date.substring(11,13), color: PeeroreumColor.gray[400]),
-                            SizedBox(width: 2,),
-                            C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
-                            SizedBox(width: 2,),
-                            C1_12px_M(text: date.substring(14,16), color: PeeroreumColor.gray[400]),
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 16,),
-                    Column(
-                      children: [
-                        B4_14px_R(text: contents)
-                      ],
-                    ),
-                    SizedBox(height: 16,),
-                    Visibility(
-                      visible: questionImage.isNotEmpty,
-                      child: CarouselSlider(
+                                children: [
+                                  C1_12px_M(
+                                      text: date.substring(0, 4),
+                                      color: PeeroreumColor.gray[400]),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                  C1_12px_M(
+                                      text: '/',
+                                      color: PeeroreumColor.gray[400]),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                ],
+                              )),
+                          C1_12px_M(
+                              text: date.substring(5, 7),
+                              color: PeeroreumColor.gray[400]),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          C1_12px_M(
+                              text: date.substring(8, 10),
+                              color: PeeroreumColor.gray[400]),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          C1_12px_M(
+                              text: date.substring(11, 13),
+                              color: PeeroreumColor.gray[400]),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          C1_12px_M(
+                              text: date.substring(14, 16),
+                              color: PeeroreumColor.gray[400]),
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Column(
+                    children: [B4_14px_R(text: contents)],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Visibility(
+                    visible: questionImage.isNotEmpty,
+                    child: CarouselSlider(
                       items: questionImage.map((i) {
                         var imageUrl = i?.toString();
                         return Builder(
@@ -472,7 +498,9 @@ class _DetailIeduState extends State<DetailIedu> {
                             return GestureDetector(
                               onTap: () {
                                 int selectedIndex = questionImage.indexOf(i);
-                                Get.to(() => ImageDetail(imageList: questionImage, initialPage: selectedIndex));
+                                Get.to(() => ImageDetail(
+                                    imageList: questionImage,
+                                    initialPage: selectedIndex));
                               },
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 16),
@@ -481,10 +509,11 @@ class _DetailIeduState extends State<DetailIedu> {
                                     borderRadius: BorderRadius.circular(8),
                                     color: PeeroreumColor.gray[100],
                                     image: imageUrl != null
-                                      ?DecorationImage(
-                                              image: Image.network(imageUrl).image,
-                                              fit: BoxFit.cover)
-                                      :null),
+                                        ? DecorationImage(
+                                            image:
+                                                Image.network(imageUrl).image,
+                                            fit: BoxFit.cover)
+                                        : null),
                                 child: Align(
                                   alignment: Alignment.bottomRight,
                                   child: Container(
@@ -520,143 +549,158 @@ class _DetailIeduState extends State<DetailIedu> {
                         height: 180,
                         enlargeCenterPage: false,
                       ),
-                     ),
                     ),
-                    //350 * 180
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            postQLike();
-                            setState(() {
-                              
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 24,
-                                width: 24,
-                                child: isLiked
-                                          ? SvgPicture.asset('assets/icons/thumbs_up_fill.svg')
-                                          : SvgPicture.asset('assets/icons/thumbs_up.svg'),
-                              ),
-                              SizedBox(width: 4,),
-                              Container(
-                                constraints: BoxConstraints(minWidth: 17, minHeight: 16),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: C1_12px_M(text: '$likesNum',color: PeeroreumColor.gray[600])
-                                  )
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 8,),
-                        Row(
+                  ),
+                  //350 * 180
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          postQLike();
+                          setState(() {});
+                        },
+                        child: Row(
                           children: [
                             Container(
                               height: 24,
                               width: 24,
-                              child: SvgPicture.asset('assets/icons/chat_drop_dots.svg'),
+                              child: isLiked
+                                  ? SvgPicture.asset(
+                                      'assets/icons/thumbs_up_fill.svg')
+                                  : SvgPicture.asset(
+                                      'assets/icons/thumbs_up.svg'),
                             ),
-                            SizedBox(width: 4,),
+                            SizedBox(
+                              width: 4,
+                            ),
                             Container(
-                              constraints: BoxConstraints(minWidth: 17, minHeight: 16),
+                                constraints:
+                                    BoxConstraints(minWidth: 17, minHeight: 16),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: C1_12px_M(
+                                        text: '$likesNum',
+                                        color: PeeroreumColor.gray[600]))),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            height: 24,
+                            width: 24,
+                            child: SvgPicture.asset(
+                                'assets/icons/chat_drop_dots.svg'),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Container(
+                              constraints:
+                                  BoxConstraints(minWidth: 17, minHeight: 16),
                               child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: C1_12px_M(text: '$commentsNum',color: PeeroreumColor.gray[600])
-                                )
-                            ),
-                        ],)
-                      ],
-                    ),
-                    SizedBox(height: 16,)
-                  ],
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 8,
-                color: PeeroreumColor.gray[100],
-              ),
-              Visibility(
-                visible: isQselected,
-                child: selectedDatas != null ?
-                  Container(
-                    color: PeeroreumColor.primaryPuple[50]!,
-                    child: MakeComment(
-                    index: 0,
-                    id: selectedDatas["id"],
-                    hasParent: -1,
-                    grade: selectedDatas['memberProfileDto']['grade'], 
-                    profileImage: selectedDatas['memberProfileDto']['profileImage'],
-                    name: selectedDatas['memberProfileDto']['nickname'], 
-                    isQwselected: isQselected, 
-                    isChosen: selectedDatas["isSelected"], 
-                    comment: selectedDatas["content"],
-                    commentImage: selectedDatas["images"],
-                    createdTime: selectedDatas["createdTime"],
-                    isLiked: selectedDatas["isLiked"],
-                    likesNum: selectedDatas["likes"],
-                    commentsNum: selectedDatas["comments"],
-                    isDeleted: selectedDatas["isDeleted"],
-                    updateData: fetchDatas,
-                    qWriter: name,),
+                                  alignment: Alignment.centerLeft,
+                                  child: C1_12px_M(
+                                      text: '$commentsNum',
+                                      color: PeeroreumColor.gray[600]))),
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
                   )
-                  :Container(),
+                ],
               ),
-              //--대안--
-              Container(
-                padding: EdgeInsets.only(bottom: 8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: (commentDatas ?? <dynamic>[]) // commentDatas가 null이면 빈 리스트를 사용합니다.
-                    .map<Widget>((commentData) {
-                      return MakeComment(
-                        index: commentDatas.indexOf(commentData),
-                        id: commentData["id"],
-                        hasParent: commentData["parentId"],
-                        grade: commentData['memberProfileDto']['grade'], 
-                        profileImage: commentData['memberProfileDto']['profileImage'],
-                        name: commentData['memberProfileDto']['nickname'], 
-                        isQwselected: isQselected, 
-                        isChosen: commentData["isSelected"], 
-                        comment: commentData["content"],
-                        commentImage: commentData["images"],
-                        createdTime: commentData["createdTime"],
-                        isLiked: commentData["isLiked"],
-                        likesNum: commentData["likes"],
-                        commentsNum: commentData["comments"],
-                        isDeleted: commentData["isDeleted"],
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 8,
+              color: PeeroreumColor.gray[100],
+            ),
+            Visibility(
+              visible: isQselected,
+              child: selectedDatas != null
+                  ? Container(
+                      color: PeeroreumColor.primaryPuple[50]!,
+                      child: MakeComment(
+                        index: 0,
+                        id: selectedDatas["id"],
+                        hasParent: -1,
+                        grade: selectedDatas['memberProfileDto']['grade'],
+                        profileImage: selectedDatas['memberProfileDto']
+                            ['profileImage'],
+                        name: selectedDatas['memberProfileDto']['nickname'],
+                        isQwselected: isQselected,
+                        isChosen: selectedDatas["isSelected"],
+                        comment: selectedDatas["content"],
+                        commentImage: selectedDatas["images"],
+                        createdTime: selectedDatas["createdTime"],
+                        isLiked: selectedDatas["isLiked"],
+                        likesNum: selectedDatas["likes"],
+                        commentsNum: selectedDatas["comments"],
+                        isDeleted: selectedDatas["isDeleted"],
                         updateData: fetchDatas,
                         qWriter: name,
-                      );
-                    }).toList(),
-                ),
+                      ),
+                    )
+                  : Container(),
+            ),
+            //--대안--
+            Container(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: (commentDatas ??
+                        <dynamic>[]) // commentDatas가 null이면 빈 리스트를 사용합니다.
+                    .map<Widget>((commentData) {
+                  return MakeComment(
+                    index: commentDatas.indexOf(commentData),
+                    id: commentData["id"],
+                    hasParent: commentData["parentId"],
+                    grade: commentData['memberProfileDto']['grade'],
+                    profileImage: commentData['memberProfileDto']
+                        ['profileImage'],
+                    name: commentData['memberProfileDto']['nickname'],
+                    isQwselected: isQselected,
+                    isChosen: commentData["isSelected"],
+                    comment: commentData["content"],
+                    commentImage: commentData["images"],
+                    createdTime: commentData["createdTime"],
+                    isLiked: commentData["isLiked"],
+                    likesNum: commentData["likes"],
+                    commentsNum: commentData["comments"],
+                    isDeleted: commentData["isDeleted"],
+                    updateData: fetchDatas,
+                    qWriter: name,
+                  );
+                }).toList(),
               ),
-              // Expanded(
-              //   child: ListView.separated(
-              //     //physics: NeverScrollableScrollPhysics(),
-              //     scrollDirection: Axis.vertical,
-              //     //padding: EdgeInsets.symmetric(horizontal: 20),
-              //     itemBuilder: (BuildContext context, int index) {
-              //       return MakeComment(
-              //           grade: commentDatas[index]["memberGrade"], 
-              //           name: commentDatas[index]["memberNickname"], 
-              //           isQselected: false, 
-              //           isChosen: commentDatas[index]["isDeleted"], 
-              //           comment: commentDatas[index]["content"],
-              //           commentImage: commentDatas[index]["imagePaths"],
-              //           );
-              //     }, 
-              //     separatorBuilder: (BuildContext context, int index) => Divider(),
-              //     itemCount: commentDatas.length),
-              // )
-            ],
-          ),
+            ),
+            // Expanded(
+            //   child: ListView.separated(
+            //     //physics: NeverScrollableScrollPhysics(),
+            //     scrollDirection: Axis.vertical,
+            //     //padding: EdgeInsets.symmetric(horizontal: 20),
+            //     itemBuilder: (BuildContext context, int index) {
+            //       return MakeComment(
+            //           grade: commentDatas[index]["memberGrade"],
+            //           name: commentDatas[index]["memberNickname"],
+            //           isQselected: false,
+            //           isChosen: commentDatas[index]["isDeleted"],
+            //           comment: commentDatas[index]["content"],
+            //           commentImage: commentDatas[index]["imagePaths"],
+            //           );
+            //     },
+            //     separatorBuilder: (BuildContext context, int index) => Divider(),
+            //     itemCount: commentDatas.length),
+            // )
+          ],
+        ),
       ),
-      
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -671,14 +715,14 @@ class _DetailIeduState extends State<DetailIedu> {
                 height: 180,
                 width: double.maxFinite,
                 decoration: _image != null
-                              ? BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                image: DecorationImage(
-                                  image: FileImage(File(_image!.path)),
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                              : null,
+                    ? BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: FileImage(File(_image!.path)),
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : null,
                 child: Align(
                   alignment: Alignment.topRight,
                   child: Container(
@@ -690,15 +734,14 @@ class _DetailIeduState extends State<DetailIedu> {
                       onTap: () {
                         setState(() {
                           _image = null;
-                          if(comment == ""){
+                          if (comment == "") {
                             isSubmittable = false;
                           }
                         });
                       },
                       child: Opacity(
-                        opacity: 0.4,
-                        child: SvgPicture.asset('assets/icons/x_circle.svg')
-                        ),
+                          opacity: 0.4,
+                          child: SvgPicture.asset('assets/icons/x_circle.svg')),
                     ),
                   ),
                 ),
@@ -707,153 +750,171 @@ class _DetailIeduState extends State<DetailIedu> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: PeeroreumColor.gray[50],
-              border: Border(
-                top: BorderSide(
+                color: PeeroreumColor.gray[50],
+                border: Border(
+                    top: BorderSide(
                   color: PeeroreumColor.gray[100]!,
                   width: 1.0,
-                )
-              )
-            ),
+                ))),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      constraints: BoxConstraints(
-                        minHeight: 48
-                      ),
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: PeeroreumColor.gray[100],
-                        border: Border.all(color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.circular(8)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width-108,
-                              child: TextFormField(
-                                      focusNode: _focusNode,
-                                      controller: _textController,
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400
-                                      ),
-                                      maxLines: _maxLines,
-                                      cursorColor: PeeroreumColor.gray[600],
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.zero,
-                                        hintText: (selectedParent == -1) ?"댓글을 입력하세요" :"대댓글을 입력하세요",
-                                        hintStyle: TextStyle(
-                                          color: PeeroreumColor.gray[600],
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                        )
-                                      ),
-                                      onChanged: (value) {
-                                        comment = value;
-                                        final lines = textlines(value);
-                                        setState(() {
-                                          if (comment != "" || _image != null){
-                                            isSubmittable = true;
-                                          } else {
-                                            isSubmittable = false;
-                                          }
-                                           _visibleLines = lines;
-                                            // 최대 4줄까지만 입력 가능하도록 설정
-                                            _maxLines = (_visibleLines > 4 ? 4 : null);
-                                        });
-                                      },
-                                    ),
-                            ),
-                          ),
-                          GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              print(selectedParent);
-                              if(isSubmittable){
-                                postAnswer();
-                                setState(() {
-                                  FocusScope.of(context).unfocus();
-                                  fetchIeduAnswerData();
-                                });
-                              }
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              LayoutBuilder(builder: (context, constraints) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  constraints: BoxConstraints(minHeight: 48),
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(
+                      color: PeeroreumColor.gray[100],
+                      border: Border.all(color: PeeroreumColor.gray[200]!),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width - 108,
+                          child: TextFormField(
+                            focusNode: _focusNode,
+                            controller: _textController,
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                            maxLines: _maxLines,
+                            cursorColor: PeeroreumColor.gray[600],
+                            decoration: InputDecoration(
+                                isDense: true,
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                                hintText: (selectedParent == -1)
+                                    ? "댓글을 입력하세요"
+                                    : "대댓글을 입력하세요",
+                                hintStyle: TextStyle(
+                                  color: PeeroreumColor.gray[600],
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                )),
+                            onChanged: (value) {
+                              comment = value;
+                              final lines = textlines(value);
+                              setState(() {
+                                if (comment != "" || _image != null) {
+                                  isSubmittable = true;
+                                } else {
+                                  isSubmittable = false;
+                                }
+                                _visibleLines = lines;
+                                // 최대 4줄까지만 입력 가능하도록 설정
+                                _maxLines = (_visibleLines > 4 ? 4 : null);
+                              });
                             },
-                            child: Container(
-                              height: 24,
-                              child: Center(
-                                child: T5_14px(text: '등록',
-                                color: isSubmittable==false ? PeeroreumColor.gray[500] :PeeroreumColor.primaryPuple[400],
-                                ),
-                              ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          print(selectedParent);
+                          if (isSubmittable) {
+                            postAnswer();
+                            setState(() {
+                              FocusScope.of(context).unfocus();
+                              fetchIeduAnswerData();
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: 24,
+                          child: Center(
+                            child: T5_14px(
+                              text: '등록',
+                              color: isSubmittable == false
+                                  ? PeeroreumColor.gray[500]
+                                  : PeeroreumColor.primaryPuple[400],
                             ),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-                ),
-                SizedBox(height: 8,),
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        if(_image == null){
-                          showImagePickerSheet();
-                        } else{
-                          Fluttertoast.showToast(msg: "댓글은 파일 최대 1개까지만 첨부 가능합니다.");
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 24,
-                            height: 24,
-                            child: SvgPicture.asset('assets/icons/camera3.svg',
-                            color: PeeroreumColor.gray[500],),
                           ),
-                          SizedBox(width: 4,),
-                          T4_16px(text: '사진 첨부', color: PeeroreumColor.gray[500],)
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 16,),
-                    GestureDetector(
-                      onTap: () async{
-                        if(_image == null){
-                          final dynamic whiteboardImage = await Get.to(() => WhiteboardIedu());
-                          setState(() {
-                            _image = whiteboardImage;
-                            isSubmittable = true;
-                          });
-                        } else{
-                          Fluttertoast.showToast(msg: "댓글은 파일 최대 1개까지만 첨부 가능합니다.");
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            child: SvgPicture.asset('assets/icons/notepad.svg',
-                            color: PeeroreumColor.gray[500],),
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }),
+              SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (_image == null) {
+                        showImagePickerSheet();
+                      } else {
+                        PeeroreumToast.show(
+                            context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 24,
+                          child: SvgPicture.asset(
+                            'assets/icons/camera3.svg',
+                            color: PeeroreumColor.gray[500],
                           ),
-                          SizedBox(width: 4,),
-                          T4_16px(text: '화이트 보드', color: PeeroreumColor.gray[500],)
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        T4_16px(
+                          text: '사진 첨부',
+                          color: PeeroreumColor.gray[500],
+                        )
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(height: 21,)
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      if (_image == null) {
+                        final dynamic whiteboardImage =
+                            await Get.to(() => WhiteboardIedu());
+                        setState(() {
+                          _image = whiteboardImage;
+                          isSubmittable = true;
+                        });
+                      } else {
+                        PeeroreumToast.show(
+                            context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          child: SvgPicture.asset(
+                            'assets/icons/notepad.svg',
+                            color: PeeroreumColor.gray[500],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        T4_16px(
+                          text: '화이트 보드',
+                          color: PeeroreumColor.gray[500],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 21,
+              )
             ]),
           ),
         ],
@@ -875,7 +936,7 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   void takeFromGallery() async {
-    final XFile? image  = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       setState(() {
@@ -973,9 +1034,10 @@ class _DetailIeduState extends State<DetailIedu> {
           );
         });
   }
+
   deleteQuestionBottomSheet(writerName) {
-      var isMyQuestion = writerName == nickname;
-      return Container(
+    var isMyQuestion = writerName == nickname;
+    return Container(
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
@@ -1013,10 +1075,12 @@ class _DetailIeduState extends State<DetailIedu> {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Get.to(() => Report(data: "[내가해냄] 내가 해냄 질문 신고\n"
-                    +"날짜 : $date\n"
-                    +"질문 아이디 : $id\n"
-                    +"업로드한 사람 : $name\n",));
+                Get.to(() => Report(
+                      data: "[내가해냄] 내가 해냄 질문 신고\n" +
+                          "날짜 : $date\n" +
+                          "질문 아이디 : $id\n" +
+                          "업로드한 사람 : $name\n",
+                    ));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -1151,7 +1215,7 @@ class _DetailIeduState extends State<DetailIedu> {
 
     formData = dio.FormData.fromMap(IeduAnswerMap);
 
-    if(_image != null){
+    if (_image != null) {
       var file = await dio.MultipartFile.fromFile(_image!.path);
       formData.files.add(MapEntry('files', file));
     }
@@ -1164,151 +1228,139 @@ class _DetailIeduState extends State<DetailIedu> {
     if (response.statusCode == 200) {
       fetchDatas();
       setState(() {
-        _image = null; 
+        _image = null;
         _textController.clear();
         _maxLines = null;
-        isSubmittable=false;
+        isSubmittable = false;
         selectedParent = -1;
       });
     } else {
-      Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
+      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
 
   int textlines(String text) {
     final TextPainter textPainter = TextPainter(
-      text: TextSpan(text: text, style: TextStyle(
-                                  height: 1.0,
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400
-                                ),),
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+            height: 1.0,
+            fontFamily: 'Pretendard',
+            fontSize: 14,
+            fontWeight: FontWeight.w400),
+      ),
       textDirection: TextDirection.ltr,
       maxLines: null,
-    )..layout(minWidth: 0, maxWidth: MediaQuery.of(context).size.width-108);
+    )..layout(minWidth: 0, maxWidth: MediaQuery.of(context).size.width - 108);
 
     List<LineMetrics> countLines = textPainter.computeLineMetrics();
     return countLines.length;
   }
 
-  Future<void> postBookmark() async{
-    if(isBookmarked == false){
-      http.post(
-        Uri.parse('${API.hostConnect}/bookmark/question/$id'),
-        headers: {
+  Future<void> postBookmark() async {
+    if (isBookmarked == false) {
+      http.post(Uri.parse('${API.hostConnect}/bookmark/question/$id'),
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
-      if (response.statusCode == 200) {
+          }).then((response) {
+        if (response.statusCode == 200) {
           print('북마크 요청이 성공했습니다.');
           print('응답: ${response.body}');
-        
+
           fetchDatas();
-      } else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
-        print(response.body);
-      }else {
-        print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
-    }
-    else if(isBookmarked == true){
-      http.delete(
-        Uri.parse('${API.hostConnect}/bookmark/question/$id'),
-        headers: {
+        } else if (response.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+          print(response.body);
+        } else {
+          print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
+      }).catchError((error) {
+        // 요청 과정에서 오류가 발생한 경우 처리
+        print('오류 발생: $error');
+      });
+    } else if (isBookmarked == true) {
+      http.delete(Uri.parse('${API.hostConnect}/bookmark/question/$id'),
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
-      if (response.statusCode == 200) {
+          }).then((response) {
+        if (response.statusCode == 200) {
           print('북마크 삭제 요청이 성공했습니다.');
           print('응답: ${response.body}');
-      
+
           fetchDatas();
-      } else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
-        print(response.body);
-      }else {
-        print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
+        } else if (response.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+          print(response.body);
+        } else {
+          print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
+      }).catchError((error) {
+        // 요청 과정에서 오류가 발생한 경우 처리
+        print('오류 발생: $error');
+      });
     }
   }
 
-  Future<void> postQLike() async{
-    if(isLiked == false){
-      http.post(
-        Uri.parse('${API.hostConnect}/like/question/$id'),
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
-      if (response.statusCode == 200) {
+  Future<void> postQLike() async {
+    if (isLiked == false) {
+      http.post(Uri.parse('${API.hostConnect}/like/question/$id'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      }).then((response) {
+        if (response.statusCode == 200) {
           print('질문 좋아요 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          
+
           fetchDatas();
-      } else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
-        print(response.body);
-      }else {
-        print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
-    }
-    else if(isLiked == true){
-      http.delete(
-        Uri.parse('${API.hostConnect}/like/question/$id'),
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
-      if (response.statusCode == 200) {
+        } else if (response.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+          print(response.body);
+        } else {
+          print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
+      }).catchError((error) {
+        // 요청 과정에서 오류가 발생한 경우 처리
+        print('오류 발생: $error');
+      });
+    } else if (isLiked == true) {
+      http.delete(Uri.parse('${API.hostConnect}/like/question/$id'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      }).then((response) {
+        if (response.statusCode == 200) {
           print('질문 좋아요 삭제 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          
+
           fetchDatas();
-      } else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
-        print(response.body);
-      }else {
-        print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
+        } else if (response.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+          print(response.body);
+        } else {
+          print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
+      }).catchError((error) {
+        // 요청 과정에서 오류가 발생한 경우 처리
+        print('오류 발생: $error');
+      });
     }
     fetchIeduQuestionData();
   }
-  Future<void> deleteQuestion() async{
-    http.delete(
-        Uri.parse('${API.hostConnect}/question/$id'),
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
+
+  Future<void> deleteQuestion() async {
+    http.delete(Uri.parse('${API.hostConnect}/question/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    }).then((response) {
       if (response.statusCode == 200) {
-          print('질문 삭제 요청이 성공했습니다.');
-          print('응답: ${response.body}');
-      } else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+        print('질문 삭제 요청이 성공했습니다.');
+        print('응답: ${response.body}');
+      } else if (response.statusCode == 404) {
+        PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
         print(response.body);
-      }else {
-        Fluttertoast.showToast(msg: '채택 완료 질문은 삭제할 수 없습니다.');
+      } else {
+        PeeroreumToast.show(context, '채택 완료 질문은 삭제할 수 없어요.', isError: true);
         print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
       }
     }).catchError((error) {
@@ -1319,415 +1371,504 @@ class _DetailIeduState extends State<DetailIedu> {
 }
 
 class MakeComment extends StatefulWidget {
-    final dynamic index;
-    final dynamic id;
-    final dynamic hasParent;
-    final dynamic grade;
-    final dynamic profileImage;
-    final dynamic name;
-    final dynamic isQwselected;
-    final dynamic isChosen;
-    final dynamic comment;
-    final List<dynamic>? commentImage;
-    final dynamic createdTime;
-    final dynamic isLiked;
-    final dynamic likesNum;
-    final dynamic commentsNum;
-    final dynamic isDeleted;
-    final VoidCallback updateData;
-    final dynamic qWriter;
+  final dynamic index;
+  final dynamic id;
+  final dynamic hasParent;
+  final dynamic grade;
+  final dynamic profileImage;
+  final dynamic name;
+  final dynamic isQwselected;
+  final dynamic isChosen;
+  final dynamic comment;
+  final List<dynamic>? commentImage;
+  final dynamic createdTime;
+  final dynamic isLiked;
+  final dynamic likesNum;
+  final dynamic commentsNum;
+  final dynamic isDeleted;
+  final VoidCallback updateData;
+  final dynamic qWriter;
 
-    const MakeComment({
-      Key? key,
-      required this.index,
-      required this.id,
-      required this.hasParent,
-      required this.grade,
-      this.profileImage,
-      required this.name,
-      required this.isQwselected,
-      required this.isChosen,
-      required this.comment,
-      this.commentImage,
-      this.createdTime,
-      this.isLiked,
-      this.likesNum,
-      this.commentsNum,
-      this.isDeleted = false,
-      required this.updateData,
-      required this.qWriter,
-    }) : super(key: key);
-  
-    @override
-    State<MakeComment> createState() => _MakeCommentState();
+  const MakeComment({
+    Key? key,
+    required this.index,
+    required this.id,
+    required this.hasParent,
+    required this.grade,
+    this.profileImage,
+    required this.name,
+    required this.isQwselected,
+    required this.isChosen,
+    required this.comment,
+    this.commentImage,
+    this.createdTime,
+    this.isLiked,
+    this.likesNum,
+    this.commentsNum,
+    this.isDeleted = false,
+    required this.updateData,
+    required this.qWriter,
+  }) : super(key: key);
+
+  @override
+  State<MakeComment> createState() => _MakeCommentState();
+}
+
+class _MakeCommentState extends State<MakeComment> {
+  String createdTime = DateTime.now().toString();
+  var nickname, token;
+
+  @override
+  void initState() {
+    super.initState();
+    createdTime = widget.createdTime ?? DateTime.now().toString();
+    getData();
   }
-  
-  class _MakeCommentState extends State<MakeComment> {
-    String createdTime = DateTime.now().toString();
-    var nickname, token;
 
-    @override
-    void initState() {
-      super.initState();
-      createdTime =  widget.createdTime ?? DateTime.now().toString();
-      getData();
-    }
-    Future<void>getData() async{
-      nickname = await FlutterSecureStorage().read(key: "nickname");
-      token = await FlutterSecureStorage().read(key: "accessToken");
-      setState(() {
-      });
-    }
+  Future<void> getData() async {
+    nickname = await FlutterSecureStorage().read(key: "nickname");
+    token = await FlutterSecureStorage().read(key: "accessToken");
+    setState(() {});
+  }
 
-    @override
-    Widget build(BuildContext context) {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        padding: widget.hasParent == -1
-        ?EdgeInsets.symmetric(vertical: 16)
-        :EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-        margin: widget.hasParent == -1
-        ?EdgeInsets.symmetric(horizontal: 20)
-        :null,
-        decoration: widget.hasParent == -1 && widget.index != 0
-        ?BoxDecoration(
-          border: Border(
-                    top: BorderSide(
-                      color: PeeroreumColor.gray[100]!,
-                      width: 1.0,
-                    )
-                  ),
-        )
-        :null,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Visibility(
-              visible: widget.hasParent != -1,
-              child: Container(
-                margin: EdgeInsets.only(right: 8),
-                child: SvgPicture.asset('assets/icons/forward.svg',
-                color: PeeroreumColor.gray[600],),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: widget.hasParent == -1
+          ? EdgeInsets.symmetric(vertical: 16)
+          : EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+      margin:
+          widget.hasParent == -1 ? EdgeInsets.symmetric(horizontal: 20) : null,
+      decoration: widget.hasParent == -1 && widget.index != 0
+          ? BoxDecoration(
+              border: Border(
+                  top: BorderSide(
+                color: PeeroreumColor.gray[100]!,
+                width: 1.0,
+              )),
+            )
+          : null,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Visibility(
+            visible: widget.hasParent != -1,
+            child: Container(
+              margin: EdgeInsets.only(right: 8),
+              child: SvgPicture.asset(
+                'assets/icons/forward.svg',
+                color: PeeroreumColor.gray[600],
               ),
             ),
-            Container(
-              padding: widget.hasParent == -1
-              ?EdgeInsets.zero
-              :EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              margin: widget.hasParent == -1
-              ?EdgeInsets.zero
-              :EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: widget.hasParent == -1
-                ?Colors.transparent
-                :PeeroreumColor.gray[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: widget.hasParent == -1
-                    ?MediaQuery.of(context).size.width -40
-                    :MediaQuery.of(context).size.width -112,
-                    child: Visibility(
-                      visible: widget.isDeleted == false,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: widget.hasParent == -1
-                            ?MediaQuery.of(context).size.width -40 -34
-                            :MediaQuery.of(context).size.width -112 -34,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    if(widget.isDeleted == false){
-                                      Get.to(() => MyPageProfile(widget.name, nickname == widget.name));
+          ),
+          Container(
+            padding: widget.hasParent == -1
+                ? EdgeInsets.zero
+                : EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            margin: widget.hasParent == -1
+                ? EdgeInsets.zero
+                : EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              color: widget.hasParent == -1
+                  ? Colors.transparent
+                  : PeeroreumColor.gray[100],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: widget.hasParent == -1
+                      ? MediaQuery.of(context).size.width - 40
+                      : MediaQuery.of(context).size.width - 112,
+                  child: Visibility(
+                    visible: widget.isDeleted == false,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: widget.hasParent == -1
+                              ? MediaQuery.of(context).size.width - 40 - 34
+                              : MediaQuery.of(context).size.width - 112 - 34,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (widget.isDeleted == false) {
+                                    Get.to(() => MyPageProfile(
+                                        widget.name, nickname == widget.name));
+                                  }
+                                },
+                                child: Container(
+                                  width: 28,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        width: 1,
+                                        color: widget.grade != null
+                                            ? PeeroreumColor
+                                                .gradeColor[widget.grade]!
+                                            : Color.fromARGB(
+                                                255, 186, 188, 189)),
+                                  ),
+                                  child: Container(
+                                    height: 26,
+                                    width: 26,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          width: 2,
+                                          color: PeeroreumColor.white
+                                              .withOpacity(0.0),
+                                        )),
+                                    child: Container(
+                                      height: 24,
+                                      width: 24,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: widget.profileImage != null
+                                            ? DecorationImage(
+                                                image: Image.network(
+                                                        widget.profileImage)
+                                                    .image,
+                                                fit: BoxFit.cover)
+                                            : DecorationImage(
+                                                image: AssetImage(
+                                                'assets/images/user.jpg',
+                                              )),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Flexible(
+                                  child: B4_14px_M(
+                                text: widget.name,
+                              )),
+                              if (nickname == widget.name &&
+                                  widget.isDeleted == false)
+                                Text(
+                                  ' (나)',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Visibility(
+                                visible: (widget.isQwselected == false) &&
+                                    (nickname == widget.qWriter) &&
+                                    (widget.qWriter != widget.name),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final _dState =
+                                        context.findAncestorStateOfType<
+                                            _DetailIeduState>();
+                                    if (await checkSelect()) {
+                                      if (_dState != null) {
+                                        _dState.setState(() {
+                                          _dState.isQselected = true;
+                                        });
+                                      }
+                                      selectAnswer();
+                                      widget.updateData();
                                     }
                                   },
                                   child: Container(
-                                    width: 28,
-                                    height: 28,
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          width: 1,
-                                          color: widget.grade != null
-                                              ? PeeroreumColor.gradeColor[widget.grade]!
-                                              : Color.fromARGB(255, 186, 188, 189)),
-                                    ),
-                                    child: Container(
-                                      height: 26,
-                                      width: 26,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            width: 2,
-                                            color: PeeroreumColor.white.withOpacity(0.0),
-                                          )),
-                                      child: Container(
-                                        height: 24,
-                                        width: 24,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: widget.profileImage != null
-                                              ? DecorationImage(
-                                                  image: Image.network(widget.profileImage).image,
-                                                  fit: BoxFit.cover)
-                                              : DecorationImage(
-                                                  image: AssetImage(
-                                                  'assets/images/user.jpg',
-                                                )),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8,),
-                                Flexible(
-                                  child: B4_14px_M(
-                                    text: widget.name,
+                                        color: PeeroreumColor.primaryPuple[400],
+                                        borderRadius: BorderRadius.circular(4)),
+                                    width: 57,
+                                    height: 24,
+                                    child: Center(
+                                        child: C1_12px_Sb(
+                                      text: '채택하기',
+                                      color: PeeroreumColor.white,
                                     )),
-                                    if (nickname == widget.name && widget.isDeleted == false)
-                                      Text(' (나)',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500
-                                    ),),
-                                SizedBox(width: 12,),
-                                Visibility(
-                                  visible: (widget.isQwselected == false) && (nickname == widget.qWriter) && (widget.qWriter != widget.name),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      final _dState = context.findAncestorStateOfType<_DetailIeduState>();
-                                      if(await checkSelect()) {
-                                        if (_dState != null) {
-                                          _dState.setState(() {
-                                            _dState.isQselected = true;
-                                          });
-                                        }
-                                        selectAnswer();
-                                        widget.updateData();
-                                      }
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: PeeroreumColor.primaryPuple[400],
-                                        borderRadius: BorderRadius.circular(4)
-                                      ),
-                                      width: 57,
-                                      height: 24,
-                                      child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
-                                    ),
                                   ),
                                 ),
-                                Visibility(
-                                  visible: widget.isQwselected == true && widget.isChosen == true,
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                        color: PeeroreumColor.primaryPuple[400],
-                                        borderRadius: BorderRadius.circular(4)
-                                      ),
-                                      width: 57,
-                                      height: 24,
-                                      child: Center(child: C1_12px_Sb(text: '채택완료', color: PeeroreumColor.white,)),
-                                    ),
+                              ),
+                              Visibility(
+                                visible: widget.isQwselected == true &&
+                                    widget.isChosen == true,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[400],
+                                      borderRadius: BorderRadius.circular(4)),
+                                  width: 57,
+                                  height: 24,
+                                  child: Center(
+                                      child: C1_12px_Sb(
+                                    text: '채택완료',
+                                    color: PeeroreumColor.white,
+                                  )),
                                 ),
-                                Visibility(
-                                  visible: widget.isQwselected == true && widget.isChosen == false && nickname == widget.qWriter,
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                        color: PeeroreumColor.gray[300],
-                                        borderRadius: BorderRadius.circular(4)
-                                      ),
-                                      width: 57,
-                                      height: 24,
-                                      child: Center(child: C1_12px_Sb(text: '채택하기', color: PeeroreumColor.white,)),
-                                    ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Visibility(
-                            visible: widget.isDeleted == false,
-                            child: GestureDetector(
-                              onTap: () async {
-                                await showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (context) {
-                                      return deleteAnswerBottomSheet(widget.name, widget.id);
-                                    });
-                              },
-                              child: Container(
-                                width: 18,
-                                height: 18,
-                                child: SvgPicture.asset('assets/icons/icon_dots_mono.svg'),
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8,),
-                  Container(
-                    width: widget.hasParent == -1
-                    ?MediaQuery.of(context).size.width -40
-                    :MediaQuery.of(context).size.width -112,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Visibility(
-                          visible: widget.isDeleted || (!widget.isDeleted && widget.comment.toString().isNotEmpty),
-                          child: B4_14px_R(text: widget.isDeleted
-                          ? '삭제된 댓글입니다.'
-                          : widget.comment,
-                          color: widget.isDeleted
-                                    ? PeeroreumColor.gray[500]
-                                    : null,),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 4,),
-                  if(widget.commentImage != null && widget.commentImage!.isNotEmpty)
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(() => ImageDetail(imageList: widget.commentImage!));
-                      },
-                      child: Container(
-                        width: widget.hasParent == -1
-                        ?MediaQuery.of(context).size.width -40
-                        :MediaQuery.of(context).size.width -112,
-                        height: 180,
-                        decoration: widget.commentImage != null && widget.commentImage!.isNotEmpty
-                        ?BoxDecoration(
-                          border: Border.all(color: PeeroreumColor.gray[100]!),
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                                    image: Image.network(widget.commentImage!.first).image,
-                                    fit: BoxFit.cover,
-                                  ),
-                        )
-                        :null,
-                      ),
-                    ),
-                  SizedBox(height: 8,),
-                  Visibility(
-                    visible: widget.isDeleted == false,
-                    child: Row(
-                      children: [
-                        Visibility(
-                          visible: createdTime.toString().substring(0,4) != DateTime.now().toString().substring(0,4),
-                          child: Row(
-                            children: [
-                              C1_12px_M(text: createdTime.toString().substring(0,4),color: PeeroreumColor.gray[400],),
-                              SizedBox(width: 2,),
-                              C1_12px_M(text: '/',color: PeeroreumColor.gray[400]),
-                              SizedBox(width: 2,)
-                            ],
-                        )),
-                        C1_12px_M(text: createdTime.toString().substring(5,7),color: PeeroreumColor.gray[400]),
-                        SizedBox(width: 2,),
-                        C1_12px_M(text: '/',color: PeeroreumColor.gray[400]),
-                        SizedBox(width: 2,),
-                        C1_12px_M(text: createdTime.toString().substring(8,10),color: PeeroreumColor.gray[400]),
-                        SizedBox(width: 4,),
-                        C1_12px_M(text: createdTime.toString().substring(11,13),color: PeeroreumColor.gray[400]),
-                        SizedBox(width: 2,),
-                        C1_12px_M(text: ':',color: PeeroreumColor.gray[400]),
-                        SizedBox(width: 2,),
-                        C1_12px_M(text: createdTime.toString().substring(14,16),color: PeeroreumColor.gray[400]),
-                              
-                        SizedBox(width: 8,),
-                        C1_12px_M(text: '|',color: PeeroreumColor.gray[200]),
-                        SizedBox(width: 8,),
-                              
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            postALike(widget.id, widget.isLiked);
-                            print('${widget.id}, ${widget.isLiked}');
-                            widget.updateData();
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 18,
-                                width: 18,
-                                child: widget.isLiked
-                                          ? SvgPicture.asset('assets/icons/thumbs_up_fill.svg')
-                                          : SvgPicture.asset('assets/icons/thumbs_up.svg'),
-                              ),
-                              SizedBox(width: 4,),
-                              Container(
-                                constraints: BoxConstraints(minWidth: 17, minHeight: 16),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: C1_12px_M(text: '${widget.likesNum}',color: PeeroreumColor.gray[600])
-                                  )
-                              ),
+                              Visibility(
+                                visible: widget.isQwselected == true &&
+                                    widget.isChosen == false &&
+                                    nickname == widget.qWriter,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: PeeroreumColor.gray[300],
+                                      borderRadius: BorderRadius.circular(4)),
+                                  width: 57,
+                                  height: 24,
+                                  child: Center(
+                                      child: C1_12px_Sb(
+                                    text: '채택하기',
+                                    color: PeeroreumColor.white,
+                                  )),
+                                ),
+                              )
                             ],
                           ),
                         ),
-                              
                         Visibility(
-                          visible: widget.hasParent == -1,
+                          visible: widget.isDeleted == false,
                           child: GestureDetector(
-                            onTap: () {
-                            final _dState = context.findAncestorStateOfType<_DetailIeduState>();
-                            if(_dState != null){
-                              _dState.setState(() {
-                                _dState.selectedParent = widget.id;
-                                FocusScope.of(context).requestFocus(_dState._focusNode);
-                                print(widget.id);
-                              });
-                            }
+                            onTap: () async {
+                              await showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) {
+                                    return deleteAnswerBottomSheet(
+                                        widget.name, widget.id);
+                                  });
                             },
-                            child: Row(
-                              children: [
-                                SizedBox(width: 8,),
-                                C1_12px_M(text: '|',color: PeeroreumColor.gray[200]),
-                                SizedBox(width: 8,),
-                                Container(
-                                  height: 18,
-                                  width: 18,
-                                  child: SvgPicture.asset('assets/icons/chat_drop_dots.svg'),
-                                ),
-                                SizedBox(width: 4,),
-                                Container(
-                                  constraints: BoxConstraints(minWidth: 17, minHeight: 16),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: C1_12px_M(text: '${widget.commentsNum}',color: PeeroreumColor.gray[600])
-                                    )
-                                ),
-                            ],),
+                            child: Container(
+                              width: 18,
+                              height: 18,
+                              child: SvgPicture.asset(
+                                  'assets/icons/icon_dots_mono.svg'),
+                            ),
                           ),
                         )
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  width: widget.hasParent == -1
+                      ? MediaQuery.of(context).size.width - 40
+                      : MediaQuery.of(context).size.width - 112,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Visibility(
+                        visible: widget.isDeleted ||
+                            (!widget.isDeleted &&
+                                widget.comment.toString().isNotEmpty),
+                        child: B4_14px_R(
+                          text:
+                              widget.isDeleted ? '삭제된 댓글입니다.' : widget.comment,
+                          color: widget.isDeleted
+                              ? PeeroreumColor.gray[500]
+                              : null,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                if (widget.commentImage != null &&
+                    widget.commentImage!.isNotEmpty)
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(
+                          () => ImageDetail(imageList: widget.commentImage!));
+                    },
+                    child: Container(
+                      width: widget.hasParent == -1
+                          ? MediaQuery.of(context).size.width - 40
+                          : MediaQuery.of(context).size.width - 112,
+                      height: 180,
+                      decoration: widget.commentImage != null &&
+                              widget.commentImage!.isNotEmpty
+                          ? BoxDecoration(
+                              border:
+                                  Border.all(color: PeeroreumColor.gray[100]!),
+                              borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: Image.network(widget.commentImage!.first)
+                                    .image,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                SizedBox(
+                  height: 8,
+                ),
+                Visibility(
+                  visible: widget.isDeleted == false,
+                  child: Row(
+                    children: [
+                      Visibility(
+                          visible: createdTime.toString().substring(0, 4) !=
+                              DateTime.now().toString().substring(0, 4),
+                          child: Row(
+                            children: [
+                              C1_12px_M(
+                                text: createdTime.toString().substring(0, 4),
+                                color: PeeroreumColor.gray[400],
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              C1_12px_M(
+                                  text: '/', color: PeeroreumColor.gray[400]),
+                              SizedBox(
+                                width: 2,
+                              )
+                            ],
+                          )),
+                      C1_12px_M(
+                          text: createdTime.toString().substring(5, 7),
+                          color: PeeroreumColor.gray[400]),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      C1_12px_M(
+                          text: createdTime.toString().substring(8, 10),
+                          color: PeeroreumColor.gray[400]),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      C1_12px_M(
+                          text: createdTime.toString().substring(11, 13),
+                          color: PeeroreumColor.gray[400]),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      C1_12px_M(
+                          text: createdTime.toString().substring(14, 16),
+                          color: PeeroreumColor.gray[400]),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      C1_12px_M(text: '|', color: PeeroreumColor.gray[200]),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          postALike(widget.id, widget.isLiked);
+                          print('${widget.id}, ${widget.isLiked}');
+                          widget.updateData();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 18,
+                              width: 18,
+                              child: widget.isLiked
+                                  ? SvgPicture.asset(
+                                      'assets/icons/thumbs_up_fill.svg')
+                                  : SvgPicture.asset(
+                                      'assets/icons/thumbs_up.svg'),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Container(
+                                constraints:
+                                    BoxConstraints(minWidth: 17, minHeight: 16),
+                                child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: C1_12px_M(
+                                        text: '${widget.likesNum}',
+                                        color: PeeroreumColor.gray[600]))),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible: widget.hasParent == -1,
+                        child: GestureDetector(
+                          onTap: () {
+                            final _dState = context
+                                .findAncestorStateOfType<_DetailIeduState>();
+                            if (_dState != null) {
+                              _dState.setState(() {
+                                _dState.selectedParent = widget.id;
+                                FocusScope.of(context)
+                                    .requestFocus(_dState._focusNode);
+                                print(widget.id);
+                              });
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 8,
+                              ),
+                              C1_12px_M(
+                                  text: '|', color: PeeroreumColor.gray[200]),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Container(
+                                height: 18,
+                                width: 18,
+                                child: SvgPicture.asset(
+                                    'assets/icons/chat_drop_dots.svg'),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Container(
+                                  constraints: BoxConstraints(
+                                      minWidth: 17, minHeight: 16),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: C1_12px_M(
+                                          text: '${widget.commentsNum}',
+                                          color: PeeroreumColor.gray[600]))),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    }
+          ),
+        ],
+      ),
+    );
+  }
 
-    deleteAnswerBottomSheet(writerName, commentID) {
-      var isMyAnswer = writerName == nickname;
-      return Container(
+  deleteAnswerBottomSheet(writerName, commentID) {
+    var isMyAnswer = writerName == nickname;
+    return Container(
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
@@ -1765,10 +1906,12 @@ class MakeComment extends StatefulWidget {
           : GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Get.to(() => Report(data: "[내가해냄] 내가 해냄 답변 신고\n"
-                    +"날짜 : ${widget.createdTime}\n"
-                    +"답변 아이디 : ${widget.id}\n"
-                    +"업로드한 사람 : ${widget.name}\n",));
+                Get.to(() => Report(
+                      data: "[내가해냄] 내가 해냄 답변 신고\n" +
+                          "날짜 : ${widget.createdTime}\n" +
+                          "답변 아이디 : ${widget.id}\n" +
+                          "업로드한 사람 : ${widget.name}\n",
+                    ));
               },
               child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
@@ -1788,9 +1931,9 @@ class MakeComment extends StatefulWidget {
               ),
             ),
     );
-    }
+  }
 
-    confirmCommentDeleteMessage(commentID) {
+  confirmCommentDeleteMessage(commentID) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -1899,86 +2042,73 @@ class MakeComment extends StatefulWidget {
     );
   }
 
-    Future<void> postALike(answerID, answerLike) async{
-    if(answerLike== false){
-      http.post(
-        Uri.parse('${API.hostConnect}/like/answer/$answerID'),
-        headers: {
+  Future<void> postALike(answerID, answerLike) async {
+    if (answerLike == false) {
+      http.post(Uri.parse('${API.hostConnect}/like/answer/$answerID'),
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
-      if (response.statusCode == 200) {
+          }).then((response) {
+        if (response.statusCode == 200) {
           print('답변 좋아요 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          setState(() {
-          });
-      } else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
-        print(response.body);
-      }else {
-        print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
-    }
-    else if(answerLike == true){
-      http.delete(
-        Uri.parse('${API.hostConnect}/like/answer/$answerID'),
-        headers: {
+          setState(() {});
+        } else if (response.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+          print(response.body);
+        } else {
+          print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
+      }).catchError((error) {
+        // 요청 과정에서 오류가 발생한 경우 처리
+        print('오류 발생: $error');
+      });
+    } else if (answerLike == true) {
+      http.delete(Uri.parse('${API.hostConnect}/like/answer/$answerID'),
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
-      if (response.statusCode == 200) {
+          }).then((response) {
+        if (response.statusCode == 200) {
           print('답변 좋아요 삭제 요청이 성공했습니다.');
           print('응답: ${response.body}');
-          setState(() {
-          });
-      } else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
-        print(response.body);
-      }else {
-        print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
+          setState(() {});
+        } else if (response.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+          print(response.body);
+        } else {
+          print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
+      }).catchError((error) {
+        // 요청 과정에서 오류가 발생한 경우 처리
+        print('오류 발생: $error');
+      });
     }
   }
 
-  Future<void> deleteAnswer(answerID) async{
-    http.delete(
-        Uri.parse('${API.hostConnect}/answer/$answerID'),
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }
-        ).then((response) {
+  Future<void> deleteAnswer(answerID) async {
+    http.delete(Uri.parse('${API.hostConnect}/answer/$answerID'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    }).then((response) {
       if (response.statusCode == 200) {
-          print('답변 삭제 요청이 성공했습니다.');
-          print('응답: ${response.body}');
-          setState(() {
-          });
-          
+        print('답변 삭제 요청이 성공했습니다.');
+        print('응답: ${response.body}');
+        setState(() {});
       } else if (response.statusCode == 403) {
         var code403 = jsonDecode(utf8.decode(response.bodyBytes))['data'];
-        if(code403 == "채택된 답변은 삭제할 수 없습니다."){
-          Fluttertoast.showToast(msg: '채택된 답변은 삭제할 수 없습니다.');
-        } else{
-          Fluttertoast.showToast(msg: '권한이 없습니다.');
+        if (code403 == "채택된 답변은 삭제할 수 없습니다.") {
+          PeeroreumToast.show(context, '채택된 답변은 삭제할 수 없어요.', isError: true);
+        } else {
+          PeeroreumToast.show(context, '권한이 없어요.', isError: true);
         }
-        
-          print('응답: ${response.body}');
-          setState(() {
-          });}
-      else if(response.statusCode == 404){
-        Fluttertoast.showToast(msg: '존재하지 않는 질문입니다.');
+
+        print('응답: ${response.body}');
+        setState(() {});
+      } else if (response.statusCode == 404) {
+        PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
         print(response.body);
-      }else {
+      } else {
         print('답변 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
       }
     }).catchError((error) {
@@ -1987,28 +2117,24 @@ class MakeComment extends StatefulWidget {
     });
   }
 
-  Future<void> selectAnswer() async{
+  Future<void> selectAnswer() async {
     print(widget.id);
-    http.put(
-      
-      Uri.parse('${API.hostConnect}/answer/${widget.id}/select'),
+    http.put(Uri.parse('${API.hostConnect}/answer/${widget.id}/select'),
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }
-    ).then((response) {
-    // 서버로부터 받은 응답 처리
-    if (response.statusCode == 200) {
-      print('답변 채택 요청이 성공했습니다.');
-      print('응답: ${response.body}');
-    } else {
-      print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-    }
-  }).catchError((error) {
-    // 요청 과정에서 오류가 발생한 경우 처리
-    print('오류 발생: $error');
-  });
-
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }).then((response) {
+      // 서버로부터 받은 응답 처리
+      if (response.statusCode == 200) {
+        print('답변 채택 요청이 성공했습니다.');
+        print('응답: ${response.body}');
+      } else {
+        print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // 요청 과정에서 오류가 발생한 경우 처리
+      print('오류 발생: $error');
+    });
   }
 
   checkSelect() async {
@@ -2100,8 +2226,7 @@ class MakeComment extends StatefulWidget {
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
-                              color: PeeroreumColor.white
-                          ),
+                              color: PeeroreumColor.white),
                         ),
                       ),
                     ),

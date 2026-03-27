@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/IeduRead.dart';
@@ -272,7 +271,6 @@ class _HomeIeduState extends State<HomeIedu> {
                   color: PeeroreumColor.gray[800],
                 ),
                 onTap: () {
-                  // Fluttertoast.showToast(msg: "준비중입니다.");
                   Get.to(() => Alert());
                 },
               ),

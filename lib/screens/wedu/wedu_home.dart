@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
@@ -19,7 +19,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_skeleton.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
-import 'package:get/get.dart';
 
 class HomeWedu extends StatefulWidget {
   const HomeWedu({super.key});
@@ -268,7 +267,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 if (inroom_datas.length < 10) {
                   Get.to(() => CreateWedu());
                 } else {
-                  Fluttertoast.showToast(msg: '같이방은 10개까지만 참여 가능해요.');
+                  PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.');
                 }
               },
             ),
@@ -1315,8 +1314,8 @@ class _HomeWeduState extends State<HomeWedu> {
                                 fetchDatas();
                                 setState(() {});
                               } else {
-                                Fluttertoast.showToast(
-                                    msg: '같이방은 10개까지만 참여 가능해요.');
+                                PeeroreumToast.show(
+                                    context, '같이방은 10개까지만 참여 가능해요.');
                               }
                             },
                             child: Text(
@@ -1450,13 +1449,13 @@ class _HomeWeduState extends State<HomeWedu> {
       'Authorization': 'Bearer $token'
     });
     if (enrollResult.statusCode == 200) {
-      Fluttertoast.showToast(msg: "같이방 참여 완료!");
+      PeeroreumToast.show(context, "같이방에 참여했어요!");
     } else if (enrollResult.statusCode == 409) {
-      Fluttertoast.showToast(msg: '이미 참여 중인 같이방입니다.');
+      PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
     } else {
-      Fluttertoast.showToast(msg: '잠시 후에 다시 시도해 주세요.');
-      print('에러${enrollResult.statusCode}${enrollResult.body}');
+      PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
     }
+    print('에러${enrollResult.statusCode}${enrollResult.body}');
     setState(() {});
   }
 
@@ -1546,8 +1545,8 @@ class _HomeWeduState extends State<HomeWedu> {
                           onPressed: () {
                             passwordController.text == datas[index]['password']
                                 ? enrollWedu(index)
-                                : Fluttertoast.showToast(
-                                    msg: '비밀번호가 일치하지 않습니다.');
+                                : PeeroreumToast.show(
+                                    context, '비밀번호가 일치하지 않아요.');
                             Get.back();
                           },
                           child: Text(
