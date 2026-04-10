@@ -114,7 +114,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
   final int maxName = 16;
   final int maxPassword = 6;
 
-  late TextfieldTagsController _controller;
+  late TextfieldTagsController<String> _controller;
   late TextEditingController pw_controller;
 
   Color _nextColor = PeeroreumColor.gray[500]!;
@@ -129,7 +129,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
   @override
   void initState() {
     super.initState();
-    _controller = TextfieldTagsController();
+    _controller = TextfieldTagsController<String>();
     pw_controller = TextEditingController(text: weduPassword);
     weduPassword ??= '';
     checkLocked();
@@ -670,122 +670,120 @@ class _ModifyWeduState extends State<ModifyWedu> {
                 return null;
               }
             },
-            inputfieldBuilder:
-                (context, tec, fn, error, onChanged, onSubmitted) {
-              return ((context, sc, tags, onTagDelete) {
-                return TextField(
-                  //scrollPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  controller: tec,
-                  focusNode: fn,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: PeeroreumColor.gray[200]!,
-                        width: 1.0,
-                      ),
+            inputFieldBuilder: (context, inputFieldValues) {
+              return TextField(
+                controller: inputFieldValues.textEditingController,
+                focusNode: inputFieldValues.focusNode,
+                decoration: InputDecoration(
+                  isDense: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: PeeroreumColor.gray[200]!,
+                      width: 1.0,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: PeeroreumColor.black,
-                        width: 1.0,
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: PeeroreumColor.error,
-                      ),
-                    ),
-                    helperText: '띄어쓰기로 각 키워드를 구분해 주세요.',
-                    helperStyle: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    hintText: _controller.hasTags ? "#피어오름" : "#피어오름 #오르미",
-                    hintStyle: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400),
-                    prefixIconConstraints: BoxConstraints(maxWidth: 350 * 0.8),
-                    prefixIcon: tags.isNotEmpty
-                        ? SingleChildScrollView(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            controller: sc,
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                                children: tags.map((String tag) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: PeeroreumColor.primaryPuple[400]!),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                  color: Colors.transparent,
-                                ),
-                                margin: const EdgeInsets.only(right: 5.0),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 7.0, vertical: 4.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      child: RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: '#',
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: PeeroreumColor
-                                                    .primaryPuple[200],
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: ' $tag',
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: PeeroreumColor
-                                                    .primaryPuple[400],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {},
-                                    ),
-                                    const SizedBox(width: 4.0),
-                                    InkWell(
-                                      child: Icon(
-                                        Icons.cancel,
-                                        size: 16.0,
-                                        color: PeeroreumColor.gray[200]!,
-                                      ),
-                                      onTap: () {
-                                        onTagDelete(tag);
-                                        weduHashTags.remove(tag);
-                                      },
-                                    )
-                                  ],
-                                ),
-                              );
-                            }).toList()),
-                          )
-                        : null,
                   ),
-                  onChanged: onChanged,
-                  onSubmitted: onSubmitted,
-                );
-              });
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: PeeroreumColor.black,
+                      width: 1.0,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: PeeroreumColor.error,
+                    ),
+                  ),
+                  helperText: '띄어쓰기로 각 키워드를 구분해 주세요.',
+                  helperStyle: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  hintText: (inputFieldValues.tags.isNotEmpty)
+                      ? "#피어오름"
+                      : "#피어오름 #오르미",
+                  hintStyle: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  prefixIconConstraints: BoxConstraints(maxWidth: 350 * 0.8),
+                  prefixIcon: inputFieldValues.tags.isNotEmpty
+                      ? SingleChildScrollView(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          controller: inputFieldValues.tagScrollController,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                              children: inputFieldValues.tags.map((String tag) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: PeeroreumColor.primaryPuple[400]!),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                ),
+                                color: Colors.transparent,
+                              ),
+                              margin: const EdgeInsets.only(right: 5.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 7.0, vertical: 4.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: '#',
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: PeeroreumColor
+                                                  .primaryPuple[200],
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: ' $tag',
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: PeeroreumColor
+                                                  .primaryPuple[400],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                  const SizedBox(width: 4.0),
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.cancel,
+                                      size: 16.0,
+                                      color: PeeroreumColor.gray[200]!,
+                                    ),
+                                    onTap: () {
+                                      inputFieldValues.onTagDelete(tag);
+                                      weduHashTags.remove(tag);
+                                    },
+                                  )
+                                ],
+                              ),
+                            );
+                          }).toList()),
+                        )
+                      : null,
+                ),
+                onChanged: inputFieldValues.onChanged,
+                onSubmitted: inputFieldValues.onSubmitted,
+              );
             },
           ),
         ),
