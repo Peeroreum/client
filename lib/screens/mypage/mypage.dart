@@ -15,6 +15,10 @@ import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_version.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
+import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/model/FirebaseToken.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -528,7 +532,8 @@ class _MyPageState extends State<MyPage> {
                     SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          // await deleteFirebaseToken();
                           Get.offAllNamed('/signIn/email');
                           FlutterSecureStorage().deleteAll();
                         },
@@ -559,4 +564,23 @@ class _MyPageState extends State<MyPage> {
       },
     );
   }
+
+  // Future<void> deleteFirebaseToken() async {
+  //   var token = await FlutterSecureStorage().read(key: "accessToken");
+  //   var firebaseToken = await FirebaseMessaging.instance.getToken();
+  //   if (firebaseToken == null) return;
+  //   var result = await http.delete(
+  //       Uri.parse('${API.hostConnect}/member/firebasetoken'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token'
+  //       },
+  //       body: jsonEncode(FirebaseToken(firebaseToken: firebaseToken)));
+
+  //   if (result.statusCode == 200) {
+  //     print("firebaseToken delete 성공");
+  //   } else {
+  //     print("firebaseToken delete 실패 ${result.statusCode}");
+  //   }
+  // }
 }
