@@ -1214,10 +1214,10 @@ packages:
     dependency: "direct main"
     description:
       name: textfield_tags
-      sha256: c1d215f481e7e8da5c79719825e595db4f829bf1ad3fce4c7ce43d340aa72683
+      sha256: "4295bcb2844022356b3808a4e5bc355e1ba8405e6a2028165863c55e9085e1eb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.2"
+    version: "2.1.1"
   timezone:
     dependency: transitive
     description:
