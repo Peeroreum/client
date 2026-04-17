@@ -42,8 +42,12 @@ Future<String?> fcmSetting() async {
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
-  const InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
+  const DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings();
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
+  );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -56,12 +60,14 @@ Future<String?> fcmSetting() async {
           notification?.title,
           notification?.body,
           NotificationDetails(
-              android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            channelDescription: channel.description,
-            icon: android.smallIcon ?? '@mipmap/ic_launcher',
-          )));
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              icon: android.smallIcon ?? '@mipmap/ic_launcher',
+            ),
+            iOS: const DarwinNotificationDetails(),
+          ));
     }
   });
 
