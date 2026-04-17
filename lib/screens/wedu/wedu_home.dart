@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
-import 'dart:convert';
+import 'package:dio/dio.dart' as dio;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,7 +15,6 @@ import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_skeleton.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -124,33 +124,54 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   fetchInWeduData() async {
-    var inWeduResult = await http.get(
-        Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (inWeduResult.statusCode == 200) {
-      inroom_datas = jsonDecode(utf8.decode(inWeduResult.bodyBytes))['data'];
-    } else {
-      print("에러${inWeduResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var inWeduResult = await dio1.get(
+          '${API.hostConnect}/wedu/in?nickname=$nickname',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inWeduResult.statusCode == 200) {
+        inroom_datas = inWeduResult.data['data'];
+      } else {
+        print("에러${inWeduResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   fetchWeduData() async {
     currentPage = 0;
-    var weduResult = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (weduResult.statusCode == 200) {
-      datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
-      fetchImage(datas);
-    } else {
-      print("에러${weduResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var weduResult = await dio1.get(
+          '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (weduResult.statusCode == 200) {
+        datas = weduResult.data['data'];
+        fetchImage(datas);
+      } else {
+        print("에러${weduResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
     if (mounted) {
       setState(() {});
@@ -166,28 +187,47 @@ class _HomeWeduState extends State<HomeWedu> {
     }
   }
 
-  loadMoreData() async {
+  void loadMoreData() async {
     setState(() {
       _isLoading = true;
     });
 
     List<dynamic> addedDatas = [];
     currentPage++;
-    var weduResult = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+    var dio1 = dio.Dio();
+    try {
+      var weduResult = await dio1.get(
+          '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (weduResult.statusCode == 200) {
+        addedDatas = weduResult.data['data'];
+        setState(() {
+          datas.addAll(addedDatas);
+          _isLoading = false;
         });
-    if (weduResult.statusCode == 200) {
-      addedDatas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+      } else {
+        print("에러${weduResult.statusCode}");
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
       setState(() {
-        datas.addAll(addedDatas);
         _isLoading = false;
       });
-    } else {
-      print("에러${weduResult.statusCode}");
+    } catch (e) {
+      print('Unexpected error: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
 
     fetchImage(addedDatas);
@@ -1438,33 +1478,60 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   fetchInvitation(id) async {
-    var inviResult = await http
-        .get(Uri.parse('${API.hostConnect}/wedu/$id/invitation'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    if (inviResult.statusCode == 200) {
-      return await jsonDecode(utf8.decode(inviResult.bodyBytes))['data'];
-    } else {
-      print("에러${inviResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var inviResult = await dio1.get('${API.hostConnect}/wedu/$id/invitation',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inviResult.statusCode == 200) {
+        return inviResult.data['data'];
+      } else {
+        print("에러${inviResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   void enrollWedu(index) async {
     var id = datas[index]['id'];
-    var enrollResult = await http
-        .post(Uri.parse('${API.hostConnect}/wedu/$id/enroll'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    if (enrollResult.statusCode == 200) {
-      PeeroreumToast.show(context, "같이방에 참여했어요!");
-    } else if (enrollResult.statusCode == 409) {
-      PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
-    } else {
-      PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+    var dio1 = dio.Dio();
+    try {
+      var enrollResult = await dio1.post('${API.hostConnect}/wedu/$id/enroll',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (enrollResult.statusCode == 200) {
+        PeeroreumToast.show(context, "같이방에 참여했어요!");
+      } else {
+        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 409) {
+          PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
+        } else if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 같이방입니다.');
+        } else {
+          PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+          print("에러${e.response?.statusCode}");
+        }
+      } else {
+        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+        print("Error sending request! ${e.message}");
+      }
+    } catch (e) {
+      print("Unexpected error: $e");
     }
-    print('에러${enrollResult.statusCode}${enrollResult.body}');
     setState(() {});
   }
 

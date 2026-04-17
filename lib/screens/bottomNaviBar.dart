@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,12 +7,8 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/FirebaseToken.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/mypage/mypage.dart';
-import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
-import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
-import 'package:peeroreum_client/screens/prepare.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/ranking/ranking.dart';
-import 'package:http/http.dart' as http;
 
 import '../api/PeeroreumApi.dart';
 
@@ -55,18 +50,28 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
 
   postFirebaseToken() async {
     var token = await const FlutterSecureStorage().read(key: 'accessToken');
-    var result = await http.post(
-        Uri.parse('${API.hostConnect}/member/firebasetoken'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-        body: jsonEncode(FirebaseToken(firebaseToken: firebaseToken)));
+    var dio1 = dio.Dio();
+    try {
+      var result = await dio1.post('${API.hostConnect}/member/firebasetoken',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }),
+          data: FirebaseToken(firebaseToken: firebaseToken).toJson());
 
-    if (result.statusCode == 200) {
-      print("firebaseToken post 성공");
-    } else {
-      print("firebaseToken post 실패 ${result.statusCode}");
+      if (result.statusCode == 200) {
+        print("firebaseToken post 성공");
+      } else {
+        print("firebaseToken post 실패 ${result.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 

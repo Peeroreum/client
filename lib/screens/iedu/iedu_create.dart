@@ -860,13 +860,29 @@ class _CreateIeduState extends State<CreateIedu> {
       formData.files.add(MapEntry('files', file));
     }
 
-    var response =
-        await dio1.post('${API.hostConnect}/question', data: formData);
+    try {
+      var response =
+          await dio1.post('${API.hostConnect}/question', data: formData);
 
-    if (response.statusCode == 200) {
-      PeeroreumToast.show(context, '질문 작성이 완료되었어요.');
-      Get.offAllNamed('/home/iedu');
-    } else {
+      if (response.statusCode == 200) {
+        PeeroreumToast.show(context, '질문 작성이 완료되었어요.');
+        Get.offAllNamed('/home/iedu');
+      } else {
+        PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+        print('HEADERS: ${e.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
+    } catch (e) {
+      print('Unexpected error: $e');
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
