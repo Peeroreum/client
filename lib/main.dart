@@ -93,8 +93,7 @@ class PeeroreumApp extends StatelessWidget {
       builder: (context, child) {
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-            child: Container(
-                color: PeeroreumColor.white, child: SafeArea(child: child!)));
+            child: child!);
       },
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -104,7 +103,9 @@ class PeeroreumApp extends StatelessWidget {
           appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
                   statusBarColor: PeeroreumColor.white,
-                  statusBarIconBrightness: Brightness.dark))),
+                  statusBarIconBrightness: Brightness.dark,
+                  systemNavigationBarColor: PeeroreumColor.white,
+                  systemNavigationBarIconBrightness: Brightness.dark))),
       title: 'Peeroreum',
       home: isNewUser
           ? OnBoarding()

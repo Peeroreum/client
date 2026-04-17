@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
+import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import '../../api/PeeroreumApi.dart';
 
 class SignIn extends StatefulWidget {
@@ -27,95 +28,98 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 80),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset(
-              'assets/images/splash_logo.png',
-              height: 236.0,
-              width: 170.0,
-            ),
-            SizedBox(height: 112),
-            Container(
-              padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 8.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                  ),
-                  Container(
-                    width: 350.0,
-                    height: 48.0,
-                    child: TextButton(
-                      onPressed: () {
-                        kakaoSignIn();
-                      },
-                      child: Text(
-                        '카카오 로그인',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                            color: Colors.black87),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Color.fromARGB(255, 254, 229, 0)),
-                      ),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.only(bottom: 8.0)),
-                  Container(
-                    width: 350.0,
-                    height: 48.0,
-                    child: TextButton(
-                      onPressed: () {
-                        googleSignIn();
-                      },
-                      child: Text(
-                        '구글 로그인',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                            color: Colors.black87),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.grey[200]),
-                      ),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.only(bottom: 8.0)),
-                  Container(
-                    width: 350.0,
-                    height: 48.0,
-                    child: TextButton(
-                      onPressed: () {
-                        Get.toNamed('/signIn/email');
-                      },
-                      child: Text(
-                        '이메일 로그인',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                            color: Colors.black87),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.grey[200]),
-                      ),
-                    ),
-                  ),
-                ],
+      body: SafeArea(
+        child: Container(
+          color: PeeroreumColor.white,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.symmetric(vertical: 80),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Image.asset(
+                'assets/images/splash_logo.png',
+                height: 236.0,
+                width: 170.0,
               ),
-            )
-          ],
+              SizedBox(height: 112),
+              Container(
+                padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 8.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                    ),
+                    Container(
+                      width: 350.0,
+                      height: 48.0,
+                      child: TextButton(
+                        onPressed: () {
+                          kakaoSignIn();
+                        },
+                        child: Text(
+                          '카카오 로그인',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.0,
+                              color: Colors.black87),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              Color.fromARGB(255, 254, 229, 0)),
+                        ),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                    Container(
+                      width: 350.0,
+                      height: 48.0,
+                      child: TextButton(
+                        onPressed: () {
+                          googleSignIn();
+                        },
+                        child: Text(
+                          '구글 로그인',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.0,
+                              color: Colors.black87),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.grey[200]),
+                        ),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                    Container(
+                      width: 350.0,
+                      height: 48.0,
+                      child: TextButton(
+                        onPressed: () {
+                          Get.toNamed('/signIn/email');
+                        },
+                        child: Text(
+                          '이메일 로그인',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.0,
+                              color: Colors.black87),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.grey[200]),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -157,14 +161,13 @@ class _SignInState extends State<SignIn> {
   Future<void> fetchSocialLogin(String socialAccount) async {
     var result = await http.get(
         Uri.parse('${API.hostConnect}/socialLogin?email=${socialAccount}'),
-        headers: {'Content-Type': 'application/json'}
-    );
+        headers: {'Content-Type': 'application/json'});
 
-    if(result.statusCode == 200) {
+    if (result.statusCode == 200) {
       var accessToken = jsonDecode(result.body)['data'];
       storage.write(key: "memberInfo", value: accessToken);
       Get.offAllNamed('/wedu');
-    } else if(result.statusCode == 404) {
+    } else if (result.statusCode == 404) {
       Member member = Member();
       member.username = socialAccount;
       Get.to(() => SignUpNickname(member), transition: Transition.noTransition);
@@ -174,9 +177,10 @@ class _SignInState extends State<SignIn> {
   }
 
   void googleSignIn() async {
-    final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleSignInAccount =
+        await GoogleSignIn().signIn();
     var socialAccount = "";
-    if(googleSignInAccount != null) {
+    if (googleSignInAccount != null) {
       socialAccount = googleSignInAccount.email;
       fetchSocialLogin(socialAccount);
     } else {

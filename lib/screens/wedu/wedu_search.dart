@@ -346,7 +346,12 @@ class _searchWeduState extends State<searchWedu> {
       },
       child: Scaffold(
         appBar: appbarWidget(),
-        body: bodyWidget(),
+        body: SafeArea(
+          child: Container(
+            color: PeeroreumColor.white,
+            child: bodyWidget(),
+          ),
+        ),
       ),
     );
   }

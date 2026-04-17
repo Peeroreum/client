@@ -14,7 +14,12 @@ class Alert extends GetView<AlertController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(),
-      body: bodyWidget(),
+      body: SafeArea(
+        child: Container(
+          color: PeeroreumColor.white,
+          child: bodyWidget(),
+        ),
+      ),
     );
   }
 

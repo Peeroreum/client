@@ -24,27 +24,29 @@ class _OnBoardingState extends State<OnBoarding> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(20),
-        child: AppBar(
-          backgroundColor: PeeroreumColor.white,
-          elevation: 0,
-        )
-        ),
-      body: 
-          Column(
+          preferredSize: Size.fromHeight(20),
+          child: AppBar(
+            backgroundColor: PeeroreumColor.white,
+            elevation: 0,
+          )),
+      body: SafeArea(
+        child: Container(
+          color: PeeroreumColor.white,
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               DotsIndicator(
-              position: pageIndex,
-              dotsCount: 3,
-              decorator: DotsDecorator(
-                color: PeeroreumColor.gray[300]!,
-                activeColor: PeeroreumColor.primaryPuple[400],
-                size: Size.square(8),
-                activeSize: const Size(20, 8),
-                activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                position: pageIndex,
+                dotsCount: 3,
+                decorator: DotsDecorator(
+                  color: PeeroreumColor.gray[300]!,
+                  activeColor: PeeroreumColor.primaryPuple[400],
+                  size: Size.square(8),
+                  activeSize: const Size(20, 8),
+                  activeShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0)),
+                ),
               ),
-            ),
               Container(
                 margin: EdgeInsets.only(top: 20),
                 child: CarouselSlider(
@@ -72,13 +74,15 @@ class _OnBoardingState extends State<OnBoarding> {
                     enableInfiniteScroll: false,
                     scrollDirection: Axis.horizontal,
                     onPageChanged: (index, reason) {
-                      pageIndex = index;
+                      setState(() {
+                        pageIndex = index;
+                      });
                       print('Current Page Index: $pageIndex');
                       if (index == 2) {
                         setState(() {
                           _isVisible = false;
                         });
-                      } else{
+                      } else {
                         setState(() {
                           _isVisible = true;
                         });
@@ -89,76 +93,84 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ],
           ),
-
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Visibility(
-            visible: _isVisible,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 28),
-              width: double.maxFinite,
-              height: 48,
-              child: TextButton(
-                onPressed: () {
-                  _controller.nextPage();
-                },
-                child: Text(
-                  '다음',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.white,
-                  ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-                  padding:
-                      MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        color: PeeroreumColor.white,
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Visibility(
+                visible: _isVisible,
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 28),
+                  width: double.maxFinite,
+                  height: 48,
+                  child: TextButton(
+                    onPressed: () {
+                      _controller.nextPage();
+                    },
+                    child: Text(
+                      '다음',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: PeeroreumColor.white,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400]),
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(vertical: 12)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Visibility(
-            visible: !_isVisible,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 28),
-              width: double.maxFinite,
-              height: 48,
-              child: TextButton(
-                onPressed: () async{
-                  await OnboardingCheck.setUserType(false);
-                  Get.offNamed('/signIn/email');
-                },
-                child: Text(
-                  '확인',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.white,
-                  ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-                  padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+              Visibility(
+                visible: !_isVisible,
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 28),
+                  width: double.maxFinite,
+                  height: 48,
+                  child: TextButton(
+                    onPressed: () async {
+                      await OnboardingCheck.setUserType(false);
+                      Get.offNamed('/signIn/email');
+                    },
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: PeeroreumColor.white,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400]),
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(vertical: 12)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -170,7 +182,9 @@ class _OnBoardingState extends State<OnBoarding> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Image.asset(imagePath, width: 350, height: 432),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           Text(
             title,
             style: TextStyle(

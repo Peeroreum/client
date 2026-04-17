@@ -328,7 +328,12 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               ),
             ),
           ),
-          body: bodyWidget(),
+          body: SafeArea(
+            child: Container(
+              color: PeeroreumColor.white,
+              child: bodyWidget(),
+            ),
+          ),
         );
         }
       },

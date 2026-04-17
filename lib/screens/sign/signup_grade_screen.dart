@@ -57,129 +57,134 @@ class _SignUpGradeState extends State<SignUpGrade> {
             },
           ),
         ),
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  height: 40,
+        body: SafeArea(
+          child: Container(
+            color: PeeroreumColor.white,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    height: 40,
+                    width: double.maxFinite,
+                    child: LinearPercentIndicator(
+                      animateFromLastPercent: true,
+                      lineHeight: 8.0,
+                      percent: _school == '대학교' ? 1.0 : 0.66,
+                      progressColor: Color.fromARGB(255, 114, 96, 248),
+                      backgroundColor: Colors.grey[100],
+                      barRadius: Radius.circular(10),
+                    )),
+                Container(
+                  height: 122,
                   width: double.maxFinite,
-                  child: LinearPercentIndicator(
-                    animateFromLastPercent: true,
-                    lineHeight: 8.0,
-                    percent: _school == '대학교' ? 1.0 : 0.66,
-                    progressColor: Color.fromARGB(255, 114, 96, 248),
-                    backgroundColor: Colors.grey[100],
-                    barRadius: Radius.circular(10),
-                  )),
-              Container(
-                height: 122,
-                width: double.maxFinite,
-                padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("학년을 알려주세요.",
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black)),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                        "학년은 매년 3월 1일에 자동으로 올라가요.\n예비 학년이 아닌, 현재(2월까지) 학년을 선택해주세요!",
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[800])),
-                  ],
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.15),
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: PeeroreumButton<String>(
-                          width: double.infinity,
-                          items: _schools,
-                          value: _school,
-                          onChanged: (value) {
-                            setState(() {
-                              _school = value;
-                              _checkInput();
-                            });
-                          },
-                          hintText: '학교',
-                        ),
-                      ),
+                      Text("학년을 알려주세요.",
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black)),
                       SizedBox(
-                        width: 20,
+                        height: 10,
                       ),
-                      Visibility(
-                        visible: _school != '대학교',
-                        child: Expanded(
+                      Text(
+                          "학년은 매년 3월 1일에 자동으로 올라가요.\n예비 학년이 아닌, 현재(2월까지) 학년을 선택해주세요!",
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey[800])),
+                    ],
+                  ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
                           child: PeeroreumButton<String>(
                             width: double.infinity,
-                            items: _grades,
-                            value: _grade,
+                            items: _schools,
+                            value: _school,
                             onChanged: (value) {
                               setState(() {
-                                _grade = value;
+                                _school = value;
                                 _checkInput();
                               });
                             },
-                            hintText: '학년',
+                            hintText: '학교',
                           ),
                         ),
-                      ),
-                    ]),
-              ),
-            ],
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Visibility(
+                          visible: _school != '대학교',
+                          child: Expanded(
+                            child: PeeroreumButton<String>(
+                              width: double.infinity,
+                              items: _grades,
+                              value: _grade,
+                              onChanged: (value) {
+                                setState(() {
+                                  _grade = value;
+                                  _checkInput();
+                                });
+                              },
+                              hintText: '학년',
+                            ),
+                          ),
+                        ),
+                      ]),
+                ),
+              ],
+            ),
           ),
         ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-          child: SizedBox(
-            height: 48,
-            child: TextButton(
-              onPressed: () {
-                if (_school == "대학교") {
-                  member.grade = 7;
-                  signUpAPI();
-                } else if (_school != null && _grade != null) {
-                  member.grade = (_school == "중학교")
-                      ? _grades.indexOf(_grade!) + 1
-                      : _grades.indexOf(_grade!) + 4;
-                  Get.to(() => SignUpSubject(member),
-                      transition: Transition.noTransition);
-                }
-              },
-              child: Text(
-                '다음',
-                style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.0,
-                    color: Colors.white),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            child: SizedBox(
+              height: 48,
+              child: TextButton(
+                onPressed: () {
+                  if (_school == "대학교") {
+                    member.grade = 7;
+                    signUpAPI();
+                  } else if (_school != null && _grade != null) {
+                    member.grade = (_school == "중학교")
+                        ? _grades.indexOf(_grade!) + 1
+                        : _grades.indexOf(_grade!) + 4;
+                    Get.to(() => SignUpSubject(member),
+                        transition: Transition.noTransition);
+                  }
+                },
+                child: Text(
+                  '다음',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      color: Colors.white),
+                ),
+                style: ButtonStyle(
+                    backgroundColor: is_Enabled
+                        ? MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400])
+                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
               ),
-              style: ButtonStyle(
-                  backgroundColor: is_Enabled
-                      ? MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400])
-                      : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ))),
             ),
           ),
         ),

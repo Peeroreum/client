@@ -54,68 +54,62 @@ class _EncouragementListState extends State<EncouragementList> {
                     color: PeeroreumColor.black),
               ),
               centerTitle: true,
-              actions: [
-                IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/icons/icon_dots_mono.svg',
-                      color: PeeroreumColor.gray[800],
-                      width: 24,
-                    ))
-              ],
             ),
-            body: Container(
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 13, horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '전체',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: PeeroreumColor.gray[500]),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              '${notSuccessList.length}',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: PeeroreumColor.gray[500]),
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              '명',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: PeeroreumColor.gray[500]),
-                            ),
-                          ],
-                        ),
-                      ],
+            body: SafeArea(
+              child: Container(
+                child: Column(
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 13, horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '전체',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[500]),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                '${notSuccessList.length}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[500]),
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                '명',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[500]),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: PeeroreumColor.gray[100],
-                    thickness: 1,
-                    height: 8,
-                  ),
-                  notOkList()
-                ],
+                    Divider(
+                      color: PeeroreumColor.gray[100],
+                      thickness: 1,
+                      height: 8,
+                    ),
+                    notOkList()
+                  ],
+                ),
               ),
             ),
           );
@@ -134,7 +128,8 @@ class _EncouragementListState extends State<EncouragementList> {
                   if (mynickname == notSuccessList[index]['nickname']) {
                     am_i = true;
                   }
-                  Get.to(()=>MyPageProfile(notSuccessList[index]['nickname'], am_i));
+                  Get.to(() =>
+                      MyPageProfile(notSuccessList[index]['nickname'], am_i));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -174,7 +169,9 @@ class _EncouragementListState extends State<EncouragementList> {
                         width: 8,
                       ),
                       Text(
-                        (notSuccessList[index]['nickname'] == mynickname)? '$mynickname (나)' : notSuccessList[index]['nickname'],
+                        (notSuccessList[index]['nickname'] == mynickname)
+                            ? '$mynickname (나)'
+                            : notSuccessList[index]['nickname'],
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,

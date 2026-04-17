@@ -478,33 +478,41 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
               ),
             ),
-            body: bodyWidget(),
-            bottomNavigationBar: Container(
-              padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-              child: SizedBox(
-                height: 48,
-                child: TextButton(
-                  onPressed: () {
-                    showDoChallengeBottomSheet();
-                  },
-                  child: Text(
-                    '인증하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.white,
+            body: SafeArea(
+              child: Container(
+                color: PeeroreumColor.white,
+                child: bodyWidget(),
+              ),
+            ),
+            bottomNavigationBar: SafeArea(
+              child: Container(
+                padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+                child: SizedBox(
+                  height: 48,
+                  child: TextButton(
+                    onPressed: () {
+                      showDoChallengeBottomSheet();
+                    },
+                    child: Text(
+                      '인증하기',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: PeeroreumColor.white,
+                      ),
                     ),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400]),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 12)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ))),
                   ),
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(vertical: 12)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ))),
                 ),
               ),
             ),
@@ -1265,134 +1273,138 @@ class _DetailWeduState extends State<DetailWedu> {
           ),
         ),
         child: isCreator
-            ? Container(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(bottom: 16, top: 4),
-                      child: Text(
-                        '같이방 관리',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: PeeroreumColor.black,
+            ? SafeArea(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(bottom: 16, top: 4),
+                        child: Text(
+                          '같이방 관리',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.black,
+                          ),
                         ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Get.to(() => ModifyWedu(
-                            id,
-                            weduTitle,
-                            weduImage,
-                            weduDday,
-                            weduSubject,
-                            weduGrade,
-                            weduAttendingPeopleNum,
-                            weduMaxPeopleNum,
-                            weduHashTags,
-                            weduLocked,
-                            weduPassword));
-                      },
-                      style: TextButton.styleFrom(
-                        minimumSize: Size.fromHeight(40),
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.all(0),
-                      ).copyWith(
-                        overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
-                      ),
-                      child: Text(
-                        '같이방 수정',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: PeeroreumColor.black,
+                      TextButton(
+                        onPressed: () {
+                          Get.to(() => ModifyWedu(
+                              id,
+                              weduTitle,
+                              weduImage,
+                              weduDday,
+                              weduSubject,
+                              weduGrade,
+                              weduAttendingPeopleNum,
+                              weduMaxPeopleNum,
+                              weduHashTags,
+                              weduLocked,
+                              weduPassword));
+                        },
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.fromHeight(40),
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.all(0),
+                        ).copyWith(
+                          overlayColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[100]),
+                        ),
+                        child: Text(
+                          '같이방 수정',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.black,
+                          ),
                         ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        List<dynamic> allMembers = [
-                          ...successList,
-                          ...notSuccessList
-                        ];
-                        Get.to(() =>
-                            ManagementCheckList(allMembers, weduTitle, id));
-                      },
-                      style: TextButton.styleFrom(
-                        minimumSize: Size.fromHeight(40),
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.all(0),
-                      ).copyWith(
-                        overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
-                      ),
-                      child: Text(
-                        '참여자 관리',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: PeeroreumColor.black,
+                      TextButton(
+                        onPressed: () {
+                          List<dynamic> allMembers = [
+                            ...successList,
+                            ...notSuccessList
+                          ];
+                          Get.to(() =>
+                              ManagementCheckList(allMembers, weduTitle, id));
+                        },
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.fromHeight(40),
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.all(0),
+                        ).copyWith(
+                          overlayColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[100]),
+                        ),
+                        child: Text(
+                          '참여자 관리',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.black,
+                          ),
                         ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        await confirmWeduDeleteMessage();
-                      },
-                      style: TextButton.styleFrom(
-                        minimumSize: Size.fromHeight(40),
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.all(0),
-                      ).copyWith(
-                        overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
-                      ),
-                      child: Text(
-                        '같이방 삭제',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: PeeroreumColor.error,
+                      TextButton(
+                        onPressed: () async {
+                          await confirmWeduDeleteMessage();
+                        },
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.fromHeight(40),
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.all(0),
+                        ).copyWith(
+                          overlayColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[100]),
+                        ),
+                        child: Text(
+                          '같이방 삭제',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.error,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               )
-            : GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () async {
-                  await confirmOutWeduMessage();
-                },
-                child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
-                    height: 56,
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 20,
-                    ),
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '나가기',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: PeeroreumColor.error,
-                        ),
+            : SafeArea(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () async {
+                    await confirmOutWeduMessage();
+                  },
+                  child: Container(
+                      margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                      height: 56,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 20,
                       ),
-                    )),
+                      child: const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '나가기',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.error,
+                          ),
+                        ),
+                      )),
+                ),
               ));
   }
 
@@ -1849,91 +1861,93 @@ class _DetailWeduState extends State<DetailWedu> {
         builder: (context) {
           return Container(
             padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: PeeroreumColor.white, // 여기에 색상 지정
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.0),
                 topRight: Radius.circular(16.0),
               ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '인증 방식을 선택하세요.',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.gray[800],
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '인증 방식을 선택하세요.',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: PeeroreumColor.gray[800],
+                    ),
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromCamera();
-                            Get.back();
-                          },
-                          child: Text(
-                            '카메라',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              takeFromCamera();
+                              Get.back();
+                            },
+                            child: Text(
+                              '카메라',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
                             ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
                           ),
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromGallery();
-                            Get.back();
-                          },
-                          child: Text(
-                            '갤러리',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              takeFromGallery();
+                              Get.back();
+                            },
+                            child: Text(
+                              '갤러리',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
                             ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
                           ),
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });

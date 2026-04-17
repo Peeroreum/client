@@ -380,77 +380,79 @@ class _MyPageProfileState extends State<MyPageProfile> {
           topRight: Radius.circular(16.0),
         ),
       ),
-      child: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: PeeroreumColor.gray[100],
-              onTap: () {
-                profileImage_change(context);
-              },
-              child: Container(
-                height: 56,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    B3_18px_R(text: '프로필 변경'),
-                  ],
+      child: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () {
+                  profileImage_change(context);
+                },
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '프로필 변경'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: PeeroreumColor.gray[100],
-              onTap: () {
-                setState(() {
-                  nickname_change();
-                });
-              },
-              child: Container(
-                height: 56,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    B3_18px_R(text: '닉네임 변경'),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: PeeroreumColor.gray[100],
-              onTap: () async {
-                XFile? _image1;
-                final ImagePicker picker1 = ImagePicker();
-                final XFile? pickedFile1 =
-                    await picker1.pickImage(source: ImageSource.gallery);
-                if (pickedFile1 != null) {
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () {
                   setState(() {
-                    _image1 = XFile(pickedFile1.path);
-                    if (_image1 != null) {
-                      setState(() {
-                        backgroundImageAPI(_image1);
-                        Get.back();
-                      });
-                    }
+                    nickname_change();
                   });
-                }
-              },
-              child: Container(
-                height: 56,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    B3_18px_R(text: '배경 변경'),
-                  ],
+                },
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '닉네임 변경'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () async {
+                  XFile? _image1;
+                  final ImagePicker picker1 = ImagePicker();
+                  final XFile? pickedFile1 =
+                      await picker1.pickImage(source: ImageSource.gallery);
+                  if (pickedFile1 != null) {
+                    setState(() {
+                      _image1 = XFile(pickedFile1.path);
+                      if (_image1 != null) {
+                        setState(() {
+                          backgroundImageAPI(_image1);
+                          Get.back();
+                        });
+                      }
+                    });
+                  }
+                },
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '배경 변경'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -852,51 +854,37 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget reportUser() {
     return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.25 - 26,
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
       ),
-      child: Scaffold(
-        body: Container(
+      child: SafeArea(
+        child: Container(
           padding: EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 16),
-                child: Text(
-                  '신고하기',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.black,
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                color: PeeroreumColor.gray[200],
-                height: 1,
-              ),
-              TextButton(
-                onPressed: () {
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () {
                   Get.to(() =>
                       Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
                 },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.fromHeight(40),
-                ),
-                child: Text(
-                  '${nickname} 신고하기',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: PeeroreumColor.gray[600],
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(
+                        text: '${nickname} 신고하기',
+                        color: PeeroreumColor.error,
+                      ),
+                    ],
                   ),
                 ),
               ),

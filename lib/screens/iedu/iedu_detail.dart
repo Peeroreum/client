@@ -701,223 +701,226 @@ class _DetailIeduState extends State<DetailIedu> {
           ],
         ),
       ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Visibility(
-            visible: _image != null,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              height: 212,
-              width: double.maxFinite,
-              color: Colors.black.withOpacity(0.4),
+      bottomNavigationBar: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Visibility(
+              visible: _image != null,
               child: Container(
-                height: 180,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                height: 212,
                 width: double.maxFinite,
-                decoration: _image != null
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: FileImage(File(_image!.path)),
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : null,
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    margin: EdgeInsets.only(top: 8, right: 8),
-                    width: 24,
-                    height: 24,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        setState(() {
-                          _image = null;
-                          if (comment == "") {
-                            isSubmittable = false;
-                          }
-                        });
-                      },
-                      child: Opacity(
-                          opacity: 0.4,
-                          child: SvgPicture.asset('assets/icons/x_circle.svg')),
+                color: Colors.black.withOpacity(0.4),
+                child: Container(
+                  height: 180,
+                  width: double.maxFinite,
+                  decoration: _image != null
+                      ? BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: FileImage(File(_image!.path)),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : null,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 8, right: 8),
+                      width: 24,
+                      height: 24,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          setState(() {
+                            _image = null;
+                            if (comment == "") {
+                              isSubmittable = false;
+                            }
+                          });
+                        },
+                        child: Opacity(
+                            opacity: 0.4,
+                            child:
+                                SvgPicture.asset('assets/icons/x_circle.svg')),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: PeeroreumColor.gray[50],
-                border: Border(
-                    top: BorderSide(
-                  color: PeeroreumColor.gray[100]!,
-                  width: 1.0,
-                ))),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              LayoutBuilder(builder: (context, constraints) {
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  constraints: BoxConstraints(minHeight: 48),
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                      color: PeeroreumColor.gray[100],
-                      border: Border.all(color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width - 108,
-                          child: TextFormField(
-                            focusNode: _focusNode,
-                            controller: _textController,
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
-                            maxLines: _maxLines,
-                            cursorColor: PeeroreumColor.gray[600],
-                            decoration: InputDecoration(
-                                isDense: true,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                                hintText: (selectedParent == -1)
-                                    ? "댓글을 입력하세요"
-                                    : "대댓글을 입력하세요",
-                                hintStyle: TextStyle(
-                                  color: PeeroreumColor.gray[600],
+            Container(
+              decoration: BoxDecoration(
+                  color: PeeroreumColor.gray[50],
+                  border: Border(
+                      top: BorderSide(
+                    color: PeeroreumColor.gray[100]!,
+                    width: 1.0,
+                  ))),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                LayoutBuilder(builder: (context, constraints) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    constraints: BoxConstraints(minHeight: 48),
+                    width: double.maxFinite,
+                    decoration: BoxDecoration(
+                        color: PeeroreumColor.gray[100],
+                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width - 108,
+                            child: TextFormField(
+                              focusNode: _focusNode,
+                              controller: _textController,
+                              style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                )),
-                            onChanged: (value) {
-                              comment = value;
-                              final lines = textlines(value);
-                              setState(() {
-                                if (comment != "" || _image != null) {
-                                  isSubmittable = true;
-                                } else {
-                                  isSubmittable = false;
-                                }
-                                _visibleLines = lines;
-                                // 최대 4줄까지만 입력 가능하도록 설정
-                                _maxLines = (_visibleLines > 4 ? 4 : null);
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          print(selectedParent);
-                          if (isSubmittable) {
-                            postAnswer();
-                            setState(() {
-                              FocusScope.of(context).unfocus();
-                              fetchIeduAnswerData();
-                            });
-                          }
-                        },
-                        child: Container(
-                          height: 24,
-                          child: Center(
-                            child: T5_14px(
-                              text: '등록',
-                              color: isSubmittable == false
-                                  ? PeeroreumColor.gray[500]
-                                  : PeeroreumColor.primaryPuple[400],
+                                  fontWeight: FontWeight.w400),
+                              maxLines: _maxLines,
+                              cursorColor: PeeroreumColor.gray[600],
+                              decoration: InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: (selectedParent == -1)
+                                      ? "댓글을 입력하세요"
+                                      : "대댓글을 입력하세요",
+                                  hintStyle: TextStyle(
+                                    color: PeeroreumColor.gray[600],
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  )),
+                              onChanged: (value) {
+                                comment = value;
+                                final lines = textlines(value);
+                                setState(() {
+                                  if (comment != "" || _image != null) {
+                                    isSubmittable = true;
+                                  } else {
+                                    isSubmittable = false;
+                                  }
+                                  _visibleLines = lines;
+                                  // 최대 4줄까지만 입력 가능하도록 설정
+                                  _maxLines = (_visibleLines > 4 ? 4 : null);
+                                });
+                              },
                             ),
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                );
-              }),
-              SizedBox(
-                height: 8,
-              ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (_image == null) {
-                        showImagePickerSheet();
-                      } else {
-                        PeeroreumToast.show(
-                            context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          child: SvgPicture.asset(
-                            'assets/icons/camera3.svg',
-                            color: PeeroreumColor.gray[500],
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            print(selectedParent);
+                            if (isSubmittable) {
+                              postAnswer();
+                              setState(() {
+                                FocusScope.of(context).unfocus();
+                                fetchIeduAnswerData();
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: 24,
+                            child: Center(
+                              child: T5_14px(
+                                text: '등록',
+                                color: isSubmittable == false
+                                    ? PeeroreumColor.gray[500]
+                                    : PeeroreumColor.primaryPuple[400],
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        T4_16px(
-                          text: '사진 첨부',
-                          color: PeeroreumColor.gray[500],
                         )
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (_image == null) {
-                        final dynamic whiteboardImage =
-                            await Get.to(() => WhiteboardIedu());
-                        setState(() {
-                          _image = whiteboardImage;
-                          isSubmittable = true;
-                        });
-                      } else {
-                        PeeroreumToast.show(
-                            context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Container(
-                          child: SvgPicture.asset(
-                            'assets/icons/notepad.svg',
-                            color: PeeroreumColor.gray[500],
+                  );
+                }),
+                SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (_image == null) {
+                          showImagePickerSheet();
+                        } else {
+                          PeeroreumToast.show(
+                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 24,
+                            height: 24,
+                            child: SvgPicture.asset(
+                              'assets/icons/camera3.svg',
+                              color: PeeroreumColor.gray[500],
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        T4_16px(
-                          text: '화이트 보드',
-                          color: PeeroreumColor.gray[500],
-                        )
-                      ],
+                          SizedBox(
+                            width: 4,
+                          ),
+                          T4_16px(
+                            text: '사진 첨부',
+                            color: PeeroreumColor.gray[500],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 21,
-              )
-            ]),
-          ),
-        ],
+                    SizedBox(
+                      width: 16,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        if (_image == null) {
+                          final dynamic whiteboardImage =
+                              await Get.to(() => WhiteboardIedu());
+                          setState(() {
+                            _image = whiteboardImage;
+                            isSubmittable = true;
+                          });
+                        } else {
+                          PeeroreumToast.show(
+                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            child: SvgPicture.asset(
+                              'assets/icons/notepad.svg',
+                              color: PeeroreumColor.gray[500],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          T4_16px(
+                            text: '화이트 보드',
+                            color: PeeroreumColor.gray[500],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 21,
+                )
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -953,83 +956,84 @@ class _DetailIeduState extends State<DetailIedu> {
         context: context,
         builder: (context) {
           return Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: PeeroreumColor.white, // 여기에 색상 지정
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.0),
                 topRight: Radius.circular(16.0),
               ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromCamera();
-                            Get.back();
-                          },
-                          child: Text(
-                            '카메라',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              takeFromCamera();
+                              Get.back();
+                            },
+                            child: Text(
+                              '카메라',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
                             ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
                           ),
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromGallery();
-                            Get.back();
-                          },
-                          child: Text(
-                            '갤러리',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              takeFromGallery();
+                              Get.back();
+                            },
+                            child: Text(
+                              '갤러리',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
                             ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
                           ),
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });

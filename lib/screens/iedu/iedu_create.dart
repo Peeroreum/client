@@ -77,15 +77,20 @@ class _CreateIeduState extends State<CreateIedu> {
         onWillPop: () async {
           return await onBackKey();
         },
-        child: Scaffold(
-          backgroundColor: PeeroreumColor.white,
-          appBar: appbarWidget(),
-          body: FutureBuilder<void>(
-              future: initFuture,
-              builder: (context, snapshot) {
-                return bodyWidget();
-              }),
-          bottomSheet: bottomWidget(),
+        child: Container(
+          color: PeeroreumColor.white,
+          child: SafeArea(
+            child: Scaffold(
+              backgroundColor: PeeroreumColor.white,
+              appBar: appbarWidget(),
+              body: FutureBuilder<void>(
+                  future: initFuture,
+                  builder: (context, snapshot) {
+                    return bodyWidget();
+                  }),
+              bottomSheet: bottomWidget(),
+            ),
+          ),
         ),
       ),
     );

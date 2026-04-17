@@ -107,15 +107,6 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 color: PeeroreumColor.black),
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(
-                  'assets/icons/icon_dots_mono.svg',
-                  color: PeeroreumColor.gray[800],
-                  width: 24,
-                ))
-          ],
         ),
         body: FutureBuilder<void>(
             future: fetchStatus(),
@@ -214,52 +205,54 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 ],
               );
             }),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-          child: SizedBox(
-            height: 48,
-            child: TextButton(
-              onPressed: () async {
-                if (isCheckedList.isNotEmpty) {
-                  receiverList = [];
-                  for (int i = 0; i < isCheckedList.length; i++) {
-                    if (isActiveList[i] == true) {
-                      if (isCheckedList[i]) {
-                        receiverList.add(successList[i]['nickname']);
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            child: SizedBox(
+              height: 48,
+              child: TextButton(
+                onPressed: () async {
+                  if (isCheckedList.isNotEmpty) {
+                    receiverList = [];
+                    for (int i = 0; i < isCheckedList.length; i++) {
+                      if (isActiveList[i] == true) {
+                        if (isCheckedList[i]) {
+                          receiverList.add(successList[i]['nickname']);
+                        }
                       }
                     }
-                  }
 
-                  if (receiverList.isNotEmpty) {
-                    await sendNotification();
-                    PeeroreumToast.show(context, '칭찬하기에 성공했어요.');
-                  }
+                    if (receiverList.isNotEmpty) {
+                      await sendNotification();
+                      PeeroreumToast.show(context, '칭찬하기에 성공했어요.');
+                    }
 
-                  setState(() {
-                    isCheckedList =
-                        List.generate(successList.length, (index) => false);
-                    isSelectAll = false;
-                  });
-                }
-              },
-              child: Text(
-                '칭찬하기',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: PeeroreumColor.white,
+                    setState(() {
+                      isCheckedList =
+                          List.generate(successList.length, (index) => false);
+                      isSelectAll = false;
+                    });
+                  }
+                },
+                child: Text(
+                  '칭찬하기',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.white,
+                  ),
                 ),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
               ),
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      PeeroreumColor.primaryPuple[400]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ))),
             ),
           ),
         ));

@@ -145,7 +145,12 @@ class _HomeIeduState extends State<HomeIedu> {
             return RefreshIndicator(
               onRefresh: () => fetchStatus(),
               color: PeeroreumColor.primaryPuple[400],
-              child: bodyWidget(),
+              child: SafeArea(
+                child: Container(
+                  color: PeeroreumColor.white,
+                  child: bodyWidget(),
+                ),
+              ),
             );
           }
         },

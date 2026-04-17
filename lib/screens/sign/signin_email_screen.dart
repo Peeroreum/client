@@ -77,383 +77,390 @@ class _EmailSignInState extends State<EmailSignIn> {
           elevation: 0.0,
           automaticallyImplyLeading: false,
         ),
-        body: ListView(children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                SizedBox(height: 60),
-                Image.asset(
-                  'assets/images/splash_logo.png',
-                  height: 236.0,
-                  width: 170.0,
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                Column(
+        body: SafeArea(
+          child: Container(
+            color: PeeroreumColor.white,
+            child: ListView(children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
                   children: [
-                    TextFormField(
-                      controller: id_controller,
-                      onTap: () {
-                        if (id_controller.text.length > 0) {
-                          setState(() {
-                            id_showClearbutton = true;
-                          });
-                        }
-                        setState(() {
-                          pw_showClearbutton = false;
-                        });
-                      },
-                      onChanged: (value) {
-                        _checkInput();
-                        if (value.length > 0) {
-                          id_showClearbutton = true;
-                        } else {
-                          id_showClearbutton = false;
-                        }
-                      },
-                      textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (term) {
-                        FocusScope.of(context).nextFocus();
-                      },
-                      style:
-                          TextStyle(fontSize: 14, color: PeeroreumColor.black),
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide:
-                                  BorderSide(color: PeeroreumColor.gray[200]!)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide:
-                                  BorderSide(color: PeeroreumColor.black)),
-                          hintText: '이메일을 입력하세요.',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: PeeroreumColor.gray[600]),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          suffixIcon: id_showClearbutton
-                              ? IconButton(
-                                  onPressed: () {
-                                    id_controller.clear();
-                                    setState(() {
-                                      id_showClearbutton = false;
-                                      _checkInput();
-                                    });
-                                  },
-                                  icon: SvgPicture.asset(
-                                    "assets/icons/x_circle.svg",
-                                    color: PeeroreumColor.gray[200],
-                                  ))
-                              : null),
+                    SizedBox(height: 60),
+                    Image.asset(
+                      'assets/images/splash_logo.png',
+                      height: 236.0,
+                      width: 170.0,
                     ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    TextFormField(
-                      controller: pw_controller,
-                      onTap: () {
-                        if (pw_controller.text.length > 0) {
-                          setState(() {
-                            pw_showClearbutton = true;
-                          });
-                        }
-                        setState(() {
-                          id_showClearbutton = false;
-                        });
-                      },
-                      onChanged: (value) {
-                        _checkInput();
-                        if (value.length > 0) {
-                          pw_showClearbutton = true;
-                        } else {
-                          pw_showClearbutton = false;
-                        }
-                      },
-                      textInputAction: TextInputAction.done,
-                      obscureText: pw_visible,
-                      obscuringCharacter: '●',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                BorderSide(color: PeeroreumColor.gray[200]!)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                BorderSide(color: PeeroreumColor.black)),
-                        hintText: '비밀번호를 입력하세요.',
-                        hintStyle: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: PeeroreumColor.gray[600]),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              pw_showClearbutton
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        pw_controller.clear();
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                    Column(
+                      children: [
+                        TextFormField(
+                          controller: id_controller,
+                          onTap: () {
+                            if (id_controller.text.length > 0) {
+                              setState(() {
+                                id_showClearbutton = true;
+                              });
+                            }
+                            setState(() {
+                              pw_showClearbutton = false;
+                            });
+                          },
+                          onChanged: (value) {
+                            _checkInput();
+                            if (value.length > 0) {
+                              id_showClearbutton = true;
+                            } else {
+                              id_showClearbutton = false;
+                            }
+                          },
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (term) {
+                            FocusScope.of(context).nextFocus();
+                          },
+                          style: TextStyle(
+                              fontSize: 14, color: PeeroreumColor.black),
+                          decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: PeeroreumColor.gray[200]!)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide:
+                                      BorderSide(color: PeeroreumColor.black)),
+                              hintText: '이메일을 입력하세요.',
+                              hintStyle: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: PeeroreumColor.gray[600]),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              suffixIcon: id_showClearbutton
+                                  ? IconButton(
+                                      onPressed: () {
+                                        id_controller.clear();
                                         setState(() {
-                                          pw_showClearbutton = false;
+                                          id_showClearbutton = false;
                                           _checkInput();
                                         });
                                       },
-                                      child: SvgPicture.asset(
+                                      icon: SvgPicture.asset(
                                         "assets/icons/x_circle.svg",
                                         color: PeeroreumColor.gray[200],
-                                      ),
-                                    )
-                                  : SizedBox(
-                                      width: 0,
-                                    ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    pw_visible = !pw_visible;
-                                  });
-                                },
-                                child: SvgPicture.asset(
-                                  !pw_visible
-                                      ? "assets/icons/eye_on.svg"
-                                      : "assets/icons/eye_off.svg",
-                                  color: PeeroreumColor.gray[600],
-                                ),
-                              ),
-                            ],
-                          ),
+                                      ))
+                                  : null),
                         ),
-                        // suffixIconConstraints: BoxConstraints(maxHeight: 18)
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0, //40.0
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48.0,
-                      child: TextButton(
-                        onPressed: is_Enabled
-                            ? () async {
-                                signIn.email = id_controller.text;
-                                signIn.password = pw_controller.text;
-                                var result = await http.post(
-                                    Uri.parse('${API.hostConnect}/login'),
-                                    body: jsonEncode(signIn),
-                                    headers: {
-                                      'Content-Type': 'application/json'
-                                    });
-                                if (result.statusCode == 200) {
-                                  var data = jsonDecode(
-                                      utf8.decode(result.bodyBytes))['data'];
-                                  secureStorage.write(
-                                      key: "accessToken",
-                                      value: data['accessToken']);
-                                  secureStorage.write(
-                                      key: "email", value: data['email']);
-                                  secureStorage.write(
-                                      key: "nickname", value: data['nickname']);
-                                  secureStorage.write(
-                                      key: "profileImage",
-                                      value: data['profileImage']);
-                                  secureStorage.write(
-                                      key: "grade",
-                                      value: data['grade'].toString());
-                                  Get.offAllNamed('/home');
-                                } else if (result.statusCode == 404 ||
-                                    result.statusCode == 401) {
-                                  PeeroreumToast.show(
-                                      context, "이메일 혹은 비밀번호가 일치하지 않아요.",
-                                      isError: true);
-                                } else {
-                                  PeeroreumToast.show(
-                                      context, '잠시 후에 다시 시도해 주세요.',
-                                      isError: true);
-                                }
-                              }
-                            : null,
-                        child: Text(
-                          '로그인',
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        TextFormField(
+                          controller: pw_controller,
+                          onTap: () {
+                            if (pw_controller.text.length > 0) {
+                              setState(() {
+                                pw_showClearbutton = true;
+                              });
+                            }
+                            setState(() {
+                              id_showClearbutton = false;
+                            });
+                          },
+                          onChanged: (value) {
+                            _checkInput();
+                            if (value.length > 0) {
+                              pw_showClearbutton = true;
+                            } else {
+                              pw_showClearbutton = false;
+                            }
+                          },
+                          textInputAction: TextInputAction.done,
+                          obscureText: pw_visible,
+                          obscuringCharacter: '●',
                           style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16.0,
-                              color: PeeroreumColor.white),
-                        ),
-                        style: ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                                EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12)),
-                            backgroundColor: is_Enabled
-                                ? MaterialStateProperty.all(
-                                    PeeroreumColor.primaryPuple[400])
-                                : MaterialStateProperty.all(
-                                    PeeroreumColor.gray[300]),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ))),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // TextButton(
-                        //     onPressed: () {},
-                        //     child: Text(
-                        //       '이메일 찾기',
-                        //       style: TextStyle(
-                        //           fontFamily: 'Pretendard',
-                        //           fontWeight: FontWeight.w600,
-                        //           fontSize: 14.0,
-                        //           color: Colors.grey[600]),
-                        //     )
-                        // ),
-                        // Text(
-                        //   '|',
-                        //   style: TextStyle(color: Colors.grey[200]),
-                        // ),
-                        TextButton(
-                            onPressed: () {
-                              Get.to(() => EmailSearch());
-                            },
-                            child: Text(
-                              '비밀번호 재설정',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14.0,
-                                  color: Colors.grey[600]),
-                            )),
-                        Text(
-                          '|',
-                          style: TextStyle(color: Colors.grey[200]),
-                        ),
-                        TextButton(
-                            onPressed: () {
-                              Get.to(() => EmailSignUp());
-                            },
-                            child: Text(
-                              '회원가입',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14.0,
-                                  color: Colors.grey[600]),
-                            )),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                            child: Divider(
-                          color: PeeroreumColor.gray[100],
-                          thickness: 1,
-                        )),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'SNS 계정으로 로그인',
-                            style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w400),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    color: PeeroreumColor.gray[200]!)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: PeeroreumColor.black)),
+                            hintText: '비밀번호를 입력하세요.',
+                            hintStyle: TextStyle(
                                 fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
                                 fontSize: 14,
-                                color: PeeroreumColor.gray[400]),
+                                fontWeight: FontWeight.w400,
+                                color: PeeroreumColor.gray[600]),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            suffixIcon: Padding(
+                              padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  pw_showClearbutton
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            pw_controller.clear();
+                                            setState(() {
+                                              pw_showClearbutton = false;
+                                              _checkInput();
+                                            });
+                                          },
+                                          child: SvgPicture.asset(
+                                            "assets/icons/x_circle.svg",
+                                            color: PeeroreumColor.gray[200],
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          width: 0,
+                                        ),
+                                  SizedBox(
+                                    width: 12,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        pw_visible = !pw_visible;
+                                      });
+                                    },
+                                    child: SvgPicture.asset(
+                                      !pw_visible
+                                          ? "assets/icons/eye_on.svg"
+                                          : "assets/icons/eye_off.svg",
+                                      color: PeeroreumColor.gray[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // suffixIconConstraints: BoxConstraints(maxHeight: 18)
                           ),
                         ),
-                        Expanded(
-                            child: Divider(
-                          color: PeeroreumColor.gray[100],
-                          thickness: 1,
-                        )),
+                        SizedBox(
+                          height: 20.0, //40.0
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48.0,
+                          child: TextButton(
+                            onPressed: is_Enabled
+                                ? () async {
+                                    signIn.email = id_controller.text;
+                                    signIn.password = pw_controller.text;
+                                    var result = await http.post(
+                                        Uri.parse('${API.hostConnect}/login'),
+                                        body: jsonEncode(signIn),
+                                        headers: {
+                                          'Content-Type': 'application/json'
+                                        });
+                                    if (result.statusCode == 200) {
+                                      var data = jsonDecode(utf8
+                                          .decode(result.bodyBytes))['data'];
+                                      secureStorage.write(
+                                          key: "accessToken",
+                                          value: data['accessToken']);
+                                      secureStorage.write(
+                                          key: "email", value: data['email']);
+                                      secureStorage.write(
+                                          key: "nickname",
+                                          value: data['nickname']);
+                                      secureStorage.write(
+                                          key: "profileImage",
+                                          value: data['profileImage']);
+                                      secureStorage.write(
+                                          key: "grade",
+                                          value: data['grade'].toString());
+                                      Get.offAllNamed('/home');
+                                    } else if (result.statusCode == 404 ||
+                                        result.statusCode == 401) {
+                                      PeeroreumToast.show(
+                                          context, "이메일 혹은 비밀번호가 일치하지 않아요.",
+                                          isError: true);
+                                    } else {
+                                      PeeroreumToast.show(
+                                          context, '잠시 후에 다시 시도해 주세요.',
+                                          isError: true);
+                                    }
+                                  }
+                                : null,
+                            child: Text(
+                              '로그인',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16.0,
+                                  color: PeeroreumColor.white),
+                            ),
+                            style: ButtonStyle(
+                                padding: MaterialStatePropertyAll(
+                                    EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12)),
+                                backgroundColor: is_Enabled
+                                    ? MaterialStateProperty.all(
+                                        PeeroreumColor.primaryPuple[400])
+                                    : MaterialStateProperty.all(
+                                        PeeroreumColor.gray[300]),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // TextButton(
+                            //     onPressed: () {},
+                            //     child: Text(
+                            //       '이메일 찾기',
+                            //       style: TextStyle(
+                            //           fontFamily: 'Pretendard',
+                            //           fontWeight: FontWeight.w600,
+                            //           fontSize: 14.0,
+                            //           color: Colors.grey[600]),
+                            //     )
+                            // ),
+                            // Text(
+                            //   '|',
+                            //   style: TextStyle(color: Colors.grey[200]),
+                            // ),
+                            TextButton(
+                                onPressed: () {
+                                  Get.to(() => EmailSearch());
+                                },
+                                child: Text(
+                                  '비밀번호 재설정',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14.0,
+                                      color: Colors.grey[600]),
+                                )),
+                            Text(
+                              '|',
+                              style: TextStyle(color: Colors.grey[200]),
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  Get.to(() => EmailSignUp());
+                                },
+                                child: Text(
+                                  '회원가입',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14.0,
+                                      color: Colors.grey[600]),
+                                )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: Divider(
+                              color: PeeroreumColor.gray[100],
+                              thickness: 1,
+                            )),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                'SNS 계정으로 로그인',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[400]),
+                              ),
+                            ),
+                            Expanded(
+                                child: Divider(
+                              color: PeeroreumColor.gray[100],
+                              thickness: 1,
+                            )),
+                          ],
+                        ),
                       ],
                     ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            child: Container(
+                              height: 48,
+                              width: 48,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: PeeroreumColor.gray[100],
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/kakao_logo.png'),
+                                      fit: BoxFit.fill)),
+                            ),
+                            onTap: () {
+                              kakaoSignIn();
+                            },
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          GestureDetector(
+                            child: Container(
+                                height: 48,
+                                width: 48,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: PeeroreumColor.gray[200]!),
+                                    shape: BoxShape.circle,
+                                    color: PeeroreumColor.white,
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/google_logo.png'),
+                                    ))),
+                            onTap: () {
+                              googleSignIn();
+                            },
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          GestureDetector(
+                            child: Container(
+                                height: 48,
+                                width: 48,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: PeeroreumColor.gray[200]!),
+                                    shape: BoxShape.circle,
+                                    color: PeeroreumColor.white,
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/apple_logo.png'),
+                                    ))),
+                            onTap: () {
+                              appleSignIn();
+                            },
+                          )
+                        ],
+                      ),
+                    )
                   ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        child: Container(
-                          height: 48,
-                          width: 48,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: PeeroreumColor.gray[100],
-                              image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/kakao_logo.png'),
-                                  fit: BoxFit.fill)),
-                        ),
-                        onTap: () {
-                          kakaoSignIn();
-                        },
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      GestureDetector(
-                        child: Container(
-                            height: 48,
-                            width: 48,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: PeeroreumColor.gray[200]!),
-                                shape: BoxShape.circle,
-                                color: PeeroreumColor.white,
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/google_logo.png'),
-                                ))),
-                        onTap: () {
-                          googleSignIn();
-                        },
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      GestureDetector(
-                        child: Container(
-                            height: 48,
-                            width: 48,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: PeeroreumColor.gray[200]!),
-                                shape: BoxShape.circle,
-                                color: PeeroreumColor.white,
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/apple_logo.png'),
-                                ))),
-                        onTap: () {
-                          appleSignIn();
-                        },
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
+              ),
+            ]),
           ),
-        ]),
+        ),
       ),
     );
   }

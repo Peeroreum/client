@@ -146,16 +146,16 @@ class _serviceTermsState extends State<serviceTerms> {
   }
 
   Widget serviceTerms() {
-    return SafeArea(
-      child: Container(
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: PeeroreumColor.white, // 여기에 색상 지정
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
-          ),
+    return Container(
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: PeeroreumColor.white, // 여기에 색상 지정
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
+      ),
+      child: SafeArea(
         child: Container(
           padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
           child: Column(

@@ -21,13 +21,11 @@ class SignUpSubject extends StatefulWidget {
 
   @override
   State<SignUpSubject> createState() => _SignUpSubjectState(member);
-  // State<SignUpSubject> createState() => _SignUpSubjectState();
 }
 
 class _SignUpSubjectState extends State<SignUpSubject> {
   Member member;
   _SignUpSubjectState(this.member);
-  // Member member = Member();
 
   final subjects = Subject.subject;
   final middleSubjects = Subject.middleSubject;
@@ -88,54 +86,220 @@ class _SignUpSubjectState extends State<SignUpSubject> {
             },
           ),
         ),
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  height: 40,
+        body: SafeArea(
+          child: Container(
+            color: PeeroreumColor.white,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    height: 40,
+                    width: double.maxFinite,
+                    child: LinearPercentIndicator(
+                      animateFromLastPercent: true,
+                      lineHeight: 8.0,
+                      percent: 1,
+                      progressColor: Color.fromARGB(255, 114, 96, 248),
+                      backgroundColor: Colors.grey[100],
+                      barRadius: Radius.circular(10),
+                    )),
+                Container(
                   width: double.maxFinite,
-                  child: LinearPercentIndicator(
-                    animateFromLastPercent: true,
-                    lineHeight: 8.0,
-                    percent: 1,
-                    progressColor: Color.fromARGB(255, 114, 96, 248),
-                    backgroundColor: Colors.grey[100],
-                    barRadius: Radius.circular(10),
-                  )),
-              Container(
-                // height: 122,
-                width: double.maxFinite,
-                padding: EdgeInsets.fromLTRB(10, 16, 10, 56),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("자신 있는 과목과 보완하고 싶은\n과목의 성취 수준을 알려주세요.",
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black)),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text("유사한 성취 수준의 친구가 있는 같이방을 추천해 드릴게요.",
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[800])),
-                  ],
+                  padding: EdgeInsets.fromLTRB(10, 16, 10, 56),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("자신 있는 과목과 보완하고 싶은\n과목의 성취 수준을 알려주세요.",
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black)),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("유사한 성취 수준의 친구가 있는 같이방을 추천해 드릴게요.",
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey[800])),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '자신 있는 과목',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: false,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) {
+                                      return goodSubject();
+                                    });
+                              },
+                              child: Container(
+                                height: 40,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: PeeroreumColor.gray[200]!,
+                                  ),
+                                  color: Colors.transparent,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      _goodSubject ?? '과목',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                          color: _goodSubject != null
+                                              ? PeeroreumColor.black
+                                              : PeeroreumColor.gray[600]),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    SvgPicture.asset('assets/icons/down.svg'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  _goodSubject != null
+                                      ? showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: false,
+                                          backgroundColor: Colors.transparent,
+                                          builder: (context) {
+                                            return goodDetail();
+                                          })
+                                      : PeeroreumToast.show(
+                                          context, '과목을 먼저 선택해주세요.',
+                                          isError: true);
+                                },
+                                child: Container(
+                                  height: 40,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: PeeroreumColor.gray[200]!,
+                                    ),
+                                    color: Colors.transparent,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        _selectedDetailGoodSubject ?? '세부 과목',
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w400,
+                                            color: _selectedDetailGoodSubject !=
+                                                    null
+                                                ? PeeroreumColor.black
+                                                : PeeroreumColor.gray[600]),
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Spacer(),
+                                      SvgPicture.asset('assets/icons/down.svg'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            _selectedDetailGoodSubject != null
+                                ? showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: false,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) {
+                                      return goodLevel();
+                                    })
+                                : PeeroreumToast.show(
+                                    context, '세부 과목을 먼저 선택해주세요.',
+                                    isError: true);
+                          },
+                          child: Container(
+                            height: 40,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: PeeroreumColor.gray[200]!,
+                              ),
+                              color: Colors.transparent,
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  _goodLevel ?? '성취 수준을 선택해 주세요',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w400,
+                                      color: _goodLevel != null
+                                          ? PeeroreumColor.black
+                                          : PeeroreumColor.gray[600]),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Spacer(),
+                                SvgPicture.asset('assets/icons/down.svg'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+                SizedBox(
+                  height: 40,
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '자신 있는 과목',
+                        '보완하고 싶은 과목',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 14,
@@ -148,21 +312,6 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          // PeeroreumButton<String>(
-                          //   items: Subject.subject,
-                          //   value: _goodSubject,
-                          //   onChanged: (value) {
-                          //     setState(() {
-                          //       _goodSubject = value;
-                          //       goodDetailSubjects = ((member.grade! <= 3)
-                          //           ? middleSubjects[_goodSubject]
-                          //           : highSubjects[_goodSubject])!;
-                          //       _selectedDetailGoodSubject = null;
-                          //       _checkInput();
-                          //     });
-                          //   },
-                          //   hintText: '과목',
-                          // ),
                           GestureDetector(
                             onTap: () {
                               showModalBottomSheet(
@@ -170,7 +319,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                   isScrollControlled: false,
                                   backgroundColor: Colors.transparent,
                                   builder: (context) {
-                                    return goodSubject();
+                                    return badSubject();
                                   });
                             },
                             child: Container(
@@ -187,11 +336,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               child: Row(
                                 children: [
                                   Text(
-                                    _goodSubject ?? '과목',
+                                    _badSubject ?? '과목',
                                     style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontWeight: FontWeight.w400,
-                                        color: _goodSubject != null
+                                        color: _badSubject != null
                                             ? PeeroreumColor.black
                                             : PeeroreumColor.gray[600]),
                                   ),
@@ -206,29 +355,16 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           SizedBox(
                             width: 16,
                           ),
-                          // Expanded(
-                          //   child: PeeroreumButton<String>(
-                          //       width: double.infinity,
-                          //       items: goodDetailSubjects,
-                          //       value: _selectedDetailGoodSubject,
-                          //       onChanged: (value) {
-                          //         setState(() {
-                          //           _selectedDetailGoodSubject = value;
-                          //           _checkInput();
-                          //         });
-                          //       },
-                          //       hintText: '세부 과목'),
-                          // ),
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                _goodSubject != null
+                                _badSubject != null
                                     ? showModalBottomSheet(
                                         context: context,
                                         isScrollControlled: false,
                                         backgroundColor: Colors.transparent,
                                         builder: (context) {
-                                          return goodDetail();
+                                          return badDetail();
                                         })
                                     : PeeroreumToast.show(
                                         context, '과목을 먼저 선택해주세요.',
@@ -248,12 +384,12 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      _selectedDetailGoodSubject ?? '세부 과목',
+                                      _selectedDetailBadSubject ?? '세부 과목',
                                       style: TextStyle(
                                           fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w400,
                                           color:
-                                              _selectedDetailGoodSubject != null
+                                              _selectedDetailBadSubject != null
                                                   ? PeeroreumColor.black
                                                   : PeeroreumColor.gray[600]),
                                     ),
@@ -272,27 +408,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       SizedBox(
                         height: 20,
                       ),
-                      // PeeroreumButton<String>(
-                      //   width: double.infinity,
-                      //   items: _levels,
-                      //   value: _goodLevel,
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       _goodLevel = value;
-                      //       _checkInput();
-                      //     });
-                      //   },
-                      //   hintText: '성취 수준을 선택해 주세요',
-                      // ),
                       GestureDetector(
                         onTap: () {
-                          _selectedDetailGoodSubject != null
+                          _selectedDetailBadSubject != null
                               ? showModalBottomSheet(
                                   context: context,
                                   isScrollControlled: false,
                                   backgroundColor: Colors.transparent,
                                   builder: (context) {
-                                    return goodLevel();
+                                    return badLevel();
                                   })
                               : PeeroreumToast.show(
                                   context, '세부 과목을 먼저 선택해주세요.',
@@ -312,11 +436,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           child: Row(
                             children: [
                               Text(
-                                _goodLevel ?? '성취 수준을 선택해 주세요',
+                                _badLevel ?? '성취 수준을 선택해 주세요',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w400,
-                                    color: _goodLevel != null
+                                    color: _badLevel != null
                                         ? PeeroreumColor.black
                                         : PeeroreumColor.gray[600]),
                               ),
@@ -330,252 +454,51 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         ),
                       ),
                     ],
-                  )),
-              SizedBox(
-                height: 40,
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '보완하고 싶은 과목',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        // PeeroreumButton<String>(
-                        //   items: Subject.subject,
-                        //   value: _badSubject,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       _badSubject = value;
-                        //       badDetailSubjects = ((member.grade! <= 3)
-                        //           ? middleSubjects[_badSubject]
-                        //           : highSubjects[_badSubject])!;
-                        //       _selectedDetailBadSubject = null;
-                        //       _checkInput();
-                        //     });
-                        //   },
-                        //   hintText: '과목',
-                        // ),
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: false,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) {
-                                  return badSubject();
-                                });
-                          },
-                          child: Container(
-                            height: 40,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: PeeroreumColor.gray[200]!,
-                              ),
-                              color: Colors.transparent,
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  _badSubject ?? '과목',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w400,
-                                      color: _badSubject != null
-                                          ? PeeroreumColor.black
-                                          : PeeroreumColor.gray[600]),
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                SvgPicture.asset('assets/icons/down.svg'),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        // Expanded(
-                        //   child: PeeroreumButton<String>(
-                        //     width: double.infinity,
-                        //     items: badDetailSubjects,
-                        //     value: _selectedDetailBadSubject,
-                        //     onChanged: (value) {
-                        //       setState(() {
-                        //         _selectedDetailBadSubject = value;
-                        //         _checkInput();
-                        //       });
-                        //     },
-                        //     hintText: '세부 과목',
-                        //   ),
-                        // ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              _badSubject != null
-                                  ? showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: false,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (context) {
-                                        return badDetail();
-                                      })
-                                  : PeeroreumToast.show(
-                                      context, '과목을 먼저 선택해주세요.',
-                                      isError: true);
-                            },
-                            child: Container(
-                              height: 40,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: PeeroreumColor.gray[200]!,
-                                ),
-                                color: Colors.transparent,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    _selectedDetailBadSubject ?? '세부 과목',
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w400,
-                                        color: _selectedDetailBadSubject != null
-                                            ? PeeroreumColor.black
-                                            : PeeroreumColor.gray[600]),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Spacer(),
-                                  SvgPicture.asset('assets/icons/down.svg'),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    // PeeroreumButton<String>(
-                    //   width: double.infinity,
-                    //   items: _levels,
-                    //   value: _badLevel,
-                    //   onChanged: (value) {
-                    //     setState(() {
-                    //       _badLevel = value;
-                    //       _checkInput();
-                    //     });
-                    //   },
-                    //   hintText: '성취 수준을 선택해 주세요',
-                    // ),
-                    GestureDetector(
-                      onTap: () {
-                        _selectedDetailBadSubject != null
-                            ? showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: false,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) {
-                                  return badLevel();
-                                })
-                            : PeeroreumToast.show(context, '세부 과목을 먼저 선택해주세요.',
-                                isError: true);
-                      },
-                      child: Container(
-                        height: 40,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: PeeroreumColor.gray[200]!,
-                          ),
-                          color: Colors.transparent,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              _badLevel ?? '성취 수준을 선택해 주세요',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  color: _badLevel != null
-                                      ? PeeroreumColor.black
-                                      : PeeroreumColor.gray[600]),
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Spacer(),
-                            SvgPicture.asset('assets/icons/down.svg'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-          child: SizedBox(
-            height: 48,
-            child: TextButton(
-              onPressed: () {
-                if (isEnabled) {
-                  member.goodSubject = subjects.indexOf(_goodSubject!) + 1;
-                  member.goodDetailSubject =
-                      goodDetailSubjects.indexOf(_selectedDetailGoodSubject!);
-                  member.goodLevel = _levels.indexOf(_goodLevel!);
-                  member.badSubject = subjects.indexOf(_badSubject!) + 1;
-                  member.badDetailSubject =
-                      badDetailSubjects.indexOf(_selectedDetailBadSubject!);
-                  member.badLevel = _levels.indexOf(_badLevel!);
-                  signUpAPI();
-                }
-              },
-              child: Text(
-                '다음',
-                style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.0,
-                    color: Colors.white),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            child: SizedBox(
+              height: 48,
+              child: TextButton(
+                onPressed: () {
+                  if (isEnabled) {
+                    member.goodSubject = subjects.indexOf(_goodSubject!) + 1;
+                    member.goodDetailSubject =
+                        goodDetailSubjects.indexOf(_selectedDetailGoodSubject!);
+                    member.goodLevel = _levels.indexOf(_goodLevel!);
+                    member.badSubject = subjects.indexOf(_badSubject!) + 1;
+                    member.badDetailSubject =
+                        badDetailSubjects.indexOf(_selectedDetailBadSubject!);
+                    member.badLevel = _levels.indexOf(_badLevel!);
+                    signUpAPI();
+                  }
+                },
+                child: Text(
+                  '다음',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      color: Colors.white),
+                ),
+                style: ButtonStyle(
+                    backgroundColor: isEnabled
+                        ? MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400])
+                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
               ),
-              style: ButtonStyle(
-                  backgroundColor: isEnabled
-                      ? MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400])
-                      : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ))),
             ),
           ),
         ),
@@ -778,7 +701,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _levels[index],
                           style: TextStyle(
                             fontFamily: 'Pretendard',
-                            fontSize: 16, //원래는 18인데 너무 큰거같아요
+                            fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: PeeroreumColor.black,
                           ),
@@ -802,8 +725,8 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
             height: 16,
@@ -933,7 +856,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
 
   badLevel() {
     return Container(
-      //width: double.infinity,
+      width: double.infinity,
       decoration: const BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
@@ -985,7 +908,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           _levels[index],
                           style: TextStyle(
                             fontFamily: 'Pretendard',
-                            fontSize: 16, //18인데 넘커보임..
+                            fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: PeeroreumColor.black,
                           ),

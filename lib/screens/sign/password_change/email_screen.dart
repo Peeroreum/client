@@ -61,128 +61,133 @@ class _EmailSearchState extends State<EmailSearch> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          reverse: true,
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom * 0.3),
+        body: SafeArea(
           child: Container(
-            padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '비밀번호 재설정',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      color: PeeroreumColor.black),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  '이메일을 입력해 주세요.',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      color: PeeroreumColor.black),
-                ),
-                SizedBox(
-                  height: 24,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: TextFormField(
-                      controller: email_controller,
-                      onTap: () {
-                        if (email_controller.text.length > 0) {
-                          setState(() {
-                            email_showClearbutton = true;
-                          });
-                        }
-                        setState(() {
-                          email_focus = true;
-                        });
-                      },
-                      onChanged: (value) {
-                        _checkInput();
-                        setState(() {
-                          if (value.isNotEmpty) {
-                            email_showClearbutton = true;
-                          } else {
-                            email_showClearbutton = false;
-                          }
-                        });
-                      },
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (value) {
-                        email_focus = false;
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'peer@mail.com',
-                        hintStyle: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: PeeroreumColor.gray[600]),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                BorderSide(color: PeeroreumColor.error)),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: PeeroreumColor.error,
-                            )),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        suffixIcon: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                                padding: EdgeInsets.only(left: 12),
-                                child: email_showClearbutton
-                                    ? GestureDetector(
-                                        onTap: () {
-                                          email_controller.clear();
-                                          setState(() {
-                                            email_showClearbutton = false;
-                                            _checkInput();
-                                          });
-                                        },
-                                        child: SvgPicture.asset(
-                                          "assets/icons/x_circle.svg",
-                                          color: PeeroreumColor.gray[200],
-                                        ))
-                                    : null),
-                            SizedBox(
-                              width: 12,
-                            )
-                          ],
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: PeeroreumColor.black,
+            color: PeeroreumColor.white,
+            child: SingleChildScrollView(
+              reverse: true,
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom * 0.3),
+              child: Container(
+                padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '비밀번호 재설정',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          color: PeeroreumColor.black),
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      '이메일을 입력해 주세요.',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          color: PeeroreumColor.black),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: TextFormField(
+                          controller: email_controller,
+                          onTap: () {
+                            if (email_controller.text.length > 0) {
+                              setState(() {
+                                email_showClearbutton = true;
+                              });
+                            }
+                            setState(() {
+                              email_focus = true;
+                            });
+                          },
+                          onChanged: (value) {
+                            _checkInput();
+                            setState(() {
+                              if (value.isNotEmpty) {
+                                email_showClearbutton = true;
+                              } else {
+                                email_showClearbutton = false;
+                              }
+                            });
+                          },
+                          textInputAction: TextInputAction.done,
+                          onFieldSubmitted: (value) {
+                            email_focus = false;
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'peer@mail.com',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: PeeroreumColor.gray[600]),
+                            errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: PeeroreumColor.error)),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: PeeroreumColor.error,
+                                )),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16),
+                            suffixIcon: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                    padding: EdgeInsets.only(left: 12),
+                                    child: email_showClearbutton
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              email_controller.clear();
+                                              setState(() {
+                                                email_showClearbutton = false;
+                                                _checkInput();
+                                              });
+                                            },
+                                            child: SvgPicture.asset(
+                                              "assets/icons/x_circle.svg",
+                                              color: PeeroreumColor.gray[200],
+                                            ))
+                                        : null),
+                                SizedBox(
+                                  width: 12,
+                                )
+                              ],
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: PeeroreumColor.black,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: PeeroreumColor.gray[200]!,
+                              ),
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: PeeroreumColor.gray[200]!,
-                          ),
-                        ),
-                      ),
-                      cursorColor: PeeroreumColor.gray[600]),
+                          cursorColor: PeeroreumColor.gray[600]),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
-        bottomSheet: Container(
+        bottomSheet: SafeArea(
           child: Container(
             color: PeeroreumColor.white,
             padding: MediaQuery.of(context).viewInsets.bottom > 0

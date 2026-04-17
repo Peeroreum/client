@@ -51,11 +51,16 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(),
-      body: FutureBuilder<void>(
-          future: fetchStatus(),
-          builder: (context, snapshot) {
-            return bodyWidget();
-          }),
+      body: SafeArea(
+        child: Container(
+          color: PeeroreumColor.white,
+          child: FutureBuilder<void>(
+              future: fetchStatus(),
+              builder: (context, snapshot) {
+                return bodyWidget();
+              }),
+        ),
+      ),
     );
   }
 
