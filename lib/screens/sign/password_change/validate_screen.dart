@@ -82,6 +82,7 @@ class _EmailValidateState extends State<EmailValidate> {
         child: SafeArea(
           child: Scaffold(
             backgroundColor: PeeroreumColor.white,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               backgroundColor: PeeroreumColor.white,
               surfaceTintColor: Colors.transparent,
@@ -96,170 +97,164 @@ class _EmailValidateState extends State<EmailValidate> {
                 ),
               ),
             ),
-            body: Container(
-              color: PeeroreumColor.white,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '인증번호 전송 완료',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                          color: PeeroreumColor.black),
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      '메일함을 확인해 주세요.',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          color: PeeroreumColor.black),
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    TextFormField(
-                      controller: code_controller,
-                      keyboardType: TextInputType.number,
-                      maxLength: 6,
-                      onChanged: (value) {
-                        _checkInput();
-                      },
-                      decoration: InputDecoration(
-                        counterText: "",
-                        hintText: '인증번호 6자리',
-                        hintStyle: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: PeeroreumColor.gray[600]),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: PeeroreumColor.black,
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '인증번호 전송 완료',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                                color: PeeroreumColor.black),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: PeeroreumColor.gray[200]!,
+                          SizedBox(height: 4),
+                          Text(
+                            '메일함을 확인해 주세요.',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                color: PeeroreumColor.black),
                           ),
-                        ),
-                      ),
-                      cursorColor: PeeroreumColor.gray[600],
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            if (!is_resending) {
-                              resendEmail();
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: is_resending
-                                      ? PeeroreumColor.gray[400]!
-                                      : PeeroreumColor.primaryPuple[500]!,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              '재전송',
-                              style: TextStyle(
+                          SizedBox(height: 24),
+                          TextFormField(
+                            controller: code_controller,
+                            keyboardType: TextInputType.number,
+                            maxLength: 6,
+                            onChanged: (value) {
+                              _checkInput();
+                            },
+                            decoration: InputDecoration(
+                              counterText: "",
+                              hintText: '인증번호 6자리',
+                              hintStyle: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w400,
                                   fontSize: 14,
-                                  color: is_resending
-                                      ? PeeroreumColor.gray[400]
-                                      : PeeroreumColor.primaryPuple[500]),
+                                  color: PeeroreumColor.gray[600]),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: PeeroreumColor.black,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: PeeroreumColor.gray[200]!,
+                                ),
+                              ),
                             ),
+                            cursorColor: PeeroreumColor.gray[600],
                           ),
-                        ),
-                        Spacer(),
-                        Text(
-                          '${timerText} 남음',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              color: PeeroreumColor.gray[600]),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                      ],
-                    )
-                  ],
+                          SizedBox(height: 16),
+                          Row(
+                            children: [
+                              SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  if (!is_resending) {
+                                    resendEmail();
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: is_resending
+                                            ? PeeroreumColor.gray[400]!
+                                            : PeeroreumColor.primaryPuple[500]!,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '재전송',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14,
+                                        color: is_resending
+                                            ? PeeroreumColor.gray[400]
+                                            : PeeroreumColor.primaryPuple[500]),
+                                  ),
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                '$timerText 남음',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[600]),
+                              ),
+                              SizedBox(width: 8),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            bottomSheet: Container(
-              color: PeeroreumColor.white,
-              padding: MediaQuery.of(context).viewInsets.bottom > 0
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom)
-                  : EdgeInsets.fromLTRB(20, 8, 20, 28),
-              width: MediaQuery.of(context).size.width,
-              child: SizedBox(
-                height: 48,
-                child: TextButton(
-                  onPressed: (is_Enabled && !is_loading)
-                      ? () {
-                          verifyCode();
-                        }
-                      : null,
-                  child: is_loading
-                      ? SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            color: PeeroreumColor.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Text(
-                          '다음',
-                          style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16.0,
-                              color: PeeroreumColor.white),
-                        ),
-                  style: ButtonStyle(
-                      backgroundColor: (is_Enabled && !is_loading)
-                          ? MaterialStateProperty.all(
-                              PeeroreumColor.primaryPuple[400])
-                          : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(vertical: 12)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                // 버튼을 body 하단에 배치 (bottomSheet 대신)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+                  child: SizedBox(
+                    height: 48,
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: (is_Enabled && !is_loading)
+                          ? () {
+                              verifyCode();
+                            }
+                          : null,
+                      child: is_loading
+                          ? SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                color: PeeroreumColor.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              '다음',
+                              style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16.0,
+                                  color: PeeroreumColor.white),
+                            ),
+                      style: ButtonStyle(
+                        backgroundColor: (is_Enabled && !is_loading)
+                            ? MaterialStateProperty.all(
+                                PeeroreumColor.primaryPuple[400])
+                            : MaterialStateProperty.all(
+                                PeeroreumColor.gray[300]),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 12)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                        borderRadius:
-                            MediaQuery.of(context).viewInsets.bottom > 0
-                                ? BorderRadius.zero
-                                : BorderRadius.circular(8.0),
-                      ))),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
