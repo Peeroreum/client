@@ -793,11 +793,28 @@ class _CreateInvitationState extends State<CreateInvitation> {
     diop.FormData formData = diop.FormData.fromMap(weduMap);
     dio.options.contentType = 'multipart/form-data';
     dio.options.headers = {'Authorization': 'Bearer $token'};
-    var inviResult = await dio.post('${API.hostConnect}/wedu', data: formData);
-    if (inviResult.statusCode == 200) {
-      Get.offAllNamed('/home');
-    } else {
-      print("초대장 ${inviResult.statusMessage}");
+    try {
+      var inviResult =
+          await dio.post('${API.hostConnect}/wedu', data: formData);
+      if (inviResult.statusCode == 200) {
+        Get.offAllNamed('/home');
+      } else {
+        PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
+      }
+    } on diop.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+        print('HEADERS: ${e.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
+    } catch (e) {
+      print('Unexpected error: $e');
+      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
 }

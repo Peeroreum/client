@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
-import 'dart:convert';
+import 'package:dio/dio.dart' as dio;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,7 +15,6 @@ import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_skeleton.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -124,33 +124,54 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   fetchInWeduData() async {
-    var inWeduResult = await http.get(
-        Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (inWeduResult.statusCode == 200) {
-      inroom_datas = jsonDecode(utf8.decode(inWeduResult.bodyBytes))['data'];
-    } else {
-      print("에러${inWeduResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var inWeduResult = await dio1.get(
+          '${API.hostConnect}/wedu/in?nickname=$nickname',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inWeduResult.statusCode == 200) {
+        inroom_datas = inWeduResult.data['data'];
+      } else {
+        print("에러${inWeduResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   fetchWeduData() async {
     currentPage = 0;
-    var weduResult = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (weduResult.statusCode == 200) {
-      datas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
-      fetchImage(datas);
-    } else {
-      print("에러${weduResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var weduResult = await dio1.get(
+          '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (weduResult.statusCode == 200) {
+        datas = weduResult.data['data'];
+        fetchImage(datas);
+      } else {
+        print("에러${weduResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
     if (mounted) {
       setState(() {});
@@ -166,28 +187,47 @@ class _HomeWeduState extends State<HomeWedu> {
     }
   }
 
-  loadMoreData() async {
+  void loadMoreData() async {
     setState(() {
       _isLoading = true;
     });
 
     List<dynamic> addedDatas = [];
     currentPage++;
-    var weduResult = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+    var dio1 = dio.Dio();
+    try {
+      var weduResult = await dio1.get(
+          '${API.hostConnect}/wedu?sort=$selectedSortType&grade=$grade&subject=$subject&page=$currentPage',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (weduResult.statusCode == 200) {
+        addedDatas = weduResult.data['data'];
+        setState(() {
+          datas.addAll(addedDatas);
+          _isLoading = false;
         });
-    if (weduResult.statusCode == 200) {
-      addedDatas = jsonDecode(utf8.decode(weduResult.bodyBytes))['data'];
+      } else {
+        print("에러${weduResult.statusCode}");
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
       setState(() {
-        datas.addAll(addedDatas);
         _isLoading = false;
       });
-    } else {
-      print("에러${weduResult.statusCode}");
+    } catch (e) {
+      print('Unexpected error: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
 
     fetchImage(addedDatas);
@@ -979,372 +1019,376 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Widget roominfo(index) {
-    return Container(
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.0),
-          topRight: Radius.circular(16.0),
-        ),
-      ),
+    return SafeArea(
       child: Container(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        color: PeeroreumColor.gray[50],
-                        border: Border.all(
-                            width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: PeeroreumColor.white, // 여기에 색상 지정
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+        ),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 72,
+                        height: 72,
+                        decoration: BoxDecoration(
+                          color: PeeroreumColor.gray[50],
+                          border: Border.all(
+                              width: 1, color: PeeroreumColor.gray[200]!),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: (datas[index]['imagePath'] != null)
+                              ? Image.network(
+                                  datas[index]['imagePath'],
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return SvgPicture.asset(
+                                      'assets/images/default.svg',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                )
+                              : SvgPicture.asset(
+                                  'assets/images/default.svg',
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5.0),
-                        child: (datas[index]['imagePath'] != null)
-                            ? Image.network(
-                                datas[index]['imagePath'],
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return SvgPicture.asset(
-                                    'assets/images/default.svg',
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              )
-                            : SvgPicture.asset(
-                                'assets/images/default.svg',
-                                fit: BoxFit.cover,
+                      Container(
+                        height: 72,
+                        padding: EdgeInsets.only(left: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                                color: PeeroreumColor.subjectColor[
+                                    dropdownSubjectList[datas[index]
+                                        ['subject']]]?[0],
                               ),
-                      ),
-                    ),
-                    Container(
-                      height: 72,
-                      padding: EdgeInsets.only(left: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
-                              color: PeeroreumColor.subjectColor[
-                                  dropdownSubjectList[datas[index]
-                                      ['subject']]]?[0],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 8),
-                              child: Text(
-                                dropdownSubjectList[datas[index]["subject"]],
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    height: 1.6,
-                                    fontFamily: 'Pretendard',
-                                    color: PeeroreumColor.subjectColor[
-                                        dropdownSubjectList[datas[index]
-                                            ['subject']]]?[1],
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 8),
+                                child: Text(
+                                  dropdownSubjectList[datas[index]["subject"]],
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      height: 1.6,
+                                      fontFamily: 'Pretendard',
+                                      color: PeeroreumColor.subjectColor[
+                                          dropdownSubjectList[datas[index]
+                                              ['subject']]]?[1],
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Row(
-                            children: [
-                              datas[index]['locked'].toString() == "true"
-                                  ? SvgPicture.asset('assets/icons/lock.svg',
-                                      color: PeeroreumColor.gray[400])
-                                  : SizedBox(),
-                              datas[index]['locked'].toString() == "true"
-                                  ? SizedBox(
-                                      width: 4,
-                                    )
-                                  : SizedBox(),
-                              SizedBox(
-                                width: datas[index]['locked'].toString() ==
-                                        "true"
-                                    ? MediaQuery.of(context).size.width * 0.42
-                                    : MediaQuery.of(context).size.width * 0.48,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(datas[index]["title"]!,
-                                      style: TextStyle(
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              children: [
+                                datas[index]['locked'].toString() == "true"
+                                    ? SvgPicture.asset('assets/icons/lock.svg',
+                                        color: PeeroreumColor.gray[400])
+                                    : SizedBox(),
+                                datas[index]['locked'].toString() == "true"
+                                    ? SizedBox(
+                                        width: 4,
+                                      )
+                                    : SizedBox(),
+                                SizedBox(
+                                  width: datas[index]['locked'].toString() ==
+                                          "true"
+                                      ? MediaQuery.of(context).size.width * 0.42
+                                      : MediaQuery.of(context).size.width *
+                                          0.48,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(datas[index]["title"]!,
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: PeeroreumColor.black,
+                                        )),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // SizedBox(
+                            //   height: 4,
+                            // ),
+                            Row(
+                              children: [
+                                Text(dropdownGradeList[datas[index]["grade"]],
+                                    style: TextStyle(
                                         fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: PeeroreumColor.black,
-                                      )),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: PeeroreumColor.gray[600])),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icons/dot.svg',
+                                    color: PeeroreumColor.gray[600],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          // SizedBox(
-                          //   height: 4,
-                          // ),
-                          Row(
-                            children: [
-                              Text(dropdownGradeList[datas[index]["grade"]],
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: PeeroreumColor.gray[600])),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset(
-                                  'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                Text('${datas[index]["attendingPeopleNum"]!}명',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: PeeroreumColor.gray[600])),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icons/dot.svg',
+                                    color: PeeroreumColor.gray[600],
+                                  ),
                                 ),
-                              ),
-                              Text('${datas[index]["attendingPeopleNum"]!}명',
-                                  style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: PeeroreumColor.gray[600])),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: SvgPicture.asset(
-                                  'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
-                                ),
-                              ),
-                              datas[index]["dday"] > 0
-                                  ? Text('D-${datas[index]["dday"]!}',
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: PeeroreumColor.gray[600]))
-                                  : Text(
-                                      'D+${datas[index]["dday"].toString().substring(1)}',
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: PeeroreumColor.gray[600])),
-                            ],
-                          )
-                        ],
+                                datas[index]["dday"] > 0
+                                    ? Text('D-${datas[index]["dday"]!}',
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: PeeroreumColor.gray[600]))
+                                    : Text(
+                                        'D+${datas[index]["dday"].toString().substring(1)}',
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: PeeroreumColor.gray[600])),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Container(
-                  width: 48,
-                  height: 48,
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: PeeroreumColor.gray[200]!),
-                      color: PeeroreumColor.white,
-                      borderRadius: BorderRadius.circular(8)),
-                  child: IconButton(
-                    onPressed: () async {
-                      final link = await getShortLink(
-                        '/home',
-                        '$index',
-                      );
-                      final THU = Uri.parse(inviDatas[datas[index]['id']]
-                              ['invitationUrl']
-                          .toString());
-                      final RoomName = datas[index]["title"];
-                      int templateId = 102956;
-                      // 카카오톡 실행 가능 여부 확인
-                      bool isKakaoTalkSharingAvailable = await ShareClient
-                          .instance
-                          .isKakaoTalkSharingAvailable();
+                    ],
+                  ),
+                  Container(
+                    width: 48,
+                    height: 48,
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                        color: PeeroreumColor.white,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: IconButton(
+                      onPressed: () async {
+                        final link = await getShortLink(
+                          '/home',
+                          '$index',
+                        );
+                        final THU = Uri.parse(inviDatas[datas[index]['id']]
+                                ['invitationUrl']
+                            .toString());
+                        final RoomName = datas[index]["title"];
+                        int templateId = 102956;
+                        // 카카오톡 실행 가능 여부 확인
+                        bool isKakaoTalkSharingAvailable = await ShareClient
+                            .instance
+                            .isKakaoTalkSharingAvailable();
 
-                      if (isKakaoTalkSharingAvailable) {
-                        try {
-                          Uri uri = await ShareClient.instance.shareCustom(
+                        if (isKakaoTalkSharingAvailable) {
+                          try {
+                            Uri uri = await ShareClient.instance.shareCustom(
+                                templateId: templateId,
+                                templateArgs: {
+                                  'RoomName': '$RoomName',
+                                  'THU': '$THU'
+                                });
+                            await ShareClient.instance.launchKakaoTalk(uri);
+                            print('카카오톡 공유 완료');
+                          } catch (error) {
+                            print('카카오톡 공유 실패 $error');
+                          }
+                        } else {
+                          try {
+                            Uri shareUrl =
+                                await WebSharerClient.instance.makeCustomUrl(
                               templateId: templateId,
                               templateArgs: {
                                 'RoomName': '$RoomName',
                                 'THU': '$THU'
-                              });
-                          await ShareClient.instance.launchKakaoTalk(uri);
-                          print('카카오톡 공유 완료');
-                        } catch (error) {
-                          print('카카오톡 공유 실패 $error');
+                              },
+                            );
+                            await launchBrowserTab(shareUrl, popupOpen: true);
+                          } catch (error) {
+                            print('카카오톡 공유 실패 $error');
+                          }
                         }
-                      } else {
-                        try {
-                          Uri shareUrl =
-                              await WebSharerClient.instance.makeCustomUrl(
-                            templateId: templateId,
-                            templateArgs: {
-                              'RoomName': '$RoomName',
-                              'THU': '$THU'
-                            },
-                          );
-                          await launchBrowserTab(shareUrl, popupOpen: true);
-                        } catch (error) {
-                          print('카카오톡 공유 실패 $error');
-                        }
-                      }
-                    },
-                    icon: SvgPicture.asset(
-                      'assets/icons/share.svg',
-                    ),
-                  ),
-                )
-              ],
-            ),
-            roominfo_tag(index),
-            SizedBox(
-              height: 8,
-            ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              child: Text(
-                inviDatas[datas[index]['id']]['challenge'],
-                style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
-              ),
-              decoration: BoxDecoration(
-                  color: PeeroreumColor.gray[100],
-                  borderRadius: BorderRadius.circular(8)),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Container(
-              height: 162,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          inviDatas[datas[index]['id']]['invitationUrl']),
-                      fit: BoxFit.cover),
-                  color: PeeroreumColor.primaryPuple[400],
-                  borderRadius: BorderRadius.circular(8)),
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(0, 8, 0, 32),
-              width: double.maxFinite,
-              child: inroom_datas
-                      .any((item) => item['id'] == datas[index]['id'])
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: TextButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        child: Text(
-                          '이미 참여 중인 같이방이에요.',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.gray[600],
-                          ),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              PeeroreumColor.gray[300]),
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(vertical: 12)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                        ),
+                      },
+                      icon: SvgPicture.asset(
+                        'assets/icons/share.svg',
                       ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            child: Text(
-                              '닫기',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: PeeroreumColor.gray[600],
-                              ),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.gray[300]),
-                              padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(vertical: 12)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              if (inroom_datas.length < 10) {
-                                Get.back();
-                                datas[index]['locked'].toString() == "true"
-                                    ? insertPassword(index)
-                                    : enrollWedu(index);
-                                fetchDatas();
-                                setState(() {});
-                              } else {
-                                PeeroreumToast.show(
-                                    context, '같이방은 10개까지만 참여 가능해요.');
-                              }
-                            },
-                            child: Text(
-                              '참여하기',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: PeeroreumColor.white,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(vertical: 12)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
-            ),
-          ],
+                  )
+                ],
+              ),
+              roominfo_tag(index),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Text(
+                  inviDatas[datas[index]['id']]['challenge'],
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
+                ),
+                decoration: BoxDecoration(
+                    color: PeeroreumColor.gray[100],
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                height: 162,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(
+                            inviDatas[datas[index]['id']]['invitationUrl']),
+                        fit: BoxFit.cover),
+                    color: PeeroreumColor.primaryPuple[400],
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 8, 0, 32),
+                width: double.maxFinite,
+                child: inroom_datas
+                        .any((item) => item['id'] == datas[index]['id'])
+                    ? SizedBox(
+                        width: double.infinity,
+                        child: TextButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: Text(
+                            '이미 참여 중인 같이방이에요.',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.gray[600],
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                PeeroreumColor.gray[300]),
+                            padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(vertical: 12)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              child: Text(
+                                '닫기',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.gray[600],
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.gray[300]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(vertical: 12)),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                if (inroom_datas.length < 10) {
+                                  Get.back();
+                                  datas[index]['locked'].toString() == "true"
+                                      ? insertPassword(index)
+                                      : enrollWedu(index);
+                                  fetchDatas();
+                                  setState(() {});
+                                } else {
+                                  PeeroreumToast.show(
+                                      context, '같이방은 10개까지만 참여 가능해요.');
+                                }
+                              },
+                              child: Text(
+                                '참여하기',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: PeeroreumColor.white,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(vertical: 12)),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1421,7 +1465,12 @@ class _HomeWeduState extends State<HomeWedu> {
               return RefreshIndicator(
                 onRefresh: () => fetchDatas(),
                 color: PeeroreumColor.primaryPuple[400],
-                child: bodyWidget(),
+                child: SafeArea(
+                  child: Container(
+                    color: PeeroreumColor.white,
+                    child: bodyWidget(),
+                  ),
+                ),
               );
             }
           }),
@@ -1429,33 +1478,60 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   fetchInvitation(id) async {
-    var inviResult = await http
-        .get(Uri.parse('${API.hostConnect}/wedu/$id/invitation'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    if (inviResult.statusCode == 200) {
-      return await jsonDecode(utf8.decode(inviResult.bodyBytes))['data'];
-    } else {
-      print("에러${inviResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var inviResult = await dio1.get('${API.hostConnect}/wedu/$id/invitation',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inviResult.statusCode == 200) {
+        return inviResult.data['data'];
+      } else {
+        print("에러${inviResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   void enrollWedu(index) async {
     var id = datas[index]['id'];
-    var enrollResult = await http
-        .post(Uri.parse('${API.hostConnect}/wedu/$id/enroll'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    if (enrollResult.statusCode == 200) {
-      PeeroreumToast.show(context, "같이방에 참여했어요!");
-    } else if (enrollResult.statusCode == 409) {
-      PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
-    } else {
-      PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+    var dio1 = dio.Dio();
+    try {
+      var enrollResult = await dio1.post('${API.hostConnect}/wedu/$id/enroll',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (enrollResult.statusCode == 200) {
+        PeeroreumToast.show(context, "같이방에 참여했어요!");
+      } else {
+        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 409) {
+          PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
+        } else if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 같이방입니다.');
+        } else {
+          PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+          print("에러${e.response?.statusCode}");
+        }
+      } else {
+        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+        print("Error sending request! ${e.message}");
+      }
+    } catch (e) {
+      print("Unexpected error: $e");
     }
-    print('에러${enrollResult.statusCode}${enrollResult.body}');
     setState(() {});
   }
 
@@ -1546,7 +1622,8 @@ class _HomeWeduState extends State<HomeWedu> {
                             passwordController.text == datas[index]['password']
                                 ? enrollWedu(index)
                                 : PeeroreumToast.show(
-                                    context, '비밀번호가 일치하지 않아요.');
+                                    context, '비밀번호가 일치하지 않아요.',
+                                    isError: true);
                             Get.back();
                           },
                           child: Text(

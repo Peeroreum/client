@@ -87,7 +87,12 @@ class _ReportState extends State<Report> {
                 fontWeight: FontWeight.w500),
           ),
         ),
-        body: bodyWidget(),
+        body: SafeArea(
+          child: Container(
+            color: PeeroreumColor.white,
+            child: bodyWidget(),
+          ),
+        ),
       ),
     );
   }
@@ -258,7 +263,7 @@ class _ReportState extends State<Report> {
           //신고하기 버튼
           Container(
             color: PeeroreumColor.white,
-            margin: EdgeInsets.fromLTRB(20, 66, 20, 8),
+            margin: EdgeInsets.fromLTRB(20, 36, 20, 8),
             width: MediaQuery.of(context).size.width,
             child: SizedBox(
               height: 48,
@@ -272,6 +277,7 @@ class _ReportState extends State<Report> {
                     ? () {
                         sendMail();
                         PeeroreumToast.show(context, "신고가 접수되었어요.");
+                        Navigator.pop(context);
                         Navigator.pop(context);
                       }
                     : null,
@@ -354,216 +360,220 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
           topRight: Radius.circular(16.0),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(
-            height: 16,
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Container(
-                height: 24,
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  '신고사유',
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              height: 16,
+            ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Container(
+                  height: 24,
+                  alignment: Alignment.centerLeft,
+                  child: const Text(
+                    '신고사유',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                //욕설 및 비방
+                setState(() {
+                  reason = [true, false, false, false];
+                  selectedReason = '욕설 및 비방';
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Container(
+                  height: 24,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '욕설 및 비방',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: reason[0]
+                              ? PeeroreumColor.primaryPuple[400]
+                              : PeeroreumColor.black,
+                        ),
+                      ),
+                      if (reason[0])
+                        SvgPicture.asset(
+                          'assets/icons/check2.svg',
+                          color: PeeroreumColor.primaryPuple[400],
+                        )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                //음란물 및 불건전한 대화
+                setState(() {
+                  reason = [false, true, false, false];
+                  selectedReason = '음란물 및 불건전한 대화';
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Container(
+                  height: 24,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '음란물 및 불건전한 대화',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: reason[1]
+                              ? PeeroreumColor.primaryPuple[400]
+                              : PeeroreumColor.black,
+                        ),
+                      ),
+                      if (reason[1])
+                        SvgPicture.asset(
+                          'assets/icons/check2.svg',
+                          color: PeeroreumColor.primaryPuple[400],
+                        )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                //상업적 광고 및 판매
+                setState(() {
+                  reason = [false, false, true, false];
+                  selectedReason = '상업적 광고 및 판매';
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Container(
+                  height: 24,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '상업적 광고 및 판매',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: (reason[2])
+                              ? PeeroreumColor.primaryPuple[400]
+                              : PeeroreumColor.black,
+                        ),
+                      ),
+                      if (reason[2])
+                        SvgPicture.asset(
+                          'assets/icons/check2.svg',
+                          color: PeeroreumColor.primaryPuple[400],
+                        )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                //기타
+                setState(() {
+                  reason = [false, false, false, true];
+                  selectedReason = '기타';
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Container(
+                  height: 24,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '기타',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: reason[3]
+                              ? PeeroreumColor.primaryPuple[400]
+                              : PeeroreumColor.black,
+                        ),
+                      ),
+                      if (reason[3])
+                        SvgPicture.asset(
+                          'assets/icons/check2.svg',
+                          color: PeeroreumColor.primaryPuple[400],
+                        )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              height: 48,
+              margin: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 20,
+              ),
+              width: double.maxFinite,
+              child: TextButton(
+                onPressed: () {
+                  widget.updateReason(reason, selectedReason);
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+                child: Text(
+                  '선택완료',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.white,
                   ),
-                )),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              //욕설 및 비방
-              setState(() {
-                reason = [true, false, false, false];
-                selectedReason = '욕설 및 비방';
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Container(
-                height: 24,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '욕설 및 비방',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: reason[0]
-                            ? PeeroreumColor.primaryPuple[400]
-                            : PeeroreumColor.black,
-                      ),
-                    ),
-                    if (reason[0])
-                      SvgPicture.asset(
-                        'assets/icons/check2.svg',
-                        color: PeeroreumColor.primaryPuple[400],
-                      )
-                  ],
                 ),
               ),
             ),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              //음란물 및 불건전한 대화
-              setState(() {
-                reason = [false, true, false, false];
-                selectedReason = '음란물 및 불건전한 대화';
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Container(
-                height: 24,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '음란물 및 불건전한 대화',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: reason[1]
-                            ? PeeroreumColor.primaryPuple[400]
-                            : PeeroreumColor.black,
-                      ),
-                    ),
-                    if (reason[1])
-                      SvgPicture.asset(
-                        'assets/icons/check2.svg',
-                        color: PeeroreumColor.primaryPuple[400],
-                      )
-                  ],
-                ),
-              ),
+            SizedBox(
+              height: 21,
             ),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              //상업적 광고 및 판매
-              setState(() {
-                reason = [false, false, true, false];
-                selectedReason = '상업적 광고 및 판매';
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Container(
-                height: 24,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '상업적 광고 및 판매',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: (reason[2])
-                            ? PeeroreumColor.primaryPuple[400]
-                            : PeeroreumColor.black,
-                      ),
-                    ),
-                    if (reason[2])
-                      SvgPicture.asset(
-                        'assets/icons/check2.svg',
-                        color: PeeroreumColor.primaryPuple[400],
-                      )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              //기타
-              setState(() {
-                reason = [false, false, false, true];
-                selectedReason = '기타';
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Container(
-                height: 24,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '기타',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: reason[3]
-                            ? PeeroreumColor.primaryPuple[400]
-                            : PeeroreumColor.black,
-                      ),
-                    ),
-                    if (reason[3])
-                      SvgPicture.asset(
-                        'assets/icons/check2.svg',
-                        color: PeeroreumColor.primaryPuple[400],
-                      )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            height: 48,
-            margin: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 20,
-            ),
-            width: double.maxFinite,
-            child: TextButton(
-              onPressed: () {
-                widget.updateReason(reason, selectedReason);
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      PeeroreumColor.primaryPuple[400]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ))),
-              child: Text(
-                '선택완료',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: PeeroreumColor.white,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 21,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

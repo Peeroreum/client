@@ -246,162 +246,169 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   ],
                 ),
               )),
-          body: FutureBuilder<void>(
-            future: initFuture,
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                return datas.isEmpty
-                    ? Center(
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 16, horizontal: 20),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    '검색된 질문',
-                                    style: TextStyle(
-                                        color: PeeroreumColor.gray[800],
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Text(
-                                    '${datas.length}',
-                                    style: TextStyle(
-                                        color: PeeroreumColor.gray[600],
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: dropdown_body(),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/no_wedu_oreum.png',
-                                    width: 150,
-                                  ),
-                                  Text(
-                                    '검색된 질문이 없어요',
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                        color: PeeroreumColor.black),
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Text(
-                                    '질문을 작성해보세요!',
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        color: PeeroreumColor.gray[700]),
-                                  ),
-                                  SizedBox(
-                                    height: 32,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Get.to(() => CreateIedu());
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                      height: 48,
-                                      width: 208,
-                                      decoration: BoxDecoration(
-                                        color: PeeroreumColor.primaryPuple[400],
-                                        borderRadius: BorderRadius.circular(8),
+          body: SafeArea(
+            child: Container(
+              color: PeeroreumColor.white,
+              child: FutureBuilder<void>(
+                future: initFuture,
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    return datas.isEmpty
+                        ? Center(
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 20),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        '검색된 질문',
+                                        style: TextStyle(
+                                            color: PeeroreumColor.gray[800],
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
                                       ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/icons/pencil_with_line.svg',
-                                            color: PeeroreumColor.white,
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          T4_16px(
-                                            text: '내가해냄 질문하러 가기',
-                                            color: PeeroreumColor.white,
-                                          )
-                                        ],
+                                      SizedBox(
+                                        width: 4,
                                       ),
-                                    ),
+                                      Text(
+                                        '${datas.length}',
+                                        style: TextStyle(
+                                            color: PeeroreumColor.gray[600],
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
+                                      )
+                                    ],
                                   ),
-                                  SizedBox(
-                                    height: 56,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    '검색된 내가해냄',
-                                    style: TextStyle(
-                                        color: PeeroreumColor.gray[800],
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child: dropdown_body(),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/no_wedu_oreum.png',
+                                        width: 150,
+                                      ),
+                                      Text(
+                                        '검색된 질문이 없어요',
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                            color: PeeroreumColor.black),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Text(
+                                        '질문을 작성해보세요!',
+                                        style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w400,
+                                            color: PeeroreumColor.gray[700]),
+                                      ),
+                                      SizedBox(
+                                        height: 32,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Get.to(() => CreateIedu());
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 12),
+                                          height: 48,
+                                          width: 208,
+                                          decoration: BoxDecoration(
+                                            color: PeeroreumColor
+                                                .primaryPuple[400],
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/icons/pencil_with_line.svg',
+                                                color: PeeroreumColor.white,
+                                              ),
+                                              SizedBox(
+                                                width: 8,
+                                              ),
+                                              T4_16px(
+                                                text: '내가해냄 질문하러 가기',
+                                                color: PeeroreumColor.white,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 56,
+                                      )
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 4,
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        '검색된 내가해냄',
+                                        style: TextStyle(
+                                            color: PeeroreumColor.gray[800],
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        '${datas.length}',
+                                        style: TextStyle(
+                                            color: PeeroreumColor.gray[600],
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
+                                      )
+                                    ],
                                   ),
-                                  Text(
-                                    '${datas.length}',
-                                    style: TextStyle(
-                                        color: PeeroreumColor.gray[600],
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
-                                  )
-                                ],
-                              ),
+                                ),
+                                dropdown_body(),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Expanded(child: asks())
+                              ],
                             ),
-                            dropdown_body(),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Expanded(child: asks())
-                          ],
-                        ),
-                      );
-              }
-            },
+                          );
+                  }
+                },
+              ),
+            ),
           )),
     );
   }

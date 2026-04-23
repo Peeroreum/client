@@ -51,68 +51,62 @@ class _ComplimentListState extends State<ComplimentList> {
                     color: PeeroreumColor.black),
               ),
               centerTitle: true,
-              actions: [
-                IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/icons/icon_dots_mono.svg',
-                      color: PeeroreumColor.gray[800],
-                      width: 24,
-                    ))
-              ],
             ),
-            body: Container(
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 13, horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '전체',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: PeeroreumColor.gray[500]),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              '${successList.length}',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: PeeroreumColor.gray[500]),
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              '명',
-                              style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: PeeroreumColor.gray[500]),
-                            ),
-                          ],
-                        ),
-                      ],
+            body: SafeArea(
+              child: Container(
+                child: Column(
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 13, horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '전체',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[500]),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                '${successList.length}',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[500]),
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                '명',
+                                style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[500]),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: PeeroreumColor.gray[100],
-                    thickness: 1,
-                    height: 8,
-                  ),
-                  okList()
-                ],
+                    Divider(
+                      color: PeeroreumColor.gray[100],
+                      thickness: 1,
+                      height: 8,
+                    ),
+                    okList()
+                  ],
+                ),
               ),
             ),
           );
@@ -132,7 +126,8 @@ class _ComplimentListState extends State<ComplimentList> {
                   if (mynickname == successList[index]['nickname']) {
                     am_i = true;
                   }
-                  Get.to(()=>MyPageProfile(successList[index]['nickname'], am_i));
+                  Get.to(() =>
+                      MyPageProfile(successList[index]['nickname'], am_i));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -172,7 +167,9 @@ class _ComplimentListState extends State<ComplimentList> {
                         width: 8,
                       ),
                       Text(
-                        (successList[index]['nickname'] == mynickname)? '$mynickname (나)' : successList[index]['nickname'],
+                        (successList[index]['nickname'] == mynickname)
+                            ? '$mynickname (나)'
+                            : successList[index]['nickname'],
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,

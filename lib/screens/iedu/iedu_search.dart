@@ -268,7 +268,12 @@ class _SearchIeduState extends State<SearchIedu> {
       },
       child: Scaffold(
         appBar: appbarWidget(),
-        body: bodyWidget(),
+        body: SafeArea(
+          child: Container(
+            color: PeeroreumColor.white,
+            child: bodyWidget(),
+          ),
+        ),
       ),
     );
   }

@@ -362,41 +362,43 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                 ],
               );
             }),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
-          child: SizedBox(
-            height: 48,
-            child: TextButton(
-              onPressed: () {
-                selectedUserList.clear();
-                for (int i = 0; i < isCheckedList.length; i++) {
-                  if (isActiveList[i] == true && isCheckedList[i] == true) {
-                    selectedUserList.add(memberList[i]['nickname']);
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            child: SizedBox(
+              height: 48,
+              child: TextButton(
+                onPressed: () {
+                  selectedUserList.clear();
+                  for (int i = 0; i < isCheckedList.length; i++) {
+                    if (isActiveList[i] == true && isCheckedList[i] == true) {
+                      selectedUserList.add(memberList[i]['nickname']);
+                    }
                   }
-                }
 
-                if (selectedUserList.isNotEmpty) {
-                  showKickDialog();
-                }
-              },
-              child: Text(
-                '참여 종료',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: PeeroreumColor.white,
+                  if (selectedUserList.isNotEmpty) {
+                    showKickDialog();
+                  }
+                },
+                child: Text(
+                  '참여 종료',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.white,
+                  ),
                 ),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        PeeroreumColor.primaryPuple[400]),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
               ),
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      PeeroreumColor.primaryPuple[400]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ))),
             ),
           ),
         ));

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -12,7 +11,6 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
@@ -86,49 +84,80 @@ class _DetailIeduState extends State<DetailIedu> {
 
   fetchSelectedQuestion(bool selectExist) async {
     if (selectExist == true) {
-      var selectedQuestionResult = await http
-          .get(Uri.parse('${API.hostConnect}/answer/$id/selected'), headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      });
-      if (selectedQuestionResult.statusCode == 200) {
-        selectedDatas =
-            jsonDecode(utf8.decode(selectedQuestionResult.bodyBytes))['data'];
-        sltProfileDatas = selectedDatas['memberProfileDto'];
-      } else {
-        print("fetchIeduQuestionData에러${selectedQuestionResult.statusCode}");
+      var dio1 = dio.Dio();
+      try {
+        var selectedQuestionResult = await dio1.get(
+            '${API.hostConnect}/answer/$id/selected',
+            options: dio.Options(headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            }));
+        if (selectedQuestionResult.statusCode == 200) {
+          selectedDatas = selectedQuestionResult.data['data'];
+          sltProfileDatas = selectedDatas['memberProfileDto'];
+        } else {
+          print("fetchIeduQuestionData에러${selectedQuestionResult.statusCode}");
+        }
+      } on dio.DioException catch (e) {
+        if (e.response != null) {
+          print('Dio error!');
+          print('STATUS: ${e.response?.statusCode}');
+          print('DATA: ${e.response?.data}');
+        } else {
+          print('Error sending request!');
+          print(e.message);
+        }
+      } catch (e) {
+        print('Unexpected error: $e');
       }
     }
     setState(() {});
   }
 
   fetchIeduQuestionData() async {
-    var inIeduQuestionResult = await http
-        .get(Uri.parse('${API.hostConnect}/question/$id'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    if (inIeduQuestionResult.statusCode == 200) {
-      questionDatas =
-          jsonDecode(utf8.decode(inIeduQuestionResult.bodyBytes))['data'];
-      profileDatas = questionDatas['memberProfileDto'];
-      profileImage = profileDatas['profileImage'];
-      grade = profileDatas['grade'];
-      name = profileDatas['nickname'];
-      date = questionDatas['createdTime'];
-      title = questionDatas['title'];
-      contents = questionDatas['content'];
-      questionImage = questionDatas['imageUrls'];
-      isLiked = questionDatas['liked'];
-      isBookmarked = questionDatas['bookmarked'];
-      likesNum = questionDatas['likes'];
-      commentsNum = questionDatas['comments'];
-      print(questionImage);
-    } else if (inIeduQuestionResult.statusCode == 404) {
-      Get.offAllNamed('/home/iedu');
-      print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
-    } else {
-      print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var inIeduQuestionResult = await dio1.get(
+          '${API.hostConnect}/question/$id',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inIeduQuestionResult.statusCode == 200) {
+        questionDatas = inIeduQuestionResult.data['data'];
+        profileDatas = questionDatas['memberProfileDto'];
+        profileImage = profileDatas['profileImage'];
+        grade = profileDatas['grade'];
+        name = profileDatas['nickname'];
+        date = questionDatas['createdTime'];
+        title = questionDatas['title'];
+        contents = questionDatas['content'];
+        questionImage = questionDatas['imageUrls'];
+        isLiked = questionDatas['liked'];
+        isBookmarked = questionDatas['bookmarked'];
+        likesNum = questionDatas['likes'];
+        commentsNum = questionDatas['comments'];
+        print(questionImage);
+      } else if (inIeduQuestionResult.statusCode == 404) {
+        Get.offAllNamed('/home/iedu');
+        print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
+      } else {
+        print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          Get.offAllNamed('/home/iedu');
+        }
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
     setState(() {});
   }
@@ -136,19 +165,32 @@ class _DetailIeduState extends State<DetailIedu> {
   fetchIeduAnswerData() async {
     page = 0;
     print(page);
-    var inIeduAnswerResult = await http.get(
-        Uri.parse('${API.hostConnect}/answer?questionId=$id&page=$page'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (inIeduAnswerResult.statusCode == 200) {
-      commentDatas =
-          jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
-      print(commentDatas);
-      setState(() {});
-    } else {
-      print("fetchIeduAnswerData에러${inIeduAnswerResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var inIeduAnswerResult = await dio1.get(
+          '${API.hostConnect}/answer?questionId=$id&page=$page',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inIeduAnswerResult.statusCode == 200) {
+        commentDatas = inIeduAnswerResult.data['data'];
+        print(commentDatas);
+        setState(() {});
+      } else {
+        print("fetchIeduAnswerData에러${inIeduAnswerResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
     setState(() {});
   }
@@ -183,21 +225,37 @@ class _DetailIeduState extends State<DetailIedu> {
 
     List<dynamic> addedDatas = [];
     page++;
-    var inIeduAnswerResult = await http.get(
-        Uri.parse('${API.hostConnect}/answer?questionId=$id&page=$page'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+    var dio1 = dio.Dio();
+    try {
+      var inIeduAnswerResult = await dio1.get(
+          '${API.hostConnect}/answer?questionId=$id&page=$page',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inIeduAnswerResult.statusCode == 200) {
+        addedDatas = inIeduAnswerResult.data['data'];
+        setState(() {
+          commentDatas.addAll(addedDatas);
+          _isLoading = false;
         });
-    if (inIeduAnswerResult.statusCode == 200) {
-      addedDatas =
-          jsonDecode(utf8.decode(inIeduAnswerResult.bodyBytes))['data'];
+      } else {
+        print("에러${inIeduAnswerResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
       setState(() {
-        commentDatas.addAll(addedDatas);
         _isLoading = false;
       });
-    } else {
-      print("에러${inIeduAnswerResult.statusCode}");
+    } catch (e) {
+      print('Unexpected error: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -701,223 +759,226 @@ class _DetailIeduState extends State<DetailIedu> {
           ],
         ),
       ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Visibility(
-            visible: _image != null,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              height: 212,
-              width: double.maxFinite,
-              color: Colors.black.withOpacity(0.4),
+      bottomNavigationBar: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Visibility(
+              visible: _image != null,
               child: Container(
-                height: 180,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                height: 212,
                 width: double.maxFinite,
-                decoration: _image != null
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: FileImage(File(_image!.path)),
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : null,
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    margin: EdgeInsets.only(top: 8, right: 8),
-                    width: 24,
-                    height: 24,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        setState(() {
-                          _image = null;
-                          if (comment == "") {
-                            isSubmittable = false;
-                          }
-                        });
-                      },
-                      child: Opacity(
-                          opacity: 0.4,
-                          child: SvgPicture.asset('assets/icons/x_circle.svg')),
+                color: Colors.black.withOpacity(0.4),
+                child: Container(
+                  height: 180,
+                  width: double.maxFinite,
+                  decoration: _image != null
+                      ? BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: FileImage(File(_image!.path)),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : null,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 8, right: 8),
+                      width: 24,
+                      height: 24,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          setState(() {
+                            _image = null;
+                            if (comment == "") {
+                              isSubmittable = false;
+                            }
+                          });
+                        },
+                        child: Opacity(
+                            opacity: 0.4,
+                            child:
+                                SvgPicture.asset('assets/icons/x_circle.svg')),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: PeeroreumColor.gray[50],
-                border: Border(
-                    top: BorderSide(
-                  color: PeeroreumColor.gray[100]!,
-                  width: 1.0,
-                ))),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              LayoutBuilder(builder: (context, constraints) {
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  constraints: BoxConstraints(minHeight: 48),
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                      color: PeeroreumColor.gray[100],
-                      border: Border.all(color: PeeroreumColor.gray[200]!),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width - 108,
-                          child: TextFormField(
-                            focusNode: _focusNode,
-                            controller: _textController,
-                            style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
-                            maxLines: _maxLines,
-                            cursorColor: PeeroreumColor.gray[600],
-                            decoration: InputDecoration(
-                                isDense: true,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                                hintText: (selectedParent == -1)
-                                    ? "댓글을 입력하세요"
-                                    : "대댓글을 입력하세요",
-                                hintStyle: TextStyle(
-                                  color: PeeroreumColor.gray[600],
+            Container(
+              decoration: BoxDecoration(
+                  color: PeeroreumColor.gray[50],
+                  border: Border(
+                      top: BorderSide(
+                    color: PeeroreumColor.gray[100]!,
+                    width: 1.0,
+                  ))),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                LayoutBuilder(builder: (context, constraints) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    constraints: BoxConstraints(minHeight: 48),
+                    width: double.maxFinite,
+                    decoration: BoxDecoration(
+                        color: PeeroreumColor.gray[100],
+                        border: Border.all(color: PeeroreumColor.gray[200]!),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width - 108,
+                            child: TextFormField(
+                              focusNode: _focusNode,
+                              controller: _textController,
+                              style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                )),
-                            onChanged: (value) {
-                              comment = value;
-                              final lines = textlines(value);
-                              setState(() {
-                                if (comment != "" || _image != null) {
-                                  isSubmittable = true;
-                                } else {
-                                  isSubmittable = false;
-                                }
-                                _visibleLines = lines;
-                                // 최대 4줄까지만 입력 가능하도록 설정
-                                _maxLines = (_visibleLines > 4 ? 4 : null);
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          print(selectedParent);
-                          if (isSubmittable) {
-                            postAnswer();
-                            setState(() {
-                              FocusScope.of(context).unfocus();
-                              fetchIeduAnswerData();
-                            });
-                          }
-                        },
-                        child: Container(
-                          height: 24,
-                          child: Center(
-                            child: T5_14px(
-                              text: '등록',
-                              color: isSubmittable == false
-                                  ? PeeroreumColor.gray[500]
-                                  : PeeroreumColor.primaryPuple[400],
+                                  fontWeight: FontWeight.w400),
+                              maxLines: _maxLines,
+                              cursorColor: PeeroreumColor.gray[600],
+                              decoration: InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: (selectedParent == -1)
+                                      ? "댓글을 입력하세요"
+                                      : "대댓글을 입력하세요",
+                                  hintStyle: TextStyle(
+                                    color: PeeroreumColor.gray[600],
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  )),
+                              onChanged: (value) {
+                                comment = value;
+                                final lines = textlines(value);
+                                setState(() {
+                                  if (comment != "" || _image != null) {
+                                    isSubmittable = true;
+                                  } else {
+                                    isSubmittable = false;
+                                  }
+                                  _visibleLines = lines;
+                                  // 최대 4줄까지만 입력 가능하도록 설정
+                                  _maxLines = (_visibleLines > 4 ? 4 : null);
+                                });
+                              },
                             ),
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                );
-              }),
-              SizedBox(
-                height: 8,
-              ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (_image == null) {
-                        showImagePickerSheet();
-                      } else {
-                        PeeroreumToast.show(
-                            context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          child: SvgPicture.asset(
-                            'assets/icons/camera3.svg',
-                            color: PeeroreumColor.gray[500],
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            print(selectedParent);
+                            if (isSubmittable) {
+                              postAnswer();
+                              setState(() {
+                                FocusScope.of(context).unfocus();
+                                fetchIeduAnswerData();
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: 24,
+                            child: Center(
+                              child: T5_14px(
+                                text: '등록',
+                                color: isSubmittable == false
+                                    ? PeeroreumColor.gray[500]
+                                    : PeeroreumColor.primaryPuple[400],
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        T4_16px(
-                          text: '사진 첨부',
-                          color: PeeroreumColor.gray[500],
                         )
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (_image == null) {
-                        final dynamic whiteboardImage =
-                            await Get.to(() => WhiteboardIedu());
-                        setState(() {
-                          _image = whiteboardImage;
-                          isSubmittable = true;
-                        });
-                      } else {
-                        PeeroreumToast.show(
-                            context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Container(
-                          child: SvgPicture.asset(
-                            'assets/icons/notepad.svg',
-                            color: PeeroreumColor.gray[500],
+                  );
+                }),
+                SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (_image == null) {
+                          showImagePickerSheet();
+                        } else {
+                          PeeroreumToast.show(
+                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 24,
+                            height: 24,
+                            child: SvgPicture.asset(
+                              'assets/icons/camera3.svg',
+                              color: PeeroreumColor.gray[500],
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        T4_16px(
-                          text: '화이트 보드',
-                          color: PeeroreumColor.gray[500],
-                        )
-                      ],
+                          SizedBox(
+                            width: 4,
+                          ),
+                          T4_16px(
+                            text: '사진 첨부',
+                            color: PeeroreumColor.gray[500],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 21,
-              )
-            ]),
-          ),
-        ],
+                    SizedBox(
+                      width: 16,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        if (_image == null) {
+                          final dynamic whiteboardImage =
+                              await Get.to(() => WhiteboardIedu());
+                          setState(() {
+                            _image = whiteboardImage;
+                            isSubmittable = true;
+                          });
+                        } else {
+                          PeeroreumToast.show(
+                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            child: SvgPicture.asset(
+                              'assets/icons/notepad.svg',
+                              color: PeeroreumColor.gray[500],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          T4_16px(
+                            text: '화이트 보드',
+                            color: PeeroreumColor.gray[500],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 21,
+                )
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -953,83 +1014,84 @@ class _DetailIeduState extends State<DetailIedu> {
         context: context,
         builder: (context) {
           return Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: PeeroreumColor.white, // 여기에 색상 지정
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.0),
                 topRight: Radius.circular(16.0),
               ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromCamera();
-                            Get.back();
-                          },
-                          child: Text(
-                            '카메라',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              takeFromCamera();
+                              Get.back();
+                            },
+                            child: Text(
+                              '카메라',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
                             ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
                           ),
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromGallery();
-                            Get.back();
-                          },
-                          child: Text(
-                            '갤러리',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              takeFromGallery();
+                              Get.back();
+                            },
+                            child: Text(
+                              '갤러리',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
                             ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
                           ),
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });
@@ -1223,18 +1285,35 @@ class _DetailIeduState extends State<DetailIedu> {
     dio1.options.contentType = 'multipart/form-data';
     dio1.options.headers = {'Authorization': 'Bearer $token'};
 
-    var response = await dio1.post('${API.hostConnect}/answer', data: formData);
+    try {
+      var response =
+          await dio1.post('${API.hostConnect}/answer', data: formData);
 
-    if (response.statusCode == 200) {
-      fetchDatas();
-      setState(() {
-        _image = null;
-        _textController.clear();
-        _maxLines = null;
-        isSubmittable = false;
-        selectedParent = -1;
-      });
-    } else {
+      if (response.statusCode == 200) {
+        fetchDatas();
+        setState(() {
+          _image = null;
+          _textController.clear();
+          _maxLines = null;
+          isSubmittable = false;
+          selectedParent = -1;
+        });
+      } else {
+        PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+        print('HEADERS: ${e.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
+    } catch (e) {
+      print('Unexpected error: $e');
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
@@ -1258,115 +1337,130 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   Future<void> postBookmark() async {
-    if (isBookmarked == false) {
-      http.post(Uri.parse('${API.hostConnect}/bookmark/question/$id'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }).then((response) {
+    var dio1 = dio.Dio();
+    try {
+      if (isBookmarked == false) {
+        var response = await dio1.post(
+            '${API.hostConnect}/bookmark/question/$id',
+            options: dio.Options(headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            }));
         if (response.statusCode == 200) {
           print('북마크 요청이 성공했습니다.');
-          print('응답: ${response.body}');
-
           fetchDatas();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-          print(response.body);
         } else {
           print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }).catchError((error) {
-        // 요청 과정에서 오류가 발생한 경우 처리
-        print('오류 발생: $error');
-      });
-    } else if (isBookmarked == true) {
-      http.delete(Uri.parse('${API.hostConnect}/bookmark/question/$id'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }).then((response) {
+      } else if (isBookmarked == true) {
+        var response = await dio1.delete(
+            '${API.hostConnect}/bookmark/question/$id',
+            options: dio.Options(headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            }));
         if (response.statusCode == 200) {
           print('북마크 삭제 요청이 성공했습니다.');
-          print('응답: ${response.body}');
-
           fetchDatas();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-          print(response.body);
         } else {
           print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }).catchError((error) {
-        // 요청 과정에서 오류가 발생한 경우 처리
-        print('오류 발생: $error');
-      });
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+        }
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   Future<void> postQLike() async {
-    if (isLiked == false) {
-      http.post(Uri.parse('${API.hostConnect}/like/question/$id'), headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      }).then((response) {
+    var dio1 = dio.Dio();
+    try {
+      if (isLiked == false) {
+        var response = await dio1.post('${API.hostConnect}/like/question/$id',
+            options: dio.Options(headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            }));
         if (response.statusCode == 200) {
           print('질문 좋아요 요청이 성공했습니다.');
-          print('응답: ${response.body}');
-
           fetchDatas();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-          print(response.body);
         } else {
           print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }).catchError((error) {
-        // 요청 과정에서 오류가 발생한 경우 처리
-        print('오류 발생: $error');
-      });
-    } else if (isLiked == true) {
-      http.delete(Uri.parse('${API.hostConnect}/like/question/$id'), headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      }).then((response) {
+      } else if (isLiked == true) {
+        var response = await dio1.delete('${API.hostConnect}/like/question/$id',
+            options: dio.Options(headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            }));
         if (response.statusCode == 200) {
           print('질문 좋아요 삭제 요청이 성공했습니다.');
-          print('응답: ${response.body}');
-
           fetchDatas();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-          print(response.body);
         } else {
           print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }).catchError((error) {
-        // 요청 과정에서 오류가 발생한 경우 처리
-        print('오류 발생: $error');
-      });
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+        }
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
     fetchIeduQuestionData();
   }
 
   Future<void> deleteQuestion() async {
-    http.delete(Uri.parse('${API.hostConnect}/question/$id'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    }).then((response) {
+    var dio1 = dio.Dio();
+    try {
+      var response = await dio1.delete('${API.hostConnect}/question/$id',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
       if (response.statusCode == 200) {
         print('질문 삭제 요청이 성공했습니다.');
-        print('응답: ${response.body}');
       } else if (response.statusCode == 404) {
         PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
-        print(response.body);
       } else {
         PeeroreumToast.show(context, '채택 완료 질문은 삭제할 수 없어요.', isError: true);
         print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
       }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
+        } else {
+          PeeroreumToast.show(context, '채택 완료 질문은 삭제할 수 없어요.', isError: true);
+        }
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
   }
 }
 
@@ -2043,98 +2137,114 @@ class _MakeCommentState extends State<MakeComment> {
   }
 
   Future<void> postALike(answerID, answerLike) async {
-    if (answerLike == false) {
-      http.post(Uri.parse('${API.hostConnect}/like/answer/$answerID'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }).then((response) {
+    var dio1 = dio.Dio();
+    try {
+      if (answerLike == false) {
+        var response = await dio1.post(
+            '${API.hostConnect}/like/answer/$answerID',
+            options: dio.Options(headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            }));
         if (response.statusCode == 200) {
           print('답변 좋아요 요청이 성공했습니다.');
-          print('응답: ${response.body}');
           setState(() {});
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-          print(response.body);
         } else {
           print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }).catchError((error) {
-        // 요청 과정에서 오류가 발생한 경우 처리
-        print('오류 발생: $error');
-      });
-    } else if (answerLike == true) {
-      http.delete(Uri.parse('${API.hostConnect}/like/answer/$answerID'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }).then((response) {
+      } else if (answerLike == true) {
+        var response = await dio1.delete(
+            '${API.hostConnect}/like/answer/$answerID',
+            options: dio.Options(headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            }));
         if (response.statusCode == 200) {
           print('답변 좋아요 삭제 요청이 성공했습니다.');
-          print('응답: ${response.body}');
           setState(() {});
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-          print(response.body);
         } else {
           print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }).catchError((error) {
-        // 요청 과정에서 오류가 발생한 경우 처리
-        print('오류 발생: $error');
-      });
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
+        }
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   Future<void> deleteAnswer(answerID) async {
-    http.delete(Uri.parse('${API.hostConnect}/answer/$answerID'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    }).then((response) {
+    var dio1 = dio.Dio();
+    try {
+      var response = await dio1.delete('${API.hostConnect}/answer/$answerID',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
       if (response.statusCode == 200) {
         print('답변 삭제 요청이 성공했습니다.');
-        print('응답: ${response.body}');
         setState(() {});
-      } else if (response.statusCode == 403) {
-        var code403 = jsonDecode(utf8.decode(response.bodyBytes))['data'];
-        if (code403 == "채택된 답변은 삭제할 수 없습니다.") {
-          PeeroreumToast.show(context, '채택된 답변은 삭제할 수 없어요.', isError: true);
-        } else {
-          PeeroreumToast.show(context, '권한이 없어요.', isError: true);
-        }
-
-        print('응답: ${response.body}');
-        setState(() {});
-      } else if (response.statusCode == 404) {
-        PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
-        print(response.body);
       } else {
         print('답변 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
       }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 403) {
+          var code403 = e.response?.data['data'];
+          if (code403 == "채택된 답변은 삭제할 수 없습니다.") {
+            PeeroreumToast.show(context, '채택된 답변은 삭제할 수 없어요.', isError: true);
+          } else {
+            PeeroreumToast.show(context, '권한이 없어요.', isError: true);
+          }
+        } else if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
+        } else {
+          print('답변 삭제 요청이 실패했습니다. 오류 코드: ${e.response?.statusCode}');
+        }
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+      setState(() {});
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
   }
 
   Future<void> selectAnswer() async {
     print(widget.id);
-    http.put(Uri.parse('${API.hostConnect}/answer/${widget.id}/select'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        }).then((response) {
-      // 서버로부터 받은 응답 처리
+    var dio1 = dio.Dio();
+    try {
+      var response = await dio1.put(
+          '${API.hostConnect}/answer/${widget.id}/select',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
       if (response.statusCode == 200) {
         print('답변 채택 요청이 성공했습니다.');
-        print('응답: ${response.body}');
       } else {
         print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
       }
-    }).catchError((error) {
-      // 요청 과정에서 오류가 발생한 경우 처리
-      print('오류 발생: $error');
-    });
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
   }
 
   checkSelect() async {

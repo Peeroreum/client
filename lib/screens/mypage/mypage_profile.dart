@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
@@ -17,7 +16,6 @@ import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/mypage_profile_friend.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MyPageProfile extends StatefulWidget {
@@ -67,34 +65,61 @@ class _MyPageProfileState extends State<MyPageProfile> {
 
   Future<void> fetchDatas() async {
     token = await storage.read(key: "accessToken");
-    var inWeduResult = await http.get(
-        Uri.parse('${API.hostConnect}/wedu/in?nickname=$nickname'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (inWeduResult.statusCode == 200) {
-      inroom_datas = jsonDecode(utf8.decode(inWeduResult.bodyBytes))['data'];
-      //print("내같이방 성공 ${inWeduResult.statusCode}");
-    } else {
-      print("내같이방 에러 ${inWeduResult.statusCode}");
+    var dio1 = dio.Dio();
+
+    try {
+      var inWeduResult = await dio1.get(
+          '${API.hostConnect}/wedu/in?nickname=$nickname',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (inWeduResult.statusCode == 200) {
+        inroom_datas = inWeduResult.data['data'];
+      } else {
+        print("내같이방 에러 ${inWeduResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
 
-    var profileinfo = await http.get(
-        Uri.parse('${API.hostConnect}/member/profile?nickname=$nickname'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (profileinfo.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(profileinfo.bodyBytes))['data'];
-      grade = data["grade"];
-      followerNumber = data["followerNumber"];
-      followingNumber = data["followingNumber"];
-      profileImage = data["profileImage"];
-      backgroundImage = data["backgroundImage"];
-      is_friend = data['following'];
-      withPeerDay = data['activeDaysCount'];
+    try {
+      var profileinfo = await dio1.get(
+          '${API.hostConnect}/member/profile?nickname=$nickname',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (profileinfo.statusCode == 200) {
+        var data = profileinfo.data['data'];
+        grade = data["grade"];
+        followerNumber = data["followerNumber"];
+        followingNumber = data["followingNumber"];
+        profileImage = data["profileImage"];
+        backgroundImage = data["backgroundImage"];
+        is_friend = data['following'];
+        withPeerDay = data['activeDaysCount'];
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
@@ -105,20 +130,35 @@ class _MyPageProfileState extends State<MyPageProfile> {
     dio1.options.contentType = 'multipart/form-data';
     dio1.options.headers = {'Authorization': 'Bearer $token'};
     dio.FormData imageData = dio.FormData.fromMap(imageMap);
-    var profileChange = await dio1
-        .put('${API.hostConnect}/member/change/profileImage', data: imageData);
-    if (profileChange.statusCode == 200) {
-      print("프로필이미지 성공 ${profileChange.statusMessage}");
-      var data = profileChange.data['data'];
-      setState(() {
-        profileImage = data;
-      });
-      if (am_i) {
-        await storage.write(key: 'profileImage', value: profileImage);
+
+    try {
+      var profileChange = await dio1.put(
+          '${API.hostConnect}/member/change/profileImage',
+          data: imageData);
+      if (profileChange.statusCode == 200) {
+        print("프로필이미지 성공 ${profileChange.statusMessage}");
+        var data = profileChange.data['data'];
+        setState(() {
+          profileImage = data;
+        });
+        if (am_i) {
+          await storage.write(key: 'profileImage', value: profileImage);
+        }
+        PeeroreumToast.show(context, "프로필 이미지가 변경되었어요.");
+      } else {
+        print("프로필이미지 ${profileChange.statusMessage}");
       }
-      PeeroreumToast.show(context, "프로필 이미지가 변경되었어요.");
-    } else {
-      print("프로필이미지 ${profileChange.statusMessage}");
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
@@ -129,138 +169,238 @@ class _MyPageProfileState extends State<MyPageProfile> {
     dio1.options.contentType = 'multipart/form-data';
     dio1.options.headers = {'Authorization': 'Bearer $token'};
     dio.FormData imageData = dio.FormData.fromMap(imageMap1);
-    var backgroundChange = await dio1.put(
-        '${API.hostConnect}/member/change/backgroundImage',
-        data: imageData);
-    if (backgroundChange.statusCode == 200) {
-      print("배경이미지 성공 ${backgroundChange.statusMessage}");
-      var data = backgroundChange.data['data'];
-      setState(() {
-        backgroundImage = data;
-      });
-      PeeroreumToast.show(context, "배경 이미지가 변경되었어요.");
-    } else {
-      print("배경이미지 ${backgroundChange.statusMessage}");
+
+    try {
+      var backgroundChange = await dio1.put(
+          '${API.hostConnect}/member/change/backgroundImage',
+          data: imageData);
+      if (backgroundChange.statusCode == 200) {
+        print("배경이미지 성공 ${backgroundChange.statusMessage}");
+        var data = backgroundChange.data['data'];
+        setState(() {
+          backgroundImage = data;
+        });
+        PeeroreumToast.show(context, "배경 이미지가 변경되었어요.");
+      } else {
+        print("배경이미지 ${backgroundChange.statusMessage}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   nicknameAPI() async {
-    var change_my_nickname = await http.put(
-        Uri.parse(
-            '${API.hostConnect}/member/change/nickname?nickname=${change_nickname_controller.text}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+    var dio1 = dio.Dio();
+    try {
+      var change_my_nickname = await dio1.put(
+          '${API.hostConnect}/member/change/nickname?nickname=${change_nickname_controller.text}',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (change_my_nickname.statusCode == 200) {
+        var data = change_my_nickname.data["data"];
+        setState(() {
+          nickname = data;
         });
-    if (change_my_nickname.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(change_my_nickname.bodyBytes))["data"];
-      setState(() {
-        nickname = data;
-      });
-      if (am_i) {
-        await storage.write(key: 'nickname', value: nickname);
+        if (am_i) {
+          await storage.write(key: 'nickname', value: nickname);
+        }
+        Get.back();
+        PeeroreumToast.show(context, "닉네임이 변경되었어요.");
+      } else {
+        print("닉네임변경 에러${change_my_nickname.statusCode}");
       }
-      Get.back();
-      PeeroreumToast.show(context, "닉네임이 변경되었어요.");
-    } else {
-      print("닉네임변경 에러${change_my_nickname.statusCode}");
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   follow() async {
     //친구 팔로우
-    var friendName = await http.post(
-        Uri.parse('${API.hostConnect}/member/friend/follow?nickname=$nickname'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+    var dio1 = dio.Dio();
+    try {
+      var friendName = await dio1.post(
+          '${API.hostConnect}/member/friend/follow?nickname=$nickname',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (friendName.statusCode == 200) {
+        setState(() {
+          is_friend = true;
         });
-    if (friendName.statusCode == 200) {
-      setState(() {
-        is_friend = true;
-      });
-      PeeroreumToast.show(context, "친구 추가를 완료했어요.");
-    } else if (friendName.statusCode == 404) {
-      PeeroreumToast.show(context, "존재하지 않는 회원이에요.", isError: true);
-    } else if (friendName.statusCode == 400) {
-      PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
-    } else if (friendName.statusCode == 409) {
-      PeeroreumToast.show(context, "이미 팔로우 중인 회원이에요.", isError: true);
-    } else {
-      setState(() {
-        is_friend = false;
-      });
-      print("친구팔로 에러${friendName.statusCode}");
+        PeeroreumToast.show(context, "친구 추가를 완료했어요.");
+      } else if (friendName.statusCode == 404) {
+        PeeroreumToast.show(context, "존재하지 않는 회원이에요.", isError: true);
+      } else if (friendName.statusCode == 400) {
+        PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
+      } else if (friendName.statusCode == 409) {
+        PeeroreumToast.show(context, "이미 팔로우 중인 회원이에요.", isError: true);
+      } else {
+        setState(() {
+          is_friend = false;
+        });
+        print("친구팔로 에러${friendName.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, "존재하지 않는 회원이에요.", isError: true);
+        } else if (e.response?.statusCode == 400) {
+          PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
+        } else if (e.response?.statusCode == 409) {
+          PeeroreumToast.show(context, "이미 팔로우 중인 회원이에요.", isError: true);
+        } else {
+          PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
+        }
+      } else {
+        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
+      }
+    } catch (e) {
+      PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
     }
     setState(() {});
   }
 
   unfollow() async {
     //친구 언팔로우
-    var friendName = await http.delete(
-        Uri.parse(
-            '${API.hostConnect}/member/friend/unfollow?nickname=$nickname'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+    var dio1 = dio.Dio();
+    try {
+      var friendName = await dio1.delete(
+          '${API.hostConnect}/member/friend/unfollow?nickname=$nickname',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (friendName.statusCode == 200) {
+        setState(() {
+          is_friend = false;
         });
-    if (friendName.statusCode == 200) {
-      setState(() {
-        is_friend = false;
-      });
 
-      PeeroreumToast.show(context, "친구 삭제를 완료했어요.");
-    } else {
+        PeeroreumToast.show(context, "친구 삭제를 완료했어요.");
+      } else {
+        setState(() {
+          is_friend = true;
+        });
+        print("친구언팔 에러${friendName.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
       setState(() {
         is_friend = true;
       });
-      print("친구언팔 에러${friendName.statusCode}");
+    } catch (e) {
+      print('Unexpected error: $e');
+      setState(() {
+        is_friend = true;
+      });
     }
   }
 
   searchfriend() async {
-    var friendName = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/member/profile?nickname=${nickname_controller.text}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (friendName.statusCode == 200) {
-      //check_friend(nickname_controller.text);
-      if (nickname_controller.text == nickname) {
-        PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
+    var dio1 = dio.Dio();
+    try {
+      var friendName = await dio1.get(
+          '${API.hostConnect}/member/profile?nickname=${nickname_controller.text}',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (friendName.statusCode == 200) {
+        //check_friend(nickname_controller.text);
+        if (nickname_controller.text == nickname) {
+          PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
+        } else {
+          Get.back();
+          Get.to(() => MyPageProfile(nickname_controller.text, false),
+                  preventDuplicates: false)
+              ?.then((value) {
+            setState(() {});
+            nickname_controller.clear();
+          });
+        }
+      } else if (friendName.statusCode == 404) {
+        PeeroreumToast.show(context, "존재하지 않는 회원이에요.");
       } else {
-        Get.back();
-        Get.to(() => MyPageProfile(nickname_controller.text, false),
-                preventDuplicates: false)
-            ?.then((value) {
-          setState(() {});
-          nickname_controller.clear();
-        });
+        print("친구찾기 에러${friendName.statusCode}");
       }
-    } else if (friendName.statusCode == 404) {
-      PeeroreumToast.show(context, "존재하지 않는 회원이에요.");
-    } else {
-      print("친구찾기 에러${friendName.statusCode}");
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          PeeroreumToast.show(context, "존재하지 않는 회원이에요.");
+        } else {
+          print("친구찾기 에러${e.response?.statusCode}");
+        }
+      } else {
+        print("Error sending request! ${e.message}");
+      }
+    } catch (e) {
+      print("Unexpected error: $e");
     }
   }
 
   void check_friend(nickname) async {
-    var myfriend = await http
-        .get(Uri.parse('${API.hostConnect}/member/friend=$nickname'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    if (myfriend.statusCode == 200) {
-      setState(() {
-        is_friend = true;
-      });
-    } else {
+    var dio1 = dio.Dio();
+    try {
+      var myfriend = await dio1.get(
+          '${API.hostConnect}/member/friend=$nickname',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (myfriend.statusCode == 200) {
+        setState(() {
+          is_friend = true;
+        });
+      } else {
+        setState(() {
+          is_friend = false;
+        });
+        print("친구체크 에러${myfriend.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error!');
+        print('STATUS: ${e.response?.statusCode}');
+        print('DATA: ${e.response?.data}');
+      } else {
+        print('Error sending request!');
+        print(e.message);
+      }
       setState(() {
         is_friend = false;
       });
-      print("친구체크 에러${myfriend.statusCode}");
+    } catch (e) {
+      print('Unexpected error: $e');
+      setState(() {
+        is_friend = false;
+      });
     }
   }
 
@@ -380,77 +520,79 @@ class _MyPageProfileState extends State<MyPageProfile> {
           topRight: Radius.circular(16.0),
         ),
       ),
-      child: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: PeeroreumColor.gray[100],
-              onTap: () {
-                profileImage_change(context);
-              },
-              child: Container(
-                height: 56,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    B3_18px_R(text: '프로필 변경'),
-                  ],
+      child: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () {
+                  profileImage_change(context);
+                },
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '프로필 변경'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: PeeroreumColor.gray[100],
-              onTap: () {
-                setState(() {
-                  nickname_change();
-                });
-              },
-              child: Container(
-                height: 56,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    B3_18px_R(text: '닉네임 변경'),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: PeeroreumColor.gray[100],
-              onTap: () async {
-                XFile? _image1;
-                final ImagePicker picker1 = ImagePicker();
-                final XFile? pickedFile1 =
-                    await picker1.pickImage(source: ImageSource.gallery);
-                if (pickedFile1 != null) {
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () {
                   setState(() {
-                    _image1 = XFile(pickedFile1.path);
-                    if (_image1 != null) {
-                      setState(() {
-                        backgroundImageAPI(_image1);
-                        Get.back();
-                      });
-                    }
+                    nickname_change();
                   });
-                }
-              },
-              child: Container(
-                height: 56,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    B3_18px_R(text: '배경 변경'),
-                  ],
+                },
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '닉네임 변경'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () async {
+                  XFile? _image1;
+                  final ImagePicker picker1 = ImagePicker();
+                  final XFile? pickedFile1 =
+                      await picker1.pickImage(source: ImageSource.gallery);
+                  if (pickedFile1 != null) {
+                    setState(() {
+                      _image1 = XFile(pickedFile1.path);
+                      if (_image1 != null) {
+                        setState(() {
+                          backgroundImageAPI(_image1);
+                          Get.back();
+                        });
+                      }
+                    });
+                  }
+                },
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '배경 변경'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -642,17 +784,31 @@ class _MyPageProfileState extends State<MyPageProfile> {
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, setState) {
             checkDuplicateNickname(String value) async {
-              var result = await http.get(
-                  Uri.parse('${API.hostConnect}/signup/nickname/$value'),
-                  headers: {'Content-Type': 'application/json'});
-              if (result.statusCode == 409) {
-                setState(() {
-                  isDuplicateNickname = true;
-                });
-              } else {
-                setState(() {
-                  isDuplicateNickname = false;
-                });
+              var dio1 = dio.Dio();
+              try {
+                var result = await dio1.get(
+                    '${API.hostConnect}/signup/nickname/$value',
+                    options: dio.Options(
+                        headers: {'Content-Type': 'application/json'}));
+                if (result.statusCode == 200) {
+                  setState(() {
+                    isDuplicateNickname = false;
+                  });
+                } else {
+                  setState(() {
+                    isDuplicateNickname = true;
+                  });
+                }
+              } on dio.DioException catch (e) {
+                if (e.response?.statusCode == 409) {
+                  setState(() {
+                    isDuplicateNickname = true;
+                  });
+                } else {
+                  print("Nickname check error: ${e.message}");
+                }
+              } catch (e) {
+                print("Unexpected error: $e");
               }
             }
 
@@ -852,51 +1008,37 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget reportUser() {
     return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.25 - 26,
       decoration: BoxDecoration(
         color: PeeroreumColor.white, // 여기에 색상 지정
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
       ),
-      child: Scaffold(
-        body: Container(
+      child: SafeArea(
+        child: Container(
           padding: EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 16),
-                child: Text(
-                  '신고하기',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.black,
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                color: PeeroreumColor.gray[200],
-                height: 1,
-              ),
-              TextButton(
-                onPressed: () {
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () {
                   Get.to(() =>
                       Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
                 },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.fromHeight(40),
-                ),
-                child: Text(
-                  '${nickname} 신고하기',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: PeeroreumColor.gray[600],
+                child: Container(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(
+                        text: '${nickname} 신고하기',
+                        color: PeeroreumColor.error,
+                      ),
+                    ],
                   ),
                 ),
               ),

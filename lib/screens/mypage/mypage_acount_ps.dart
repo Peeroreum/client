@@ -448,42 +448,45 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
 
   Widget bottomsheetWidget() {
     return Container(
-      child: Container(
-        color: PeeroreumColor.white,
-        padding: MediaQuery.of(context).viewInsets.bottom > 0
-            ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
-            : EdgeInsets.fromLTRB(20, 8, 20, 28),
-        width: MediaQuery.of(context).size.width,
-        child: SizedBox(
-          height: 48,
-          child: TextButton(
-            onPressed: (pw_check && pw2_check)
-                ? () async {
-                    member.password = pw_controller.text;
-                    psChangeAPI();
-                  }
-                : null,
-            child: Text(
-              '변경하기',
-              style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.0,
-                  color: PeeroreumColor.white),
+      color: PeeroreumColor.white,
+      child: SafeArea(
+        child: Container(
+          padding: MediaQuery.of(context).viewInsets.bottom > 0
+              ? EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom)
+              : EdgeInsets.fromLTRB(20, 8, 20, 28),
+          width: MediaQuery.of(context).size.width,
+          child: SizedBox(
+            height: 48,
+            child: TextButton(
+              onPressed: (pw_check && pw2_check)
+                  ? () async {
+                      member.password = pw_controller.text;
+                      psChangeAPI();
+                    }
+                  : null,
+              child: Text(
+                '변경하기',
+                style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.0,
+                    color: PeeroreumColor.white),
+              ),
+              style: ButtonStyle(
+                  backgroundColor: (pw_check && pw2_check)
+                      ? MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400])
+                      : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                  padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(vertical: 12)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
+                        ? BorderRadius.zero
+                        : BorderRadius.circular(8.0),
+                  ))),
             ),
-            style: ButtonStyle(
-                backgroundColor: (pw_check && pw2_check)
-                    ? MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400])
-                    : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 12)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
-                      ? BorderRadius.zero
-                      : BorderRadius.circular(8.0),
-                ))),
           ),
         ),
       ),

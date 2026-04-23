@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,12 +7,8 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/FirebaseToken.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/mypage/mypage.dart';
-import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
-import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
-import 'package:peeroreum_client/screens/prepare.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/ranking/ranking.dart';
-import 'package:http/http.dart' as http;
 
 import '../api/PeeroreumApi.dart';
 
@@ -55,93 +50,115 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
 
   postFirebaseToken() async {
     var token = await const FlutterSecureStorage().read(key: 'accessToken');
-    var result = await http.post(
-        Uri.parse('${API.hostConnect}/member/firebasetoken'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-        body: jsonEncode(FirebaseToken(firebaseToken: firebaseToken)));
+    var dio1 = dio.Dio();
+    try {
+      var result = await dio1.post('${API.hostConnect}/member/firebasetoken',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }),
+          data: FirebaseToken(firebaseToken: firebaseToken).toJson());
 
-    if (result.statusCode == 200) {
-      print("firebaseToken post 성공");
-    } else {
-      print("firebaseToken post 실패 ${result.statusCode}");
+      if (result.statusCode == 200) {
+        print("firebaseToken post 성공");
+      } else {
+        print("firebaseToken post 실패 ${result.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 
   Widget bottomNavigatorBarWidget() {
-    return Theme(
-      data: ThemeData(
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: PeeroreumColor.gray[100]!,
+            width: 1,
+          ),
+        ),
       ),
-      child: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            // BottomNavigationBarItem(
-            //     icon: SvgPicture.asset(
-            //       'assets/icons/home.svg',
-            //       color: PeeroreumColor.gray[400],
-            //     ),
-            //     activeIcon: SvgPicture.asset(
-            //       'assets/icons/home_fill.svg',
-            //       color: PeeroreumColor.primaryPuple[400],
-            //     ),
-            //     label: '홈'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/user_three.svg',
-                  color: PeeroreumColor.gray[400],
-                ),
-                activeIcon: SvgPicture.asset(
-                  'assets/icons/user_three_fill.svg',
-                  color: PeeroreumColor.primaryPuple[400],
-                ),
-                label: '같이해냄'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/chats_tear_drop.svg',
-                  color: PeeroreumColor.gray[400],
-                ),
-                activeIcon: SvgPicture.asset(
-                  'assets/icons/chats_tear_drop_fill.svg',
-                  color: PeeroreumColor.primaryPuple[400],
-                ),
-                label: '내가해냄'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/medal.svg',
-                  color: PeeroreumColor.gray[400],
-                ),
-                activeIcon: SvgPicture.asset(
-                  'assets/icons/medal_fill.svg',
-                  color: PeeroreumColor.primaryPuple[400],
-                ),
-                label: '랭킹'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/user.svg',
-                  color: PeeroreumColor.gray[400],
-                ),
-                activeIcon: SvgPicture.asset(
-                  'assets/icons/user_fill.svg',
-                  color: PeeroreumColor.primaryPuple[400],
-                ),
-                label: '마이페이지'),
-          ],
-          currentIndex: selectedIndex,
-          unselectedItemColor: PeeroreumColor.gray[400],
-          unselectedLabelStyle:
-              TextStyle(fontFamily: 'Pretendard', fontSize: 12),
-          selectedItemColor: PeeroreumColor.primaryPuple[400],
-          selectedLabelStyle: TextStyle(fontFamily: 'Pretendard', fontSize: 12),
-          backgroundColor: PeeroreumColor.white,
-          type: BottomNavigationBarType.fixed,
-          onTap: (int index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          }),
+      child: Theme(
+        data: ThemeData(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+            items: <BottomNavigationBarItem>[
+              // BottomNavigationBarItem(
+              //     icon: SvgPicture.asset(
+              //       'assets/icons/home.svg',
+              //       color: PeeroreumColor.gray[400],
+              //     ),
+              //     activeIcon: SvgPicture.asset(
+              //       'assets/icons/home_fill.svg',
+              //       color: PeeroreumColor.primaryPuple[400],
+              //     ),
+              //     label: '홈'),
+              BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/user_three.svg',
+                    color: PeeroreumColor.gray[400],
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'assets/icons/user_three_fill.svg',
+                    color: PeeroreumColor.primaryPuple[400],
+                  ),
+                  label: '같이해냄'),
+              BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/chats_tear_drop.svg',
+                    color: PeeroreumColor.gray[400],
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'assets/icons/chats_tear_drop_fill.svg',
+                    color: PeeroreumColor.primaryPuple[400],
+                  ),
+                  label: '내가해냄'),
+              BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/medal.svg',
+                    color: PeeroreumColor.gray[400],
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'assets/icons/medal_fill.svg',
+                    color: PeeroreumColor.primaryPuple[400],
+                  ),
+                  label: '랭킹'),
+              BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/user.svg',
+                    color: PeeroreumColor.gray[400],
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'assets/icons/user_fill.svg',
+                    color: PeeroreumColor.primaryPuple[400],
+                  ),
+                  label: '마이페이지'),
+            ],
+            currentIndex: selectedIndex,
+            unselectedItemColor: PeeroreumColor.gray[400],
+            unselectedLabelStyle:
+                TextStyle(fontFamily: 'Pretendard', fontSize: 12),
+            selectedItemColor: PeeroreumColor.primaryPuple[400],
+            selectedLabelStyle:
+                TextStyle(fontFamily: 'Pretendard', fontSize: 12),
+            backgroundColor: PeeroreumColor.white,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            onTap: (int index) {
+              setState(() {
+                selectedIndex = index;
+              });
+            }),
+      ),
     );
   }
 

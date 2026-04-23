@@ -88,197 +88,366 @@ class _EmailSignUpState extends State<EmailSignUp> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          reverse: true,
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom * 0.3),
-          child: Container(
-            padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        body: Container(
+          color: PeeroreumColor.white,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              reverse: true,
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom * 0.3),
+              child: Container(
+                padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      '이메일',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '이메일',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextFormField(
+                              controller: id_controller,
+                              onTap: () {
+                                if (id_controller.text.length > 0) {
+                                  setState(() {
+                                    id_showClearbutton = true;
+                                  });
+                                }
+                                setState(() {
+                                  pw_showClearbutton = false;
+                                  pw2_showClearbutton = false;
+                                  id_focus = true;
+                                  pw_focus = false;
+                                  pw2_focus = false;
+                                });
+                              },
+                              onChanged: (value) {
+                                validateEmail();
+                                _checkInput();
+                                setState(() {
+                                  if (value.isNotEmpty) {
+                                    id_showClearbutton = true;
+                                  } else {
+                                    id_showClearbutton = false;
+                                  }
+                                });
+                              },
+                              textInputAction: TextInputAction.next,
+                              onFieldSubmitted: (value) {
+                                id_focus = false;
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'peer@mail.com',
+                                hintStyle: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: PeeroreumColor.gray[600]),
+                                errorText:
+                                    id_duplicate ? "이미 사용 중인 이메일입니다." : null,
+                                errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                        color: PeeroreumColor.error)),
+                                focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: PeeroreumColor.error,
+                                    )),
+                                suffixIcon: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        padding: EdgeInsets.only(left: 12),
+                                        child: id_showClearbutton
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  id_controller.clear();
+                                                  setState(() {
+                                                    id_showClearbutton = false;
+                                                    id_check = false;
+                                                    id_duplicate = false;
+                                                    _checkInput();
+                                                  });
+                                                },
+                                                child: SvgPicture.asset(
+                                                  "assets/icons/x_circle.svg",
+                                                  color:
+                                                      PeeroreumColor.gray[200],
+                                                ))
+                                            : null),
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                    Container(
+                                      padding: id_check
+                                          ? EdgeInsets.fromLTRB(0, 0, 16, 0)
+                                          : null,
+                                      child: id_check
+                                          ? SvgPicture.asset(
+                                              "assets/icons/check.svg",
+                                              color: PeeroreumColor
+                                                  .primaryPuple[400],
+                                            )
+                                          : SizedBox(),
+                                    ),
+                                    Container(
+                                        padding: id_duplicate
+                                            ? EdgeInsets.fromLTRB(0, 0, 16, 0)
+                                            : null,
+                                        child: id_duplicate
+                                            ? SvgPicture.asset(
+                                                "assets/icons/warning_circle.svg",
+                                                color: PeeroreumColor.error,
+                                              )
+                                            : SizedBox())
+                                  ],
+                                ),
+                                helperText: id_focus ? emailHelperText() : null,
+                                helperStyle: emailHelperTextStyle(),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                focusedBorder: id_check
+                                    ? OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                            color: PeeroreumColor
+                                                .primaryPuple[400]!),
+                                      )
+                                    : OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          color: PeeroreumColor.black,
+                                        ),
+                                      ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: id_focus
+                                          ? (id_check
+                                              ? PeeroreumColor
+                                                  .primaryPuple[400]!
+                                              : PeeroreumColor.gray[200]!)
+                                          : PeeroreumColor.gray[200]!),
+                                ),
+                              ),
+                              cursorColor: PeeroreumColor.gray[600]),
+                        )
+                      ],
                     ),
                     SizedBox(
-                      height: 4.0,
+                      height: 40.0,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: TextFormField(
-                          controller: id_controller,
-                          onTap: () {
-                            if (id_controller.text.length > 0) {
-                              setState(() {
-                                id_showClearbutton = true;
-                              });
-                            }
-                            setState(() {
-                              pw_showClearbutton = false;
-                              pw2_showClearbutton = false;
-                              id_focus = true;
-                              pw_focus = false;
-                              pw2_focus = false;
-                            });
-                          },
-                          onChanged: (value) {
-                            validateEmail();
-                            _checkInput();
-                            setState(() {
-                              if (value.isNotEmpty) {
-                                id_showClearbutton = true;
-                              } else {
-                                id_showClearbutton = false;
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '비밀번호',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14),
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextFormField(
+                            controller: pw_controller,
+                            onTap: () {
+                              if (pw_controller.text.length > 0) {
+                                setState(() {
+                                  pw_showClearbutton = true;
+                                });
                               }
-                            });
-                          },
-                          textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (value) {
-                            id_focus = false;
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'peer@mail.com',
-                            hintStyle: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                color: PeeroreumColor.gray[600]),
-                            errorText: id_duplicate ? "이미 사용 중인 이메일입니다." : null,
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                    BorderSide(color: PeeroreumColor.error)),
-                            focusedErrorBorder: OutlineInputBorder(
+                              setState(() {
+                                id_showClearbutton = false;
+                                pw2_showClearbutton = false;
+                                id_focus = false;
+                                pw_focus = true;
+                                pw2_focus = false;
+                              });
+                            },
+                            onChanged: (value) {
+                              _checkInput();
+                              if (value.isNotEmpty) {
+                                pw_showClearbutton = true;
+                                if (pw_controller.text == pw2_controller.text) {
+                                  setState(() {
+                                    pw2_check = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    pw2_check = false;
+                                  });
+                                }
+                              } else {
+                                pw_showClearbutton = false;
+                              }
+                              if (RegExp(
+                                      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
+                                  .hasMatch(pw_controller.text)) {
+                                setState(() {
+                                  pw_check = true;
+                                });
+                              } else {
+                                setState(() {
+                                  pw_check = false;
+                                });
+                              }
+                            },
+                            textInputAction: TextInputAction.next,
+                            onFieldSubmitted: (value) {
+                              pw_focus = false;
+                            },
+                            decoration: InputDecoration(
+                              hintText: '비밀번호를 입력하세요',
+                              hintStyle: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                  color: PeeroreumColor.gray[600]),
+                              errorText:
+                                  pw_controller.text.length >= 2 && !pw_check
+                                      ? "영문, 숫자, 특수문자 포함 8자~12자"
+                                      : null,
+                              errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
                                   color: PeeroreumColor.error,
-                                )),
-                            suffixIcon: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                    padding: EdgeInsets.only(left: 12),
-                                    child: id_showClearbutton
-                                        ? GestureDetector(
-                                            onTap: () {
-                                              id_controller.clear();
-                                              setState(() {
-                                                id_showClearbutton = false;
-                                                id_check = false;
-                                                id_duplicate = false;
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: PeeroreumColor.error,
+                                  )),
+                              suffixIcon: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                      padding: EdgeInsets.only(left: 12),
+                                      child: pw_showClearbutton
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                pw_controller.clear();
+                                                setState(() {
+                                                  pw_showClearbutton = false;
+                                                  pw_check = false;
+                                                });
                                                 _checkInput();
-                                              });
-                                            },
-                                            child: SvgPicture.asset(
-                                              "assets/icons/x_circle.svg",
-                                              color: PeeroreumColor.gray[200],
-                                            ))
-                                        : null),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                Container(
-                                  padding: id_check
-                                      ? EdgeInsets.fromLTRB(0, 0, 16, 0)
-                                      : null,
-                                  child: id_check
-                                      ? SvgPicture.asset(
-                                          "assets/icons/check.svg",
-                                          color:
-                                              PeeroreumColor.primaryPuple[400],
-                                        )
-                                      : SizedBox(),
-                                ),
-                                Container(
-                                    padding: id_duplicate
-                                        ? EdgeInsets.fromLTRB(0, 0, 16, 0)
-                                        : null,
-                                    child: id_duplicate
-                                        ? SvgPicture.asset(
-                                            "assets/icons/warning_circle.svg",
-                                            color: PeeroreumColor.error,
-                                          )
-                                        : SizedBox())
-                              ],
-                            ),
-                            helperText: id_focus ? emailHelperText() : null,
-                            helperStyle: emailHelperTextStyle(),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
-                            focusedBorder: id_check
-                                ? OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                        color:
-                                            PeeroreumColor.primaryPuple[400]!),
-                                  )
-                                : OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
-                                      color: PeeroreumColor.black,
-                                    ),
+                                              },
+                                              child: SvgPicture.asset(
+                                                "assets/icons/x_circle.svg",
+                                                color: PeeroreumColor.gray[200],
+                                              ))
+                                          : null),
+                                  SizedBox(
+                                    width: 12,
                                   ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                  color: id_focus
-                                      ? (id_check
-                                          ? PeeroreumColor.primaryPuple[400]!
-                                          : PeeroreumColor.gray[200]!)
-                                      : PeeroreumColor.gray[200]!),
+                                  pw_suffix()
+                                ],
+                              ),
+                              helperText: pw_check
+                                  ? (pw_focus ? "사용 가능한 비밀번호입니다." : null)
+                                  : "영문, 숫자, 특수문자 포함 8자~12자",
+                              helperStyle: pw_check
+                                  ? TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: PeeroreumColor.primaryPuple[400])
+                                  : TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: PeeroreumColor.gray[600]),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
+                              focusedBorder: pw_check
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                          color: PeeroreumColor
+                                              .primaryPuple[400]!),
+                                    )
+                                  : OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: PeeroreumColor.black,
+                                      ),
+                                    ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    color: pw_focus
+                                        ? (pw_check
+                                            ? PeeroreumColor.primaryPuple[400]!
+                                            : PeeroreumColor.gray[200]!)
+                                        : PeeroreumColor.gray[200]!),
+                              ),
                             ),
+                            showCursor: false,
+                            obscureText: pw_hide,
+                            obscuringCharacter: '●',
                           ),
-                          cursorColor: PeeroreumColor.gray[600]),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 40.0,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '비밀번호',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14),
+                        ),
+                      ],
                     ),
                     SizedBox(
-                      height: 4,
+                      height: 16,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: TextFormField(
-                        controller: pw_controller,
-                        onTap: () {
-                          if (pw_controller.text.length > 0) {
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '비밀번호 확인',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14),
+                        ),
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        TextFormField(
+                          controller: pw2_controller,
+                          scrollPadding: EdgeInsets.only(bottom: 140),
+                          onTap: () {
+                            if (pw2_controller.text.length > 0) {
+                              setState(() {
+                                pw2_showClearbutton = true;
+                              });
+                            }
                             setState(() {
-                              pw_showClearbutton = true;
+                              id_showClearbutton = false;
+                              pw_showClearbutton = false;
+                              id_focus = false;
+                              pw_focus = false;
+                              pw2_focus = true;
                             });
-                          }
-                          setState(() {
-                            id_showClearbutton = false;
-                            pw2_showClearbutton = false;
-                            id_focus = false;
-                            pw_focus = true;
-                            pw2_focus = false;
-                          });
-                        },
-                        onChanged: (value) {
-                          _checkInput();
-                          if (value.isNotEmpty) {
-                            pw_showClearbutton = true;
+                          },
+                          onChanged: (value) {
+                            _checkInput();
+                            if (value.isNotEmpty) {
+                              pw2_showClearbutton = true;
+                            } else {
+                              pw2_showClearbutton = false;
+                            }
                             if (pw_controller.text == pw2_controller.text) {
                               setState(() {
                                 pw2_check = true;
@@ -288,271 +457,113 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                 pw2_check = false;
                               });
                             }
-                          } else {
-                            pw_showClearbutton = false;
-                          }
-                          if (RegExp(
-                                  r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
-                              .hasMatch(pw_controller.text)) {
-                            setState(() {
-                              pw_check = true;
-                            });
-                          } else {
-                            setState(() {
-                              pw_check = false;
-                            });
-                          }
-                        },
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (value) {
-                          pw_focus = false;
-                        },
-                        decoration: InputDecoration(
-                          hintText: '비밀번호를 입력하세요',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              color: PeeroreumColor.gray[600]),
-                          errorText: pw_controller.text.length >= 2 && !pw_check
-                              ? "영문, 숫자, 특수문자 포함 8자~12자"
-                              : null,
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: PeeroreumColor.error,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: PeeroreumColor.error,
-                              )),
-                          suffixIcon: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.only(left: 12),
-                                  child: pw_showClearbutton
+                          },
+                          onFieldSubmitted: (value) {
+                            pw2_focus = false;
+                          },
+                          obscureText: pw2_hide,
+                          obscuringCharacter: '●',
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    color: pw2_focus
+                                        ? (pw2_check
+                                            ? PeeroreumColor.primaryPuple[400]!
+                                            : PeeroreumColor.gray[200]!)
+                                        : PeeroreumColor.gray[200]!)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    color: pw2_check
+                                        ? PeeroreumColor.primaryPuple[400]!
+                                        : PeeroreumColor.black)),
+                            hintText: '비밀번호를 재입력하세요',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: PeeroreumColor.gray[600]),
+                            helperText: pw2_focus
+                                ? (pw2_check ? "비밀번호가 일치합니다." : "")
+                                : null,
+                            helperStyle: TextStyle(
+                                fontFamily: "Pretendard",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                color: PeeroreumColor.primaryPuple[400]),
+                            errorText:
+                                !pw2_check && pw2_controller.text.length >= 2
+                                    ? "비밀번호가 일치하지 않습니다."
+                                    : null,
+                            errorStyle:
+                                !pw2_check && pw2_controller.text.length >= 2
+                                    ? TextStyle(
+                                        fontFamily: "Pretendard",
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                        color: PeeroreumColor.error)
+                                    : null,
+                            errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: PeeroreumColor.error)),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    BorderSide(color: PeeroreumColor.error)),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  pw2_showClearbutton
                                       ? GestureDetector(
                                           onTap: () {
-                                            pw_controller.clear();
+                                            pw2_controller.clear();
                                             setState(() {
-                                              pw_showClearbutton = false;
-                                              pw_check = false;
+                                              pw2_showClearbutton = false;
+                                              pw2_check = false;
                                             });
                                             _checkInput();
                                           },
                                           child: SvgPicture.asset(
                                             "assets/icons/x_circle.svg",
                                             color: PeeroreumColor.gray[200],
-                                          ))
-                                      : null),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              pw_suffix()
-                            ],
-                          ),
-                          helperText: pw_check
-                              ? (pw_focus ? "사용 가능한 비밀번호입니다." : null)
-                              : "영문, 숫자, 특수문자 포함 8자~12자",
-                          helperStyle: pw_check
-                              ? TextStyle(
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  color: PeeroreumColor.primaryPuple[400])
-                              : TextStyle(
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  color: PeeroreumColor.gray[600]),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          focusedBorder: pw_check
-                              ? OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                      color: PeeroreumColor.primaryPuple[400]!),
-                                )
-                              : OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: PeeroreumColor.black,
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                  SizedBox(
+                                    width: 12,
                                   ),
-                                ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                                color: pw_focus
-                                    ? (pw_check
-                                        ? PeeroreumColor.primaryPuple[400]!
-                                        : PeeroreumColor.gray[200]!)
-                                    : PeeroreumColor.gray[200]!),
-                          ),
-                        ),
-                        showCursor: false,
-                        obscureText: pw_hide,
-                        obscuringCharacter: '●',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '비밀번호 확인',
-                      style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14),
-                    ),
-                    SizedBox(
-                      height: 4.0,
-                    ),
-                    TextFormField(
-                      controller: pw2_controller,
-                      scrollPadding: EdgeInsets.only(bottom: 140),
-                      onTap: () {
-                        if (pw2_controller.text.length > 0) {
-                          setState(() {
-                            pw2_showClearbutton = true;
-                          });
-                        }
-                        setState(() {
-                          id_showClearbutton = false;
-                          pw_showClearbutton = false;
-                          id_focus = false;
-                          pw_focus = false;
-                          pw2_focus = true;
-                        });
-                      },
-                      onChanged: (value) {
-                        _checkInput();
-                        if (value.isNotEmpty) {
-                          pw2_showClearbutton = true;
-                        } else {
-                          pw2_showClearbutton = false;
-                        }
-                        if (pw_controller.text == pw2_controller.text) {
-                          setState(() {
-                            pw2_check = true;
-                          });
-                        } else {
-                          setState(() {
-                            pw2_check = false;
-                          });
-                        }
-                      },
-                      onFieldSubmitted: (value) {
-                        pw2_focus = false;
-                      },
-                      obscureText: pw2_hide,
-                      obscuringCharacter: '●',
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                                color: pw2_focus
-                                    ? (pw2_check
-                                        ? PeeroreumColor.primaryPuple[400]!
-                                        : PeeroreumColor.gray[200]!)
-                                    : PeeroreumColor.gray[200]!)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                                color: pw2_check
-                                    ? PeeroreumColor.primaryPuple[400]!
-                                    : PeeroreumColor.black)),
-                        hintText: '비밀번호를 재입력하세요',
-                        hintStyle: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: PeeroreumColor.gray[600]),
-                        helperText: pw2_focus
-                            ? (pw2_check ? "비밀번호가 일치합니다." : "")
-                            : null,
-                        helperStyle: TextStyle(
-                            fontFamily: "Pretendard",
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12,
-                            color: PeeroreumColor.primaryPuple[400]),
-                        errorText: !pw2_check && pw2_controller.text.length >= 2
-                            ? "비밀번호가 일치하지 않습니다."
-                            : null,
-                        errorStyle:
-                            !pw2_check && pw2_controller.text.length >= 2
-                                ? TextStyle(
-                                    fontFamily: "Pretendard",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                    color: PeeroreumColor.error)
-                                : null,
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                BorderSide(color: PeeroreumColor.error)),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                BorderSide(color: PeeroreumColor.error)),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        suffixIcon: Padding(
-                          padding: EdgeInsets.only(left: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              pw2_showClearbutton
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        pw2_controller.clear();
-                                        setState(() {
-                                          pw2_showClearbutton = false;
-                                          pw2_check = false;
-                                        });
-                                        _checkInput();
-                                      },
-                                      child: SvgPicture.asset(
-                                        "assets/icons/x_circle.svg",
-                                        color: PeeroreumColor.gray[200],
-                                      ),
-                                    )
-                                  : SizedBox(),
-                              SizedBox(
-                                width: 12,
+                                  pw2_suffix()
+                                ],
                               ),
-                              pw2_suffix()
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom))
                   ],
                 ),
-                Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom))
-              ],
+              ),
             ),
           ),
         ),
         bottomSheet: Container(
-          child: Container(
-            color: PeeroreumColor.white,
-            padding: MediaQuery.of(context).viewInsets.bottom > 0
-                ? EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom)
-                : EdgeInsets.fromLTRB(20, 8, 20, 28),
-            width: MediaQuery.of(context).size.width,
+          color: PeeroreumColor.white,
+          padding: MediaQuery.of(context).viewInsets.bottom > 0
+              ? EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom)
+              : EdgeInsets.fromLTRB(20, 8, 20, 28),
+          width: MediaQuery.of(context).size.width,
+          child: SafeArea(
             child: SizedBox(
               height: 48,
               child: TextButton(

@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors, deprecated_member_use, non_constant_identifier_names, prefer_typing_uninitialized_variables
 
-import 'dart:convert';
+import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,7 +14,6 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/screens/iedu/iedu_search.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_skeleton.dart';
 
@@ -145,7 +144,12 @@ class _HomeIeduState extends State<HomeIedu> {
             return RefreshIndicator(
               onRefresh: () => fetchStatus(),
               color: PeeroreumColor.primaryPuple[400],
-              child: bodyWidget(),
+              child: SafeArea(
+                child: Container(
+                  color: PeeroreumColor.white,
+                  child: bodyWidget(),
+                ),
+              ),
             );
           }
         },
@@ -165,47 +169,76 @@ class _HomeIeduState extends State<HomeIedu> {
 
   fetchIeduData() async {
     currentPage = 0;
-    var IeduResult = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/question?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (IeduResult.statusCode == 200) {
-      print("성공 fetchIeduData ${IeduResult.statusCode}");
-      datas = jsonDecode(utf8.decode(IeduResult.bodyBytes))['data'];
-    } else {
-      print("에러 fetchIeduData ${IeduResult.statusCode}");
+    var dio1 = dio.Dio();
+    try {
+      var IeduResult = await dio1.get(
+          '${API.hostConnect}/question?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (IeduResult.statusCode == 200) {
+        print("성공 fetchIeduData ${IeduResult.statusCode}");
+        datas = IeduResult.data['data'];
+      } else {
+        print("에러 fetchIeduData ${IeduResult.statusCode}");
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
     if (mounted) {
       setState(() {});
     }
   }
 
-  loadMoreData() async {
+  void loadMoreData() async {
     setState(() {
       _isLoading = true;
     });
 
     List<dynamic> addedDatas = [];
     currentPage++;
-    var IeduResult = await http.get(
-        Uri.parse(
-            '${API.hostConnect}/question?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+    var dio1 = dio.Dio();
+    try {
+      var IeduResult = await dio1.get(
+          '${API.hostConnect}/question?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage',
+          options: dio.Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }));
+      if (IeduResult.statusCode == 200) {
+        addedDatas = IeduResult.data['data'];
+        setState(() {
+          datas.addAll(addedDatas);
+          _isLoading = false;
         });
-    if (IeduResult.statusCode == 200) {
-      addedDatas = jsonDecode(utf8.decode(IeduResult.bodyBytes))['data'];
+        print("성공 loadMoreData ${IeduResult.statusCode}");
+      } else {
+        print("에러 loadMoreData ${IeduResult.statusCode}");
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } on dio.DioException catch (e) {
+      if (e.response != null) {
+        print('Dio error! STATUS: ${e.response?.statusCode}');
+      } else {
+        print('Error sending request! ${e.message}');
+      }
       setState(() {
-        datas.addAll(addedDatas);
         _isLoading = false;
       });
-      print("성공 loadMoreData ${IeduResult.statusCode}");
-    } else {
-      print("에러 loadMoreData ${IeduResult.statusCode}");
+    } catch (e) {
+      print('Unexpected error: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 

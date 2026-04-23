@@ -184,7 +184,12 @@ class _ModifyWeduState extends State<ModifyWedu> {
       child: Scaffold(
         backgroundColor: PeeroreumColor.white,
         appBar: appbarWidget(),
-        body: bodyWidget(),
+        body: SafeArea(
+          child: Container(
+            color: PeeroreumColor.white,
+            child: bodyWidget(),
+          ),
+        ),
       ),
     );
   }

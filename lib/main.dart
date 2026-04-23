@@ -103,7 +103,9 @@ class PeeroreumApp extends StatelessWidget {
           appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
                   statusBarColor: PeeroreumColor.white,
-                  statusBarIconBrightness: Brightness.dark))),
+                  statusBarIconBrightness: Brightness.dark,
+                  systemNavigationBarColor: PeeroreumColor.white,
+                  systemNavigationBarIconBrightness: Brightness.dark))),
       title: 'Peeroreum',
       home: isNewUser
           ? OnBoarding()

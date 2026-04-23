@@ -102,7 +102,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
         child: Scaffold(
           backgroundColor: PeeroreumColor.white,
           appBar: appbarWidget(),
-          body: bodyWidget(),
+          body: SafeArea(child: bodyWidget()),
         ),
       ),
     );

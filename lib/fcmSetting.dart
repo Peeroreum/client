@@ -29,17 +29,34 @@ Future<String?> fcmSetting() async {
     sound: true,
   );
 
-  const AndroidNotificationChannel channel = AndroidNotificationChannel('peeroreum_notification', 'peeroreum_notification', description: '피어오름 알림입니다.', importance: Importance.max);
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'peeroreum_notification', 'peeroreum_notification',
+      description: '피어오름 알림입니다.', importance: Importance.max);
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings();
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
 
-    if(message.notification != null && android != null) {
+    if (message.notification != null && android != null) {
       flutterLocalNotificationsPlugin.show(
-          notification.hashCode ,
+          notification.hashCode,
           notification?.title,
           notification?.body,
           NotificationDetails(
@@ -47,10 +64,10 @@ Future<String?> fcmSetting() async {
               channel.id,
               channel.name,
               channelDescription: channel.description,
-              icon: android.smallIcon
-            )
-          )
-      );
+              icon: android.smallIcon ?? '@mipmap/ic_launcher',
+            ),
+            iOS: const DarwinNotificationDetails(),
+          ));
     }
   });
 
