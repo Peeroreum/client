@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_inquiry.dart';
@@ -538,8 +539,6 @@ class _MyPageState extends State<MyPage> {
                       child: TextButton(
                         onPressed: () async {
                           await logout();
-                          Get.offAllNamed('/signIn/email');
-                          FlutterSecureStorage().deleteAll();
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],
@@ -579,6 +578,8 @@ class _MyPageState extends State<MyPage> {
             'Authorization': 'Bearer $token'
           }));
       print("firebaseToken delete 성공");
+      Get.offAllNamed('/signIn/email');
+      FlutterSecureStorage().deleteAll();
     } on dio.DioException catch (e) {
       if (e.response != null) {
         print("firebaseToken delete 실패 ${e.response?.statusCode}");
