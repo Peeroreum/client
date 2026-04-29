@@ -10,6 +10,9 @@ import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/ranking/ranking.dart';
 
+import 'package:get/get.dart';
+import 'package:peeroreum_client/data/pending_deep_link.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
 import '../api/PeeroreumApi.dart';
 
 class bottomNaviBar extends StatefulWidget {
@@ -38,10 +41,23 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     postFirebaseToken();
     visitCount();
+    _handlePendingDeepLink();
+  }
+
+  void _handlePendingDeepLink() {
+    final roomId = PendingDeepLink.roomId;
+    print('[DeepLink] _handlePendingDeepLink called, roomId=$roomId');
+    if (roomId != null) {
+      PendingDeepLink.roomId = null;
+      // 첫 프레임 렌더링 완료 후 이동
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        print('[DeepLink] addPostFrameCallback firing, showing WeduJoinFromLink modal');
+        WeduJoinFromLink.show(context, roomId);
+      });
+    }
   }
 
   void visitCount() async {

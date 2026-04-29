@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/MemberInfo.dart';
 import 'package:peeroreum_client/model/SignIn.dart';
@@ -276,6 +277,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       secureStorage.write(
                                           key: "grade",
                                           value: data['grade'].toString());
+                                      PendingDeepLink.handleAfterLogin();
                                       Get.offAllNamed('/home');
                                     } else if (result.statusCode == 404 ||
                                         result.statusCode == 401) {
@@ -524,6 +526,7 @@ class _EmailSignInState extends State<EmailSignIn> {
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);
       secureStorage.write(key: "grade", value: data['grade'].toString());
+      PendingDeepLink.handleAfterLogin();
       Get.offAllNamed('/home');
     } else if (result.statusCode == 404) {
       Member member = Member();
