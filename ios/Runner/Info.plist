@@ -28,7 +28,8 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.984740225939-02sqnjvc9hr1lierr8mgrgrhph7cu8l9</string>
-				<string>a17f729816582e161afaae9395c1f1b5</string>
+				<string>kakaoa17f729816582e161afaae9395c1f1b5</string>
+				<string>peeroreum</string>
 			</array>
 		</dict>
 	</array>
@@ -42,6 +43,11 @@
 	<array>
 		<string>https</string>
 		<string>http</string>
+		<string>kakaokompassauth</string>
+		<string>storekit</string>
+		<string>kakaolink</string>
+		<string>kakaotalk</string>
+		<string>kakaostory</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
