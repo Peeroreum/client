@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD4xay-u3aox_CvIpJSNF7woWwLi3bVjlY',
-    appId: '1:984740225939:android:610c533956029c8ae3be66',
+    appId: '1:984740225939:android:32b22cb012110de3e3be66',
     messagingSenderId: '984740225939',
     projectId: 'peeroreum-409506',
     storageBucket: 'peeroreum-409506.appspot.com',
