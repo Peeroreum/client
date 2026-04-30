@@ -30,6 +30,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/screens/sign/signin_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'firebase_options.dart';
 
 // 네이티브 딥링크 채널 (Kakao 인텐트 처리용)
@@ -57,24 +58,34 @@ void main() async {
   // 앱이 실행 중일 때 네이티브로부터 딥링크 수신 (onNewIntent)
   _deepLinkChannel.setMethodCallHandler((call) async {
     if (call.method == 'onDeepLink') {
+      // 같이방 딥링크
       final roomId = call.arguments as String?;
       print('[DeepLink] onDeepLink from native: $roomId');
       if (roomId == null) return;
       final loggedIn = await checkLogIn();
       if (loggedIn) {
-        // 앱이 실행 중 → 현재 화면 위에 바텀시트로 표시
         final ctx = Get.context;
-        if (ctx != null) {
-          WeduJoinFromLink.show(ctx, roomId);
-        }
+        if (ctx != null) WeduJoinFromLink.show(ctx, roomId);
       } else {
         PendingDeepLink.roomId = roomId;
+        Get.offAll(() => EmailSignIn());
+      }
+    } else if (call.method == 'onDeepLinkProfile') {
+      // 프로필 딥링크
+      final nickname = call.arguments as String?;
+      print('[DeepLink] onDeepLinkProfile from native: $nickname');
+      if (nickname == null) return;
+      final loggedIn = await checkLogIn();
+      if (loggedIn) {
+        Get.to(() => MyPageProfile(nickname, false));
+      } else {
+        PendingDeepLink.profileNickname = nickname;
         Get.offAll(() => EmailSignIn());
       }
     }
   });
 
-  // 콜드 스타트: 네이티브 MainActivity에서 추출한 roomId 가져오기
+  // 콜드 스타트: roomId
   try {
     final roomId = await _deepLinkChannel
         .invokeMethod<String>('getInitialRoomId')
@@ -85,30 +96,49 @@ void main() async {
     print('[DeepLink] getInitialRoomId error: $e');
   }
 
-  // app_links는 peeroreum:// 직접 스킴 전용 (카카오 스킴은 네이티브 MethodChannel에서 처리)
+  // 콜드 스타트: nickname
+  try {
+    final nickname = await _deepLinkChannel
+        .invokeMethod<String>('getInitialNickname')
+        .timeout(const Duration(seconds: 3), onTimeout: () => null);
+    print('[DeepLink] getInitialNickname from native: $nickname');
+    if (nickname != null) PendingDeepLink.profileNickname = nickname;
+  } catch (e) {
+    print('[DeepLink] getInitialNickname error: $e');
+  }
+
+  // app_links: iOS 전용 (Android는 MethodChannel로 cold/warm start 모두 처리하므로 중복 방지)
   final appLinks = AppLinks();
   appLinks.uriLinkStream.listen((uri) async {
     print('[DeepLink] uriLinkStream: $uri');
-    // Android: 카카오 스킴은 네이티브 MethodChannel(MainActivity.kt)에서 처리 → 중복 방지
-    // iOS: 네이티브 MethodChannel 없으므로 uriLinkStream에서 처리
-    if (Platform.isAndroid && uri.scheme.startsWith('kakaoa')) return;
+    if (Platform.isAndroid) return; // Android는 MethodChannel이 모두 처리
+
+    // 같이방
     final roomId = extractRoomId(uri);
-    if (roomId == null) return;
-    final loggedIn = await checkLogIn();
-    // 앱이 아직 초기화 중이면 (콜드 스타트) → PendingDeepLink에 저장, bottomNaviBar가 처리
-    if (!_appReady) {
-      print('[DeepLink] uriLinkStream: app not ready, storing pending roomId=$roomId');
-      PendingDeepLink.roomId = roomId;
+    if (roomId != null) {
+      final loggedIn = await checkLogIn();
+      if (!_appReady) { PendingDeepLink.roomId = roomId; return; }
+      if (loggedIn) {
+        final ctx = Get.context;
+        if (ctx != null) WeduJoinFromLink.show(ctx, roomId);
+      } else {
+        PendingDeepLink.roomId = roomId;
+        Get.offAll(() => EmailSignIn());
+      }
       return;
     }
-    if (loggedIn) {
-      final ctx = Get.context;
-      if (ctx != null) {
-        WeduJoinFromLink.show(ctx, roomId);
+
+    // 프로필
+    final nickname = extractNickname(uri);
+    if (nickname != null) {
+      final loggedIn = await checkLogIn();
+      if (!_appReady) { PendingDeepLink.profileNickname = nickname; return; }
+      if (loggedIn) {
+        Get.to(() => MyPageProfile(nickname, false));
+      } else {
+        PendingDeepLink.profileNickname = nickname;
+        Get.offAll(() => EmailSignIn());
       }
-    } else {
-      PendingDeepLink.roomId = roomId;
-      Get.offAll(() => EmailSignIn());
     }
   });
 
@@ -131,29 +161,42 @@ Future<bool> checkLogIn() async {
   return token != null;
 }
 
-/// peeroreum:// 직접 스킴 및 카카오 스킴(kakaoa{key}://kakaolink/...)에서 roomId 추출
+/// peeroreum://wedu/{roomId} 또는 카카오 스킴?roomId=... 에서 roomId 추출
 String? extractRoomId(Uri uri) {
   // 1) peeroreum://wedu/{roomId}
   if (uri.scheme == 'peeroreum' && uri.host == 'wedu') {
     final id = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
     return (id != null && id.isNotEmpty) ? id : null;
   }
-  // 2) 카카오 스킴: kakaoa{key}://kakaolink?roomId={roomId} (FeedTemplate executionParams)
+  // 2) 카카오 스킴: kakaoa{key}://kakaolink?roomId={roomId}
   if (uri.scheme.startsWith('kakaoa') && uri.host == 'kakaolink') {
     print('[DeepLink] Kakao URI queryParams=${uri.queryParameters}');
-    // androidExecutionParams로 전달된 roomId
     final roomId = uri.queryParameters['roomId'];
     if (roomId != null && roomId.isNotEmpty) return roomId;
-    // 구버전 호환: path segment
+    // 구버전 호환
     if (uri.pathSegments.isNotEmpty && uri.pathSegments.first.isNotEmpty) {
       return uri.pathSegments.first;
     }
-    // 구버전 호환: raw query
     final raw = uri.query.isNotEmpty ? Uri.decodeFull(uri.query) : '';
     if (raw.startsWith('peeroreum://wedu/')) {
       return raw.replaceFirst('peeroreum://wedu/', '').split('/').first;
     }
     if (raw.isNotEmpty) return raw.split('/').first;
+  }
+  return null;
+}
+
+/// peeroreum://profile/{nickname} 또는 카카오 스킴?nickname=... 에서 nickname 추출
+String? extractNickname(Uri uri) {
+  // 1) peeroreum://profile/{nickname}
+  if (uri.scheme == 'peeroreum' && uri.host == 'profile') {
+    final nick = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
+    return (nick != null && nick.isNotEmpty) ? nick : null;
+  }
+  // 2) 카카오 스킴: kakaoa{key}://kakaolink?nickname={nickname}
+  if (uri.scheme.startsWith('kakaoa') && uri.host == 'kakaolink') {
+    final nickname = uri.queryParameters['nickname'];
+    if (nickname != null && nickname.isNotEmpty) return nickname;
   }
   return null;
 }

@@ -87,6 +87,13 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="peeroreum" android:host="wedu" />
             </intent-filter>
+            <!-- 프로필 딥링크: peeroreum://profile/{nickname} -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="peeroreum" android:host="profile" />
+            </intent-filter>
             <!-- 카카오 메시지 템플릿 딥링크: kakaoa{key}://kakaolink?... -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

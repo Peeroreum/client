@@ -13,6 +13,7 @@ import 'package:peeroreum_client/screens/ranking/ranking.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import '../api/PeeroreumApi.dart';
 
 class bottomNaviBar extends StatefulWidget {
@@ -49,13 +50,24 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
 
   void _handlePendingDeepLink() {
     final roomId = PendingDeepLink.roomId;
-    print('[DeepLink] _handlePendingDeepLink called, roomId=$roomId');
+    final profileNickname = PendingDeepLink.profileNickname;
+    print('[DeepLink] _handlePendingDeepLink roomId=$roomId profileNickname=$profileNickname');
+
     if (roomId != null) {
       PendingDeepLink.roomId = null;
-      // 첫 프레임 렌더링 완료 후 이동
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        print('[DeepLink] addPostFrameCallback firing, showing WeduJoinFromLink modal');
-        WeduJoinFromLink.show(context, roomId);
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // GetX Navigator 초기화 완료 후 호출해야 GlobalKey 충돌 방지
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (mounted) WeduJoinFromLink.show(context, roomId);
+      });
+    }
+
+    if (profileNickname != null) {
+      PendingDeepLink.profileNickname = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // Get.to()는 Navigator가 완전히 준비된 후 호출해야 GlobalKey 충돌 방지
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (mounted) Get.to(() => MyPageProfile(profileNickname, false));
       });
     }
   }
