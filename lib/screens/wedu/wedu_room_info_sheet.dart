@@ -64,11 +64,12 @@ class WeduRoomInfoSheet extends StatelessWidget {
     VoidCallback? onClose,
     VoidCallback? onShare,
   }) {
-    return showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => WeduRoomInfoSheet(
+    // Get.bottomSheet()를 사용해 GetX가 직접 overlay context를 관리하게 함.
+    // cold start 시 showModalBottomSheet가 GetX Navigator 초기화 타이밍과 충돌해
+    // GlobalKey<NavigatorState>가 Navigator와 _FocusInheritedScope 두 곳에
+    // 동시 등록되는 문제를 방지한다.
+    return Get.bottomSheet(
+      WeduRoomInfoSheet(
         roomData: roomData,
         inviData: inviData,
         hashTagsList: hashTagsList,
@@ -77,24 +78,41 @@ class WeduRoomInfoSheet extends StatelessWidget {
         onClose: onClose,
         onShare: onShare,
       ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      ignoreSafeArea: false,
     );
   }
 
-  /// 딥링크 진입용: roomId 로 데이터를 미리 받아온 뒤 바텀시트 표시.
-  /// 바텀시트를 열기 전에 fetch 를 완료하므로 로딩 상태가 없어
-  /// isScrollControlled: true 에서도 올바른 높이로 표시됨.
-  static Future<void> showFromLink(BuildContext context, String roomId) async {
+  // ──────────────────────────────────────────────────────────────
+  // 공통 데이터 fetch (딥링크 / 새로고침 등 어디서든 재사용 가능)
+  // ──────────────────────────────────────────────────────────────
+
+  /// roomId 하나로 바텀시트에 필요한 모든 데이터를 받아온다.
+  ///
+  /// 반환 구조:
+  /// ```
+  /// {
+  ///   'roomData':       Map<String, dynamic>,  // imagePath·dday 등 정규화된 키
+  ///   'inviData':       Map<String, dynamic>,
+  ///   'hashTagsList':   List<dynamic>,
+  ///   'isAlreadyJoined': bool,
+  ///   'roomId':         String,
+  ///   'headers':        Map<String, String>,   // 이후 enroll 등에 재사용
+  /// }
+  /// ```
+  /// 실패 시 null 반환.
+  static Future<Map<String, dynamic>?> fetchData(String roomId) async {
     final storage = const FlutterSecureStorage();
     final token = await storage.read(key: 'accessToken');
     final nickname = await storage.read(key: 'nickname');
-    final headers = {
+    final headers = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
     final d = dio.Dio();
 
     try {
-      // 병렬 fetch
       final results = await Future.wait([
         d.get('${API.hostConnect}/wedu/$roomId',
             options: dio.Options(headers: headers)),
@@ -109,42 +127,65 @@ class WeduRoomInfoSheet extends StatelessWidget {
       final inList = results[2].data['data'] as List<dynamic>? ?? [];
       final isAlreadyJoined = inList.any((r) => r['id'].toString() == roomId);
 
-      // WeduReadDto(imageUrl, dDay) → wedu_home 포맷(imagePath, dday) 으로 정규화
+      // WeduReadDto(imageUrl, dDay) → 공통 포맷(imagePath, dday) 으로 정규화
+      // wedu_home 리스트 API 는 이미 imagePath·dday 를 쓰므로 일치함
       final roomData = <String, dynamic>{
         ...roomRaw,
-        'imagePath': roomRaw['imageUrl'],
-        'dday': roomRaw['dDay'],
+        'imagePath': roomRaw['imageUrl'] ?? roomRaw['imagePath'],
+        'dday': roomRaw['dDay'] ?? roomRaw['dday'],
       };
       final hashTagsList = (roomRaw['hashTags'] as List<dynamic>?) ?? [];
 
-      if (!context.mounted) return;
-
-      await show(
-        context,
-        roomData: roomData,
-        inviData: inviData,
-        hashTagsList: hashTagsList,
-        isAlreadyJoined: isAlreadyJoined,
-        onEnroll: () {
-          final locked = roomData['locked'] == true;
-          if (locked) {
-            _showPasswordDialog(context, roomData, roomId, headers);
-          } else {
-            _doEnroll(roomId, headers);
-          }
-        },
-      );
+      return {
+        'roomData': roomData,
+        'inviData': inviData,
+        'hashTagsList': hashTagsList,
+        'isAlreadyJoined': isAlreadyJoined,
+        'roomId': roomId,
+        'headers': headers,
+      };
     } on dio.DioException catch (e) {
-      print('[WeduRoomInfoSheet] showFromLink DioException: ${e.response?.statusCode} ${e.response?.data}');
-      if (context.mounted) {
-        PeeroreumToast.show(context, '같이방 정보를 불러올 수 없어요.');
-      }
+      print('[WeduRoomInfoSheet] fetchData DioException: ${e.response?.statusCode}');
+      return null;
     } catch (e) {
-      print('[WeduRoomInfoSheet] showFromLink error: $e');
+      print('[WeduRoomInfoSheet] fetchData error: $e');
+      return null;
+    }
+  }
+
+  /// 딥링크 진입용: fetchData() 로 데이터를 미리 받아온 뒤 바텀시트 표시.
+  /// 바텀시트를 열기 전에 fetch 를 완료하므로 로딩 상태가 없어
+  /// isScrollControlled: true 에서도 올바른 높이로 표시됨.
+  static Future<void> showFromLink(BuildContext context, String roomId) async {
+    final data = await fetchData(roomId);
+
+    if (data == null) {
       if (context.mounted) {
         PeeroreumToast.show(context, '같이방 정보를 불러올 수 없어요.');
       }
+      return;
     }
+
+    if (!context.mounted) return;
+
+    final roomData = data['roomData'] as Map<String, dynamic>;
+    final headers = data['headers'] as Map<String, String>;
+
+    await show(
+      context,
+      roomData: roomData,
+      inviData: data['inviData'] as Map<String, dynamic>,
+      hashTagsList: data['hashTagsList'] as List<dynamic>,
+      isAlreadyJoined: data['isAlreadyJoined'] as bool,
+      onEnroll: () {
+        final locked = roomData['locked'] == true;
+        if (locked) {
+          _showPasswordDialog(context, roomData, roomId, headers);
+        } else {
+          _doEnroll(roomId, headers);
+        }
+      },
+    );
   }
 
   // ──────────────────────────────────────────────────────────────
@@ -155,7 +196,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
     BuildContext context,
     Map<String, dynamic> roomData,
     String roomId,
-    Map<String, dynamic> headers,
+    Map<String, String> headers,
   ) {
     final passwordController = TextEditingController();
     showDialog(
@@ -209,7 +250,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
   }
 
   static Future<void> _doEnroll(
-      String roomId, Map<String, dynamic> headers) async {
+      String roomId, Map<String, String> headers) async {
     final d = dio.Dio();
     try {
       final res = await d.post(

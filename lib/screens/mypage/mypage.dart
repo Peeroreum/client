@@ -82,9 +82,7 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget bodyWidget() {
-    return Scaffold(
-      backgroundColor: PeeroreumColor.white,
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -129,8 +127,7 @@ class _MyPageState extends State<MyPage> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget first_col() {

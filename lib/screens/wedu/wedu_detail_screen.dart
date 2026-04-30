@@ -412,7 +412,7 @@ class _DetailWeduState extends State<DetailWedu> {
       future: initFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(backgroundColor: PeeroreumColor.white);
+          return Container(color: PeeroreumColor.white);
         } else if (snapshot.hasError) {
           // 에러 발생 시
           return Center(child: Text('Error: ${snapshot.error}'));
