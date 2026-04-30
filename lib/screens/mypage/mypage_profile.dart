@@ -57,6 +57,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   var withPeerDay;
   Member member = Member();
   final change_nickname_controller = TextEditingController();
+  final GlobalKey _shareButtonKey = GlobalKey();
 
   @override
   void initState() {
@@ -1313,6 +1314,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
+              key: _shareButtonKey,
               onPressed: () async {
                 if ((is_friend == true) && (am_i == false)) {
                   unfollow();
@@ -1352,10 +1354,26 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       print('카카오톡 공유 완료');
                     } catch (error) {
                       print('카카오톡 공유 실패 $error');
-                      Share.share('$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname');
+                      final box = _shareButtonKey.currentContext
+                          ?.findRenderObject() as RenderBox?;
+                      final rect = box == null
+                          ? null
+                          : box.localToGlobal(Offset.zero) & box.size;
+                      Share.share(
+                        '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
+                        sharePositionOrigin: rect,
+                      );
                     }
                   } else {
-                    Share.share('$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname');
+                    final box = _shareButtonKey.currentContext
+                        ?.findRenderObject() as RenderBox?;
+                    final rect = box == null
+                        ? null
+                        : box.localToGlobal(Offset.zero) & box.size;
+                    Share.share(
+                      '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
+                      sharePositionOrigin: rect,
+                    );
                   }
                 } else {
                   print('error');

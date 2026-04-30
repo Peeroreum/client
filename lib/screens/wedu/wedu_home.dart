@@ -1006,7 +1006,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 hashTagsList: hashTags[datas[index]['id']] ?? [],
                 isAlreadyJoined: inroom_datas
                     .any((item) => item['id'] == datas[index]['id']),
-                onShare: () async {
+                onShare: (shareRect) async {
                   final roomId = datas[index]['id'].toString();
                   final thuUrl = (inviDatas[datas[index]['id']]
                               ?['invitationUrl'] ?? '')
@@ -1037,10 +1037,12 @@ class _HomeWeduState extends State<HomeWedu> {
                           .shareDefault(template: feedTemplate);
                       await ShareClient.instance.launchKakaoTalk(uri);
                     } catch (e) {
-                      Share.share(buildShareMessage(roomName, roomId));
+                      Share.share(buildShareMessage(roomName, roomId),
+                          sharePositionOrigin: shareRect);
                     }
                   } else {
-                    Share.share(buildShareMessage(roomName, roomId));
+                    Share.share(buildShareMessage(roomName, roomId),
+                        sharePositionOrigin: shareRect);
                   }
                 },
                 onEnroll: () {

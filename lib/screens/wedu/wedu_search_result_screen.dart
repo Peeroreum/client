@@ -474,10 +474,11 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               hashTagsList: hashTags[datas[index]['id']] ?? [],
               isAlreadyJoined: inroom_datas
                   .any((item) => item['id'] == datas[index]['id']),
-              onShare: () {
+              onShare: (shareRect) {
                 final roomId = datas[index]['id'].toString();
                 final roomName = datas[index]['title'] as String? ?? '같이방';
-                Share.share(buildShareMessage(roomName, roomId));
+                Share.share(buildShareMessage(roomName, roomId),
+                    sharePositionOrigin: shareRect);
               },
               onEnroll: () {
                 Get.back();

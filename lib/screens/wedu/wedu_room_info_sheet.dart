@@ -29,7 +29,8 @@ class WeduRoomInfoSheet extends StatelessWidget {
   final VoidCallback? onClose;
 
   /// 공유 버튼 콜백 (null 이면 공유 버튼 숨김)
-  final VoidCallback? onShare;
+  /// Rect? 는 iOS sharePositionOrigin 용 share 버튼 위치
+  final void Function(Rect?)? onShare;
 
   static const List<String> _gradeList = [
     '전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'
@@ -62,7 +63,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
     required bool isAlreadyJoined,
     VoidCallback? onEnroll,
     VoidCallback? onClose,
-    VoidCallback? onShare,
+    void Function(Rect?)? onShare,
   }) {
     // Get.bottomSheet()를 사용해 GetX가 직접 overlay context를 관리하게 함.
     // cold start 시 showModalBottomSheet가 GetX Navigator 초기화 타이밍과 충돌해
@@ -512,9 +513,17 @@ class WeduRoomInfoSheet extends StatelessWidget {
                         color: PeeroreumColor.white,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: IconButton(
-                        onPressed: onShare,
-                        icon: SvgPicture.asset('assets/icons/share.svg'),
+                      child: Builder(
+                        builder: (ctx) => IconButton(
+                          onPressed: () {
+                            final box = ctx.findRenderObject() as RenderBox?;
+                            final rect = box == null
+                                ? null
+                                : box.localToGlobal(Offset.zero) & box.size;
+                            onShare!(rect);
+                          },
+                          icon: SvgPicture.asset('assets/icons/share.svg'),
+                        ),
                       ),
                     ),
                 ],
