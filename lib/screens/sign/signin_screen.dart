@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
+import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import '../../api/PeeroreumApi.dart';
 
@@ -166,6 +167,7 @@ class _SignInState extends State<SignIn> {
     if (result.statusCode == 200) {
       var accessToken = jsonDecode(result.body)['data'];
       storage.write(key: "memberInfo", value: accessToken);
+      PendingDeepLink.handleAfterLogin();
       Get.offAllNamed('/wedu');
     } else if (result.statusCode == 404) {
       Member member = Member();

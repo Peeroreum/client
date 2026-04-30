@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "984740225939",
     "project_id": "peeroreum-409506",
-    "storage_bucket": "peeroreum-409506.appspot.com"
+    "storage_bucket": "peeroreum-409506.firebasestorage.app"
   },
   "client": [
     {
@@ -82,8 +82,28 @@
           }
         },
         {
-          "client_id": "984740225939-90rmjde1dta2gjir2lpc9ae7ini6e6so.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "984740225939-832qmsg865ljku3tq8jq148kq02dj2ao.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.peeroreum.peeroreum_client",
+            "certificate_hash": "58848f10c9447c6232bd24f0f266f10aae5d4a89"
+          }
+        },
+        {
+          "client_id": "984740225939-hugob3cseoe70tmhu1l6t7mgcpquqht7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.peeroreum.peeroreum_client",
+            "certificate_hash": "75ee19941196efb5e4030511628aaef4c607e1b1"
+          }
+        },
+        {
+          "client_id": "984740225939-t5vekgg4qg08jh6vurhlvs9p4da7l369.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.peeroreum.peeroreum_client",
+            "certificate_hash": "aa8d4c089631a90c92add5e76e9c9865506194ef"
+          }
         }
       ],
       "api_key": [

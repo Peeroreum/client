@@ -4,12 +4,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:peeroreum_client/firebase_options.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
 Future<String?> fcmSetting() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -71,7 +69,13 @@ Future<String?> fcmSetting() async {
     }
   });
 
-  String? firebaseToken = await messaging.getToken();
+  String? firebaseToken;
+  try {
+    firebaseToken = await messaging.getToken()
+        .timeout(const Duration(seconds: 10), onTimeout: () => null);
+  } catch (_) {
+    firebaseToken = null;
+  }
 
   return firebaseToken;
 }

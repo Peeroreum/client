@@ -8,6 +8,7 @@ import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -56,6 +57,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   var withPeerDay;
   Member member = Member();
   final change_nickname_controller = TextEditingController();
+  final GlobalKey _shareButtonKey = GlobalKey();
 
   @override
   void initState() {
@@ -412,7 +414,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           future: fetchDatas(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Scaffold(backgroundColor: PeeroreumColor.white);
+              return Container(color: PeeroreumColor.white);
             } else if (snapshot.hasError) {
               // 에러 발생 시
               return Center(child: Text('Error: ${snapshot.error}'));
@@ -1312,6 +1314,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
+              key: _shareButtonKey,
               onPressed: () async {
                 if ((is_friend == true) && (am_i == false)) {
                   unfollow();
@@ -1321,34 +1324,56 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   print('친구 팔로우 프린트 메세지 입니다');
                 } else if ((is_friend == false) && (am_i == true)) {
                   print('프로필 공유');
-                  //PeeroreumToast.show(context, "복사되었습니다");
-                  final UserName = nickname;
-                  int templateId = 102993;
-                  // 카카오톡 실행 가능 여부 확인
-                  bool isKakaoTalkSharingAvailable =
+                  final storeUrl = Uri.parse(
+                      'https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client');
+                  final feedLink = Link(
+                    androidExecutionParams: {'nickname': nickname},
+                    iosExecutionParams: {'nickname': nickname},
+                    webUrl: storeUrl,
+                    mobileWebUrl: storeUrl,
+                  );
+                  final imageUri = (profileImage != null && (profileImage as String).isNotEmpty)
+                      ? Uri.parse(profileImage)
+                      : Uri.parse('https://mud-kage.kakao.com/dn/dpk9l1/btqmGhA2lKL/Ugkc7KRk9s2SLoKGcMBbK0/kakaolink40_original.png');
+                  final feedTemplate = FeedTemplate(
+                    content: Content(
+                      title: '$nickname 님의 피어오름 프로필',
+                      description: '함께 공부하는 피어오름에서 만나요!',
+                      imageUrl: imageUri,
+                      link: feedLink,
+                    ),
+                    buttons: [Button(title: '프로필 보기', link: feedLink)],
+                  );
+                  final available =
                       await ShareClient.instance.isKakaoTalkSharingAvailable();
-
-                  if (isKakaoTalkSharingAvailable) {
+                  if (available) {
                     try {
-                      Uri uri = await ShareClient.instance.shareCustom(
-                          templateId: templateId,
-                          templateArgs: {'UserName': '$UserName'});
+                      final uri = await ShareClient.instance
+                          .shareDefault(template: feedTemplate);
                       await ShareClient.instance.launchKakaoTalk(uri);
                       print('카카오톡 공유 완료');
                     } catch (error) {
                       print('카카오톡 공유 실패 $error');
+                      final box = _shareButtonKey.currentContext
+                          ?.findRenderObject() as RenderBox?;
+                      final rect = box == null
+                          ? null
+                          : box.localToGlobal(Offset.zero) & box.size;
+                      Share.share(
+                        '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
+                        sharePositionOrigin: rect,
+                      );
                     }
                   } else {
-                    try {
-                      Uri shareUrl =
-                          await WebSharerClient.instance.makeCustomUrl(
-                        templateId: templateId,
-                        templateArgs: {'UserName': '$UserName'},
-                      );
-                      await launchBrowserTab(shareUrl, popupOpen: true);
-                    } catch (error) {
-                      print('카카오톡 공유 실패 $error');
-                    }
+                    final box = _shareButtonKey.currentContext
+                        ?.findRenderObject() as RenderBox?;
+                    final rect = box == null
+                        ? null
+                        : box.localToGlobal(Offset.zero) & box.size;
+                    Share.share(
+                      '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
+                      sharePositionOrigin: rect,
+                    );
                   }
                 } else {
                   print('error');

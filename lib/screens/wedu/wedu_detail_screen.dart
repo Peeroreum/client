@@ -20,6 +20,8 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../api/PeeroreumApi.dart';
 import 'package:get/get.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DetailWedu extends StatefulWidget {
   DetailWedu(this.id);
@@ -69,6 +71,61 @@ class _DetailWeduState extends State<DetailWedu> {
   bool isCreator = false;
   bool isSuccess = false;
   bool isDialogShow = false;
+
+  final GlobalKey _dotsButtonKey = GlobalKey();
+
+  String _getInviteLink(String roomId) => 'peeroreum://wedu/$roomId';
+
+  String _buildShareMessage(String roomName, String roomId) {
+    return '📚 피어오름 같이방 \'$roomName\'에 초대합니다!\n\n'
+        '앱이 설치된 경우 아래 링크를 눌러 바로 입장하세요:\n'
+        '${_getInviteLink(roomId)}\n\n'
+        '앱이 없다면 설치 후 참여해요 🙌\n'
+        '• 안드로이드: https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client\n'
+        '• iOS: https://apps.apple.com/app/id피어오름앱ID';
+  }
+
+  Future<void> _shareRoom() async {
+    // 바텀시트 닫기
+    Get.back();
+
+    final roomId = id.toString();
+    final roomName = weduTitle?.toString() ?? '';
+    final imageUrl = weduImage?.toString() ?? '';
+    final storeUrl = Uri.parse(
+        'https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client');
+    final feedLink = Link(
+      androidExecutionParams: {'roomId': roomId},
+      iosExecutionParams: {'roomId': roomId},
+      webUrl: storeUrl,
+      mobileWebUrl: storeUrl,
+    );
+    final feedTemplate = FeedTemplate(
+      content: Content(
+        title: '📚 $roomName',
+        description: '피어오름 같이방에 초대합니다!',
+        imageUrl: Uri.parse(imageUrl.isNotEmpty ? imageUrl : 'https://peeroreum.com'),
+        link: feedLink,
+      ),
+      buttons: [Button(title: '참여하기', link: feedLink)],
+    );
+
+    // iOS sharePositionOrigin: dots 버튼 위치를 앵커로 사용
+    final box = _dotsButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    final rect = box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+
+    final available = await ShareClient.instance.isKakaoTalkSharingAvailable();
+    if (available) {
+      try {
+        final uri = await ShareClient.instance.shareDefault(template: feedTemplate);
+        await ShareClient.instance.launchKakaoTalk(uri);
+      } catch (e) {
+        Share.share(_buildShareMessage(roomName, roomId), sharePositionOrigin: rect);
+      }
+    } else {
+      Share.share(_buildShareMessage(roomName, roomId), sharePositionOrigin: rect);
+    }
+  }
 
   @override
   void initState() {
@@ -412,7 +469,7 @@ class _DetailWeduState extends State<DetailWedu> {
       future: initFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(backgroundColor: PeeroreumColor.white);
+          return Container(color: PeeroreumColor.white);
         } else if (snapshot.hasError) {
           // 에러 발생 시
           return Center(child: Text('Error: ${snapshot.error}'));
@@ -465,6 +522,7 @@ class _DetailWeduState extends State<DetailWedu> {
               ),
               actions: [
                 IconButton(
+                    key: _dotsButtonKey,
                     onPressed: () async {
                       await showModalBottomSheet(
                           context: context,
@@ -1349,6 +1407,26 @@ class _DetailWeduState extends State<DetailWedu> {
                         ),
                       ),
                       TextButton(
+                        onPressed: _shareRoom,
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.fromHeight(40),
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.all(0),
+                        ).copyWith(
+                          overlayColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[100]),
+                        ),
+                        child: Text(
+                          '공유하기',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.black,
+                          ),
+                        ),
+                      ),
+                      TextButton(
                         onPressed: () {
                           Get.to(() => ModifyWedu(
                               id,
@@ -1435,21 +1513,45 @@ class _DetailWeduState extends State<DetailWedu> {
                 ),
               )
             : SafeArea(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () async {
-                    await confirmOutWeduMessage();
-                  },
-                  child: Container(
-                      margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
-                      height: 56,
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 20,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 25),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextButton(
+                        onPressed: _shareRoom,
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.fromHeight(40),
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.all(0),
+                        ).copyWith(
+                          overlayColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[100]),
+                        ),
+                        child: Text(
+                          '공유하기',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.black,
+                          ),
+                        ),
                       ),
-                      child: const Align(
-                        alignment: Alignment.centerLeft,
+                      TextButton(
+                        onPressed: () async {
+                          Get.back();
+                          await confirmOutWeduMessage();
+                        },
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.fromHeight(40),
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.all(0),
+                        ).copyWith(
+                          overlayColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[100]),
+                        ),
                         child: Text(
                           '나가기',
                           style: TextStyle(
@@ -1459,7 +1561,9 @@ class _DetailWeduState extends State<DetailWedu> {
                             color: PeeroreumColor.error,
                           ),
                         ),
-                      )),
+                      ),
+                    ],
+                  ),
                 ),
               ));
   }
