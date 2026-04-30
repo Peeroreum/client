@@ -253,7 +253,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(20, 20, 20, 40),
+                margin: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 width: MediaQuery.of(context).size.width,
                 child: SizedBox(
                   height: 48,

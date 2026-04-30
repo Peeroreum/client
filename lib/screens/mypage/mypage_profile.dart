@@ -522,9 +522,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
           topRight: Radius.circular(16.0),
         ),
       ),
-      child: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(20),
+      child: Container(
+          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -596,7 +595,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -1017,9 +1015,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
           topRight: Radius.circular(16.0),
         ),
       ),
-      child: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(20),
+      child: Container(
+          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -1047,7 +1044,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ],
           ),
         ),
-      ),
     );
   }
 

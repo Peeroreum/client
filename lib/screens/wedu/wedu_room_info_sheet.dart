@@ -339,8 +339,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
     final challenge = inviData['challenge'] as String?;
     final invitationUrl = inviData['invitationUrl'] as String?;
 
-    return SafeArea(
-      child: Container(
+    return Container(
         width: double.maxFinite,
         decoration: BoxDecoration(
           color: PeeroreumColor.white,
@@ -567,7 +566,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
 
               // ── 버튼 영역 ──
               Container(
-                margin: EdgeInsets.fromLTRB(0, 8, 0, 32),
+                margin: EdgeInsets.fromLTRB(0, 8, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 width: double.maxFinite,
                 child: isAlreadyJoined
                     ? SizedBox(
@@ -659,7 +658,6 @@ class WeduRoomInfoSheet extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

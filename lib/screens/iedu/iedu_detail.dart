@@ -759,8 +759,7 @@ class _DetailIeduState extends State<DetailIedu> {
           ],
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Column(
+      bottomNavigationBar: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Visibility(
@@ -973,13 +972,12 @@ class _DetailIeduState extends State<DetailIedu> {
                   ],
                 ),
                 SizedBox(
-                  height: 21,
+                  height: MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0,
                 )
               ]),
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -1021,8 +1019,7 @@ class _DetailIeduState extends State<DetailIedu> {
                 topRight: Radius.circular(16.0),
               ),
             ),
-            child: SafeArea(
-              child: Column(
+            child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1091,7 +1088,6 @@ class _DetailIeduState extends State<DetailIedu> {
                     ),
                   ),
                 ],
-              ),
             ),
           );
         });
@@ -1114,7 +1110,7 @@ class _DetailIeduState extends State<DetailIedu> {
                 await confirmQuestionDeleteMessage();
               },
               child: Container(
-                  margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                  margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                   height: 56,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -1145,7 +1141,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     ));
               },
               child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 height: 56,
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(
@@ -1977,7 +1973,7 @@ class _MakeCommentState extends State<MakeComment> {
                 await confirmCommentDeleteMessage(commentID);
               },
               child: Container(
-                  margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                  margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                   height: 56,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -2008,7 +2004,7 @@ class _MakeCommentState extends State<MakeComment> {
                     ));
               },
               child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 height: 56,
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(

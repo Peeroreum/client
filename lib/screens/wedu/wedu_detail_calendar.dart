@@ -831,7 +831,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 Get.back();
               },
               child: Container(
-                  margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                  margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                   height: 56,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -867,7 +867,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 });
               },
               child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 height: 56,
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(

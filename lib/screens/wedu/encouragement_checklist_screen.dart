@@ -215,9 +215,8 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                 ),
               );
             }),
-        bottomNavigationBar: SafeArea(
-          child: Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+        bottomNavigationBar: Container(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
             child: SizedBox(
               height: 48,
               width: double.infinity,
@@ -265,7 +264,6 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                     ))),
               ),
             ),
-          ),
         ));
   }
 

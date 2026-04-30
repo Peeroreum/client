@@ -598,9 +598,8 @@ class _DetailWeduState extends State<DetailWedu> {
                 child: bodyWidget(),
               ),
             ),
-            bottomNavigationBar: SafeArea(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            bottomNavigationBar: Container(
+                padding: EdgeInsets.fromLTRB(20, 8, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 child: SizedBox(
                   height: 48,
                   child: TextButton(
@@ -628,7 +627,6 @@ class _DetailWeduState extends State<DetailWedu> {
                         ))),
                   ),
                 ),
-              ),
             ),
           );
         }
@@ -801,7 +799,7 @@ class _DetailWeduState extends State<DetailWedu> {
         ),
       ),
       child: Container(
-        padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
+        padding: EdgeInsets.fromLTRB(20, 16, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1387,9 +1385,8 @@ class _DetailWeduState extends State<DetailWedu> {
           ),
         ),
         child: isCreator
-            ? SafeArea(
-                child: Container(
-                  padding: EdgeInsets.all(20),
+            ? Container(
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -1510,11 +1507,9 @@ class _DetailWeduState extends State<DetailWedu> {
                       ),
                     ],
                   ),
-                ),
               )
-            : SafeArea(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 25),
+            : Container(
+                  padding: EdgeInsets.fromLTRB(20, 16, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1564,7 +1559,6 @@ class _DetailWeduState extends State<DetailWedu> {
                       ),
                     ],
                   ),
-                ),
               ));
   }
 
@@ -1586,7 +1580,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 Get.back();
               },
               child: Container(
-                  margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                  margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                   height: 56,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -1617,7 +1611,7 @@ class _DetailWeduState extends State<DetailWedu> {
                     ));
               },
               child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 16, 0, 41),
+                margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 height: 56,
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(
@@ -2072,8 +2066,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 topRight: Radius.circular(16.0),
               ),
             ),
-            child: SafeArea(
-              child: Column(
+            child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -2151,7 +2144,6 @@ class _DetailWeduState extends State<DetailWedu> {
                     ),
                   ),
                 ],
-              ),
             ),
           );
         });
