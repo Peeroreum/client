@@ -1320,32 +1320,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   print('친구 팔로우 프린트 메세지 입니다');
                 } else if ((is_friend == false) && (am_i == true)) {
                   print('프로필 공유');
-                  final storeUrl = Uri.parse(
-                      'https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client');
-                  final feedLink = Link(
-                    androidExecutionParams: {'nickname': nickname},
-                    iosExecutionParams: {'nickname': nickname},
-                    webUrl: storeUrl,
-                    mobileWebUrl: storeUrl,
-                  );
-                  final imageUri = (profileImage != null && (profileImage as String).isNotEmpty)
-                      ? Uri.parse(profileImage)
-                      : Uri.parse('https://mud-kage.kakao.com/dn/dpk9l1/btqmGhA2lKL/Ugkc7KRk9s2SLoKGcMBbK0/kakaolink40_original.png');
-                  final feedTemplate = FeedTemplate(
-                    content: Content(
-                      title: '$nickname 님의 피어오름 프로필',
-                      description: '함께 공부하는 피어오름에서 만나요!',
-                      imageUrl: imageUri,
-                      link: feedLink,
-                    ),
-                    buttons: [Button(title: '프로필 보기', link: feedLink)],
-                  );
                   final available =
                       await ShareClient.instance.isKakaoTalkSharingAvailable();
                   if (available) {
                     try {
-                      final uri = await ShareClient.instance
-                          .shareDefault(template: feedTemplate);
+                      final uri = await ShareClient.instance.shareCustom(
+                        templateId: 102993,
+                        templateArgs: {'UserName': nickname},
+                      );
                       await ShareClient.instance.launchKakaoTalk(uri);
                       print('카카오톡 공유 완료');
                     } catch (error) {
