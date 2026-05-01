@@ -1014,27 +1014,18 @@ class _HomeWeduState extends State<HomeWedu> {
                   final roomName = datas[index]['title'] as String? ?? '';
                   final storeUrl = Uri.parse(
                       'https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client');
-                  final feedLink = Link(
-                    androidExecutionParams: {'roomId': roomId},
-                    iosExecutionParams: {'roomId': roomId},
-                    webUrl: storeUrl,
-                    mobileWebUrl: storeUrl,
-                  );
-                  final feedTemplate = FeedTemplate(
-                    content: Content(
-                      title: '📚 $roomName',
-                      description: '피어오름 같이방에 초대합니다!',
-                      imageUrl: Uri.parse(thuUrl),
-                      link: feedLink,
-                    ),
-                    buttons: [Button(title: '참여하기', link: feedLink)],
-                  );
                   final available = await ShareClient.instance
                       .isKakaoTalkSharingAvailable();
                   if (available) {
                     try {
-                      final uri = await ShareClient.instance
-                          .shareDefault(template: feedTemplate);
+                      final uri = await ShareClient.instance.shareCustom(
+                        templateId: 102956,
+                        templateArgs: {
+                          'RoomName': roomName,
+                          'ImageUrl': thuUrl,
+                          'Link': 'peeroreum://wedu/$roomId',
+                        },
+                      );
                       await ShareClient.instance.launchKakaoTalk(uri);
                     } catch (e) {
                       Share.share(buildShareMessage(roomName, roomId),

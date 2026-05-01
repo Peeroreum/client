@@ -56,6 +56,7 @@ class _DetailWeduState extends State<DetailWedu> {
   double percent = 0.0;
   //수정하기screen에 넘겨줄 변수//
   dynamic weduImage = null;
+  String invitationUrl = '';
   dynamic weduTitle = '';
   dynamic weduSubject = '';
   dynamic weduDday = '';
@@ -94,22 +95,6 @@ class _DetailWeduState extends State<DetailWedu> {
     final imageUrl = weduImage?.toString() ?? '';
     final storeUrl = Uri.parse(
         'https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client');
-    final feedLink = Link(
-      androidExecutionParams: {'roomId': roomId},
-      iosExecutionParams: {'roomId': roomId},
-      webUrl: storeUrl,
-      mobileWebUrl: storeUrl,
-    );
-    final feedTemplate = FeedTemplate(
-      content: Content(
-        title: '📚 $roomName',
-        description: '피어오름 같이방에 초대합니다!',
-        imageUrl: Uri.parse(imageUrl.isNotEmpty ? imageUrl : 'https://peeroreum.com'),
-        link: feedLink,
-      ),
-      buttons: [Button(title: '참여하기', link: feedLink)],
-    );
-
     // iOS sharePositionOrigin: dots 버튼 위치를 앵커로 사용
     final box = _dotsButtonKey.currentContext?.findRenderObject() as RenderBox?;
     final rect = box == null ? null : box.localToGlobal(Offset.zero) & box.size;
@@ -117,7 +102,14 @@ class _DetailWeduState extends State<DetailWedu> {
     final available = await ShareClient.instance.isKakaoTalkSharingAvailable();
     if (available) {
       try {
-        final uri = await ShareClient.instance.shareDefault(template: feedTemplate);
+        final uri = await ShareClient.instance.shareCustom(
+          templateId: 102956,
+          templateArgs: {
+            'RoomName': roomName,
+            'ImageUrl': invitationUrl,
+            'Link': 'peeroreum://wedu/$roomId',
+          },
+        );
         await ShareClient.instance.launchKakaoTalk(uri);
       } catch (e) {
         Share.share(_buildShareMessage(roomName, roomId), sharePositionOrigin: rect);
@@ -157,6 +149,19 @@ class _DetailWeduState extends State<DetailWedu> {
         //수정하기screen에 넘겨줄 변수//
         weduTitle = weduData['title'];
         weduImage = weduData['imageUrl'];
+        // 초대장 이미지 fetch
+        try {
+          var inviResult = await dio.get('${API.hostConnect}/wedu/$id/invitation',
+              options: diop.Options(headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $token'
+              }));
+          if (inviResult.statusCode == 200) {
+            invitationUrl = inviResult.data['data']['invitationUrl']?.toString() ?? '';
+          }
+        } catch (e) {
+          print('초대장 이미지 fetch 실패: $e');
+        }
         weduDday = weduData['dday'];
         weduSubject = weduData['subject'];
         weduGrade = weduData['grade'];
