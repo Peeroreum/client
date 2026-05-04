@@ -13,20 +13,23 @@ import Flutter
     ) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
 
-        let controller = window?.rootViewController as! FlutterViewController
-        deepLinkChannel = FlutterMethodChannel(
-            name: "com.peeroreum/deeplink",
-            binaryMessenger: controller.binaryMessenger
-        )
+        // super 호출로 Flutter 엔진 및 window 초기화
+        let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
-        // Flutter에서 getInitialRoomId / getInitialNickname 호출 시 응답
-        deepLinkChannel?.setMethodCallHandler { [weak self] call, result in
-            if call.method == "getInitialRoomId" {
-                result(self?.initialRoomId)
-            } else if call.method == "getInitialNickname" {
-                result(self?.initialNickname)
-            } else {
-                result(FlutterMethodNotImplemented)
+        // window 초기화 이후 MethodChannel 설정
+        if let controller = window?.rootViewController as? FlutterViewController {
+            deepLinkChannel = FlutterMethodChannel(
+                name: "com.peeroreum/deeplink",
+                binaryMessenger: controller.binaryMessenger
+            )
+            deepLinkChannel?.setMethodCallHandler { [weak self] call, result in
+                if call.method == "getInitialRoomId" {
+                    result(self?.initialRoomId)
+                } else if call.method == "getInitialNickname" {
+                    result(self?.initialNickname)
+                } else {
+                    result(FlutterMethodNotImplemented)
+                }
             }
         }
 
@@ -35,7 +38,7 @@ import Flutter
             handleKakaoLink(url, isColdStart: true)
         }
 
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        return result
     }
 
     // 웜 스타트: 앱이 떠 있는 상태에서 카카오 링크로 열릴 때
@@ -53,9 +56,9 @@ import Flutter
 
     private func handleKakaoLink(_ url: URL, isColdStart: Bool) {
         let query = url.query ?? ""
-        let decoded = query.removingPercentEncoding ?? query
 
         // 같이방: peeroreum://wedu/{roomId} 형태로 넘어오는 경우
+        let decoded = query.removingPercentEncoding ?? query
         if decoded.hasPrefix("peeroreum://wedu/") {
             let roomId = String(decoded.dropFirst("peeroreum://wedu/".count))
                 .components(separatedBy: "/").first ?? ""
