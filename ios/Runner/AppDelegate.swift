@@ -6,6 +6,8 @@ import Flutter
     private var initialRoomId: String? = nil
     private var initialNickname: String? = nil
     private var deepLinkChannel: FlutterMethodChannel? = nil
+    /// 콜드 스타트에서 이미 처리한 URL — application:open:url: 중복 호출 방지
+    private var coldStartHandledUrl: String? = nil
 
     override func application(
         _ application: UIApplication,
@@ -33,20 +35,27 @@ import Flutter
             }
         }
 
-        // 콜드 스타트: 앱이 꺼진 상태에서 카카오 링크로 열릴 때
+        // 콜드 스타트: 앱이 꺼진 상태에서 링크로 열릴 때
         if let url = launchOptions?[.url] as? URL {
+            coldStartHandledUrl = url.absoluteString
             handleKakaoLink(url, isColdStart: true)
         }
 
         return result
     }
 
-    // 웜 스타트: 앱이 떠 있는 상태에서 카카오 링크로 열릴 때
+    // 웜 스타트: 앱이 떠 있는 상태에서 링크로 열릴 때
+    // (iOS cold start에서도 didFinishLaunchingWithOptions 이후 이 메서드가 한 번 더 호출되므로 중복 방지 처리)
     override func application(
         _ app: UIApplication,
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
+        // 콜드 스타트에서 이미 처리한 URL이면 건너뜀
+        if let handled = coldStartHandledUrl, handled == url.absoluteString {
+            coldStartHandledUrl = nil
+            return true
+        }
         if url.scheme?.hasPrefix("kakaoa") == true && url.host == "kakaolink" {
             handleKakaoLink(url, isColdStart: false)
             return true
