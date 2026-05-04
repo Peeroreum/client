@@ -109,6 +109,24 @@ void main() async {
 
   // app_links: iOS 전용 (Android는 MethodChannel로 cold/warm start 모두 처리하므로 중복 방지)
   final appLinks = AppLinks();
+
+  // iOS 콜드 스타트: 앱이 꺼진 상태에서 링크로 열릴 때
+  if (Platform.isIOS) {
+    try {
+      final initialUri = await appLinks.getInitialLink()
+          .timeout(const Duration(seconds: 3), onTimeout: () => null);
+      if (initialUri != null) {
+        print('[DeepLink] iOS getInitialLink: $initialUri');
+        final roomId = extractRoomId(initialUri);
+        if (roomId != null) PendingDeepLink.roomId = roomId;
+        final nickname = extractNickname(initialUri);
+        if (nickname != null) PendingDeepLink.profileNickname = nickname;
+      }
+    } catch (e) {
+      print('[DeepLink] iOS getInitialLink error: $e');
+    }
+  }
+
   appLinks.uriLinkStream.listen((uri) async {
     print('[DeepLink] uriLinkStream: $uri');
     if (Platform.isAndroid) return; // Android는 MethodChannel이 모두 처리
