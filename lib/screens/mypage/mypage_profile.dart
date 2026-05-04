@@ -46,7 +46,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     '고3',
     '대학'
   ];
-  List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타'];
+  List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
   bool is_friend = false;
   List<dynamic> badges = [];
   var grade;
