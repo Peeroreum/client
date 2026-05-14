@@ -160,9 +160,10 @@ class _SignInState extends State<SignIn> {
   }
 
   Future<void> fetchSocialLogin(String socialAccount) async {
-    var result = await http.get(
-        Uri.parse('${API.hostConnect}/socialLogin?email=${socialAccount}'),
-        headers: {'Content-Type': 'application/json'});
+    var result = await http.post(
+        Uri.parse('${API.hostConnect}/socialLogin'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': socialAccount}));
 
     if (result.statusCode == 200) {
       var accessToken = jsonDecode(result.body)['data'];
