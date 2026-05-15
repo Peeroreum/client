@@ -326,45 +326,41 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                         ],
                       ),
                     ),
-                    InkWell(
-                      onTap: () {
-                        if (isActiveList[index]) {
+                    if (notSuccessList[index]['nickname'] != sender)
+                      InkWell(
+                        onTap: () {
+                          if (isActiveList[index]) {
+                            setState(() {
+                              isCheckedList[index] = !isCheckedList[index];
+                            });
+                          }
                           setState(() {
-                            isCheckedList[index] = !isCheckedList[index];
+                            isSelectAll = controlAllSelect();
                           });
-                        }
-                        setState(() {
-                          isSelectAll = controlAllSelect();
-                        });
-                      },
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: (isCheckedList[index]
-                                ? PeeroreumColor.primaryPuple[400]!
-                                : PeeroreumColor.gray[200]!),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: isActiveList[index]
-                              ? (isCheckedList[index]
+                        },
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: (isCheckedList[index]
                                   ? PeeroreumColor.primaryPuple[400]!
-                                  : PeeroreumColor.white)
-                              : PeeroreumColor.gray[300]!,
+                                  : PeeroreumColor.gray[200]!),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: isActiveList[index]
+                                ? (isCheckedList[index]
+                                    ? PeeroreumColor.primaryPuple[400]!
+                                    : PeeroreumColor.white)
+                                : PeeroreumColor.gray[300]!,
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/icons/check.svg',
+                            color: PeeroreumColor.white,
+                          ),
                         ),
-                        child: //isCheckedList[index]
-                            //?
-                            // Center(
-                            SvgPicture.asset(
-                          'assets/icons/check.svg',
-                          color: PeeroreumColor.white,
-                        ),
-                        // )
-                        //: null,
                       ),
-                    ),
                   ],
                 ),
               );
