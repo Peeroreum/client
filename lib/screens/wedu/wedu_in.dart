@@ -1,16 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
-import 'dart:convert';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:get/get.dart';
 
 class InWedu extends StatefulWidget {
   const InWedu({super.key});
@@ -20,31 +14,25 @@ class InWedu extends StatefulWidget {
 }
 
 class _InWeduState extends State<InWedu> {
-  List<dynamic> ing_group = [];
-  List<dynamic> complete_group = [];
+  List<dynamic> ingGroup = [];
+  List<dynamic> completeGroup = [];
 
-  var token;
-  dynamic datas = '';
+  dynamic data = '';
   List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
 
   @override
   void initState() {
     super.initState();
-    fetchDatas();
+    fetchData();
   }
 
-  Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
-    var result = await http.get(Uri.parse('${API.hostConnect}/wedu/my'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+  Future<void> fetchData() async {
+    var result = await ApiClient().get('/wedu/my');
     if (result.statusCode == 200) {
-      datas = await jsonDecode(utf8.decode(result.bodyBytes))['data'];
-      ing_group = datas["ingWedus"];
-      complete_group = datas['endWedus'];
+      data = result.data['data'];
+      ingGroup = data["ingWedus"];
+      completeGroup = data['endWedus'];
     } else {
       print("에러${result.statusCode}");
     }
@@ -55,7 +43,7 @@ class _InWeduState extends State<InWedu> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchDatas(),
+          future: fetchData(),
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -75,7 +63,7 @@ class _InWeduState extends State<InWedu> {
           color: PeeroreumColor.gray[800],
         ),
       ),
-      title: Text(
+      title: const Text(
         "내 같이방",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -111,7 +99,7 @@ class _InWeduState extends State<InWedu> {
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
-                tabs: [
+                tabs: const [
                   Tab(
                     text: '참여 중인 같이방',
                   ),
@@ -125,8 +113,8 @@ class _InWeduState extends State<InWedu> {
             ),
             Expanded(
                 child: TabBarView(children: [
-              ing_group.isNotEmpty
-                  ? ing_room()
+              ingGroup.isNotEmpty
+                  ? ingRoom()
                   : Center(
                       child: Text(
                       '참여 중인 같이방이 없습니다.',
@@ -136,8 +124,8 @@ class _InWeduState extends State<InWedu> {
                           fontSize: 16,
                           color: PeeroreumColor.gray[600]),
                     )),
-              complete_group.isNotEmpty
-                  ? complete_room()
+              completeGroup.isNotEmpty
+                  ? completeRoom()
                   : Center(
                       child: Text(
                       '완료된 같이방이 없습니다.',
@@ -154,11 +142,11 @@ class _InWeduState extends State<InWedu> {
     );
   }
 
-  Widget complete_room() {
+  Widget completeRoom() {
     return ListView.separated(
       shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      itemCount: complete_group.length,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      itemCount: completeGroup.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(
           height: 8,
@@ -170,27 +158,27 @@ class _InWeduState extends State<InWedu> {
           //   Get.to(() => DetailWedu(complete_group[index]["id"]));
           // },
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0))),
             child: Row(
               children: [
                 Container(
-                  margin: EdgeInsets.only(right: 16),
+                  margin: const EdgeInsets.only(right: 16),
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
                     color: PeeroreumColor.gray[50],
                     border:
                         Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
-                    child: complete_group[index]["imagePath"] != null
+                    child: completeGroup[index]["imagePath"] != null
                         ? Image.network(
-                            complete_group[index]["imagePath"],
+                            completeGroup[index]["imagePath"],
                             fit: BoxFit.cover,
                           )
                         : SvgPicture.asset(
@@ -207,32 +195,32 @@ class _InWeduState extends State<InWedu> {
                           DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
+                                  const BorderRadius.all(Radius.circular(4)),
                               color: PeeroreumColor.subjectColor[subjectList[
-                                  complete_group[index]['subject']]]?[0],
+                                  completeGroup[index]['subject']]]?[0],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               child: Text(
-                                subjectList[complete_group[index]['subject']],
+                                subjectList[completeGroup[index]['subject']],
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     color: PeeroreumColor.subjectColor[
-                                        subjectList[complete_group[index]
+                                        subjectList[completeGroup[index]
                                             ['subject']]]?[1],
                                     fontWeight: FontWeight.w600,
                                     fontSize: 10),
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 4,
                           ),
                           Flexible(
                             child: Text(
-                              complete_group[index]["title"]!,
-                              style: TextStyle(
+                              completeGroup[index]["title"]!,
+                              style: const TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -249,14 +237,14 @@ class _InWeduState extends State<InWedu> {
                           //     : Container()
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
                               Text(
-                                gradeList[complete_group[index]["grade"]],
+                                gradeList[completeGroup[index]["grade"]],
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -272,7 +260,7 @@ class _InWeduState extends State<InWedu> {
                                 ),
                               ),
                               Text(
-                                '${complete_group[index]["attendingPeopleNum"]!}명',
+                                '${completeGroup[index]["attendingPeopleNum"]!}명',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -288,7 +276,7 @@ class _InWeduState extends State<InWedu> {
                                 ),
                               ),
                               Text(
-                                '${complete_group[index]["dday"].toString().substring(1)}일 전',
+                                '${completeGroup[index]["dday"].toString().substring(1)}일 전',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -310,11 +298,11 @@ class _InWeduState extends State<InWedu> {
     );
   }
 
-  Widget ing_room() {
+  Widget ingRoom() {
     return ListView.separated(
       shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      itemCount: ing_group.length,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      itemCount: ingGroup.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(
           height: 8,
@@ -323,30 +311,30 @@ class _InWeduState extends State<InWedu> {
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onTap: () {
-            Get.to(() => DetailWedu(ing_group[index]["id"]));
+            Get.to(() => DetailWedu(ingGroup[index]["id"]));
           },
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0))),
             child: Row(
               children: [
                 Container(
-                  margin: EdgeInsets.only(right: 16),
+                  margin: const EdgeInsets.only(right: 16),
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
                     color: PeeroreumColor.gray[50],
                     border:
                         Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
-                    child: ing_group[index]["imagePath"] != null
+                    child: ingGroup[index]["imagePath"] != null
                         ? Image.network(
-                            ing_group[index]["imagePath"],
+                            ingGroup[index]["imagePath"],
                             fit: BoxFit.cover,
                           )
                         : SvgPicture.asset(
@@ -363,32 +351,32 @@ class _InWeduState extends State<InWedu> {
                           DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
+                                  const BorderRadius.all(Radius.circular(4)),
                               color: PeeroreumColor.subjectColor[
-                                  subjectList[ing_group[index]['subject']]]?[0],
+                                  subjectList[ingGroup[index]['subject']]]?[0],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               child: Text(
-                                subjectList[ing_group[index]['subject']],
+                                subjectList[ingGroup[index]['subject']],
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     color: PeeroreumColor.subjectColor[
-                                        subjectList[ing_group[index]
+                                        subjectList[ingGroup[index]
                                             ['subject']]]?[1],
                                     fontWeight: FontWeight.w600,
                                     fontSize: 10),
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 4,
                           ),
                           Flexible(
                             child: Text(
-                              ing_group[index]["title"]!,
-                              style: TextStyle(
+                              ingGroup[index]["title"]!,
+                              style: const TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -405,14 +393,14 @@ class _InWeduState extends State<InWedu> {
                           //     : Container()
                         ],
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
                               Text(
-                                gradeList[ing_group[index]["grade"]],
+                                gradeList[ingGroup[index]["grade"]],
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -428,7 +416,7 @@ class _InWeduState extends State<InWedu> {
                                 ),
                               ),
                               Text(
-                                '${ing_group[index]["attendingPeopleNum"]!}명 참여중',
+                                '${ingGroup[index]["attendingPeopleNum"]!}명 참여중',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -444,7 +432,7 @@ class _InWeduState extends State<InWedu> {
                                 ),
                               ),
                               Text(
-                                'D-${ing_group[index]["dday"]!}',
+                                'D-${ingGroup[index]["dday"]!}',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 12,
@@ -453,11 +441,11 @@ class _InWeduState extends State<InWedu> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 8,
                           ),
                           Text(
-                            "${ing_group[index]["progress"]}% 달성",
+                            "${ingGroup[index]["progress"]}% 달성",
                             style: TextStyle(
                                 color: PeeroreumColor.primaryPuple[400],
                                 fontFamily: 'Pretendard',
@@ -466,21 +454,21 @@ class _InWeduState extends State<InWedu> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       LinearPercentIndicator(
-                        padding: EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(0),
                         lineHeight: 8,
                         percent: double.parse(
-                                ing_group[index]["progress"].toString()) /
+                                ingGroup[index]["progress"].toString()) /
                             100,
                         backgroundColor: PeeroreumColor.gray[200],
                         linearGradient: LinearGradient(colors: [
                           PeeroreumColor.primaryPuple[400]!,
                           PeeroreumColor.primaryPuple[200]!
                         ]),
-                        barRadius: Radius.circular(8),
+                        barRadius: const Radius.circular(8),
                       )
                     ],
                   ),

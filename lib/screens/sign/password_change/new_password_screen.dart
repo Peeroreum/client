@@ -1,12 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import '../../../api/PeeroreumApi.dart';
 import './complete_screen.dart';
 
 class NewPassword extends StatefulWidget {
@@ -466,24 +465,28 @@ class _NewPasswordState extends State<NewPassword> {
     setState(() {
       is_loading = true;
     });
-    var result = await http.put(
-        Uri.parse(
-            '${API.hostConnect}/member/password/reset?newPassword=${pw_controller.text}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${widget.token}'
-        });
-    setState(() {
-      is_loading = false;
-    });
-    if (result.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(result.bodyBytes));
-      if (data['status'] == 'success') {
-        Get.to(() => CompletePassword(), transition: Transition.noTransition);
+    try {
+      final result = await ApiClient().put(
+        '/member/password/reset?newPassword=${Uri.encodeComponent(pw_controller.text)}',
+        options: Options(headers: {'Authorization': 'Bearer ${widget.token}'}),
+      );
+      setState(() {
+        is_loading = false;
+      });
+      if (result.statusCode == 200) {
+        final data = result.data;
+        if (data['status'] == 'success') {
+          Get.to(() => CompletePassword(), transition: Transition.noTransition);
+        } else {
+          PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
+        }
       } else {
         PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
       }
-    } else {
+    } catch (e) {
+      setState(() {
+        is_loading = false;
+      });
       PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
     }
   }

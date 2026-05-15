@@ -1,18 +1,16 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:http/http.dart' as http;
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 
 class ManagementCheckList extends StatefulWidget {
-  ManagementCheckList(this.memberList, this.title, this.id);
+  ManagementCheckList(this.memberList, this.title, this.id, {super.key});
+
   List<dynamic> memberList;
   String title;
   int id;
@@ -24,6 +22,7 @@ class ManagementCheckList extends StatefulWidget {
 
 class _ManagementCheckListState extends State<ManagementCheckList> {
   _ManagementCheckListState(this.memberList, this.title, this.id);
+
   List<dynamic> memberList;
   String title;
   int id;
@@ -60,18 +59,11 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
   }
 
   fetchStatus() async {
-    myNickname = await FlutterSecureStorage().read(key: "nickname");
-    String? token = await FlutterSecureStorage().read(key: "accessToken");
-    var response = await http.get(
-      Uri.parse('${API.hostConnect}/wedu/$id/members'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
-    );
+    myNickname = await const FlutterSecureStorage().read(key: "nickname");
+    var response = await ApiClient().get('/wedu/$id/members');
 
     if (response.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(response.bodyBytes))['data'];
+      var data = response.data['data'];
       for (var m in data) {
         for (int i = 0; i < memberList.length; i++) {
           if (memberList[i]['nickname'] == m['nickname']) {
@@ -93,7 +85,6 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
   }
 
   void kickMember(List<String> nicknameList) async {
-    String? token = await FlutterSecureStorage().read(key: "accessToken");
     bool allSuccess = true;
 
     for (var nickname in nicknameList) {
@@ -102,13 +93,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
       if (member == null) continue;
 
       var memberId = member['memberId'];
-      var result = await http.delete(
-        Uri.parse('${API.hostConnect}/wedu/$id/kick/$memberId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-      );
+      var result = await ApiClient().delete('/wedu/$id/kick/$memberId');
 
       if (result.statusCode == 200) {
         setState(() {
@@ -138,8 +123,8 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 20),
-          contentPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
@@ -158,7 +143,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Text(
@@ -171,7 +156,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -184,7 +169,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300],
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -200,7 +185,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () async {
@@ -210,13 +195,13 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '확인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -255,7 +240,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
               Get.to(() => DetailWedu(id));
             },
           ),
-          title: Text(
+          title: const Text(
             '참여자 관리',
             style: TextStyle(
                 fontFamily: 'Pretendard',
@@ -271,7 +256,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
               return Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -285,7 +270,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[500]),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 4,
                             ),
                             Text(
@@ -296,7 +281,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[500]),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 2,
                             ),
                             Text(
@@ -340,7 +325,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                                 'assets/icons/check.svg',
                                 color: PeeroreumColor.gray[500],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 4,
                               ),
                               T5_14px(
@@ -363,42 +348,48 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
               );
             }),
         bottomNavigationBar: Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
-            child: SizedBox(
-              height: 48,
-              child: TextButton(
-                onPressed: () {
-                  selectedUserList.clear();
-                  for (int i = 0; i < isCheckedList.length; i++) {
-                    if (isActiveList[i] == true && isCheckedList[i] == true) {
-                      selectedUserList.add(memberList[i]['nickname']);
-                    }
+          padding: EdgeInsets.fromLTRB(
+              20,
+              8,
+              20,
+              MediaQuery.of(context).viewPadding.bottom > 20
+                  ? MediaQuery.of(context).viewPadding.bottom
+                  : 20.0),
+          child: SizedBox(
+            height: 48,
+            child: TextButton(
+              onPressed: () {
+                selectedUserList.clear();
+                for (int i = 0; i < isCheckedList.length; i++) {
+                  if (isActiveList[i] == true && isCheckedList[i] == true) {
+                    selectedUserList.add(memberList[i]['nickname']);
                   }
+                }
 
-                  if (selectedUserList.isNotEmpty) {
-                    showKickDialog();
-                  }
-                },
-                child: Text(
-                  '참여 종료',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.white,
-                  ),
+                if (selectedUserList.isNotEmpty) {
+                  showKickDialog();
+                }
+              },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      PeeroreumColor.primaryPuple[400]),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 12)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ))),
+              child: const Text(
+                '참여 종료',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: PeeroreumColor.white,
                 ),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
+          ),
         ));
   }
 
@@ -408,7 +399,8 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
             scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
                     Expanded(
@@ -438,13 +430,13 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                                         image: NetworkImage(
                                             memberList[index]["profileImage"]),
                                         fit: BoxFit.cover)
-                                    : DecorationImage(
+                                    : const DecorationImage(
                                         image: AssetImage(
                                             'assets/images/user.jpg')),
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 8,
                           ),
                           Text(

@@ -1,13 +1,9 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:http/http.dart' as http;
-import '../../api/PeeroreumApi.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 
 class MyPageAccountPS extends StatefulWidget {
@@ -18,31 +14,30 @@ class MyPageAccountPS extends StatefulWidget {
 }
 
 class _MyPageAccountPSState extends State<MyPageAccountPS> {
-  var token;
   Member member = Member();
-  final pw_controller = TextEditingController();
-  final pw2_controller = TextEditingController();
-  bool is_Enabled = false;
-  bool pw_hide = true;
-  bool pw2_hide = true;
+  final pw1Controller = TextEditingController();
+  final pw2Controller = TextEditingController();
+  bool isEnabled = false;
+  bool pw1Hide = true;
+  bool pw2Hide = true;
 
-  bool pw_check = false;
-  bool pw2_check = false;
+  bool pw1Check = false;
+  bool pw2Check = false;
 
-  bool pw_showClearbutton = false;
-  bool pw2_showClearbutton = false;
+  bool pw1ShowClearbutton = false;
+  bool pw2ShowClearbutton = false;
 
-  bool pw_focus = false;
-  bool pw2_focus = false;
+  bool pw1Focus = false;
+  bool pw2Focus = false;
 
   void _checkInput() {
-    if (pw_check && pw2_check) {
+    if (pw1Check && pw2Check) {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     } else {
       setState(() {
-        is_Enabled = false;
+        isEnabled = false;
       });
     }
   }
@@ -52,17 +47,17 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        pw_showClearbutton = false;
-        pw2_showClearbutton = false;
-        pw_focus = false;
-        pw2_focus = false;
+        pw1ShowClearbutton = false;
+        pw2ShowClearbutton = false;
+        pw1Focus = false;
+        pw2Focus = false;
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: appbarWidget(),
         body: bodyWidget(),
-        bottomSheet: bottomsheetWidget(),
+        bottomSheet: bottomSheetWidget(),
       ),
     );
   }
@@ -82,7 +77,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           color: PeeroreumColor.gray[800],
         ),
       ),
-      title: Text(
+      title: const Text(
         "비밀번호 변경",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -98,47 +93,47 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            PwWidget(),
-            SizedBox(
+            pwWidget(),
+            const SizedBox(
               height: 16,
             ),
-            PwCheckWidget(),
+            pwCheckWidget(),
           ],
         ),
       ),
     );
   }
 
-  Widget PwWidget() {
+  Widget pwWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "새 비밀번호",
           style: TextStyle(
               fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w500),
         ),
-        SizedBox(
+        const SizedBox(
           height: 4,
         ),
         SizedBox(
           width: MediaQuery.of(context).size.width,
           child: TextFormField(
-            controller: pw_controller,
+            controller: pw1Controller,
             onTap: () {
               setState(() {
-                pw_focus = true;
-                pw2_showClearbutton = false;
-                pw2_focus = false;
+                pw1Focus = true;
+                pw2ShowClearbutton = false;
+                pw2Focus = false;
               });
-              if (pw_controller.text.length > 0) {
+              if (pw1Controller.text.isNotEmpty) {
                 setState(() {
-                  pw_showClearbutton = true;
+                  pw1ShowClearbutton = true;
                 });
               }
             },
@@ -146,21 +141,21 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
               _checkInput();
               setState(() {
                 if (value.isNotEmpty) {
-                  pw_showClearbutton = true;
-                  if (pw_controller.text == pw2_controller.text) {
-                    pw2_check = true;
+                  pw1ShowClearbutton = true;
+                  if (pw1Controller.text == pw2Controller.text) {
+                    pw2Check = true;
                   } else {
-                    pw2_check = false;
+                    pw2Check = false;
                   }
                 } else {
-                  pw_showClearbutton = false;
+                  pw1ShowClearbutton = false;
                 }
                 if (RegExp(
                         r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
-                    .hasMatch(pw_controller.text)) {
-                  pw_check = true;
+                    .hasMatch(pw1Controller.text)) {
+                  pw1Check = true;
                 } else {
-                  pw_check = false;
+                  pw1Check = false;
                 }
               });
             },
@@ -171,18 +166,18 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                   fontWeight: FontWeight.w400,
                   fontSize: 14,
                   color: PeeroreumColor.gray[600]),
-              errorText: pw_controller.text.length >= 2 && !pw_check
+              errorText: pw1Controller.text.length >= 2 && !pw1Check
                   ? "영문, 숫자, 특수문자 포함 8자~12자"
                   : null,
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: PeeroreumColor.error,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: PeeroreumColor.error,
                   )),
               suffixIcon: Row(
@@ -190,14 +185,14 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                      padding: EdgeInsets.only(left: 12),
-                      child: pw_showClearbutton
+                      padding: const EdgeInsets.only(left: 12),
+                      child: pw1ShowClearbutton
                           ? GestureDetector(
                               onTap: () {
-                                pw_controller.clear();
+                                pw1Controller.clear();
                                 setState(() {
-                                  pw_showClearbutton = false;
-                                  pw_check = false;
+                                  pw1ShowClearbutton = false;
+                                  pw1Check = false;
                                 });
                                 _checkInput();
                               },
@@ -206,16 +201,16 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                                 color: PeeroreumColor.gray[200],
                               ))
                           : null),
-                  SizedBox(
+                  const SizedBox(
                     width: 12,
                   ),
-                  pw_suffix()
+                  pw1Suffix()
                 ],
               ),
-              helperText: pw_check
-                  ? (pw_focus ? "사용 가능한 비밀번호입니다." : null)
+              helperText: pw1Check
+                  ? (pw1Focus ? "사용 가능한 비밀번호입니다." : null)
                   : "영문, 숫자, 특수문자 포함 8자~12자",
-              helperStyle: pw_check
+              helperStyle: pw1Check
                   ? TextStyle(
                       fontFamily: "Pretendard",
                       fontWeight: FontWeight.w400,
@@ -228,7 +223,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                       color: PeeroreumColor.gray[600]),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              focusedBorder: pw_check
+              focusedBorder: pw1Check
                   ? OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide:
@@ -236,22 +231,22 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                     )
                   : OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: PeeroreumColor.black,
                       ),
                     ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
-                    color: (pw_focus
-                        ? (pw_check
+                    color: (pw1Focus
+                        ? (pw1Check
                             ? PeeroreumColor.primaryPuple[400]!
                             : PeeroreumColor.gray[200]!)
                         : PeeroreumColor.gray[200]!)),
               ),
             ),
             showCursor: false,
-            obscureText: pw_hide,
+            obscureText: pw1Hide,
             obscuringCharacter: '●',
           ),
         ),
@@ -259,31 +254,31 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     );
   }
 
-  Widget PwCheckWidget() {
+  Widget pwCheckWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           '비밀번호 확인',
           style: TextStyle(
               fontFamily: 'Pretendard',
               fontWeight: FontWeight.w500,
               fontSize: 14),
         ),
-        SizedBox(
+        const SizedBox(
           height: 4.0,
         ),
         TextField(
-          controller: pw2_controller,
+          controller: pw2Controller,
           onTap: () {
             setState(() {
-              pw2_focus = true;
-              pw_focus = false;
-              pw_showClearbutton = false;
+              pw2Focus = true;
+              pw1Focus = false;
+              pw1ShowClearbutton = false;
             });
-            if (pw2_controller.text.length > 0) {
+            if (pw2Controller.text.isNotEmpty) {
               setState(() {
-                pw2_showClearbutton = true;
+                pw2ShowClearbutton = true;
               });
             }
           },
@@ -291,32 +286,32 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
             _checkInput();
             setState(() {
               if (value.isNotEmpty) {
-                pw2_showClearbutton = true;
+                pw2ShowClearbutton = true;
               } else {
-                pw2_showClearbutton = false;
+                pw2ShowClearbutton = false;
               }
-              if (pw_controller.text == pw2_controller.text) {
-                pw2_check = true;
+              if (pw1Controller.text == pw2Controller.text) {
+                pw2Check = true;
               } else {
-                pw2_check = false;
+                pw2Check = false;
               }
             });
           },
-          obscureText: pw2_hide,
+          obscureText: pw2Hide,
           obscuringCharacter: '●',
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
-                    color: pw2_check
-                        ? (pw2_focus
+                    color: pw2Check
+                        ? (pw2Focus
                             ? PeeroreumColor.primaryPuple[400]!
                             : PeeroreumColor.gray[200]!)
                         : PeeroreumColor.gray[200]!)),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
-                    color: pw2_check
+                    color: pw2Check
                         ? PeeroreumColor.primaryPuple[400]!
                         : PeeroreumColor.black)),
             hintText: '비밀번호를 재입력하세요',
@@ -325,17 +320,17 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: PeeroreumColor.gray[600]),
-            helperText: pw2_focus ? (pw2_check ? "비밀번호가 일치합니다." : null) : null,
+            helperText: pw2Focus ? (pw2Check ? "비밀번호가 일치합니다." : null) : null,
             helperStyle: TextStyle(
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w400,
                 fontSize: 12,
                 color: PeeroreumColor.primaryPuple[400]),
-            errorText: !pw2_check && pw2_controller.text.length >= 2
+            errorText: !pw2Check && pw2Controller.text.length >= 2
                 ? "비밀번호가 일치하지 않습니다."
                 : null,
-            errorStyle: !pw2_check && pw2_controller.text.length >= 2
-                ? TextStyle(
+            errorStyle: !pw2Check && pw2Controller.text.length >= 2
+                ? const TextStyle(
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
@@ -343,22 +338,22 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 : null,
             errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: PeeroreumColor.error)),
+                borderSide: const BorderSide(color: PeeroreumColor.error)),
             focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: PeeroreumColor.error)),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                borderSide: const BorderSide(color: PeeroreumColor.error)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             suffixIcon: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                pw2_showClearbutton
+                pw2ShowClearbutton
                     ? GestureDetector(
                         onTap: () {
-                          pw2_controller.clear();
+                          pw2Controller.clear();
                           setState(() {
-                            pw2_showClearbutton = false;
-                            pw2_check = false;
+                            pw2ShowClearbutton = false;
+                            pw2Check = false;
                             _checkInput();
                           });
                         },
@@ -367,11 +362,11 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                           color: PeeroreumColor.gray[200],
                         ),
                       )
-                    : SizedBox(),
-                SizedBox(
+                    : const SizedBox(),
+                const SizedBox(
                   width: 12,
                 ),
-                pw2_suffix()
+                pw2Suffix()
               ],
             ),
           ),
@@ -380,18 +375,18 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     );
   }
 
-  pw_suffix() {
-    if (pw_check) {
+  pw1Suffix() {
+    if (pw1Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
             color: PeeroreumColor.primaryPuple[400],
           ));
     }
-    if (pw_controller.text.length >= 2 && !pw_check) {
+    if (pw1Controller.text.length >= 2 && !pw1Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
             color: PeeroreumColor.error,
@@ -400,31 +395,31 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          pw_hide = !pw_hide;
+          pw1Hide = !pw1Hide;
         });
       },
       child: Container(
-        padding: EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.only(right: 16),
         child: SvgPicture.asset(
-          pw_hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
+          pw1Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
           color: PeeroreumColor.gray[600],
         ),
       ),
     );
   }
 
-  pw2_suffix() {
-    if (pw2_check) {
+  pw2Suffix() {
+    if (pw2Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
             color: PeeroreumColor.primaryPuple[400],
           ));
     }
-    if (pw2_controller.text.length >= 2 && !pw2_check) {
+    if (pw2Controller.text.length >= 2 && !pw2Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
             color: PeeroreumColor.error,
@@ -433,20 +428,20 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          pw2_hide = !pw2_hide;
+          pw2Hide = !pw2Hide;
         });
       },
       child: Container(
-        padding: EdgeInsets.fromLTRB(12, 0, 16, 0),
+        padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
         child: SvgPicture.asset(
-          pw2_hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
+          pw2Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
           color: PeeroreumColor.gray[600],
         ),
       ),
     );
   }
 
-  Widget bottomsheetWidget() {
+  Widget bottomSheetWidget() {
     return Container(
       color: PeeroreumColor.white,
       child: SafeArea(
@@ -454,18 +449,31 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           padding: MediaQuery.of(context).viewInsets.bottom > 0
               ? EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom)
-              : EdgeInsets.fromLTRB(20, 8, 20, 28),
+              : const EdgeInsets.fromLTRB(20, 8, 20, 28),
           width: MediaQuery.of(context).size.width,
           child: SizedBox(
             height: 48,
             child: TextButton(
-              onPressed: (pw_check && pw2_check)
+              onPressed: (pw1Check && pw2Check)
                   ? () async {
-                      member.password = pw_controller.text;
+                      member.password = pw1Controller.text;
                       psChangeAPI();
                     }
                   : null,
-              child: Text(
+              style: ButtonStyle(
+                  backgroundColor: (pw1Check && pw2Check)
+                      ? MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400])
+                      : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 12)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
+                        ? BorderRadius.zero
+                        : BorderRadius.circular(8.0),
+                  ))),
+              child: const Text(
                 '변경하기',
                 style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -473,19 +481,6 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                     fontSize: 16.0,
                     color: PeeroreumColor.white),
               ),
-              style: ButtonStyle(
-                  backgroundColor: (pw_check && pw2_check)
-                      ? MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400])
-                      : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
-                        ? BorderRadius.zero
-                        : BorderRadius.circular(8.0),
-                  ))),
             ),
           ),
         ),
@@ -494,15 +489,9 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
   }
 
   Future<void> psChangeAPI() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
-    var result = await http.put(
-        Uri.parse(
-            '${API.hostConnect}/member/change/pw?password=${pw2_controller.text}'),
-        body: jsonEncode(member),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+    var result = await ApiClient().put(
+        '/member/change/pw?password=${pw2Controller.text}',
+        data: member);
     if (result.statusCode == 200) {
       PeeroreumToast.show(context, "비밀번호가 변경되었어요.");
       Get.back();

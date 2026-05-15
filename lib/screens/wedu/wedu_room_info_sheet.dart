@@ -1,11 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 
@@ -33,10 +31,24 @@ class WeduRoomInfoSheet extends StatelessWidget {
   final void Function(Rect?)? onShare;
 
   static const List<String> _gradeList = [
-    '전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'
+    '전체',
+    '중1',
+    '중2',
+    '중3',
+    '고1',
+    '고2',
+    '고3',
+    '대학'
   ];
   static const List<String> _subjectList = [
-    '전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'
+    '전체',
+    '국어',
+    '영어',
+    '수학',
+    '사회',
+    '과학',
+    '기타',
+    '대학'
   ];
 
   const WeduRoomInfoSheet({
@@ -104,23 +116,13 @@ class WeduRoomInfoSheet extends StatelessWidget {
   /// ```
   /// 실패 시 null 반환.
   static Future<Map<String, dynamic>?> fetchData(String roomId) async {
-    final storage = const FlutterSecureStorage();
-    final token = await storage.read(key: 'accessToken');
-    final nickname = await storage.read(key: 'nickname');
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-    final d = dio.Dio();
+    final nickname = await const FlutterSecureStorage().read(key: 'nickname');
 
     try {
       final results = await Future.wait([
-        d.get('${API.hostConnect}/wedu/$roomId',
-            options: dio.Options(headers: headers)),
-        d.get('${API.hostConnect}/wedu/$roomId/invitation',
-            options: dio.Options(headers: headers)),
-        d.get('${API.hostConnect}/wedu/in?nickname=$nickname',
-            options: dio.Options(headers: headers)),
+        ApiClient().get('/wedu/$roomId'),
+        ApiClient().get('/wedu/$roomId/invitation'),
+        ApiClient().get('/wedu/in', queryParameters: {'nickname': nickname}),
       ]);
 
       final roomRaw = results[0].data['data'] as Map<String, dynamic>? ?? {};
@@ -129,7 +131,6 @@ class WeduRoomInfoSheet extends StatelessWidget {
       final isAlreadyJoined = inList.any((r) => r['id'].toString() == roomId);
 
       // WeduReadDto(imageUrl, dDay) → 공통 포맷(imagePath, dday) 으로 정규화
-      // wedu_home 리스트 API 는 이미 imagePath·dday 를 쓰므로 일치함
       final roomData = <String, dynamic>{
         ...roomRaw,
         'imagePath': roomRaw['imageUrl'] ?? roomRaw['imagePath'],
@@ -143,10 +144,10 @@ class WeduRoomInfoSheet extends StatelessWidget {
         'hashTagsList': hashTagsList,
         'isAlreadyJoined': isAlreadyJoined,
         'roomId': roomId,
-        'headers': headers,
       };
     } on dio.DioException catch (e) {
-      print('[WeduRoomInfoSheet] fetchData DioException: ${e.response?.statusCode}');
+      print(
+          '[WeduRoomInfoSheet] fetchData DioException: ${e.response?.statusCode}');
       return null;
     } catch (e) {
       print('[WeduRoomInfoSheet] fetchData error: $e');
@@ -170,7 +171,6 @@ class WeduRoomInfoSheet extends StatelessWidget {
     if (!context.mounted) return;
 
     final roomData = data['roomData'] as Map<String, dynamic>;
-    final headers = data['headers'] as Map<String, String>;
 
     await show(
       context,
@@ -181,9 +181,9 @@ class WeduRoomInfoSheet extends StatelessWidget {
       onEnroll: () {
         final locked = roomData['locked'] == true;
         if (locked) {
-          _showPasswordDialog(context, roomData, roomId, headers);
+          _showPasswordDialog(context, roomData, roomId);
         } else {
-          _doEnroll(roomId, headers);
+          _doEnroll(roomId);
         }
       },
     );
@@ -197,7 +197,6 @@ class WeduRoomInfoSheet extends StatelessWidget {
     BuildContext context,
     Map<String, dynamic> roomData,
     String roomId,
-    Map<String, String> headers,
   ) {
     final passwordController = TextEditingController();
     showDialog(
@@ -227,17 +226,15 @@ class WeduRoomInfoSheet extends StatelessWidget {
             onPressed: () => Get.back(),
             child: Text('취소',
                 style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    color: PeeroreumColor.gray[600])),
+                    fontFamily: 'Pretendard', color: PeeroreumColor.gray[600])),
           ),
           TextButton(
             onPressed: () {
               if (passwordController.text == roomData['password']) {
                 Get.back();
-                _doEnroll(roomId, headers);
+                _doEnroll(roomId);
               } else {
-                PeeroreumToast.show(ctx, '비밀번호가 일치하지 않아요.',
-                    isError: true);
+                PeeroreumToast.show(ctx, '비밀번호가 일치하지 않아요.', isError: true);
               }
             },
             child: Text('확인',
@@ -250,14 +247,9 @@ class WeduRoomInfoSheet extends StatelessWidget {
     );
   }
 
-  static Future<void> _doEnroll(
-      String roomId, Map<String, String> headers) async {
-    final d = dio.Dio();
+  static Future<void> _doEnroll(String roomId) async {
     try {
-      final res = await d.post(
-        '${API.hostConnect}/wedu/$roomId/enroll',
-        options: dio.Options(headers: headers),
-      );
+      final res = await ApiClient().post('/wedu/$roomId/enroll');
       if (res.statusCode == 200) {
         Get.back();
         final ctx = Get.context;
@@ -283,20 +275,20 @@ class WeduRoomInfoSheet extends StatelessWidget {
   Widget _buildHashTags() {
     if (hashTagsList.isEmpty) return Container();
     return Padding(
-      padding: EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.only(top: 16),
       child: SizedBox(
         height: 26,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           itemCount: hashTagsList.length,
-          separatorBuilder: (_, __) => SizedBox(width: 4),
+          separatorBuilder: (_, __) => const SizedBox(width: 4),
           itemBuilder: (context, i) => Container(
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             decoration: BoxDecoration(
               border: Border.all(
                   width: 1, color: PeeroreumColor.primaryPuple[400]!),
-              borderRadius: BorderRadius.all(Radius.circular(100)),
+              borderRadius: const BorderRadius.all(Radius.circular(100)),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -307,7 +299,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
                         color: PeeroreumColor.primaryPuple[200],
                         fontSize: 12,
                         fontWeight: FontWeight.w500)),
-                SizedBox(width: 2),
+                const SizedBox(width: 2),
                 Text(hashTagsList[i].toString(),
                     style: TextStyle(
                         color: PeeroreumColor.primaryPuple[400],
@@ -329,10 +321,9 @@ class WeduRoomInfoSheet extends StatelessWidget {
     final title = roomData['title'] as String? ?? '';
     final grade = roomData['grade'];
     final attendingPeopleNum = roomData['attendingPeopleNum'] ?? 0;
-    final dday = roomData['dday'];
+    final dDay = roomData['dDay'];
 
-    final gradeText =
-        (grade != null) ? _gradeList[(grade as num).toInt()] : '';
+    final gradeText = (grade != null) ? _gradeList[(grade as num).toInt()] : '';
     final subjectText =
         (subject != null) ? _subjectList[(subject as num).toInt()] : '';
 
@@ -340,324 +331,327 @@ class WeduRoomInfoSheet extends StatelessWidget {
     final invitationUrl = inviData['invitationUrl'] as String?;
 
     return Container(
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: PeeroreumColor.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-          ),
+      width: double.maxFinite,
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         ),
-        child: Container(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ── 상단: 썸네일 + 제목/정보 + 공유버튼 ──
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      // 썸네일
-                      Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          color: PeeroreumColor.gray[50],
-                          border: Border.all(
-                              width: 1, color: PeeroreumColor.gray[200]!),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(5.0)),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: imagePath != null
-                              ? Image.network(
-                                  imagePath,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) =>
-                                      SvgPicture.asset(
-                                          'assets/images/default.svg',
-                                          fit: BoxFit.cover),
-                                )
-                              : SvgPicture.asset(
-                                  'assets/images/default.svg',
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── 상단: 썸네일 + 제목/정보 + 공유버튼 ──
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    // 썸네일
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: PeeroreumColor.gray[50],
+                        border: Border.all(
+                            width: 1, color: PeeroreumColor.gray[200]!),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5.0)),
                       ),
-                      // 제목 + 학년/인원/D-day
-                      Container(
-                        height: 72,
-                        padding: EdgeInsets.only(left: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 과목 태그
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                                color: PeeroreumColor
-                                    .subjectColor[subjectText]?[0],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: imagePath != null
+                            ? Image.network(
+                                imagePath,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => SvgPicture.asset(
+                                    'assets/images/default.svg',
+                                    fit: BoxFit.cover),
+                              )
+                            : SvgPicture.asset(
+                                'assets/images/default.svg',
+                                fit: BoxFit.cover,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 2, horizontal: 8),
-                                child: Text(
-                                  subjectText,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    height: 1.6,
-                                    fontFamily: 'Pretendard',
-                                    color: PeeroreumColor
-                                        .subjectColor[subjectText]?[1],
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10,
-                                  ),
+                      ),
+                    ),
+                    // 제목 + 학년/인원/D-day
+                    Container(
+                      height: 72,
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 과목 태그
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(4)),
+                              color: PeeroreumColor.subjectColor[subjectText]
+                                  ?[0],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              child: Text(
+                                subjectText,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  height: 1.6,
+                                  fontFamily: 'Pretendard',
+                                  color: PeeroreumColor
+                                      .subjectColor[subjectText]?[1],
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 10,
                                 ),
                               ),
                             ),
-                            SizedBox(height: 4),
-                            // 제목
-                            Row(
-                              children: [
-                                if (locked)
-                                  SvgPicture.asset('assets/icons/lock.svg',
-                                      color: PeeroreumColor.gray[400]),
-                                if (locked) SizedBox(width: 4),
-                                SizedBox(
-                                  width: locked
-                                      ? MediaQuery.of(context).size.width *
-                                          0.42
-                                      : MediaQuery.of(context).size.width *
-                                          0.48,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                      title,
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: PeeroreumColor.black,
-                                      ),
+                          ),
+                          const SizedBox(height: 4),
+                          // 제목
+                          Row(
+                            children: [
+                              if (locked)
+                                SvgPicture.asset('assets/icons/lock.svg',
+                                    color: PeeroreumColor.gray[400]),
+                              if (locked) const SizedBox(width: 4),
+                              SizedBox(
+                                width: locked
+                                    ? MediaQuery.of(context).size.width * 0.42
+                                    : MediaQuery.of(context).size.width * 0.48,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    title,
+                                    style: const TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: PeeroreumColor.black,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                            // 학년 · 인원 · D-day
-                            Row(
-                              children: [
-                                Text(gradeText,
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: PeeroreumColor.gray[600])),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: SvgPicture.asset(
-                                    'assets/icons/dot.svg',
-                                    color: PeeroreumColor.gray[600],
-                                  ),
-                                ),
-                                Text('${attendingPeopleNum}명',
-                                    style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: PeeroreumColor.gray[600])),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: SvgPicture.asset(
-                                    'assets/icons/dot.svg',
-                                    color: PeeroreumColor.gray[600],
-                                  ),
-                                ),
-                                dday != null && (dday as num) > 0
-                                    ? Text('D-$dday',
-                                        style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: PeeroreumColor.gray[600]))
-                                    : Text(
-                                        'D+${dday.toString().replaceAll('-', '')}',
-                                        style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: PeeroreumColor.gray[600])),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  // 공유 버튼 (onShare 가 있을 때만)
-                  if (onShare != null)
-                    Container(
-                      width: 48,
-                      height: 48,
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: PeeroreumColor.gray[200]!),
-                        color: PeeroreumColor.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Builder(
-                        builder: (ctx) => IconButton(
-                          onPressed: () {
-                            final box = ctx.findRenderObject() as RenderBox?;
-                            final rect = box == null
-                                ? null
-                                : box.localToGlobal(Offset.zero) & box.size;
-                            onShare!(rect);
-                          },
-                          icon: SvgPicture.asset('assets/icons/share.svg'),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-
-              // ── 해시태그 ──
-              _buildHashTags(),
-              SizedBox(height: 8),
-
-              // ── 챌린지 ──
-              if (challenge != null && challenge.isNotEmpty)
-                Container(
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Text(
-                    challenge,
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  decoration: BoxDecoration(
-                      color: PeeroreumColor.gray[100],
-                      borderRadius: BorderRadius.circular(8)),
-                ),
-
-              SizedBox(height: 16),
-
-              // ── 초대장 이미지 ──
-              if (invitationUrl != null)
-                Container(
-                  height: 162,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(invitationUrl), fit: BoxFit.cover),
-                    color: PeeroreumColor.primaryPuple[400],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-
-              // ── 버튼 영역 ──
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 8, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
-                width: double.maxFinite,
-                child: isAlreadyJoined
-                    ? SizedBox(
-                        width: double.infinity,
-                        child: TextButton(
-                          onPressed: () => Get.back(),
-                          child: Text(
-                            '이미 참여 중인 같이방이에요.',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.gray[600],
-                            ),
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                PeeroreumColor.gray[300]),
-                            padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(vertical: 12)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                              onPressed: onClose ?? () => Get.back(),
-                              child: Text(
-                                '닫기',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                          // 학년 · 인원 · D-day
+                          Row(
+                            children: [
+                              Text(gradeText,
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
                                   color: PeeroreumColor.gray[600],
                                 ),
                               ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    PeeroreumColor.gray[300]),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.symmetric(vertical: 12)),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
+                              Text('$attendingPeopleNum명',
+                                  style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: PeeroreumColor.gray[600])),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/dot.svg',
+                                  color: PeeroreumColor.gray[600],
                                 ),
                               ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: onEnroll,
-                              child: Text(
-                                '참여하기',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: PeeroreumColor.white,
-                                ),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    PeeroreumColor.primaryPuple[400]),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.symmetric(vertical: 12)),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                              ),
-                            ),
+                              dDay != null && (dDay as num) > 0
+                                  ? Text('D-$dDay',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: PeeroreumColor.gray[600]))
+                                  : Text(
+                                      'D+${dDay.toString().replaceAll('-', '')}',
+                                      style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: PeeroreumColor.gray[600])),
+                            ],
                           ),
                         ],
                       ),
+                    ),
+                  ],
+                ),
+                // 공유 버튼 (onShare 가 있을 때만)
+                if (onShare != null)
+                  Container(
+                    width: 48,
+                    height: 48,
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: PeeroreumColor.gray[200]!),
+                      color: PeeroreumColor.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Builder(
+                      builder: (ctx) => IconButton(
+                        onPressed: () {
+                          final box = ctx.findRenderObject() as RenderBox?;
+                          final rect = box == null
+                              ? null
+                              : box.localToGlobal(Offset.zero) & box.size;
+                          onShare!(rect);
+                        },
+                        icon: SvgPicture.asset('assets/icons/share.svg'),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
+            // ── 해시태그 ──
+            _buildHashTags(),
+            const SizedBox(height: 8),
+
+            // ── 챌린지 ──
+            if (challenge != null && challenge.isNotEmpty)
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                    color: PeeroreumColor.gray[100],
+                    borderRadius: BorderRadius.circular(8)),
+                child: Text(
+                  challenge,
+                  style: const TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
+                ),
               ),
-            ],
-          ),
+
+            const SizedBox(height: 16),
+
+            // ── 초대장 이미지 ──
+            if (invitationUrl != null)
+              Container(
+                height: 162,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage(invitationUrl), fit: BoxFit.cover),
+                  color: PeeroreumColor.primaryPuple[400],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+
+            // ── 버튼 영역 ──
+            Container(
+              margin: EdgeInsets.fromLTRB(
+                  0,
+                  8,
+                  0,
+                  MediaQuery.of(context).viewPadding.bottom > 20
+                      ? MediaQuery.of(context).viewPadding.bottom
+                      : 20.0),
+              width: double.maxFinite,
+              child: isAlreadyJoined
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () => Get.back(),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              PeeroreumColor.gray[300]),
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(vertical: 12)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          '이미 참여 중인 같이방이에요.',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.gray[600],
+                          ),
+                        ),
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: onClose ?? () => Get.back(),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.gray[300]),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(vertical: 12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              '닫기',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.gray[600],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: onEnroll,
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  PeeroreumColor.primaryPuple[400]),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(vertical: 12)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              '참여하기',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: PeeroreumColor.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }

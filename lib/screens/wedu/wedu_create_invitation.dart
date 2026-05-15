@@ -1,17 +1,15 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:dio/dio.dart' as diop;
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
-import '../../api/PeeroreumApi.dart';
 import 'package:get/get.dart';
 
 class CreateInvitation extends StatefulWidget {
@@ -41,15 +39,15 @@ class _CreateInvitationState extends State<CreateInvitation> {
     PeeroreumColor.primaryPuple[50],
     PeeroreumColor.white,
     PeeroreumColor.black,
-    Color(0xffCACACA),
-    Color(0xffCACACA)
+    const Color(0xffCACACA),
+    const Color(0xffCACACA)
   ];
   List<dynamic> fontColorSelect = [
     PeeroreumColor.white,
     PeeroreumColor.black,
-    Color(0xffCACACA)
+    const Color(0xffCACACA)
   ];
-  bool nextbutton = false;
+  bool nextButton = false;
 
   Color _backgroundColor = PeeroreumColor.primaryPuple[400]!;
   Color _fontColor = PeeroreumColor.white;
@@ -97,22 +95,23 @@ class _CreateInvitationState extends State<CreateInvitation> {
   }
 
   Color? pickerColor;
+
   void changeColor(Color color) {
     setState(() => pickerColor = color);
   }
 
-  XFile? _image; //이미지를 담을 변수 선언
-  final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
+  XFile? _image;
+  final ImagePicker picker = ImagePicker();
+
   Future getImage(ImageSource imageSource) async {
     if (isImagePickerActive) {
-      return; // 이미지 피커가 이미 열려 있는 경우, 다시 열지 않음
+      return;
     }
-    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
     isImagePickerActive = true;
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
       setState(() {
-        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+        _image = XFile(pickedFile.path);
       });
     }
     isImagePickerActive = false;
@@ -162,24 +161,24 @@ class _CreateInvitationState extends State<CreateInvitation> {
           centerTitle: true,
           actions: [
             Container(
-              padding: EdgeInsets.only(right: 20),
+              padding: const EdgeInsets.only(right: 20),
               child: GestureDetector(
                 onTap: () {
-                  if (nextbutton) {
+                  if (nextButton) {
                     postWeduAndInvitation(weduMap);
                   } else {
                     PeeroreumToast.show(context, '초대장 문구를 넣어주세요.');
                   }
                 },
                 child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 20),
+                  margin: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
                     '만들기',
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
-                      color: nextbutton
+                      color: nextButton
                           ? PeeroreumColor.primaryPuple[400]
                           : PeeroreumColor.gray[400],
                     ),
@@ -249,15 +248,6 @@ class _CreateInvitationState extends State<CreateInvitation> {
                     SizedBox(
                       width: 350,
                       child: TextFormField(
-                        // onFieldSubmitted: (value) {
-
-                        //   setState(() {
-                        //     _inviText=value.replaceAllMapped(
-                        //       RegExp(r'[♡♥☆★]'),
-                        //       (match) => iconMap[match.group(0)]!,
-                        //     );
-                        //   });
-                        // },
                         decoration: InputDecoration(
                             isDense: true,
                             contentPadding: const EdgeInsets.symmetric(
@@ -300,17 +290,17 @@ class _CreateInvitationState extends State<CreateInvitation> {
                               (match) => iconMap[match.group(0)]!,
                             );
                             if (value.isEmpty) {
-                              nextbutton = false;
+                              nextButton = false;
                             }
                             if (value.isNotEmpty) {
                               for (int i = 1; i < value.length + 1; i++) {
                                 if (value == ' ' * i) {
-                                  nextbutton = false;
+                                  nextButton = false;
                                   PeeroreumToast.show(
                                       context, '공백으로 만들 수 없어요.');
                                 }
                                 if (value != ' ' * i) {
-                                  nextbutton = true;
+                                  nextButton = true;
                                 }
                               }
                             }
@@ -336,7 +326,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                         const SizedBox(
                           height: 8,
                         ),
-                        Container(
+                        SizedBox(
                           height: 32,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
@@ -362,8 +352,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                           shadowColor: Colors.transparent,
                                           surfaceTintColor: Colors.transparent,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                8.0), // 테두리의 둥근 정도 조절
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                           child: Padding(
                                               padding: const EdgeInsets.all(20),
@@ -387,10 +377,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                     onColorChanged:
                                                         (Color color) {
                                                       setState(() {
-                                                        //_image = null;
                                                         _savedBackgroundColor =
                                                             color;
-                                                        //_backgroundColor = color;
                                                         int red = color.red;
                                                         int blue = color.blue;
                                                         int green = color.green;
@@ -424,7 +412,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                                   'Pretendard'),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 20,
                                                       ),
                                                       GestureDetector(
@@ -449,7 +437,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                                   'Pretendard'),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 4,
                                                       )
                                                     ],
@@ -460,10 +448,10 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       },
                                     );
                                   } else if (index == 6) {
-                                    // Handle image picker button tap
                                     await getImage(ImageSource.gallery);
                                     if (_image != null) {
-                                      _backgroundColor = Color(0xfffffffe);
+                                      _backgroundColor =
+                                          const Color(0xfffffffe);
                                       _fontColor = PeeroreumColor.white;
                                       isFontColorSelected = [
                                         true,
@@ -476,9 +464,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       });
                                     }
                                   } else {
-                                    // Handle color selection
                                     setState(() {
-                                      // Update the selected color based on the index
                                       switch (index) {
                                         case 0:
                                           _backgroundColor =
@@ -551,7 +537,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       width: 2,
                                     ),
                                     image: index == 5
-                                        ? DecorationImage(
+                                        ? const DecorationImage(
                                             image: AssetImage(
                                                 'assets/images/colorpicker_background.png'),
                                           )
@@ -605,7 +591,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                         const SizedBox(
                           height: 8,
                         ),
-                        Container(
+                        SizedBox(
                           height: 32,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
@@ -629,8 +615,8 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                         return Dialog(
                                           backgroundColor: PeeroreumColor.white,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                8.0), // 테두리의 둥근 정도 조절
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                           child: Padding(
                                               padding: const EdgeInsets.all(20),
@@ -654,7 +640,6 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                         (Color color) {
                                                       setState(() {
                                                         _savedFontColor = color;
-                                                        //checkColors();
                                                       });
                                                     },
                                                   ),
@@ -681,7 +666,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                                   'Pretendard'),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 20,
                                                       ),
                                                       GestureDetector(
@@ -706,7 +691,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                                   'Pretendard'),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 4,
                                                       )
                                                     ],
@@ -717,9 +702,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       },
                                     );
                                   } else {
-                                    // Handle color selection
                                     setState(() {
-                                      // Update the selected color based on the index
                                       switch (index) {
                                         case 0:
                                           _fontColor = PeeroreumColor.white;
@@ -743,7 +726,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       width: 2,
                                     ),
                                     image: index == 2
-                                        ? DecorationImage(
+                                        ? const DecorationImage(
                                             image: AssetImage(
                                                 'assets/images/colorpicker_background.png'),
                                           )
@@ -782,26 +765,21 @@ class _CreateInvitationState extends State<CreateInvitation> {
   }
 
   postWeduAndInvitation(weduMap) async {
-    var dio = diop.Dio();
-    final token = await const FlutterSecureStorage().read(key: "accessToken");
     bytes = await controller.capture();
     var byteList = bytes?.toList();
     weduMap.addAll({
       "inviFile":
-          diop.MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")
+          dio.MultipartFile.fromBytes(byteList!, filename: "invitation.jpg")
     });
-    diop.FormData formData = diop.FormData.fromMap(weduMap);
-    dio.options.contentType = 'multipart/form-data';
-    dio.options.headers = {'Authorization': 'Bearer $token'};
+    dio.FormData formData = dio.FormData.fromMap(weduMap);
     try {
-      var inviResult =
-          await dio.post('${API.hostConnect}/wedu', data: formData);
+      var inviResult = await ApiClient().postForm('/wedu', formData);
       if (inviResult.statusCode == 200) {
         Get.offAllNamed('/home');
       } else {
         PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
       }
-    } on diop.DioException catch (e) {
+    } on dio.DioException catch (e) {
       if (e.response != null) {
         print('Dio error!');
         print('STATUS: ${e.response?.statusCode}');

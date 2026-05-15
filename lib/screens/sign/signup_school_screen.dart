@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumButton.dart';
@@ -7,14 +5,12 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:http/http.dart' as http;
-
-import '../../api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 
 class SignUpSchool extends StatefulWidget {
   Member member;
 
-  SignUpSchool(this.member);
+  SignUpSchool(this.member, {super.key});
 
   @override
   State<SignUpSchool> createState() => _SignUpSchoolState(member);
@@ -45,7 +41,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
     }
   }
 
-  void SkipDialog() {
+  void skipDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -54,15 +50,15 @@ class _SignUpSchoolState extends State<SignUpSchool> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
-          title: Text("학교 입력을 건너뛰실 건가요?", textAlign: TextAlign.center),
-          titleTextStyle: TextStyle(
+          title: const Text("학교 입력을 건너뛰실 건가요?", textAlign: TextAlign.center),
+          titleTextStyle: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             fontFamily: 'Pretendard',
             color: PeeroreumColor.black,
           ),
-          titlePadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-          content: Text(
+          titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          content: const Text(
             "학교를 입력하지 않은 경우, 학교 대항전과 같은 이벤트 참여에 제한이 생길 수 있어요.",
             textAlign: TextAlign.center,
           ),
@@ -80,6 +76,15 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     onPressed: () {
                       Get.back();
                     },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Text(
@@ -92,18 +97,9 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                         ),
                       ),
                     ),
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 Expanded(
@@ -111,8 +107,17 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     onPressed: () {
                       signUpAPI();
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          PeeroreumColor.primaryPuple[400]),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(12.0),
                       child: Text(
                         '건너뛰기',
                         style: TextStyle(
@@ -120,15 +125,6 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: PeeroreumColor.white,
-                        ),
-                      ),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                     ),
@@ -167,39 +163,39 @@ class _SignUpSchoolState extends State<SignUpSchool> {
         body: SafeArea(
           child: Container(
             color: PeeroreumColor.white,
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    SizedBox(
                       height: 40,
                       width: double.maxFinite,
                       child: LinearPercentIndicator(
                         animateFromLastPercent: true,
                         lineHeight: 8.0,
                         percent: 1,
-                        progressColor: Color.fromARGB(255, 114, 96, 248),
+                        progressColor: const Color.fromARGB(255, 114, 96, 248),
                         backgroundColor: Colors.grey[100],
-                        barRadius: Radius.circular(10),
+                        barRadius: const Radius.circular(10),
                       ),
                     ),
                     Container(
                       height: 122,
                       width: double.maxFinite,
-                      padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
+                      padding: const EdgeInsets.fromLTRB(10, 16, 10, 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("현재 다니는 학교를 알려주세요.",
+                          const Text("현재 다니는 학교를 알려주세요.",
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 24,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Text("학교 정보는 추후 학교 대항전 등 이벤트에 활용될 수 있어요.",
@@ -216,11 +212,11 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     ),
                     Container(
                       width: double.maxFinite,
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             '지역',
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
@@ -228,7 +224,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           Row(
@@ -248,7 +244,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                                   hintText: '시･도',
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 16,
                               ),
                               Expanded(
@@ -267,10 +263,10 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
-                          Container(
+                          SizedBox(
                             width: MediaQuery.of(context).size.width,
                             height: 48,
                             child: TextFormField(
@@ -289,13 +285,13 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: PeeroreumColor.gray[200]!),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8))),
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: PeeroreumColor.gray[200]!),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8))),
                               ),
                               cursorColor: PeeroreumColor.gray[600],
                             ),
@@ -306,10 +302,10 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                   ],
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextButton(
                     onPressed: () {
-                      SkipDialog();
+                      skipDialog();
                     },
                     child: Text(
                       '건너뛰기',
@@ -327,7 +323,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
         ),
         bottomNavigationBar: SafeArea(
           child: Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
             child: SizedBox(
               height: 48,
               child: TextButton(
@@ -339,7 +335,18 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     signUpAPI();
                   }
                 },
-                child: Text(
+                style: ButtonStyle(
+                    backgroundColor: isEnabled
+                        ? MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400])
+                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+                child: const Text(
                   '다음',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
@@ -347,17 +354,6 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                       fontSize: 16.0,
                       color: Colors.white),
                 ),
-                style: ButtonStyle(
-                    backgroundColor: isEnabled
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
           ),
@@ -367,11 +363,9 @@ class _SignUpSchoolState extends State<SignUpSchool> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await http.post(Uri.parse('${API.hostConnect}/signup'),
-        body: jsonEncode(member),
-        headers: {'Content-Type': 'application/json'});
+    var result = await ApiClient().post('/signup', data: member);
     if (result.statusCode == 200) {
-      Get.to(() => EmailSignIn(), transition: Transition.noTransition);
+      Get.to(() => const EmailSignIn(), transition: Transition.noTransition);
     } else {
       print(result.statusCode);
     }

@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import '../../../api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import './validate_screen.dart';
 
 class EmailSearch extends StatefulWidget {
@@ -247,9 +245,7 @@ class _EmailSearchState extends State<EmailSearch> {
   }
 
   isExistingEmail() async {
-    var result = await http.get(
-        Uri.parse('${API.hostConnect}/signup/email/${email_controller.text}'),
-        headers: {'Content-Type': 'application/json'});
+    var result = await ApiClient().get('/signup/email/${email_controller.text}');
     if (result.statusCode == 409) {
       return true;
     } else {
@@ -261,15 +257,14 @@ class _EmailSearchState extends State<EmailSearch> {
     setState(() {
       is_loading = true;
     });
-    var result = await http.post(
-      Uri.parse(
-          '${API.hostConnect}/member/password/email?email=${email_controller.text}'),
+    var result = await ApiClient().post(
+      '/member/password/email?email=${Uri.encodeComponent(email_controller.text)}',
     );
     setState(() {
       is_loading = false;
     });
     if (result.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(result.bodyBytes));
+      var data = result.data;
       if (data['status'] == 'success') {
         Get.to(() => EmailValidate(email_controller.text),
             transition: Transition.noTransition);

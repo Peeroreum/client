@@ -6,14 +6,13 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_subject_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:http/http.dart' as http;
-import '../../api/PeeroreumApi.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
+import 'package:peeroreum_client/api/ApiClient.dart';
 
 class SignUpGrade extends StatefulWidget {
   Member member;
-  SignUpGrade(this.member);
+
+  SignUpGrade(this.member, {super.key});
 
   @override
   State<SignUpGrade> createState() => _SignUpGradeState(member);
@@ -21,18 +20,20 @@ class SignUpGrade extends StatefulWidget {
 
 class _SignUpGradeState extends State<SignUpGrade> {
   Member member;
+
   _SignUpGradeState(this.member);
+
   final _schools = ['중학교', '고등학교', '대학교'];
   final _grades = ['1학년', '2학년', '3학년'];
   String? _school;
   String? _grade;
 
-  bool is_Enabled = false;
+  bool isEnabled = false;
 
   void _checkInput() {
     if ((_school != null && _grade != null) || _school == '대학교') {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     }
   }
@@ -60,39 +61,39 @@ class _SignUpGradeState extends State<SignUpGrade> {
         body: SafeArea(
           child: Container(
             color: PeeroreumColor.white,
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                     height: 40,
                     width: double.maxFinite,
                     child: LinearPercentIndicator(
                       animateFromLastPercent: true,
                       lineHeight: 8.0,
                       percent: _school == '대학교' ? 1.0 : 0.66,
-                      progressColor: Color.fromARGB(255, 114, 96, 248),
+                      progressColor: const Color.fromARGB(255, 114, 96, 248),
                       backgroundColor: Colors.grey[100],
-                      barRadius: Radius.circular(10),
+                      barRadius: const Radius.circular(10),
                     )),
                 Container(
                   height: 122,
                   width: double.maxFinite,
-                  padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
+                  padding: const EdgeInsets.fromLTRB(10, 16, 10, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("학년을 알려주세요.",
+                      const Text("학년을 알려주세요.",
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                               color: Colors.black)),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
-                          "학년은 매년 3월 1일에 자동으로 올라가요.\n예비 학년이 아닌, 현재(2월까지) 학년을 선택해주세요!",
+                          "학년은 매년 3월 1일에 자동으로 올라가요.\n예비 학년이 아닌, 현재(2월까지) 학년을 선택해 주세요!",
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 14,
@@ -103,7 +104,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.15),
                 Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -121,7 +122,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
                             hintText: '학교',
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         Visibility(
@@ -149,7 +150,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
         ),
         bottomNavigationBar: SafeArea(
           child: Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
             child: SizedBox(
               height: 48,
               child: TextButton(
@@ -165,7 +166,18 @@ class _SignUpGradeState extends State<SignUpGrade> {
                         transition: Transition.noTransition);
                   }
                 },
-                child: Text(
+                style: ButtonStyle(
+                    backgroundColor: isEnabled
+                        ? MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400])
+                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+                child: const Text(
                   '다음',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
@@ -173,17 +185,6 @@ class _SignUpGradeState extends State<SignUpGrade> {
                       fontSize: 16.0,
                       color: Colors.white),
                 ),
-                style: ButtonStyle(
-                    backgroundColor: is_Enabled
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
           ),
@@ -193,13 +194,12 @@ class _SignUpGradeState extends State<SignUpGrade> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await http.post(Uri.parse('${API.hostConnect}/signup'),
-        body: jsonEncode(member),
-        headers: {'Content-Type': 'application/json'});
+    var result = await ApiClient().post('/signup', data: member);
     if (result.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(result.bodyBytes))['data'];
-      FlutterSecureStorage secureStorage = FlutterSecureStorage();
+      var data = result.data['data'];
+      FlutterSecureStorage secureStorage = const FlutterSecureStorage();
       secureStorage.write(key: "accessToken", value: data['accessToken']);
+      secureStorage.write(key: "refreshToken", value: data['refreshToken']);
       secureStorage.write(key: "email", value: data['email']);
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);

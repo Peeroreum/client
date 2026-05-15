@@ -1,15 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
-import 'dart:convert';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class InIedu extends StatefulWidget {
   const InIedu({super.key});
@@ -19,24 +14,22 @@ class InIedu extends StatefulWidget {
 }
 
 class _InIeduState extends State<InIedu> {
-  var token;
-
   int currentPage = 0;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
   late Future initFuture;
 
-  dynamic data_q = '';
+  dynamic dataQ = '';
   dynamic question = '';
-  dynamic data_a = '';
+  dynamic dataA = '';
   dynamic answer = '';
-  dynamic total_q = 0;
-  dynamic total_a = 0;
+  dynamic totalQ = 0;
+  dynamic totalA = 0;
 
   @override
   void initState() {
     super.initState();
-    initFuture = fetchDatas();
+    initFuture = fetchData();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
@@ -45,40 +38,30 @@ class _InIeduState extends State<InIedu> {
       }
     });
     currentPage = 0;
-    fetchDatas();
+    fetchData();
   }
 
-  Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
+  Future<void> fetchData() async {
     currentPage = 0;
 
-    var IeduQuestion = await http.get(
-        Uri.parse('${API.hostConnect}/question/my?page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (IeduQuestion.statusCode == 200) {
-      print("성공 IeduQuestion ${IeduQuestion.statusCode}");
-      data_q = jsonDecode(utf8.decode(IeduQuestion.bodyBytes))["data"];
-      total_q = data_q['total'];
-      question = data_q["questionListReadDtos"];
+    var ieduQuestion = await ApiClient().get('/question/my', queryParameters: {'page': currentPage});
+    if (ieduQuestion.statusCode == 200) {
+      print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      dataQ = ieduQuestion.data["data"];
+      totalQ = dataQ['total'];
+      question = dataQ["questionListReadDtos"];
     } else {
-      print("에러 IeduQuestion ${IeduQuestion.statusCode}");
+      print("에러 ieduQuestion ${ieduQuestion.statusCode}");
     }
 
-    var IeduAnswer = await http.get(Uri.parse('${API.hostConnect}/answer/my'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (IeduAnswer.statusCode == 200) {
-      print("성공 IeduAnswer ${IeduAnswer.statusCode}");
-      data_a = jsonDecode(utf8.decode(IeduAnswer.bodyBytes))['data'];
-      total_a = data_a['total'];
-      answer = data_a["questionListReadDtos"];
+    var ieduAnswer = await ApiClient().get('/answer/my');
+    if (ieduAnswer.statusCode == 200) {
+      print("성공 ieduAnswer ${ieduAnswer.statusCode}");
+      dataA = ieduAnswer.data['data'];
+      totalA = dataA['total'];
+      answer = dataA["questionListReadDtos"];
     } else {
-      print("에러 IeduAnswer ${IeduAnswer.statusCode}");
+      print("에러 ieduAnswer ${ieduAnswer.statusCode}");
     }
   }
 
@@ -89,22 +72,17 @@ class _InIeduState extends State<InIedu> {
 
     List<dynamic> addedDatas = [];
     currentPage++;
-    var IeduQuestion = await http.get(
-        Uri.parse('${API.hostConnect}/question/my?page=$currentPage'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (IeduQuestion.statusCode == 200) {
-      print("성공 IeduQuestion ${IeduQuestion.statusCode}");
-      addedDatas = jsonDecode(utf8.decode(IeduQuestion.bodyBytes))["data"];
+    var ieduQuestion = await ApiClient().get('/question/my', queryParameters: {'page': currentPage});
+    if (ieduQuestion.statusCode == 200) {
+      print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      addedDatas = ieduQuestion.data["data"];
       setState(() {
-        data_q.addAll(addedDatas);
-        question = data_q["questionListReadDtos"];
+        dataQ.addAll(addedDatas);
+        question = dataQ["questionListReadDtos"];
         _isLoading = false;
       });
     } else {
-      print("에러 IeduQuestion ${IeduQuestion.statusCode}");
+      print("에러 ieduQuestion ${ieduQuestion.statusCode}");
     }
   }
 
@@ -133,7 +111,7 @@ class _InIeduState extends State<InIedu> {
           color: PeeroreumColor.gray[800],
         ),
       ),
-      title: Text(
+      title: const Text(
         "내 내가해냄",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -169,7 +147,7 @@ class _InIeduState extends State<InIedu> {
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
-                tabs: [
+                tabs: const [
                   Tab(
                     text: '질문',
                   ),
@@ -184,7 +162,7 @@ class _InIeduState extends State<InIedu> {
             Expanded(
               child: TabBarView(
                 children: [
-                  data_q.isNotEmpty
+                  dataQ.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
@@ -199,7 +177,7 @@ class _InIeduState extends State<InIedu> {
                               fontSize: 16,
                               color: PeeroreumColor.gray[600]),
                         )),
-                  data_a.isNotEmpty
+                  dataA.isNotEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 20),
@@ -235,7 +213,7 @@ class _InIeduState extends State<InIedu> {
         return '${difference.inDays}일';
       } else if (difference.inDays <= 30) {
         int weeks = (difference.inDays / 7).floor();
-        return '${weeks}주';
+        return '$weeks주';
       } else if (difference.inDays >= 365) {
         int years = difference.inDays ~/ 365;
         return '$years년';
@@ -264,16 +242,16 @@ class _InIeduState extends State<InIedu> {
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
-            SizedBox(
+            const SizedBox(
               width: 4,
             ),
             B4_14px_M(
-              text: '$total_q',
+              text: '$totalQ',
               color: PeeroreumColor.gray[500],
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 16,
         ),
         Expanded(
@@ -294,18 +272,18 @@ class _InIeduState extends State<InIedu> {
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                     decoration: BoxDecoration(
                         color: PeeroreumColor.white,
                         border: Border.all(
                             width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        borderRadius: const BorderRadius.all(Radius.circular(8.0))),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
+                            SizedBox(
                               width: question[index]['selected']
                                   ? MediaQuery.of(context).size.width - 142
                                   : MediaQuery.of(context).size.width - 133,
@@ -321,18 +299,18 @@ class _InIeduState extends State<InIedu> {
                                 ],
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 8,
                             ),
                             question[index]['selected']
                                 ? Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: PeeroreumColor.primaryPuple[200],
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: SizedBox(
+                                    child: const SizedBox(
                                       height: 16,
                                       child: Center(
                                         child: C2_10px_Sb(
@@ -343,7 +321,7 @@ class _InIeduState extends State<InIedu> {
                                     ),
                                   )
                                 : Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: PeeroreumColor.gray[200],
@@ -361,7 +339,7 @@ class _InIeduState extends State<InIedu> {
                                   ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 12,
                         ),
                         SizedBox(
@@ -422,16 +400,16 @@ class _InIeduState extends State<InIedu> {
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
-            SizedBox(
+            const SizedBox(
               width: 4,
             ),
             B4_14px_M(
-              text: '$total_a',
+              text: '$totalA',
               color: PeeroreumColor.gray[500],
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 16,
         ),
         Expanded(
@@ -451,18 +429,18 @@ class _InIeduState extends State<InIedu> {
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                     decoration: BoxDecoration(
                         color: PeeroreumColor.white,
                         border: Border.all(
                             width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        borderRadius: const BorderRadius.all(Radius.circular(8.0))),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
+                            SizedBox(
                               width: answer[index]['selected']
                                   ? MediaQuery.of(context).size.width - 142
                                   : MediaQuery.of(context).size.width - 133,
@@ -478,18 +456,18 @@ class _InIeduState extends State<InIedu> {
                                 ],
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 8,
                             ),
                             answer[index]['selected']
                                 ? Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: PeeroreumColor.primaryPuple[200],
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: SizedBox(
+                                    child: const SizedBox(
                                       height: 16,
                                       child: Center(
                                         child: C2_10px_Sb(
@@ -500,7 +478,7 @@ class _InIeduState extends State<InIedu> {
                                     ),
                                   )
                                 : Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: PeeroreumColor.gray[200],
@@ -518,7 +496,7 @@ class _InIeduState extends State<InIedu> {
                                   ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 4,
                         ),
                         Row(
@@ -532,7 +510,7 @@ class _InIeduState extends State<InIedu> {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 12,
                         ),
                         SizedBox(

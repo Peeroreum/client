@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_grade_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-import '../../api/PeeroreumApi.dart';
 import '../../designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 
 class SignUpNickname extends StatefulWidget {
   Member member;
-  SignUpNickname(this.member);
+
+  SignUpNickname(this.member, {super.key});
 
   @override
   State<SignUpNickname> createState() => _SignUpNicknameState(member);
@@ -20,18 +20,18 @@ class SignUpNickname extends StatefulWidget {
 
 class _SignUpNicknameState extends State<SignUpNickname> {
   Member member;
+
   _SignUpNicknameState(this.member);
+
   final nicknameController = TextEditingController();
   bool isDuplicateNickname = false;
   bool checkNickname = false;
   bool showNicknameClearButton = false;
 
-  bool nickname_focus = false;
+  bool nicknameFocus = false;
 
   checkDuplicateNickname(String value) async {
-    var result = await http.get(
-        Uri.parse('${API.hostConnect}/signup/nickname/$value'),
-        headers: {'Content-Type': 'application/json'});
+    var result = await ApiClient().get('/signup/nickname/$value');
     if (result.statusCode == 409) {
       setState(() {
         isDuplicateNickname = true;
@@ -49,7 +49,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
-          nickname_focus = false;
+          nicknameFocus = false;
           showNicknameClearButton = false;
         });
       },
@@ -75,7 +75,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom * 1.3),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   // mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -88,24 +88,25 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                             animateFromLastPercent: true,
                             lineHeight: 8.0,
                             percent: 0.33,
-                            progressColor: Color.fromARGB(255, 114, 96, 248),
+                            progressColor:
+                                const Color.fromARGB(255, 114, 96, 248),
                             backgroundColor: Colors.grey[100],
-                            barRadius: Radius.circular(10),
+                            barRadius: const Radius.circular(10),
                           ),
                         ),
                         Container(
                           width: double.maxFinite,
-                          padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
+                          padding: const EdgeInsets.fromLTRB(10, 16, 10, 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("피어오름에서 사용할 닉네임을\n알려주세요.",
+                              const Text("피어오름에서 사용할 닉네임을\n알려주세요.",
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 24,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.black)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Text("닉네임을 설정하면 30일 이후 변경할 수 있어요.",
@@ -123,16 +124,16 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                       // padding: EdgeInsets.fromLTRB(10, 136, 10, 0),
                       margin: EdgeInsets.symmetric(
                           vertical: MediaQuery.of(context).size.height * 0.15),
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
                           controller: nicknameController,
-                          scrollPadding: EdgeInsets.only(bottom: 400),
+                          scrollPadding: const EdgeInsets.only(bottom: 400),
                           onTap: () {
                             setState(() {
-                              nickname_focus = true;
+                              nicknameFocus = true;
                             });
-                            if (nicknameController.text.length > 0) {
+                            if (nicknameController.text.isNotEmpty) {
                               setState(() {
                                 showNicknameClearButton = true;
                               });
@@ -170,7 +171,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[600]),
                               helperText: checkNickname && !isDuplicateNickname
-                                  ? (nickname_focus ? "사용 가능한 닉네임입니다." : null)
+                                  ? (nicknameFocus ? "사용 가능한 닉네임입니다." : null)
                                   : "언더바(_)를 제외한 특수문자는 사용할 수 없어요.",
                               helperStyle: TextStyle(
                                   fontFamily: 'Pretendard',
@@ -182,13 +183,13 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                               errorText: checkError(),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: PeeroreumColor.error,
                                 ),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: PeeroreumColor.error,
                                   )),
                               counterText:
@@ -210,7 +211,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                     )
                                   : OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(
+                                      borderSide: const BorderSide(
                                         color: PeeroreumColor.black,
                                       ),
                                     ),
@@ -219,7 +220,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                   ? OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: BorderSide(
-                                          color: (nickname_focus
+                                          color: (nicknameFocus
                                               ? PeeroreumColor
                                                   .primaryPuple[400]!
                                               : PeeroreumColor.gray[200]!)),
@@ -234,7 +235,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
-                                      padding: EdgeInsets.only(left: 12),
+                                      padding: const EdgeInsets.only(left: 12),
                                       child: showNicknameClearButton
                                           ? IconButton(
                                               onPressed: () {
@@ -252,7 +253,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                               ))
                                           : null),
                                   Container(
-                                      padding: EdgeInsets.only(right: 16),
+                                      padding: const EdgeInsets.only(right: 16),
                                       child: checkNickname &&
                                               !isDuplicateNickname
                                           ? SvgPicture.asset(
@@ -282,7 +283,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
           padding: MediaQuery.of(context).viewInsets.bottom > 0
               ? EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom)
-              : EdgeInsets.fromLTRB(20, 8, 20, 28),
+              : const EdgeInsets.fromLTRB(20, 8, 20, 28),
           child: SafeArea(
             child: SizedBox(
               height: 48,
@@ -294,14 +295,6 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                             transition: Transition.noTransition);
                       }
                     : null,
-                child: Text(
-                  '다음',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
-                      color: Colors.white),
-                ),
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
                         checkNickname && !isDuplicateNickname
@@ -315,6 +308,14 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                           ? BorderRadius.zero
                           : BorderRadius.circular(8.0),
                     ))),
+                child: const Text(
+                  '다음',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      color: Colors.white),
+                ),
               ),
             ),
           ),
@@ -324,7 +325,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
   }
 
   checkError() {
-    if (!checkNickname && nicknameController.text.length > 0) {
+    if (!checkNickname && nicknameController.text.isNotEmpty) {
       return "한글 2자, 영문/숫자 4자 이상 적어주세요.";
     }
     if (isDuplicateNickname) {

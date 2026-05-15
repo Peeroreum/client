@@ -1,7 +1,6 @@
-import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/FirebaseToken.dart';
@@ -14,31 +13,30 @@ import 'package:get/get.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
-import '../api/PeeroreumApi.dart';
 
-class bottomNaviBar extends StatefulWidget {
+class BottomNaviBar extends StatefulWidget {
   String firebaseToken;
   var selectedIndex;
-  bottomNaviBar(this.firebaseToken, this.selectedIndex, {super.key});
+
+  BottomNaviBar(this.firebaseToken, this.selectedIndex, {super.key});
 
   @override
-  State<bottomNaviBar> createState() =>
-      _bottomNaviBarState(firebaseToken, selectedIndex);
+  State<BottomNaviBar> createState() =>
+      _BottomNaviBarState(firebaseToken, selectedIndex);
 }
 
-class _bottomNaviBarState extends State<bottomNaviBar> {
+class _BottomNaviBarState extends State<BottomNaviBar> {
   String firebaseToken;
   var selectedIndex;
 
-  List _pages = [
-    // Prepare(),
-    HomeWedu(),
-    HomeIedu(),
-    Ranking(),
-    MyPage(),
+  final List _pages = [
+    const HomeWedu(),
+    const HomeIedu(),
+    const Ranking(),
+    const MyPage(),
   ];
 
-  _bottomNaviBarState(this.firebaseToken, this.selectedIndex);
+  _BottomNaviBarState(this.firebaseToken, this.selectedIndex);
 
   @override
   void initState() {
@@ -51,7 +49,8 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
   void _handlePendingDeepLink() {
     final roomId = PendingDeepLink.roomId;
     final profileNickname = PendingDeepLink.profileNickname;
-    print('[DeepLink] _handlePendingDeepLink roomId=$roomId profileNickname=$profileNickname');
+    print(
+        '[DeepLink] _handlePendingDeepLink roomId=$roomId profileNickname=$profileNickname');
 
     if (roomId != null) {
       PendingDeepLink.roomId = null;
@@ -77,26 +76,13 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
   }
 
   postFirebaseToken() async {
-    var token = await const FlutterSecureStorage().read(key: 'accessToken');
-    var dio1 = dio.Dio();
     try {
-      var result = await dio1.post('${API.hostConnect}/member/firebasetoken',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }),
+      var result = await ApiClient().post('/member/firebasetoken',
           data: FirebaseToken(firebaseToken: firebaseToken).toJson());
-
       if (result.statusCode == 200) {
         print("firebaseToken post 성공");
       } else {
         print("firebaseToken post 실패 ${result.statusCode}");
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error! STATUS: ${e.response?.statusCode}');
-      } else {
-        print('Error sending request! ${e.message}');
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -174,10 +160,10 @@ class _bottomNaviBarState extends State<bottomNaviBar> {
             currentIndex: selectedIndex,
             unselectedItemColor: PeeroreumColor.gray[400],
             unselectedLabelStyle:
-                TextStyle(fontFamily: 'Pretendard', fontSize: 12),
+                const TextStyle(fontFamily: 'Pretendard', fontSize: 12),
             selectedItemColor: PeeroreumColor.primaryPuple[400],
             selectedLabelStyle:
-                TextStyle(fontFamily: 'Pretendard', fontSize: 12),
+                const TextStyle(fontFamily: 'Pretendard', fontSize: 12),
             backgroundColor: PeeroreumColor.white,
             elevation: 0,
             type: BottomNavigationBarType.fixed,
