@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:textfield_tags/textfield_tags.dart';
@@ -95,15 +96,12 @@ class _CreateWeduState extends State<CreateWedu> {
     }
   }
 
-  XFile? _image; //이미지를 담을 변수 선언
-  final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
-  Future getImage(ImageSource imageSource) async {
-    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
-
-    if (pickedFile != null) {
+  XFile? _image;
+  Future getImage() async {
+    final selected = await showCustomImagePicker(context, multiple: false);
+    if (selected != null && selected.isNotEmpty) {
       setState(() {
-        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+        _image = selected.first;
       });
     }
   }
@@ -224,7 +222,7 @@ class _CreateWeduState extends State<CreateWedu> {
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
-                            getImage(ImageSource.gallery);
+                            getImage();
                           },
                           child: Align(
                             alignment: Alignment.bottomRight,

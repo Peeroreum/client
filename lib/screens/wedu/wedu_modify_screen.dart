@@ -8,6 +8,7 @@ import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
@@ -163,13 +164,12 @@ class _ModifyWeduState extends State<ModifyWedu> {
   }
 
   XFile? _image;
-  final ImagePicker picker = ImagePicker();
 
-  Future getImage(ImageSource imageSource) async {
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
-    if (pickedFile != null) {
+  Future getImage() async {
+    final selected = await showCustomImagePicker(context, multiple: false);
+    if (selected != null && selected.isNotEmpty) {
       setState(() {
-        _image = XFile(pickedFile.path);
+        _image = selected.first;
       });
     }
   }
@@ -347,7 +347,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                getImage(ImageSource.gallery);
+                getImage();
                 checkValidation();
               },
               child: Container(

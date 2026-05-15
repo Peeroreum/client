@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
@@ -442,20 +443,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
               splashColor: Colors.transparent,
               highlightColor: PeeroreumColor.gray[100],
               onTap: () async {
-                XFile? image1;
-                final ImagePicker picker1 = ImagePicker();
-                final XFile? pickedFile1 =
-                    await picker1.pickImage(source: ImageSource.gallery);
-                if (pickedFile1 != null) {
-                  setState(() {
-                    image1 = XFile(pickedFile1.path);
-                    if (image1 != null) {
-                      setState(() {
-                        backgroundImageAPI(image1);
-                        Get.back();
-                      });
-                    }
-                  });
+                final selected = await showCustomImagePicker(context, multiple: false);
+                if (selected != null && selected.isNotEmpty) {
+                  backgroundImageAPI(selected.first);
+                  Get.back();
                 }
               },
               child: const SizedBox(
@@ -509,12 +500,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        final ImagePicker picker = ImagePicker();
-                        final XFile? pickedFile =
-                            await picker.pickImage(source: ImageSource.gallery);
-                        if (pickedFile != null) {
+                        final selected = await showCustomImagePicker(context, multiple: false);
+                        if (selected != null && selected.isNotEmpty) {
                           setState(() {
-                            image = XFile(pickedFile.path);
+                            image = selected.first;
                           });
                         }
                       },
