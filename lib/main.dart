@@ -1,125 +1,317 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:peeroreum_client/data/Onboarding_check.dart';
+import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/fcmSetting.dart';
+import 'package:peeroreum_client/screens/alert/alert_view.dart';
+import 'package:peeroreum_client/screens/bottomNaviBar.dart';
+import 'package:peeroreum_client/screens/report.dart';
+import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
+import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
+import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
+import 'package:peeroreum_client/screens/sign/signin_screen.dart';
+import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
+import 'package:peeroreum_client/screens/wedu/compliment_list_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_create_invitation.dart';
+import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:app_links/app_links.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:peeroreum_client/data/pending_deep_link.dart';
+import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
+import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
+import 'firebase_options.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 
-void main() {
-  runApp(const MyApp());
+// 네이티브 딥링크 채널 (Kakao 인텐트 처리용)
+const _deepLinkChannel = MethodChannel('com.peeroreum/deeplink');
+
+bool _appReady = false;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (_) {
+    // 네이티브에서 이미 자동 초기화된 경우 무시
+  }
+
+  ApiClient().init();
+
+  const nativeAppKey = "a17f729816582e161afaae9395c1f1b5";
+  KakaoSdk.init(nativeAppKey: nativeAppKey);
+  bool isLoggedIn = await checkLogIn();
+  String? firebaseToken = await fcmSetting();
+  bool? isNewUser = await checkUser();
+
+  // 앱이 실행 중일 때 네이티브로부터 딥링크 수신 (onNewIntent)
+  _deepLinkChannel.setMethodCallHandler((call) async {
+    if (call.method == 'onDeepLink') {
+      // 같이방 딥링크
+      final roomId = call.arguments as String?;
+      print('[DeepLink] onDeepLink from native: $roomId');
+      if (roomId == null) return;
+      final loggedIn = await checkLogIn();
+      if (loggedIn) {
+        final ctx = Get.context;
+        if (ctx != null) WeduJoinFromLink.show(ctx, roomId);
+      } else {
+        PendingDeepLink.roomId = roomId;
+        Get.offAll(() => EmailSignIn());
+      }
+    } else if (call.method == 'onDeepLinkProfile') {
+      // 프로필 딥링크
+      final nickname = call.arguments as String?;
+      print('[DeepLink] onDeepLinkProfile from native: $nickname');
+      if (nickname == null) return;
+      final loggedIn = await checkLogIn();
+      if (loggedIn) {
+        Get.to(() => MyPageProfile(nickname, false));
+      } else {
+        PendingDeepLink.profileNickname = nickname;
+        Get.offAll(() => EmailSignIn());
+      }
+    }
+  });
+
+  // 콜드 스타트: roomId
+  try {
+    final roomId = await _deepLinkChannel
+        .invokeMethod<String>('getInitialRoomId')
+        .timeout(const Duration(seconds: 3), onTimeout: () => null);
+    print('[DeepLink] getInitialRoomId from native: $roomId');
+    if (roomId != null) PendingDeepLink.roomId = roomId;
+  } catch (e) {
+    print('[DeepLink] getInitialRoomId error: $e');
+  }
+
+  // 콜드 스타트: nickname
+  try {
+    final nickname = await _deepLinkChannel
+        .invokeMethod<String>('getInitialNickname')
+        .timeout(const Duration(seconds: 3), onTimeout: () => null);
+    print('[DeepLink] getInitialNickname from native: $nickname');
+    if (nickname != null) PendingDeepLink.profileNickname = nickname;
+  } catch (e) {
+    print('[DeepLink] getInitialNickname error: $e');
+  }
+
+  // app_links: iOS 전용 (Android는 MethodChannel로 cold/warm start 모두 처리하므로 중복 방지)
+  // iOS cold/warm start 모두 AppDelegate MethodChannel로 처리하므로 getInitialLink() 불필요
+  final appLinks = AppLinks();
+  appLinks.uriLinkStream.listen((uri) async {
+    print('[DeepLink] uriLinkStream: $uri');
+    if (Platform.isAndroid) return; // Android는 MethodChannel이 모두 처리
+    if (uri.scheme.startsWith('kakaoa')) return; // iOS Kakao 스킴은 AppDelegate MethodChannel이 처리
+
+    // 같이방
+    final roomId = extractRoomId(uri);
+    if (roomId != null) {
+      final loggedIn = await checkLogIn();
+      if (!_appReady) { PendingDeepLink.roomId = roomId; return; }
+      if (loggedIn) {
+        final ctx = Get.context;
+        if (ctx != null) WeduJoinFromLink.show(ctx, roomId);
+      } else {
+        PendingDeepLink.roomId = roomId;
+        Get.offAll(() => EmailSignIn());
+      }
+      return;
+    }
+
+    // 프로필
+    final nickname = extractNickname(uri);
+    if (nickname != null) {
+      final loggedIn = await checkLogIn();
+      if (!_appReady) { PendingDeepLink.profileNickname = nickname; return; }
+      if (loggedIn) {
+        Get.to(() => MyPageProfile(nickname, false));
+      } else {
+        PendingDeepLink.profileNickname = nickname;
+        Get.offAll(() => EmailSignIn());
+      }
+    }
+  });
+
+  runApp(PeeroreumApp(isLoggedIn, firebaseToken ?? '', isNewUser));
+  // 첫 프레임 완료 후 앱 준비 완료 플래그 설정
+  WidgetsBinding.instance.addPostFrameCallback((_) => _appReady = true);
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+Future<bool> checkUser() async {
+  bool? isnewhere = await OnboardingCheck.getUserType();
+  if (isnewhere != false) {
+    isnewhere = true;
+  }
+  return isnewhere!;
+}
+
+Future<bool> checkLogIn() async {
+  final secureStorage = FlutterSecureStorage();
+  String? token = await secureStorage.read(key: 'accessToken');
+  return token != null;
+}
+
+/// peeroreum://wedu/{roomId} 또는 카카오 스킴?roomId=... 에서 roomId 추출
+String? extractRoomId(Uri uri) {
+  // 1) peeroreum://wedu/{roomId}
+  if (uri.scheme == 'peeroreum' && uri.host == 'wedu') {
+    final id = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
+    return (id != null && id.isNotEmpty) ? id : null;
+  }
+  // 2) 카카오 스킴: kakaoa{key}://kakaolink?roomId={roomId}
+  if (uri.scheme.startsWith('kakaoa') && uri.host == 'kakaolink') {
+    print('[DeepLink] Kakao URI queryParams=${uri.queryParameters}');
+    final roomId = uri.queryParameters['roomId'];
+    if (roomId != null && roomId.isNotEmpty) return roomId;
+    // 구버전 호환
+    if (uri.pathSegments.isNotEmpty && uri.pathSegments.first.isNotEmpty) {
+      return uri.pathSegments.first;
+    }
+    final raw = uri.query.isNotEmpty ? Uri.decodeFull(uri.query) : '';
+    if (raw.startsWith('peeroreum://wedu/')) {
+      return raw.replaceFirst('peeroreum://wedu/', '').split('/').first;
+    }
+    if (raw.isNotEmpty) return raw.split('/').first;
+  }
+  return null;
+}
+
+/// peeroreum://profile/{nickname} 또는 카카오 스킴?nickname=... 에서 nickname 추출
+String? extractNickname(Uri uri) {
+  // 1) peeroreum://profile/{nickname}
+  if (uri.scheme == 'peeroreum' && uri.host == 'profile') {
+    final nick = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
+    return (nick != null && nick.isNotEmpty) ? nick : null;
+  }
+  // 2) 카카오 스킴: kakaoa{key}://kakaolink?nickname={nickname}
+  if (uri.scheme.startsWith('kakaoa') && uri.host == 'kakaolink') {
+    final nickname = uri.queryParameters['nickname'];
+    if (nickname != null && nickname.isNotEmpty) return nickname;
+  }
+  return null;
+}
+
+class PeeroreumApp extends StatelessWidget {
+  bool isLoggedIn;
+  bool isNewUser;
+  String firebaseToken;
+  PeeroreumApp(this.isLoggedIn, this.firebaseToken, this.isNewUser,
+      {super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return GetMaterialApp(
+      builder: (context, child) {
+        return MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+            child: child!);
+      },
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          appBarTheme: const AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: PeeroreumColor.white,
+                  statusBarIconBrightness: Brightness.dark,
+                  systemNavigationBarColor: PeeroreumColor.white,
+                  systemNavigationBarIconBrightness: Brightness.dark))),
+      title: 'Peeroreum',
+      home: isNewUser
+          ? OnBoarding()
+          : (isLoggedIn ? BottomNaviBar(firebaseToken, 0) : EmailSignIn()),
+      // initialRoute: isLoggedIn? '/home' : '/signIn/email',
+      // routes: {
+      //   '/signIn': (context) => SignIn(),
+      //   '/signIn/email': (context) => EmailSignIn(),
+      //   '/signUp/email': (context) => EmailSignUp(),
+      //   '/home': (context) => bottomNaviBar(firebaseToken, 1),
+      //   '/wedu': (context) => HomeWedu(),
+      //   '/wedu/create_invitaion': (context) => CreateInvitation(),
+      //   'wedu/my': (context) => InWedu(),
+      //   '/wedu/challenge/ok': (context) => ComplimentList(),
+      //   '/wedu/challenge/notok': (context) => EncouragementList(),
+      //   //'/wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
+      //   //'/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
+      //   'signUp/onBoarding': (context) => OnBoarding(),
+      //   'signUp/Complete': (context) => SignUpComplete(),
+      //   '/report': (context) => Report(data: "상세 data 아직 추가 안 됨",),
+      //   '/home/iedu': (context) => bottomNaviBar(firebaseToken, 2),
+      // },
+      getPages: [
+        GetPage(
+          name: '/signIn',
+          page: () => SignIn(),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        GetPage(
+          name: '/signIn/email',
+          page: () => EmailSignIn(),
+        ),
+        GetPage(
+          name: '/signUp/email',
+          page: () => EmailSignUp(),
+        ),
+        GetPage(
+          name: '/home',
+          page: () => BottomNaviBar(firebaseToken, 0),
+        ),
+        GetPage(
+          name: '/wedu',
+          page: () => HomeWedu(),
+        ),
+        GetPage(
+          name: '/wedu/create_invitaion',
+          page: () => CreateInvitation(),
+        ),
+        GetPage(
+          name: '/wedu/my',
+          page: () => InWedu(),
+        ),
+        GetPage(
+          name: '/wedu/challenge/ok',
+          page: () => ComplimentList(),
+        ),
+        GetPage(
+          name: '/wedu/challenge/notok',
+          page: () => EncouragementList(),
+        ),
+        GetPage(
+          name: '/signUp/onBoarding',
+          page: () => OnBoarding(),
+        ),
+        GetPage(
+          name: '/signUp/Complete',
+          page: () => SignUpComplete(),
+        ),
+        GetPage(
+          name: '/report',
+          page: () => const Report(
+            data: "상세 data 아직 추가 안 됨",
+          ),
+        ),
+        GetPage(
+          name: '/home/iedu',
+          page: () => BottomNaviBar(firebaseToken, 1),
+        ),
+        GetPage(
+          name: '/home/alert',
+          page: () => Alert(),
+        ),
+      ],
+      debugShowCheckedModeBanner: false,
     );
   }
 }

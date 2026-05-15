@@ -1,13 +1,98 @@
 import UIKit
 import Flutter
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
+    private var initialRoomId: String? = nil
+    private var initialNickname: String? = nil
+    private var deepLinkChannel: FlutterMethodChannel? = nil
+    /// 콜드 스타트에서 이미 처리한 URL — application:open:url: 중복 호출 방지
+    private var coldStartHandledUrl: String? = nil
+
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        GeneratedPluginRegistrant.register(with: self)
+
+        // super 호출로 Flutter 엔진 및 window 초기화
+        let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
+        // window 초기화 이후 MethodChannel 설정
+        if let controller = window?.rootViewController as? FlutterViewController {
+            deepLinkChannel = FlutterMethodChannel(
+                name: "com.peeroreum/deeplink",
+                binaryMessenger: controller.binaryMessenger
+            )
+            deepLinkChannel?.setMethodCallHandler { [weak self] call, result in
+                if call.method == "getInitialRoomId" {
+                    result(self?.initialRoomId)
+                } else if call.method == "getInitialNickname" {
+                    result(self?.initialNickname)
+                } else {
+                    result(FlutterMethodNotImplemented)
+                }
+            }
+        }
+
+        // 콜드 스타트: 앱이 꺼진 상태에서 링크로 열릴 때
+        if let url = launchOptions?[.url] as? URL {
+            coldStartHandledUrl = url.absoluteString
+            handleKakaoLink(url, isColdStart: true)
+        }
+
+        return result
+    }
+
+    // 웜 스타트: 앱이 떠 있는 상태에서 링크로 열릴 때
+    // (iOS cold start에서도 didFinishLaunchingWithOptions 이후 이 메서드가 한 번 더 호출되므로 중복 방지 처리)
+    override func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        // 콜드 스타트에서 이미 처리한 URL이면 건너뜀
+        if let handled = coldStartHandledUrl, handled == url.absoluteString {
+            coldStartHandledUrl = nil
+            return true
+        }
+        if url.scheme?.hasPrefix("kakaoa") == true && url.host == "kakaolink" {
+            handleKakaoLink(url, isColdStart: false)
+            return true
+        }
+        return super.application(app, open: url, options: options)
+    }
+
+    private func handleKakaoLink(_ url: URL, isColdStart: Bool) {
+        let query = url.query ?? ""
+
+        // 같이방: peeroreum://wedu/{roomId} 형태로 넘어오는 경우
+        let decoded = query.removingPercentEncoding ?? query
+        if decoded.hasPrefix("peeroreum://wedu/") {
+            let roomId = String(decoded.dropFirst("peeroreum://wedu/".count))
+                .components(separatedBy: "/").first ?? ""
+            if !roomId.isEmpty {
+                if isColdStart { initialRoomId = roomId }
+                else { deepLinkChannel?.invokeMethod("onDeepLink", arguments: roomId) }
+                return
+            }
+        }
+
+        // query parameter 파싱 (roomId=xxx 또는 nickname=xxx)
+        if let components = URLComponents(string: "app://app?\(query)") {
+            let items = components.queryItems ?? []
+
+            if let roomId = items.first(where: { $0.name == "roomId" })?.value, !roomId.isEmpty {
+                if isColdStart { initialRoomId = roomId }
+                else { deepLinkChannel?.invokeMethod("onDeepLink", arguments: roomId) }
+                return
+            }
+
+            if let nickname = items.first(where: { $0.name == "nickname" })?.value, !nickname.isEmpty {
+                if isColdStart { initialNickname = nickname }
+                else { deepLinkChannel?.invokeMethod("onDeepLinkProfile", arguments: nickname) }
+                return
+            }
+        }
+    }
 }
