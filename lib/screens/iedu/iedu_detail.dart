@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,7 +10,7 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/report.dart';
@@ -19,7 +18,7 @@ import 'package:peeroreum_client/screens/report.dart';
 class DetailIedu extends StatefulWidget {
   final int id;
   final bool isQselected;
-  const DetailIedu(this.id, this.isQselected);
+  const DetailIedu(this.id, this.isQselected, {super.key});
 
   @override
   State<DetailIedu> createState() => _DetailIeduState(id, isQselected);
@@ -28,10 +27,10 @@ class DetailIedu extends StatefulWidget {
 class _DetailIeduState extends State<DetailIedu> {
   _DetailIeduState(this.id, this.isQselected);
 
-  var id, token, nickname;
+  var id, nickname;
   TextEditingController _textController = TextEditingController();
-  ScrollController _scrollController = ScrollController();
-  FocusNode _focusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
   late Future initFuture;
   int page = 0;
   bool _isLoading = false;
@@ -39,10 +38,10 @@ class _DetailIeduState extends State<DetailIedu> {
   int? _maxLines = 1; // 현재 줄 수
   int _visibleLines = 1; // 화면에 보이는 줄 수
 
-  dynamic selectedDatas;
-  dynamic sltProfileDatas;
-  dynamic questionDatas = '';
-  dynamic profileDatas = '';
+  dynamic selectedData;
+  dynamic sltProfileData;
+  dynamic questionData = '';
+  dynamic profileData = '';
 
   dynamic profileImage;
   dynamic grade;
@@ -67,15 +66,14 @@ class _DetailIeduState extends State<DetailIedu> {
   final ImagePicker picker = ImagePicker();
   XFile? _image;
   //----------------
-  List<dynamic> commentDatas = [];
+  List<dynamic> commentData = [];
 
   void updateData() {
     setState(() {});
   }
 
-  Future<void> fetchDatas() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
-    nickname = await FlutterSecureStorage().read(key: "nickname");
+  Future<void> fetchData() async {
+    nickname = await const FlutterSecureStorage().read(key: "nickname");
 
     await fetchIeduQuestionData();
     await fetchIeduAnswerData();
@@ -84,28 +82,13 @@ class _DetailIeduState extends State<DetailIedu> {
 
   fetchSelectedQuestion(bool selectExist) async {
     if (selectExist == true) {
-      var dio1 = dio.Dio();
       try {
-        var selectedQuestionResult = await dio1.get(
-            '${API.hostConnect}/answer/$id/selected',
-            options: dio.Options(headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            }));
+        var selectedQuestionResult = await ApiClient().get('/answer/$id/selected');
         if (selectedQuestionResult.statusCode == 200) {
-          selectedDatas = selectedQuestionResult.data['data'];
-          sltProfileDatas = selectedDatas['memberProfileDto'];
+          selectedData = selectedQuestionResult.data['data'];
+          sltProfileData = selectedData['memberProfileDto'];
         } else {
           print("fetchIeduQuestionData에러${selectedQuestionResult.statusCode}");
-        }
-      } on dio.DioException catch (e) {
-        if (e.response != null) {
-          print('Dio error!');
-          print('STATUS: ${e.response?.statusCode}');
-          print('DATA: ${e.response?.data}');
-        } else {
-          print('Error sending request!');
-          print(e.message);
         }
       } catch (e) {
         print('Unexpected error: $e');
@@ -115,46 +98,28 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   fetchIeduQuestionData() async {
-    var dio1 = dio.Dio();
     try {
-      var inIeduQuestionResult = await dio1.get(
-          '${API.hostConnect}/question/$id',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var inIeduQuestionResult = await ApiClient().get('/question/$id');
       if (inIeduQuestionResult.statusCode == 200) {
-        questionDatas = inIeduQuestionResult.data['data'];
-        profileDatas = questionDatas['memberProfileDto'];
-        profileImage = profileDatas['profileImage'];
-        grade = profileDatas['grade'];
-        name = profileDatas['nickname'];
-        date = questionDatas['createdTime'];
-        title = questionDatas['title'];
-        contents = questionDatas['content'];
-        questionImage = questionDatas['imageUrls'];
-        isLiked = questionDatas['liked'];
-        isBookmarked = questionDatas['bookmarked'];
-        likesNum = questionDatas['likes'];
-        commentsNum = questionDatas['comments'];
+        questionData = inIeduQuestionResult.data['data'];
+        profileData = questionData['memberProfileDto'];
+        profileImage = profileData['profileImage'];
+        grade = profileData['grade'];
+        name = profileData['nickname'];
+        date = questionData['createdTime'];
+        title = questionData['title'];
+        contents = questionData['content'];
+        questionImage = questionData['imageUrls'];
+        isLiked = questionData['liked'];
+        isBookmarked = questionData['bookmarked'];
+        likesNum = questionData['likes'];
+        commentsNum = questionData['comments'];
         print(questionImage);
       } else if (inIeduQuestionResult.statusCode == 404) {
         Get.offAllNamed('/home/iedu');
         print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
       } else {
         print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 404) {
-          Get.offAllNamed('/home/iedu');
-        }
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -165,29 +130,14 @@ class _DetailIeduState extends State<DetailIedu> {
   fetchIeduAnswerData() async {
     page = 0;
     print(page);
-    var dio1 = dio.Dio();
     try {
-      var inIeduAnswerResult = await dio1.get(
-          '${API.hostConnect}/answer?questionId=$id&page=$page',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var inIeduAnswerResult = await ApiClient().get('/answer?questionId=$id&page=$page');
       if (inIeduAnswerResult.statusCode == 200) {
-        commentDatas = inIeduAnswerResult.data['data'];
-        print(commentDatas);
+        commentData = inIeduAnswerResult.data['data'];
+        print(commentData);
         setState(() {});
       } else {
         print("fetchIeduAnswerData에러${inIeduAnswerResult.statusCode}");
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -198,59 +148,44 @@ class _DetailIeduState extends State<DetailIedu> {
   @override
   void initState() {
     super.initState();
-    initFuture = fetchDatas();
+    initFuture = fetchData();
     _textController = TextEditingController();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
           !_isLoading) {
-        loadmoreData();
+        loadMoreData();
       }
     });
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(loadmoreData);
+    _scrollController.removeListener(loadMoreData);
     _scrollController.dispose();
     _textController.dispose();
     page = 0;
     super.dispose();
   }
 
-  void loadmoreData() async {
+  void loadMoreData() async {
     setState(() {
       _isLoading = true;
     });
 
-    List<dynamic> addedDatas = [];
+    List<dynamic> addedData = [];
     page++;
-    var dio1 = dio.Dio();
     try {
-      var inIeduAnswerResult = await dio1.get(
-          '${API.hostConnect}/answer?questionId=$id&page=$page',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var inIeduAnswerResult = await ApiClient().get('/answer?questionId=$id&page=$page');
       if (inIeduAnswerResult.statusCode == 200) {
-        addedDatas = inIeduAnswerResult.data['data'];
+        addedData = inIeduAnswerResult.data['data'];
         setState(() {
-          commentDatas.addAll(addedDatas);
+          commentData.addAll(addedData);
           _isLoading = false;
         });
       } else {
         print("에러${inIeduAnswerResult.statusCode}");
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error! STATUS: ${e.response?.statusCode}');
-      } else {
-        print('Error sending request! ${e.message}');
-      }
-      setState(() {
-        _isLoading = false;
-      });
     } catch (e) {
       print('Unexpected error: $e');
       setState(() {
@@ -331,8 +266,8 @@ class _DetailIeduState extends State<DetailIedu> {
                 child: Container(
                   width: 24,
                   height: 24,
-                  margin: EdgeInsets.only(right: 4),
-                  constraints: BoxConstraints(),
+                  margin: const EdgeInsets.only(right: 4),
+                  constraints: const BoxConstraints(),
                   child: isBookmarked != null && isBookmarked
                       ? SvgPicture.asset('assets/icons/bookmark_fill.svg',
                           color: PeeroreumColor.primaryPuple[400])
@@ -350,7 +285,7 @@ class _DetailIeduState extends State<DetailIedu> {
                   height: 24,
                   width: 24,
                   padding: EdgeInsets.zero,
-                  constraints: BoxConstraints(),
+                  constraints: const BoxConstraints(),
                   child: SvgPicture.asset(
                     'assets/icons/icon_dots_mono.svg',
                     height: 24,
@@ -384,13 +319,13 @@ class _DetailIeduState extends State<DetailIedu> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       vertical: 16,
                     ),
                     child: Column(
@@ -405,7 +340,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     height: 1,
                     color: PeeroreumColor.gray[100],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Row(
@@ -427,7 +362,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                     width: 1,
                                     color: grade != null
                                         ? PeeroreumColor.gradeColor[grade]!
-                                        : Color.fromARGB(255, 186, 188, 189)),
+                                        : const Color.fromARGB(255, 186, 188, 189)),
                               ),
                               child: Container(
                                 height: 26,
@@ -454,7 +389,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                                   'Error loading image: $exception');
                                             },
                                           )
-                                        : DecorationImage(
+                                        : const DecorationImage(
                                             image: AssetImage(
                                             'assets/images/user.jpg',
                                           )),
@@ -468,13 +403,13 @@ class _DetailIeduState extends State<DetailIedu> {
                           ),
                           Text(
                             name,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500),
                           ),
                           if (nickname == name)
-                            Text(
+                            const Text(
                               ' (나)',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
@@ -493,13 +428,13 @@ class _DetailIeduState extends State<DetailIedu> {
                                   C1_12px_M(
                                       text: date.substring(0, 4),
                                       color: PeeroreumColor.gray[400]),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                   C1_12px_M(
                                       text: '/',
                                       color: PeeroreumColor.gray[400]),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                 ],
@@ -507,27 +442,27 @@ class _DetailIeduState extends State<DetailIedu> {
                           C1_12px_M(
                               text: date.substring(5, 7),
                               color: PeeroreumColor.gray[400]),
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           C1_12px_M(
                               text: date.substring(8, 10),
                               color: PeeroreumColor.gray[400]),
-                          SizedBox(
+                          const SizedBox(
                             width: 4,
                           ),
                           C1_12px_M(
                               text: date.substring(11, 13),
                               color: PeeroreumColor.gray[400]),
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           C1_12px_M(
@@ -537,13 +472,13 @@ class _DetailIeduState extends State<DetailIedu> {
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Column(
                     children: [B4_14px_R(text: contents)],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Visibility(
@@ -575,16 +510,16 @@ class _DetailIeduState extends State<DetailIedu> {
                                 child: Align(
                                   alignment: Alignment.bottomRight,
                                   child: Container(
-                                      margin: EdgeInsets.all(12),
-                                      padding: EdgeInsets.symmetric(
+                                      margin: const EdgeInsets.all(12),
+                                      padding: const EdgeInsets.symmetric(
                                           vertical: 4, horizontal: 8),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
-                                        color: Color.fromARGB(60, 0, 0, 0),
+                                        color: const Color.fromARGB(60, 0, 0, 0),
                                       ),
                                       child: Text(
-                                        '${currentPage} / ${questionImage.length}',
-                                        style: TextStyle(
+                                        '$currentPage / ${questionImage.length}',
+                                        style: const TextStyle(
                                             fontFamily: 'Pretendard',
                                             fontWeight: FontWeight.w400,
                                             fontSize: 12,
@@ -619,7 +554,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         },
                         child: Row(
                           children: [
-                            Container(
+                            SizedBox(
                               height: 24,
                               width: 24,
                               child: isLiked
@@ -628,12 +563,12 @@ class _DetailIeduState extends State<DetailIedu> {
                                   : SvgPicture.asset(
                                       'assets/icons/thumbs_up.svg'),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 4,
                             ),
                             Container(
                                 constraints:
-                                    BoxConstraints(minWidth: 17, minHeight: 16),
+                                    const BoxConstraints(minWidth: 17, minHeight: 16),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: C1_12px_M(
@@ -642,23 +577,23 @@ class _DetailIeduState extends State<DetailIedu> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Row(
                         children: [
-                          Container(
+                          SizedBox(
                             height: 24,
                             width: 24,
                             child: SvgPicture.asset(
                                 'assets/icons/chat_drop_dots.svg'),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 4,
                           ),
                           Container(
                               constraints:
-                                  BoxConstraints(minWidth: 17, minHeight: 16),
+                                  const BoxConstraints(minWidth: 17, minHeight: 16),
                               child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: C1_12px_M(
@@ -668,7 +603,7 @@ class _DetailIeduState extends State<DetailIedu> {
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   )
                 ],
@@ -681,27 +616,27 @@ class _DetailIeduState extends State<DetailIedu> {
             ),
             Visibility(
               visible: isQselected,
-              child: selectedDatas != null
+              child: selectedData != null
                   ? Container(
                       color: PeeroreumColor.primaryPuple[50]!,
                       child: MakeComment(
                         index: 0,
-                        id: selectedDatas["id"],
+                        id: selectedData["id"],
                         hasParent: -1,
-                        grade: selectedDatas['memberProfileDto']['grade'],
-                        profileImage: selectedDatas['memberProfileDto']
+                        grade: selectedData['memberProfileDto']['grade'],
+                        profileImage: selectedData['memberProfileDto']
                             ['profileImage'],
-                        name: selectedDatas['memberProfileDto']['nickname'],
+                        name: selectedData['memberProfileDto']['nickname'],
                         isQwselected: isQselected,
-                        isChosen: selectedDatas["isSelected"],
-                        comment: selectedDatas["content"],
-                        commentImage: selectedDatas["images"],
-                        createdTime: selectedDatas["createdTime"],
-                        isLiked: selectedDatas["isLiked"],
-                        likesNum: selectedDatas["likes"],
-                        commentsNum: selectedDatas["comments"],
-                        isDeleted: selectedDatas["isDeleted"],
-                        updateData: fetchDatas,
+                        isChosen: selectedData["isSelected"],
+                        comment: selectedData["content"],
+                        commentImage: selectedData["images"],
+                        createdTime: selectedData["createdTime"],
+                        isLiked: selectedData["isLiked"],
+                        likesNum: selectedData["likes"],
+                        commentsNum: selectedData["comments"],
+                        isDeleted: selectedData["isDeleted"],
+                        updateData: fetchData,
                         qWriter: name,
                       ),
                     )
@@ -709,14 +644,13 @@ class _DetailIeduState extends State<DetailIedu> {
             ),
             //--대안--
             Container(
-              padding: EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: (commentDatas ??
-                        <dynamic>[]) // commentDatas가 null이면 빈 리스트를 사용합니다.
+                children: (commentData)
                     .map<Widget>((commentData) {
                   return MakeComment(
-                    index: commentDatas.indexOf(commentData),
+                    index: this.commentData.indexOf(commentData),
                     id: commentData["id"],
                     hasParent: commentData["parentId"],
                     grade: commentData['memberProfileDto']['grade'],
@@ -732,7 +666,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     likesNum: commentData["likes"],
                     commentsNum: commentData["comments"],
                     isDeleted: commentData["isDeleted"],
-                    updateData: fetchDatas,
+                    updateData: fetchData,
                     qWriter: name,
                   );
                 }).toList(),
@@ -765,7 +699,7 @@ class _DetailIeduState extends State<DetailIedu> {
             Visibility(
               visible: _image != null,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 height: 212,
                 width: double.maxFinite,
                 color: Colors.black.withOpacity(0.4),
@@ -784,7 +718,7 @@ class _DetailIeduState extends State<DetailIedu> {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Container(
-                      margin: EdgeInsets.only(top: 8, right: 8),
+                      margin: const EdgeInsets.only(top: 8, right: 8),
                       width: 24,
                       height: 24,
                       child: GestureDetector(
@@ -815,12 +749,12 @@ class _DetailIeduState extends State<DetailIedu> {
                     color: PeeroreumColor.gray[100]!,
                     width: 1.0,
                   ))),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 LayoutBuilder(builder: (context, constraints) {
                   return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    constraints: BoxConstraints(minHeight: 48),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    constraints: const BoxConstraints(minHeight: 48),
                     width: double.maxFinite,
                     decoration: BoxDecoration(
                         color: PeeroreumColor.gray[100],
@@ -836,7 +770,7 @@ class _DetailIeduState extends State<DetailIedu> {
                             child: TextFormField(
                               focusNode: _focusNode,
                               controller: _textController,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400),
@@ -857,7 +791,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                   )),
                               onChanged: (value) {
                                 comment = value;
-                                final lines = textlines(value);
+                                final lines = textLines(value);
                                 setState(() {
                                   if (comment != "" || _image != null) {
                                     isSubmittable = true;
@@ -884,7 +818,7 @@ class _DetailIeduState extends State<DetailIedu> {
                               });
                             }
                           },
-                          child: Container(
+                          child: SizedBox(
                             height: 24,
                             child: Center(
                               child: T5_14px(
@@ -900,7 +834,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     ),
                   );
                 }),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 Row(
@@ -924,7 +858,7 @@ class _DetailIeduState extends State<DetailIedu> {
                               color: PeeroreumColor.gray[500],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 4,
                           ),
                           T4_16px(
@@ -934,14 +868,14 @@ class _DetailIeduState extends State<DetailIedu> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                     ),
                     GestureDetector(
                       onTap: () async {
                         if (_image == null) {
                           final dynamic whiteboardImage =
-                              await Get.to(() => WhiteboardIedu());
+                              await Get.to(() => const WhiteboardIedu());
                           setState(() {
                             _image = whiteboardImage;
                             isSubmittable = true;
@@ -959,7 +893,7 @@ class _DetailIeduState extends State<DetailIedu> {
                               color: PeeroreumColor.gray[500],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 4,
                           ),
                           T4_16px(
@@ -989,7 +923,7 @@ class _DetailIeduState extends State<DetailIedu> {
         isSubmittable = true;
       });
     } else {
-      // 이미지 선택이 취소되었을 때의 처리
+      // 이미지 선택이 취소되었을 때
       print('Image selection cancelled');
     }
   }
@@ -1013,7 +947,7 @@ class _DetailIeduState extends State<DetailIedu> {
         builder: (context) {
           return Container(
             decoration: const BoxDecoration(
-              color: PeeroreumColor.white, // 여기에 색상 지정
+              color: PeeroreumColor.white,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.0),
                 topRight: Radius.circular(16.0),
@@ -1025,7 +959,7 @@ class _DetailIeduState extends State<DetailIedu> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -1035,7 +969,17 @@ class _DetailIeduState extends State<DetailIedu> {
                               takeFromCamera();
                               Get.back();
                             },
-                            child: Text(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
+                            child: const Text(
                               '카메라',
                               style: TextStyle(
                                 fontFamily: 'Pretendard',
@@ -1044,26 +988,26 @@ class _DetailIeduState extends State<DetailIedu> {
                                 color: PeeroreumColor.white,
                               ),
                             ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    PeeroreumColor.primaryPuple[400]),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.all(12)),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ))),
                           ),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: TextButton(
                             onPressed: () {
                               takeFromGallery();
                               Get.back();
                             },
-                            child: Text(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    PeeroreumColor.primaryPuple[400]),
+                                padding: MaterialStateProperty.all(
+                                    const EdgeInsets.all(12)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ))),
+                            child: const Text(
                               '갤러리',
                               style: TextStyle(
                                 fontFamily: 'Pretendard',
@@ -1072,16 +1016,6 @@ class _DetailIeduState extends State<DetailIedu> {
                                 color: PeeroreumColor.white,
                               ),
                             ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    PeeroreumColor.primaryPuple[400]),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.all(12)),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ))),
                           ),
                         ),
                       ],
@@ -1096,8 +1030,8 @@ class _DetailIeduState extends State<DetailIedu> {
   deleteQuestionBottomSheet(writerName) {
     var isMyQuestion = writerName == nickname;
     return Container(
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -1144,11 +1078,11 @@ class _DetailIeduState extends State<DetailIedu> {
                 margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 height: 56,
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   vertical: 16,
                   horizontal: 20,
                 ),
-                child: Text('신고하기',
+                child: const Text('신고하기',
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 18,
@@ -1166,8 +1100,8 @@ class _DetailIeduState extends State<DetailIedu> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 20),
-          contentPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
@@ -1186,10 +1120,10 @@ class _DetailIeduState extends State<DetailIedu> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -1208,11 +1142,10 @@ class _DetailIeduState extends State<DetailIedu> {
                           });
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
+                          backgroundColor: PeeroreumColor.gray[300],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
-                            // 모양
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -1226,7 +1159,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () {
@@ -1235,13 +1168,13 @@ class _DetailIeduState extends State<DetailIedu> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '삭제',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -1262,7 +1195,6 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   Future<void> postAnswer() async {
-    var dio1 = dio.Dio();
     var formData = dio.FormData();
 
     var IeduAnswerMap = <String, dynamic>{
@@ -1278,15 +1210,11 @@ class _DetailIeduState extends State<DetailIedu> {
       formData.files.add(MapEntry('files', file));
     }
 
-    dio1.options.contentType = 'multipart/form-data';
-    dio1.options.headers = {'Authorization': 'Bearer $token'};
-
     try {
-      var response =
-          await dio1.post('${API.hostConnect}/answer', data: formData);
+      var response = await ApiClient().postForm('/answer', formData);
 
       if (response.statusCode == 200) {
-        fetchDatas();
+        fetchData();
         setState(() {
           _image = null;
           _textController.clear();
@@ -1297,28 +1225,17 @@ class _DetailIeduState extends State<DetailIedu> {
       } else {
         PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
-      }
-      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     } catch (e) {
       print('Unexpected error: $e');
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
 
-  int textlines(String text) {
+  int textLines(String text) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: TextStyle(
+        style: const TextStyle(
             height: 1.0,
             fontFamily: 'Pretendard',
             fontSize: 14,
@@ -1333,47 +1250,27 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   Future<void> postBookmark() async {
-    var dio1 = dio.Dio();
     try {
       if (isBookmarked == false) {
-        var response = await dio1.post(
-            '${API.hostConnect}/bookmark/question/$id',
-            options: dio.Options(headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            }));
+        var response = await ApiClient().post('/bookmark/question/$id');
         if (response.statusCode == 200) {
           print('북마크 요청이 성공했습니다.');
-          fetchDatas();
+          fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
           print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
       } else if (isBookmarked == true) {
-        var response = await dio1.delete(
-            '${API.hostConnect}/bookmark/question/$id',
-            options: dio.Options(headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            }));
+        var response = await ApiClient().delete('/bookmark/question/$id');
         if (response.statusCode == 200) {
           print('북마크 삭제 요청이 성공했습니다.');
-          fetchDatas();
+          fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
           print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-        }
-        print('Dio error! STATUS: ${e.response?.statusCode}');
-      } else {
-        print('Error sending request! ${e.message}');
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -1381,45 +1278,27 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   Future<void> postQLike() async {
-    var dio1 = dio.Dio();
     try {
       if (isLiked == false) {
-        var response = await dio1.post('${API.hostConnect}/like/question/$id',
-            options: dio.Options(headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            }));
+        var response = await ApiClient().post('/like/question/$id');
         if (response.statusCode == 200) {
           print('질문 좋아요 요청이 성공했습니다.');
-          fetchDatas();
+          fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
           print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
       } else if (isLiked == true) {
-        var response = await dio1.delete('${API.hostConnect}/like/question/$id',
-            options: dio.Options(headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            }));
+        var response = await ApiClient().delete('/like/question/$id');
         if (response.statusCode == 200) {
           print('질문 좋아요 삭제 요청이 성공했습니다.');
-          fetchDatas();
+          fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
           print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-        }
-        print('Dio error! STATUS: ${e.response?.statusCode}');
-      } else {
-        print('Error sending request! ${e.message}');
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -1428,13 +1307,8 @@ class _DetailIeduState extends State<DetailIedu> {
   }
 
   Future<void> deleteQuestion() async {
-    var dio1 = dio.Dio();
     try {
-      var response = await dio1.delete('${API.hostConnect}/question/$id',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var response = await ApiClient().delete('/question/$id');
       if (response.statusCode == 200) {
         print('질문 삭제 요청이 성공했습니다.');
       } else if (response.statusCode == 404) {
@@ -1442,17 +1316,6 @@ class _DetailIeduState extends State<DetailIedu> {
       } else {
         PeeroreumToast.show(context, '채택 완료 질문은 삭제할 수 없어요.', isError: true);
         print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
-        } else {
-          PeeroreumToast.show(context, '채택 완료 질문은 삭제할 수 없어요.', isError: true);
-        }
-        print('Dio error! STATUS: ${e.response?.statusCode}');
-      } else {
-        print('Error sending request! ${e.message}');
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -1506,7 +1369,7 @@ class MakeComment extends StatefulWidget {
 
 class _MakeCommentState extends State<MakeComment> {
   String createdTime = DateTime.now().toString();
-  var nickname, token;
+  var nickname;
 
   @override
   void initState() {
@@ -1516,8 +1379,7 @@ class _MakeCommentState extends State<MakeComment> {
   }
 
   Future<void> getData() async {
-    nickname = await FlutterSecureStorage().read(key: "nickname");
-    token = await FlutterSecureStorage().read(key: "accessToken");
+    nickname = await const FlutterSecureStorage().read(key: "nickname");
     setState(() {});
   }
 
@@ -1526,10 +1388,10 @@ class _MakeCommentState extends State<MakeComment> {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: widget.hasParent == -1
-          ? EdgeInsets.symmetric(vertical: 16)
-          : EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+          ? const EdgeInsets.symmetric(vertical: 16)
+          : const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       margin:
-          widget.hasParent == -1 ? EdgeInsets.symmetric(horizontal: 20) : null,
+          widget.hasParent == -1 ? const EdgeInsets.symmetric(horizontal: 20) : null,
       decoration: widget.hasParent == -1 && widget.index != 0
           ? BoxDecoration(
               border: Border(
@@ -1545,7 +1407,7 @@ class _MakeCommentState extends State<MakeComment> {
           Visibility(
             visible: widget.hasParent != -1,
             child: Container(
-              margin: EdgeInsets.only(right: 8),
+              margin: const EdgeInsets.only(right: 8),
               child: SvgPicture.asset(
                 'assets/icons/forward.svg',
                 color: PeeroreumColor.gray[600],
@@ -1555,10 +1417,10 @@ class _MakeCommentState extends State<MakeComment> {
           Container(
             padding: widget.hasParent == -1
                 ? EdgeInsets.zero
-                : EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                : const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             margin: widget.hasParent == -1
                 ? EdgeInsets.zero
-                : EdgeInsets.only(bottom: 8),
+                : const EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
               color: widget.hasParent == -1
                   ? Colors.transparent
@@ -1569,7 +1431,7 @@ class _MakeCommentState extends State<MakeComment> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   width: widget.hasParent == -1
                       ? MediaQuery.of(context).size.width - 40
                       : MediaQuery.of(context).size.width - 112,
@@ -1578,7 +1440,7 @@ class _MakeCommentState extends State<MakeComment> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
+                        SizedBox(
                           width: widget.hasParent == -1
                               ? MediaQuery.of(context).size.width - 40 - 34
                               : MediaQuery.of(context).size.width - 112 - 34,
@@ -1603,7 +1465,7 @@ class _MakeCommentState extends State<MakeComment> {
                                         color: widget.grade != null
                                             ? PeeroreumColor
                                                 .gradeColor[widget.grade]!
-                                            : Color.fromARGB(
+                                            : const Color.fromARGB(
                                                 255, 186, 188, 189)),
                                   ),
                                   child: Container(
@@ -1627,7 +1489,7 @@ class _MakeCommentState extends State<MakeComment> {
                                                         widget.profileImage)
                                                     .image,
                                                 fit: BoxFit.cover)
-                                            : DecorationImage(
+                                            : const DecorationImage(
                                                 image: AssetImage(
                                                 'assets/images/user.jpg',
                                               )),
@@ -1645,14 +1507,14 @@ class _MakeCommentState extends State<MakeComment> {
                               )),
                               if (nickname == widget.name &&
                                   widget.isDeleted == false)
-                                Text(
+                                const Text(
                                   ' (나)',
                                   style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                 ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 12,
                               ),
                               Visibility(
@@ -1680,7 +1542,7 @@ class _MakeCommentState extends State<MakeComment> {
                                         borderRadius: BorderRadius.circular(4)),
                                     width: 57,
                                     height: 24,
-                                    child: Center(
+                                    child: const Center(
                                         child: C1_12px_Sb(
                                       text: '채택하기',
                                       color: PeeroreumColor.white,
@@ -1697,7 +1559,7 @@ class _MakeCommentState extends State<MakeComment> {
                                       borderRadius: BorderRadius.circular(4)),
                                   width: 57,
                                   height: 24,
-                                  child: Center(
+                                  child: const Center(
                                       child: C1_12px_Sb(
                                     text: '채택완료',
                                     color: PeeroreumColor.white,
@@ -1714,7 +1576,7 @@ class _MakeCommentState extends State<MakeComment> {
                                       borderRadius: BorderRadius.circular(4)),
                                   width: 57,
                                   height: 24,
-                                  child: Center(
+                                  child: const Center(
                                       child: C1_12px_Sb(
                                     text: '채택하기',
                                     color: PeeroreumColor.white,
@@ -1737,7 +1599,7 @@ class _MakeCommentState extends State<MakeComment> {
                                         widget.name, widget.id);
                                   });
                             },
-                            child: Container(
+                            child: SizedBox(
                               width: 18,
                               height: 18,
                               child: SvgPicture.asset(
@@ -1749,10 +1611,10 @@ class _MakeCommentState extends State<MakeComment> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                Container(
+                SizedBox(
                   width: widget.hasParent == -1
                       ? MediaQuery.of(context).size.width - 40
                       : MediaQuery.of(context).size.width - 112,
@@ -1775,7 +1637,7 @@ class _MakeCommentState extends State<MakeComment> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 if (widget.commentImage != null &&
@@ -1805,7 +1667,7 @@ class _MakeCommentState extends State<MakeComment> {
                           : null,
                     ),
                   ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 Visibility(
@@ -1821,12 +1683,12 @@ class _MakeCommentState extends State<MakeComment> {
                                 text: createdTime.toString().substring(0, 4),
                                 color: PeeroreumColor.gray[400],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 2,
                               ),
                               C1_12px_M(
                                   text: '/', color: PeeroreumColor.gray[400]),
-                              SizedBox(
+                              const SizedBox(
                                 width: 2,
                               )
                             ],
@@ -1834,37 +1696,37 @@ class _MakeCommentState extends State<MakeComment> {
                       C1_12px_M(
                           text: createdTime.toString().substring(5, 7),
                           color: PeeroreumColor.gray[400]),
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       C1_12px_M(
                           text: createdTime.toString().substring(8, 10),
                           color: PeeroreumColor.gray[400]),
-                      SizedBox(
+                      const SizedBox(
                         width: 4,
                       ),
                       C1_12px_M(
                           text: createdTime.toString().substring(11, 13),
                           color: PeeroreumColor.gray[400]),
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       C1_12px_M(
                           text: createdTime.toString().substring(14, 16),
                           color: PeeroreumColor.gray[400]),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       C1_12px_M(text: '|', color: PeeroreumColor.gray[200]),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       GestureDetector(
@@ -1876,7 +1738,7 @@ class _MakeCommentState extends State<MakeComment> {
                         },
                         child: Row(
                           children: [
-                            Container(
+                            SizedBox(
                               height: 18,
                               width: 18,
                               child: widget.isLiked
@@ -1885,12 +1747,12 @@ class _MakeCommentState extends State<MakeComment> {
                                   : SvgPicture.asset(
                                       'assets/icons/thumbs_up.svg'),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 4,
                             ),
                             Container(
                                 constraints:
-                                    BoxConstraints(minWidth: 17, minHeight: 16),
+                                    const BoxConstraints(minWidth: 17, minHeight: 16),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: C1_12px_M(
@@ -1903,38 +1765,38 @@ class _MakeCommentState extends State<MakeComment> {
                         visible: widget.hasParent == -1,
                         child: GestureDetector(
                           onTap: () {
-                            final _dState = context
+                            final dState = context
                                 .findAncestorStateOfType<_DetailIeduState>();
-                            if (_dState != null) {
-                              _dState.setState(() {
-                                _dState.selectedParent = widget.id;
+                            if (dState != null) {
+                              dState.setState(() {
+                                dState.selectedParent = widget.id;
                                 FocusScope.of(context)
-                                    .requestFocus(_dState._focusNode);
+                                    .requestFocus(dState._focusNode);
                                 print(widget.id);
                               });
                             }
                           },
                           child: Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 8,
                               ),
                               C1_12px_M(
                                   text: '|', color: PeeroreumColor.gray[200]),
-                              SizedBox(
+                              const SizedBox(
                                 width: 8,
                               ),
-                              Container(
+                              SizedBox(
                                 height: 18,
                                 width: 18,
                                 child: SvgPicture.asset(
                                     'assets/icons/chat_drop_dots.svg'),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 4,
                               ),
                               Container(
-                                  constraints: BoxConstraints(
+                                  constraints: const BoxConstraints(
                                       minWidth: 17, minHeight: 16),
                                   child: Align(
                                       alignment: Alignment.centerLeft,
@@ -1959,8 +1821,8 @@ class _MakeCommentState extends State<MakeComment> {
   deleteAnswerBottomSheet(writerName, commentID) {
     var isMyAnswer = writerName == nickname;
     return Container(
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -2007,11 +1869,11 @@ class _MakeCommentState extends State<MakeComment> {
                 margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
                 height: 56,
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   vertical: 16,
                   horizontal: 20,
                 ),
-                child: Text('신고하기',
+                child: const Text('신고하기',
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 18,
@@ -2029,8 +1891,8 @@ class _MakeCommentState extends State<MakeComment> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 20),
-          contentPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
@@ -2049,10 +1911,10 @@ class _MakeCommentState extends State<MakeComment> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -2071,11 +1933,10 @@ class _MakeCommentState extends State<MakeComment> {
                           });
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
+                          backgroundColor: PeeroreumColor.gray[300],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
-                            // 모양
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -2089,7 +1950,7 @@ class _MakeCommentState extends State<MakeComment> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () {
@@ -2106,13 +1967,13 @@ class _MakeCommentState extends State<MakeComment> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '삭제',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -2133,15 +1994,9 @@ class _MakeCommentState extends State<MakeComment> {
   }
 
   Future<void> postALike(answerID, answerLike) async {
-    var dio1 = dio.Dio();
     try {
       if (answerLike == false) {
-        var response = await dio1.post(
-            '${API.hostConnect}/like/answer/$answerID',
-            options: dio.Options(headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            }));
+        var response = await ApiClient().post('/like/answer/$answerID');
         if (response.statusCode == 200) {
           print('답변 좋아요 요청이 성공했습니다.');
           setState(() {});
@@ -2151,12 +2006,7 @@ class _MakeCommentState extends State<MakeComment> {
           print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
       } else if (answerLike == true) {
-        var response = await dio1.delete(
-            '${API.hostConnect}/like/answer/$answerID',
-            options: dio.Options(headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            }));
+        var response = await ApiClient().delete('/like/answer/$answerID');
         if (response.statusCode == 200) {
           print('답변 좋아요 삭제 요청이 성공했습니다.');
           setState(() {});
@@ -2166,52 +2016,20 @@ class _MakeCommentState extends State<MakeComment> {
           print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
-        }
-        print('Dio error! STATUS: ${e.response?.statusCode}');
-      } else {
-        print('Error sending request! ${e.message}');
-      }
     } catch (e) {
       print('Unexpected error: $e');
     }
   }
 
   Future<void> deleteAnswer(answerID) async {
-    var dio1 = dio.Dio();
     try {
-      var response = await dio1.delete('${API.hostConnect}/answer/$answerID',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var response = await ApiClient().delete('/answer/$answerID');
       if (response.statusCode == 200) {
         print('답변 삭제 요청이 성공했습니다.');
         setState(() {});
       } else {
         print('답변 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 403) {
-          var code403 = e.response?.data['data'];
-          if (code403 == "채택된 답변은 삭제할 수 없습니다.") {
-            PeeroreumToast.show(context, '채택된 답변은 삭제할 수 없어요.', isError: true);
-          } else {
-            PeeroreumToast.show(context, '권한이 없어요.', isError: true);
-          }
-        } else if (e.response?.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
-        } else {
-          print('답변 삭제 요청이 실패했습니다. 오류 코드: ${e.response?.statusCode}');
-        }
-      } else {
-        print('Error sending request! ${e.message}');
-      }
-      setState(() {});
     } catch (e) {
       print('Unexpected error: $e');
     }
@@ -2219,24 +2037,12 @@ class _MakeCommentState extends State<MakeComment> {
 
   Future<void> selectAnswer() async {
     print(widget.id);
-    var dio1 = dio.Dio();
     try {
-      var response = await dio1.put(
-          '${API.hostConnect}/answer/${widget.id}/select',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var response = await ApiClient().put('/answer/${widget.id}/select');
       if (response.statusCode == 200) {
         print('답변 채택 요청이 성공했습니다.');
       } else {
         print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error! STATUS: ${e.response?.statusCode}');
-      } else {
-        print('Error sending request! ${e.message}');
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -2249,8 +2055,8 @@ class _MakeCommentState extends State<MakeComment> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 20),
-          contentPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
@@ -2269,7 +2075,7 @@ class _MakeCommentState extends State<MakeComment> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Text(
@@ -2282,7 +2088,7 @@ class _MakeCommentState extends State<MakeComment> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -2294,9 +2100,9 @@ class _MakeCommentState extends State<MakeComment> {
                           Get.back(result: false);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
+                          backgroundColor: PeeroreumColor.gray[300],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             // 모양
                             borderRadius: BorderRadius.circular(8),
@@ -2312,7 +2118,7 @@ class _MakeCommentState extends State<MakeComment> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () {
@@ -2320,13 +2126,13 @@ class _MakeCommentState extends State<MakeComment> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '채택',
                           style: TextStyle(
                               fontFamily: 'Pretendard',

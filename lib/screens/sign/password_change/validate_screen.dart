@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import '../../../api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import './new_password_screen.dart';
 
 class EmailValidate extends StatefulWidget {
@@ -266,15 +264,14 @@ class _EmailValidateState extends State<EmailValidate> {
     setState(() {
       is_loading = true;
     });
-    var result = await http.post(
-      Uri.parse(
-          '${API.hostConnect}/member/password/verify?email=${widget.email}&code=${code_controller.text}'),
+    var result = await ApiClient().post(
+      '/member/password/verify?email=${Uri.encodeComponent(widget.email)}&code=${Uri.encodeComponent(code_controller.text)}',
     );
     setState(() {
       is_loading = false;
     });
     if (result.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(result.bodyBytes));
+      var data = result.data;
       if (data['status'] == 'success') {
         String token = data['data'];
         Get.to(() => NewPassword(widget.email, token),
@@ -299,15 +296,14 @@ class _EmailValidateState extends State<EmailValidate> {
     setState(() {
       is_resending = true;
     });
-    var result = await http.post(
-      Uri.parse(
-          '${API.hostConnect}/member/password/email?email=${widget.email}'),
+    var result = await ApiClient().post(
+      '/member/password/email?email=${Uri.encodeComponent(widget.email)}',
     );
     setState(() {
       is_resending = false;
     });
     if (result.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(result.bodyBytes));
+      var data = result.data;
       if (data['status'] == 'success') {
         _timer.cancel();
         startTimer();

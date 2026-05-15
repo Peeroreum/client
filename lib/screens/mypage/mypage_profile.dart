@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/model/Member.dart';
@@ -21,21 +21,23 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MyPageProfile extends StatefulWidget {
   String nickname;
-  bool am_i;
-  MyPageProfile(this.nickname, this.am_i);
+  bool amI;
+
+  MyPageProfile(this.nickname, this.amI, {super.key});
 
   @override
-  State<MyPageProfile> createState() => _MyPageProfileState(nickname, am_i);
+  State<MyPageProfile> createState() => _MyPageProfileState(nickname, amI);
 }
 
 class _MyPageProfileState extends State<MyPageProfile> {
   String nickname;
-  bool am_i;
-  _MyPageProfileState(this.nickname, this.am_i);
-  FlutterSecureStorage storage = FlutterSecureStorage();
-  var token;
-  final nickname_controller = TextEditingController();
-  List<dynamic> inroom_datas = [];
+  bool amI;
+
+  _MyPageProfileState(this.nickname, this.amI);
+
+  FlutterSecureStorage storage = const FlutterSecureStorage();
+  final nicknameController = TextEditingController();
+  List<dynamic> inRoomData = [];
   List<String> dropdownGradeList = [
     '전체',
     '중1',
@@ -46,8 +48,17 @@ class _MyPageProfileState extends State<MyPageProfile> {
     '고3',
     '대학'
   ];
-  List<String> dropdownSubjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
-  bool is_friend = false;
+  List<String> dropdownSubjectList = [
+    '전체',
+    '국어',
+    '영어',
+    '수학',
+    '사회',
+    '과학',
+    '기타',
+    '대학'
+  ];
+  bool isFriend = false;
   List<dynamic> badges = [];
   var grade;
   var profileImage;
@@ -56,69 +67,39 @@ class _MyPageProfileState extends State<MyPageProfile> {
   var followingNumber;
   var withPeerDay;
   Member member = Member();
-  final change_nickname_controller = TextEditingController();
+  final changeNicknameController = TextEditingController();
   final GlobalKey _shareButtonKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    fetchDatas();
+    fetchData();
   }
 
-  Future<void> fetchDatas() async {
-    token = await storage.read(key: "accessToken");
-    var dio1 = dio.Dio();
-
+  Future<void> fetchData() async {
     try {
-      var inWeduResult = await dio1.get(
-          '${API.hostConnect}/wedu/in?nickname=$nickname',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var inWeduResult = await ApiClient().get('/wedu/in?nickname=$nickname');
       if (inWeduResult.statusCode == 200) {
-        inroom_datas = inWeduResult.data['data'];
+        inRoomData = inWeduResult.data['data'];
       } else {
         print("내같이방 에러 ${inWeduResult.statusCode}");
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
       }
     } catch (e) {
       print('Unexpected error: $e');
     }
 
     try {
-      var profileinfo = await dio1.get(
-          '${API.hostConnect}/member/profile?nickname=$nickname',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
-      if (profileinfo.statusCode == 200) {
-        var data = profileinfo.data['data'];
+      var profileInfo =
+          await ApiClient().get('/member/profile?nickname=$nickname');
+      if (profileInfo.statusCode == 200) {
+        var data = profileInfo.data['data'];
         grade = data["grade"];
         followerNumber = data["followerNumber"];
         followingNumber = data["followingNumber"];
         profileImage = data["profileImage"];
         backgroundImage = data["backgroundImage"];
-        is_friend = data['following'];
+        isFriend = data['following'];
         withPeerDay = data['activeDaysCount'];
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -128,36 +109,23 @@ class _MyPageProfileState extends State<MyPageProfile> {
   profileImageAPI(var _image) async {
     var image = await dio.MultipartFile.fromFile(_image!.path);
     var imageMap = <String, dynamic>{'profileImage': image};
-    var dio1 = dio.Dio();
-    dio1.options.contentType = 'multipart/form-data';
-    dio1.options.headers = {'Authorization': 'Bearer $token'};
     dio.FormData imageData = dio.FormData.fromMap(imageMap);
 
     try {
-      var profileChange = await dio1.put(
-          '${API.hostConnect}/member/change/profileImage',
-          data: imageData);
+      var profileChange =
+          await ApiClient().putForm('/member/change/profileImage', imageData);
       if (profileChange.statusCode == 200) {
         print("프로필이미지 성공 ${profileChange.statusMessage}");
         var data = profileChange.data['data'];
         setState(() {
           profileImage = data;
         });
-        if (am_i) {
+        if (amI) {
           await storage.write(key: 'profileImage', value: profileImage);
         }
         PeeroreumToast.show(context, "프로필 이미지가 변경되었어요.");
       } else {
         print("프로필이미지 ${profileChange.statusMessage}");
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -167,15 +135,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
   backgroundImageAPI(var _image1) async {
     var image1 = await dio.MultipartFile.fromFile(_image1!.path);
     var imageMap1 = <String, dynamic>{'profileImage': image1};
-    var dio1 = dio.Dio();
-    dio1.options.contentType = 'multipart/form-data';
-    dio1.options.headers = {'Authorization': 'Bearer $token'};
     dio.FormData imageData = dio.FormData.fromMap(imageMap1);
 
     try {
-      var backgroundChange = await dio1.put(
-          '${API.hostConnect}/member/change/backgroundImage',
-          data: imageData);
+      var backgroundChange = await ApiClient()
+          .putForm('/member/change/backgroundImage', imageData);
       if (backgroundChange.statusCode == 200) {
         print("배경이미지 성공 ${backgroundChange.statusMessage}");
         var data = backgroundChange.data['data'];
@@ -186,50 +150,27 @@ class _MyPageProfileState extends State<MyPageProfile> {
       } else {
         print("배경이미지 ${backgroundChange.statusMessage}");
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
-      }
     } catch (e) {
       print('Unexpected error: $e');
     }
   }
 
   nicknameAPI() async {
-    var dio1 = dio.Dio();
     try {
-      var change_my_nickname = await dio1.put(
-          '${API.hostConnect}/member/change/nickname?nickname=${change_nickname_controller.text}',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
-      if (change_my_nickname.statusCode == 200) {
-        var data = change_my_nickname.data["data"];
+      var changeMyNickname = await ApiClient().put(
+          '/member/change/nickname?nickname=${changeNicknameController.text}');
+      if (changeMyNickname.statusCode == 200) {
+        var data = changeMyNickname.data["data"];
         setState(() {
           nickname = data;
         });
-        if (am_i) {
+        if (amI) {
           await storage.write(key: 'nickname', value: nickname);
         }
         Get.back();
         PeeroreumToast.show(context, "닉네임이 변경되었어요.");
       } else {
-        print("닉네임변경 에러${change_my_nickname.statusCode}");
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
+        print("닉네임변경 에러${changeMyNickname.statusCode}");
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -237,18 +178,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   follow() async {
-    //친구 팔로우
-    var dio1 = dio.Dio();
     try {
-      var friendName = await dio1.post(
-          '${API.hostConnect}/member/friend/follow?nickname=$nickname',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var friendName =
+          await ApiClient().post('/member/friend/follow?nickname=$nickname');
       if (friendName.statusCode == 200) {
         setState(() {
-          is_friend = true;
+          isFriend = true;
         });
         PeeroreumToast.show(context, "친구 추가를 완료했어요.");
       } else if (friendName.statusCode == 404) {
@@ -259,23 +194,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
         PeeroreumToast.show(context, "이미 팔로우 중인 회원이에요.", isError: true);
       } else {
         setState(() {
-          is_friend = false;
+          isFriend = false;
         });
         print("친구팔로 에러${friendName.statusCode}");
-      }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 404) {
-          PeeroreumToast.show(context, "존재하지 않는 회원이에요.", isError: true);
-        } else if (e.response?.statusCode == 400) {
-          PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
-        } else if (e.response?.statusCode == 409) {
-          PeeroreumToast.show(context, "이미 팔로우 중인 회원이에요.", isError: true);
-        } else {
-          PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
-        }
-      } else {
-        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
       }
     } catch (e) {
       PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
@@ -284,67 +205,44 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   unfollow() async {
-    //친구 언팔로우
-    var dio1 = dio.Dio();
     try {
-      var friendName = await dio1.delete(
-          '${API.hostConnect}/member/friend/unfollow?nickname=$nickname',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var friendName = await ApiClient()
+          .delete('/member/friend/unfollow?nickname=$nickname');
       if (friendName.statusCode == 200) {
         setState(() {
-          is_friend = false;
+          isFriend = false;
         });
 
         PeeroreumToast.show(context, "친구 삭제를 완료했어요.");
       } else {
         setState(() {
-          is_friend = true;
+          isFriend = true;
         });
         print("친구언팔 에러${friendName.statusCode}");
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
-      }
-      setState(() {
-        is_friend = true;
-      });
     } catch (e) {
       print('Unexpected error: $e');
       setState(() {
-        is_friend = true;
+        isFriend = true;
       });
     }
   }
 
-  searchfriend() async {
-    var dio1 = dio.Dio();
+  searchFriend() async {
     try {
-      var friendName = await dio1.get(
-          '${API.hostConnect}/member/profile?nickname=${nickname_controller.text}',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
+      var friendName = await ApiClient()
+          .get('/member/profile?nickname=${nicknameController.text}');
       if (friendName.statusCode == 200) {
         //check_friend(nickname_controller.text);
-        if (nickname_controller.text == nickname) {
+        if (nicknameController.text == nickname) {
           PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
         } else {
           Get.back();
-          Get.to(() => MyPageProfile(nickname_controller.text, false),
+          Get.to(() => MyPageProfile(nicknameController.text, false),
                   preventDuplicates: false)
               ?.then((value) {
             setState(() {});
-            nickname_controller.clear();
+            nicknameController.clear();
           });
         }
       } else if (friendName.statusCode == 404) {
@@ -352,56 +250,28 @@ class _MyPageProfileState extends State<MyPageProfile> {
       } else {
         print("친구찾기 에러${friendName.statusCode}");
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        if (e.response?.statusCode == 404) {
-          PeeroreumToast.show(context, "존재하지 않는 회원이에요.");
-        } else {
-          print("친구찾기 에러${e.response?.statusCode}");
-        }
-      } else {
-        print("Error sending request! ${e.message}");
-      }
     } catch (e) {
       print("Unexpected error: $e");
     }
   }
 
-  void check_friend(nickname) async {
-    var dio1 = dio.Dio();
+  void checkFriend(nickname) async {
     try {
-      var myfriend = await dio1.get(
-          '${API.hostConnect}/member/friend=$nickname',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
-      if (myfriend.statusCode == 200) {
+      var myFriend = await ApiClient().get('/member/friend=$nickname');
+      if (myFriend.statusCode == 200) {
         setState(() {
-          is_friend = true;
+          isFriend = true;
         });
       } else {
         setState(() {
-          is_friend = false;
+          isFriend = false;
         });
-        print("친구체크 에러${myfriend.statusCode}");
+        print("친구체크 에러${myFriend.statusCode}");
       }
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
-      }
-      setState(() {
-        is_friend = false;
-      });
     } catch (e) {
       print('Unexpected error: $e');
       setState(() {
-        is_friend = false;
+        isFriend = false;
       });
     }
   }
@@ -411,7 +281,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchDatas(),
+          future: fetchData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container(color: PeeroreumColor.white);
@@ -440,7 +310,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
           Get.back();
         },
       ),
-      title: Text(
+      title: const Text(
         "프로필",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -459,14 +329,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Container(
                   width: 24,
                   height: 24,
-                  padding: EdgeInsets.all(2),
-                  margin: EdgeInsets.only(right: 4),
-                  constraints: BoxConstraints(),
+                  padding: const EdgeInsets.all(2),
+                  margin: const EdgeInsets.only(right: 4),
+                  constraints: const BoxConstraints(),
                   child: SvgPicture.asset('assets/icons/search.svg',
                       color: PeeroreumColor.black),
                 ),
                 onTap: () {
-                  search_friend();
+                  showSearchFriendDialog();
                 },
               ),
               GestureDetector(
@@ -475,7 +345,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   height: 24,
                   width: 24,
                   padding: EdgeInsets.zero,
-                  constraints: BoxConstraints(),
+                  constraints: const BoxConstraints(),
                   child: SvgPicture.asset(
                     'assets/icons/icon_dots_mono.svg',
                     height: 24,
@@ -484,7 +354,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                 ),
                 onTap: () {
-                  am_i
+                  amI
                       ? showModalBottomSheet(
                           //'나'일 경우 프로필 수정
                           context: context,
@@ -515,99 +385,105 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget changeMe() {
     return Container(
       width: double.maxFinite,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
         ),
       ),
       child: Container(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: PeeroreumColor.gray[100],
-                onTap: () {
-                  profileImage_change(context);
-                },
-                child: Container(
-                  height: 56,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      B3_18px_R(text: '프로필 변경'),
-                    ],
-                  ),
+        padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            MediaQuery.of(context).viewPadding.bottom > 20
+                ? MediaQuery.of(context).viewPadding.bottom
+                : 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () {
+                profileImageChange(context);
+              },
+              child: const SizedBox(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3_18px_R(text: '프로필 변경'),
+                  ],
                 ),
               ),
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: PeeroreumColor.gray[100],
-                onTap: () {
+            ),
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () {
+                setState(() {
+                  nicknameChange();
+                });
+              },
+              child: const SizedBox(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3_18px_R(text: '닉네임 변경'),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () async {
+                XFile? image1;
+                final ImagePicker picker1 = ImagePicker();
+                final XFile? pickedFile1 =
+                    await picker1.pickImage(source: ImageSource.gallery);
+                if (pickedFile1 != null) {
                   setState(() {
-                    nickname_change();
+                    image1 = XFile(pickedFile1.path);
+                    if (image1 != null) {
+                      setState(() {
+                        backgroundImageAPI(image1);
+                        Get.back();
+                      });
+                    }
                   });
-                },
-                child: Container(
-                  height: 56,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      B3_18px_R(text: '닉네임 변경'),
-                    ],
-                  ),
+                }
+              },
+              child: const SizedBox(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3_18px_R(text: '배경 변경'),
+                  ],
                 ),
               ),
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: PeeroreumColor.gray[100],
-                onTap: () async {
-                  XFile? _image1;
-                  final ImagePicker picker1 = ImagePicker();
-                  final XFile? pickedFile1 =
-                      await picker1.pickImage(source: ImageSource.gallery);
-                  if (pickedFile1 != null) {
-                    setState(() {
-                      _image1 = XFile(pickedFile1.path);
-                      if (_image1 != null) {
-                        setState(() {
-                          backgroundImageAPI(_image1);
-                          Get.back();
-                        });
-                      }
-                    });
-                  }
-                },
-                child: Container(
-                  height: 56,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      B3_18px_R(text: '배경 변경'),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 
   ///프로필 사진 변경///
-  profileImage_change(BuildContext context) {
-    XFile? _image;
+  profileImageChange(BuildContext context) {
+    XFile? image;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-              insetPadding: EdgeInsets.all(20),
+              insetPadding: const EdgeInsets.all(20),
               iconPadding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
@@ -618,7 +494,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    const Text(
                       "프로필 사진 변경",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -628,7 +504,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         color: PeeroreumColor.black,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     GestureDetector(
@@ -638,8 +514,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             await picker.pickImage(source: ImageSource.gallery);
                         if (pickedFile != null) {
                           setState(() {
-                            _image =
-                                XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+                            image = XFile(pickedFile.path);
                           });
                         }
                       },
@@ -652,7 +527,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               width: 2,
                               color: grade != null
                                   ? PeeroreumColor.gradeColor[grade]!
-                                  : Color.fromARGB(255, 186, 188, 189)),
+                                  : const Color.fromARGB(255, 186, 188, 189)),
                         ),
                         child: Container(
                           height: 84,
@@ -664,29 +539,29 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               color: PeeroreumColor.white,
                             ),
                             image: profileImage != null
-                                ? (_image != null
+                                ? (image != null
                                     ? DecorationImage(
-                                        image: FileImage(File(_image!.path)),
+                                        image: FileImage(File(image!.path)),
                                         //fit: BoxFit.cover,
                                       )
                                     : DecorationImage(
                                         image: NetworkImage(profileImage),
                                         //fit: BoxFit.cover,
                                       ))
-                                : (_image != null
+                                : (image != null
                                     ? DecorationImage(
-                                        image: FileImage(File(_image!.path)),
+                                        image: FileImage(File(image!.path)),
                                         //fit: BoxFit.cover,
                                       )
-                                    : DecorationImage(
+                                    : const DecorationImage(
                                         image: AssetImage(
                                         'assets/images/user.jpg',
                                       ))),
                           ),
                           child: Align(
-                            alignment: Alignment(1.2, 1.2),
+                            alignment: const Alignment(1.2, 1.2),
                             child: Container(
-                                padding: EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: PeeroreumColor.gray[200],
@@ -701,7 +576,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -711,10 +586,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               Get.back();
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor:
-                                  PeeroreumColor.gray[300], // 배경 색상
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 16), // 패딩
+                              backgroundColor: PeeroreumColor.gray[300],
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
                               shape: RoundedRectangleBorder(
                                 // 모양
                                 borderRadius: BorderRadius.circular(8),
@@ -730,23 +604,23 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: TextButton(
                             onPressed: () {
-                              if (_image != null) {
+                              if (image != null) {
                                 setState(() {
-                                  profileImageAPI(_image);
+                                  profileImageAPI(image);
                                   Get.back();
                                   Get.back();
                                 });
                               }
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor: _image != null
+                              backgroundColor: image != null
                                   ? PeeroreumColor.primaryPuple[400]
                                   : PeeroreumColor.gray[300],
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   vertical: 12, horizontal: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -758,7 +632,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
-                                color: _image != null
+                                color: image != null
                                     ? PeeroreumColor.white
                                     : PeeroreumColor.gray[600],
                               ),
@@ -778,18 +652,15 @@ class _MyPageProfileState extends State<MyPageProfile> {
   ///////////////////닉네임 변경///////////////////
   bool checkNickname = false;
   bool isDuplicateNickname = false;
-  nickname_change() {
+
+  nicknameChange() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, setState) {
             checkDuplicateNickname(String value) async {
-              var dio1 = dio.Dio();
               try {
-                var result = await dio1.get(
-                    '${API.hostConnect}/signup/nickname/$value',
-                    options: dio.Options(
-                        headers: {'Content-Type': 'application/json'}));
+                var result = await ApiClient().get('/signup/nickname/$value');
                 if (result.statusCode == 200) {
                   setState(() {
                     isDuplicateNickname = false;
@@ -799,22 +670,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     isDuplicateNickname = true;
                   });
                 }
-              } on dio.DioException catch (e) {
-                if (e.response?.statusCode == 409) {
-                  setState(() {
-                    isDuplicateNickname = true;
-                  });
-                } else {
-                  print("Nickname check error: ${e.message}");
-                }
               } catch (e) {
                 print("Unexpected error: $e");
               }
             }
 
             checkError() {
-              if (!checkNickname &&
-                  change_nickname_controller.text.isNotEmpty) {
+              if (!checkNickname && changeNicknameController.text.isNotEmpty) {
                 return "한글 2자, 영문/숫자 4자 이상 적어주세요.";
               }
               if (isDuplicateNickname) {
@@ -824,8 +686,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
             }
 
             return AlertDialog(
-              insetPadding: EdgeInsets.symmetric(horizontal: 20),
-              contentPadding: EdgeInsets.all(20),
+              insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+              contentPadding: const EdgeInsets.all(20),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
               backgroundColor: PeeroreumColor.white,
@@ -835,7 +697,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         "닉네임 변경",
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -845,11 +707,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           color: PeeroreumColor.black,
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Container(
+                      const SizedBox(height: 8),
+                      SizedBox(
                         height: 72,
                         child: TextFormField(
-                          controller: change_nickname_controller,
+                          controller: changeNicknameController,
                           onChanged: (value) {
                             checkDuplicateNickname(value);
                             if (value.isNotEmpty) {
@@ -883,7 +745,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               borderSide:
                                   BorderSide(color: PeeroreumColor.gray[200]!),
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
+                                  const BorderRadius.all(Radius.circular(8)),
                             ),
                             focusedBorder: checkNickname && !isDuplicateNickname
                                 ? OutlineInputBorder(
@@ -894,7 +756,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                   )
                                 : OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: PeeroreumColor.black,
                                     ),
                                   ),
@@ -911,17 +773,17 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             errorText: checkError(),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: PeeroreumColor.error,
                               ),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: PeeroreumColor.error,
                                 )),
                             counterText:
-                                '${change_nickname_controller.text.length} / 12',
+                                '${changeNicknameController.text.length} / 12',
                             counterStyle: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontSize: 12,
@@ -931,7 +793,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           cursorColor: PeeroreumColor.gray[600],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 16,
                       ),
                       Row(
@@ -943,12 +805,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 Get.back();
                               },
                               style: TextButton.styleFrom(
-                                backgroundColor:
-                                    PeeroreumColor.gray[300], // 배경 색상
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 16), // 패딩
+                                backgroundColor: PeeroreumColor.gray[300],
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
                                 shape: RoundedRectangleBorder(
-                                  // 모양
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
@@ -962,7 +822,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: TextButton(
                               onPressed: () {
@@ -977,7 +837,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                     checkNickname && !isDuplicateNickname
                                         ? PeeroreumColor.primaryPuple[400]
                                         : PeeroreumColor.gray[300],
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     vertical: 12, horizontal: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -1008,46 +868,52 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget reportUser() {
     return Container(
       width: double.maxFinite,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
         ),
       ),
       child: Container(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: PeeroreumColor.gray[100],
-                onTap: () {
-                  Get.to(() =>
-                      Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
-                },
-                child: Container(
-                  height: 56,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      B3_18px_R(
-                        text: '${nickname} 신고하기',
-                        color: PeeroreumColor.error,
-                      ),
-                    ],
-                  ),
+        padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            MediaQuery.of(context).viewPadding.bottom > 20
+                ? MediaQuery.of(context).viewPadding.bottom
+                : 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () {
+                Get.to(() =>
+                    Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
+              },
+              child: SizedBox(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3_18px_R(
+                      text: '$nickname 신고하기',
+                      color: PeeroreumColor.error,
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 
-  void search_friend() {
+  void showSearchFriendDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1056,14 +922,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
-          insetPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.all(20),
           iconPadding: EdgeInsets.zero,
           content: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   "친구찾기",
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -1073,12 +939,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     color: PeeroreumColor.black,
                   ),
                 ),
-                SizedBox(height: 8),
-                Container(
+                const SizedBox(height: 8),
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,
                   height: 48,
                   child: TextFormField(
-                    controller: nickname_controller,
+                    controller: nicknameController,
                     decoration: InputDecoration(
                       hintText: '닉네임을 정확하게 입력해 주세요.',
                       hintStyle: TextStyle(
@@ -1090,18 +956,20 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       enabledBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: PeeroreumColor.gray[200]!),
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
                       ),
                     ),
                     cursorColor: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1111,9 +979,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           Get.back();
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
+                          backgroundColor: PeeroreumColor.gray[300],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             // 모양
                             borderRadius: BorderRadius.circular(8),
@@ -1129,23 +997,23 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            searchfriend();
+                            searchFriend();
                           });
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '확인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -1181,11 +1049,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
 
   Widget myProfile() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       child: Column(
         children: [
-          myinfo(),
-          SizedBox(
+          myInfo(),
+          const SizedBox(
             height: 16,
           ),
           friends(),
@@ -1194,9 +1062,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
     );
   }
 
-  Widget myinfo() {
+  Widget myInfo() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       decoration: backgroundImage != null
           ? BoxDecoration(
               image: DecorationImage(
@@ -1205,10 +1073,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 image: NetworkImage(backgroundImage),
                 fit: BoxFit.cover,
               ),
-              borderRadius: BorderRadius.all(Radius.circular(16)))
+              borderRadius: const BorderRadius.all(Radius.circular(16)))
           : BoxDecoration(
               color: PeeroreumColor.gray[200],
-              borderRadius: BorderRadius.all(Radius.circular(16))),
+              borderRadius: const BorderRadius.all(Radius.circular(16))),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1248,7 +1116,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
@@ -1260,7 +1128,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       width: 3,
                       color: grade != null
                           ? PeeroreumColor.gradeColor[grade]!
-                          : Color.fromARGB(255, 186, 188, 189)),
+                          : const Color.fromARGB(255, 186, 188, 189)),
                 ),
                 child: Container(
                   height: 84,
@@ -1280,7 +1148,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           ? DecorationImage(
                               image: NetworkImage(profileImage),
                               fit: BoxFit.cover)
-                          : DecorationImage(
+                          : const DecorationImage(
                               image: AssetImage(
                               'assets/images/user.jpg',
                             )),
@@ -1288,7 +1156,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
               Text(
@@ -1304,21 +1172,21 @@ class _MyPageProfileState extends State<MyPageProfile> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextButton(
               key: _shareButtonKey,
               onPressed: () async {
-                if ((is_friend == true) && (am_i == false)) {
+                if ((isFriend == true) && (amI == false)) {
                   unfollow();
                   print('친구 언팔로우 프린트 메세지입니다');
-                } else if ((is_friend == false) && (am_i == false)) {
+                } else if ((isFriend == false) && (amI == false)) {
                   follow();
                   print('친구 팔로우 프린트 메세지 입니다');
-                } else if ((is_friend == false) && (am_i == true)) {
+                } else if ((isFriend == false) && (amI == true)) {
                   print('프로필 공유');
                   final available =
                       await ShareClient.instance.isKakaoTalkSharingAvailable();
@@ -1359,18 +1227,18 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 setState(() {});
               },
               style: ButtonStyle(
-                  maximumSize: am_i
-                      ? MaterialStateProperty.all<Size>(Size(138, 40))
-                      : MaterialStateProperty.all<Size>(Size(124, 40)),
-                  backgroundColor: am_i
+                  maximumSize: amI
+                      ? MaterialStateProperty.all<Size>(const Size(138, 40))
+                      : MaterialStateProperty.all<Size>(const Size(124, 40)),
+                  backgroundColor: amI
                       ? MaterialStateProperty.all(
                           PeeroreumColor.primaryPuple[400])
-                      : (is_friend
+                      : (isFriend
                           ? MaterialStateProperty.all(PeeroreumColor.gray[300])
                           : MaterialStateProperty.all(
                               PeeroreumColor.primaryPuple[400])),
                   padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
@@ -1378,29 +1246,29 @@ class _MyPageProfileState extends State<MyPageProfile> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  am_i
+                  amI
                       ? SvgPicture.asset(
                           'assets/icons/share.svg',
                           color: PeeroreumColor.white,
                         )
                       : SvgPicture.asset(
                           'assets/icons/plus_user.svg',
-                          color: is_friend
+                          color: isFriend
                               ? PeeroreumColor.gray[600]
                               : PeeroreumColor.white,
                         ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Text(
-                    am_i ? '프로필 공유' : (is_friend ? '친구 끊기' : '친구 추가'),
+                    amI ? '프로필 공유' : (isFriend ? '친구 끊기' : '친구 추가'),
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: am_i
+                      color: amI
                           ? PeeroreumColor.white
-                          : (is_friend
+                          : (isFriend
                               ? PeeroreumColor.gray[600]
                               : PeeroreumColor.white),
                     ),
@@ -1428,11 +1296,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ));
             },
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
               decoration: BoxDecoration(
                   border:
                       Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
+                  borderRadius: const BorderRadius.all(Radius.circular(8))),
               child: SizedBox(
                 height: 25,
                 child: Row(
@@ -1452,7 +1320,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 8,
         ),
         Expanded(
@@ -1465,11 +1333,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   ));
             },
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
               decoration: BoxDecoration(
                   border:
                       Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
+                  borderRadius: const BorderRadius.all(Radius.circular(8))),
               child: SizedBox(
                 height: 25,
                 child: Row(
@@ -1542,7 +1410,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     );
   }
 
-  Widget Badge() {
+  Widget badge() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -1553,7 +1421,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             color: PeeroreumColor.gray[100],
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 8,
         ),
         Container(
@@ -1570,86 +1438,84 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget myWedu() {
     return Column(
       children: [
-        room_body(),
-        (inroom_datas.isNotEmpty)
-            ? SizedBox(height: 180, child: in_room_body())
-            : SizedBox(height: 0),
+        roomBody(),
+        (inRoomData.isNotEmpty)
+            ? SizedBox(height: 180, child: inRoomBody())
+            : const SizedBox(height: 0),
       ],
     );
   }
 
-  Widget room_body() {
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Text(
-                  "참여 중인 같이방",
-                  style: TextStyle(
-                      color: PeeroreumColor.gray[800],
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  '${inroom_datas.length}',
-                  style: TextStyle(
-                      color: PeeroreumColor.gray[600],
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-            GestureDetector(
-              onTap: () {
-                if (am_i == true) {
-                  Get.to(InWedu());
-                }
-              },
-              child: Text(
-                am_i ? '전체 보기' : "",
+  Widget roomBody() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Text(
+                "참여 중인 같이방",
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: PeeroreumColor.gray[500],
-                ),
+                    color: PeeroreumColor.gray[800],
+                    fontFamily: 'Pretendard',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600),
               ),
-            )
-          ],
-        ),
+              const SizedBox(
+                width: 4,
+              ),
+              Text(
+                '${inRoomData.length}',
+                style: TextStyle(
+                    color: PeeroreumColor.gray[600],
+                    fontFamily: 'Pretendard',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: () {
+              if (amI == true) {
+                Get.to(const InWedu());
+              }
+            },
+            child: Text(
+              amI ? '전체 보기' : "",
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: PeeroreumColor.gray[500],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 
-  Widget in_room_body() {
+  Widget inRoomBody() {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       // shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      itemCount: inroom_datas.length,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemCount: inRoomData.length,
       separatorBuilder: (BuildContext context, int index) {
         return Container(
           width: 8,
         );
       },
       itemBuilder: (BuildContext context, int index) {
-        int rindex = inroom_datas.length - 1 - index;
+        int roomIndex = inRoomData.length - 1 - index;
         return GestureDetector(
           child: Container(
             width: 150,
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             decoration: BoxDecoration(
                 border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0))),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -1661,13 +1527,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     color: PeeroreumColor.gray[50],
                     border:
                         Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
-                    child: (inroom_datas[rindex]['imagePath'] != null)
+                    child: (inRoomData[roomIndex]['imagePath'] != null)
                         ? Image.network(
-                            inroom_datas[rindex]['imagePath'],
+                            inRoomData[roomIndex]['imagePath'],
                             fit: BoxFit.cover,
                           )
                         : SvgPicture.asset(
@@ -1676,7 +1542,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -1684,22 +1550,23 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   children: [
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(4)),
                         color: PeeroreumColor.subjectColor[dropdownSubjectList[
-                            inroom_datas[rindex]['subject']]]?[0],
+                            inRoomData[roomIndex]['subject']]]?[0],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 8),
                         child: Text(
-                          dropdownSubjectList[inroom_datas[rindex]['subject']],
+                          dropdownSubjectList[inRoomData[roomIndex]['subject']],
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
                             color: PeeroreumColor.subjectColor[
-                                dropdownSubjectList[inroom_datas[rindex]
+                                dropdownSubjectList[inRoomData[roomIndex]
                                     ['subject']]]?[1],
                           ),
                         ),
@@ -1714,7 +1581,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Text(
-                          inroom_datas[rindex]["title"]!,
+                          inRoomData[roomIndex]["title"]!,
                           style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 16,
@@ -1732,7 +1599,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(dropdownGradeList[inroom_datas[rindex]["grade"]],
+                    Text(dropdownGradeList[inRoomData[roomIndex]["grade"]],
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -1745,7 +1612,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         color: PeeroreumColor.gray[600],
                       ),
                     ),
-                    Text('${inroom_datas[rindex]["attendingPeopleNum"]!}명',
+                    Text('${inRoomData[roomIndex]["attendingPeopleNum"]!}명',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -1758,7 +1625,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         color: PeeroreumColor.gray[600],
                       ),
                     ),
-                    Text('D-${inroom_datas[rindex]["dday"]!}',
+                    Text('D-${inRoomData[roomIndex]["dday"]!}',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
@@ -1766,11 +1633,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             color: PeeroreumColor.gray[600])),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Text(
-                  '${inroom_datas[rindex]["progress"]}% 달성', //이후 퍼센티지 수정
+                  '${inRoomData[roomIndex]["progress"]}% 달성',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 14,
@@ -1781,7 +1648,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
             ),
           ),
           onTap: () {
-            am_i ? Get.to(() => DetailWedu(inroom_datas[rindex]["id"])) : null;
+            amI ? Get.to(() => DetailWedu(inRoomData[roomIndex]["id"])) : null;
           },
         );
       },

@@ -1,9 +1,8 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, non_constant_identifier_names
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/data/VisitCount.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -15,9 +14,6 @@ import 'package:peeroreum_client/screens/mypage/mypage_account.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_notification.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_version.dart';
-
-import 'package:dio/dio.dart' as dio;
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -32,17 +28,17 @@ class _MyPageState extends State<MyPage> {
   var profileImage;
   var grade;
   var withPeerDay = 0;
-  List<dynamic> datas = [];
-  List<dynamic> inroom_datas = [];
-  List<dynamic> inviDatas = [];
+  List<dynamic> data = [];
+  List<dynamic> inroomData = [];
+  List<dynamic> inviData = [];
   List<dynamic> hashTags = [];
   List<dynamic> notSuccessList = [];
 
   fetchStatus() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
-    nickname = await FlutterSecureStorage().read(key: "nickname");
-    profileImage = await FlutterSecureStorage().read(key: "profileImage");
-    grade = await FlutterSecureStorage().read(key: "grade");
+    token = await const FlutterSecureStorage().read(key: "accessToken");
+    nickname = await const FlutterSecureStorage().read(key: "nickname");
+    profileImage = await const FlutterSecureStorage().read(key: "profileImage");
+    grade = await const FlutterSecureStorage().read(key: "grade");
     withPeerDay = await VisitCount.getVisitCount();
   }
 
@@ -69,7 +65,7 @@ class _MyPageState extends State<MyPage> {
       surfaceTintColor: PeeroreumColor.white,
       shadowColor: PeeroreumColor.white,
       elevation: 0.2,
-      title: Text(
+      title: const Text(
         "마이페이지",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -83,54 +79,54 @@ class _MyPageState extends State<MyPage> {
 
   Widget bodyWidget() {
     return SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[100]!),
-                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                  child: first_col()),
-              SizedBox(
-                height: 16,
-              ),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[100]!),
-                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                  child: second_col()),
-              SizedBox(
-                height: 16,
-              ),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[100]!),
-                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                  child: third_col()),
-              SizedBox(
-                height: 16,
-              ),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: PeeroreumColor.gray[100]!),
-                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                  child: fourth_col()),
-            ],
-          ),
+      child: Container(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[100]!),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                child: firstCol()),
+            const SizedBox(
+              height: 16,
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[100]!),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                child: secondCol()),
+            const SizedBox(
+              height: 16,
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[100]!),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                child: thirdCol()),
+            const SizedBox(
+              height: 16,
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(width: 1, color: PeeroreumColor.gray[100]!),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                child: fourthCol()),
+          ],
         ),
-      );
+      ),
+    );
   }
 
-  Widget first_col() {
+  Widget firstCol() {
     return Column(
       children: [
         InkWell(
@@ -140,12 +136,11 @@ class _MyPageState extends State<MyPage> {
             Get.to(() => MyPageProfile(nickname, true));
           },
           child: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                    child: Row(children: [
+                Row(children: [
                   Container(
                     width: 45,
                     height: 45,
@@ -155,7 +150,7 @@ class _MyPageState extends State<MyPage> {
                           width: 2,
                           color: grade != null
                               ? PeeroreumColor.gradeColor[int.parse(grade)]!
-                              : Color.fromARGB(255, 186, 188, 189)),
+                              : const Color.fromARGB(255, 186, 188, 189)),
                     ),
                     child: Container(
                       height: 42,
@@ -170,7 +165,7 @@ class _MyPageState extends State<MyPage> {
                             ? DecorationImage(
                                 image: NetworkImage(profileImage),
                                 fit: BoxFit.cover)
-                            : DecorationImage(
+                            : const DecorationImage(
                                 image: AssetImage(
                                 'assets/images/user.jpg',
                               )),
@@ -180,14 +175,14 @@ class _MyPageState extends State<MyPage> {
                   Container(width: 11),
                   Text(
                     '$nickname',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: PeeroreumColor.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Pretendard',
                     ),
                   ),
-                ])),
+                ]),
                 SvgPicture.asset(
                   'assets/icons/right.svg',
                   height: 24,
@@ -198,12 +193,12 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
         Container(
-          margin: EdgeInsets.symmetric(horizontal: 16),
+          margin: const EdgeInsets.symmetric(horizontal: 16),
           height: 1,
           color: PeeroreumColor.gray[100],
         ),
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -212,7 +207,7 @@ class _MyPageState extends State<MyPage> {
                 height: 24,
               ),
               Container(width: 4),
-              Text(
+              const Text(
                 '+',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -222,7 +217,7 @@ class _MyPageState extends State<MyPage> {
               ),
               Container(width: 2),
               Text("$withPeerDay",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -234,22 +229,22 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget second_col() {
+  Widget secondCol() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(InWedu())},
+          onTap: () => {Get.to(const InWedu())},
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset('assets/icons/UsersThree.svg'),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -263,15 +258,15 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(InIedu())},
+          onTap: () => {Get.to(const InIedu())},
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset('assets/icons/ChatsTeardrop.svg'),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -285,15 +280,15 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(Scrap())},
+          onTap: () => {Get.to(const Scrap())},
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset('assets/icons/BookmarkSimple.svg'),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -308,22 +303,22 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget third_col() {
+  Widget thirdCol() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(MyPageNotification())},
+          onTap: () => {Get.to(const MyPageNotification())},
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset('assets/icons/bell.svg'),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -337,9 +332,9 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(MyPageAccount())},
+          onTap: () => {Get.to(const MyPageAccount())},
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -347,7 +342,7 @@ class _MyPageState extends State<MyPage> {
                 SvgPicture.asset(
                   'assets/icons/User2.svg',
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -384,22 +379,22 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget fourth_col() {
+  Widget fourthCol() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(MyPageInquiry())},
+          onTap: () => {Get.to(const MyPageInquiry())},
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset('assets/icons/Headset.svg'),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -413,15 +408,15 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () => {Get.to(MyPageVersion())},
+          onTap: () => {Get.to(const MyPageVersion())},
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset('assets/icons/Info.svg'),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -439,13 +434,13 @@ class _MyPageState extends State<MyPage> {
             logoutModal();
           },
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset('assets/icons/SignOut.svg'),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 T4_16px(
@@ -466,8 +461,8 @@ class _MyPageState extends State<MyPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 20),
-          contentPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
@@ -476,7 +471,7 @@ class _MyPageState extends State<MyPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   "로그아웃",
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -486,7 +481,7 @@ class _MyPageState extends State<MyPage> {
                     color: PeeroreumColor.black,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Container(
                   alignment: Alignment.center,
                   height: 48,
@@ -501,7 +496,7 @@ class _MyPageState extends State<MyPage> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -514,7 +509,7 @@ class _MyPageState extends State<MyPage> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.gray[300],
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -530,7 +525,7 @@ class _MyPageState extends State<MyPage> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () async {
@@ -538,13 +533,13 @@ class _MyPageState extends State<MyPage> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '확인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -565,25 +560,14 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future<void> logout() async {
-    var token = await FlutterSecureStorage().read(key: "accessToken");
-    var dio1 = dio.Dio();
     try {
-      await dio1.post('${API.hostConnect}/logout',
-          options: dio.Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }));
-      print("firebaseToken delete 성공");
-      Get.offAllNamed('/signIn/email');
-      FlutterSecureStorage().deleteAll();
-    } on dio.DioException catch (e) {
-      if (e.response != null) {
-        print("firebaseToken delete 실패 ${e.response?.statusCode}");
-      } else {
-        print("firebaseToken delete 에러: ${e.message}");
-      }
+      await ApiClient().post('/logout');
+      print("logout 성공");
     } catch (e) {
-      print("firebaseToken delete 예외 발생: $e");
+      print("logout 예외 발생: $e");
+    } finally {
+      const FlutterSecureStorage().deleteAll();
+      Get.offAllNamed('/signIn/email');
     }
   }
 }

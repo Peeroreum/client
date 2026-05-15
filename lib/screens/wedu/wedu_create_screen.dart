@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dio/dio.dart' as diop;
+import 'package:dio/dio.dart' as dio;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,10 +8,8 @@ import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
-import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 
 DateTime date = DateTime.now().add(const Duration(days: 66));
@@ -34,6 +32,7 @@ class _CreateWeduState extends State<CreateWedu> {
   String dropdownSubject = subject.first;
   String dropdownGrade = grade.first;
   int dropdownHeadcount = headcount.first;
+
   //String dropdownGender = gender.first;
   String? dropdownChallenge;
 
@@ -446,13 +445,14 @@ class _CreateWeduState extends State<CreateWedu> {
                                         final selectedDate =
                                             await showDatePicker(
                                           locale: const Locale('ko'),
-                                          context:
-                                              context, // 팝업으로 띄우기 때문에 context 전달
-                                          initialDate: DateTime.now().add(Duration(
-                                              days:
-                                                  66)), // 달력을 띄웠을 때 선택된 날짜. 위에서 date 변수에 오늘 날짜를 넣었으므로 오늘 날짜가 선택돼서 나옴
+                                          context: context,
+                                          // 팝업으로 띄우기 때문에 context 전달
+                                          initialDate: DateTime.now()
+                                              .add(Duration(days: 66)),
+                                          // 달력을 띄웠을 때 선택된 날짜. 위에서 date 변수에 오늘 날짜를 넣었으므로 오늘 날짜가 선택돼서 나옴
                                           firstDate: DateTime.now()
-                                              .add(Duration(days: 66)), // 시작 년도
+                                              .add(Duration(days: 66)),
+                                          // 시작 년도
                                           lastDate: DateTime.now()
                                               .add(Duration(days: 1 * 365)),
                                           helpText: '',
@@ -463,10 +463,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                                     PeeroreumColor.gray[200],
                                                 colorScheme: ColorScheme.light(
                                                     primary: PeeroreumColor
-                                                            .primaryPuple[
-                                                        100]!, // header background color
-                                                    onPrimary: Colors
-                                                        .black, // header text color
+                                                        .primaryPuple[100]!,
+                                                    // header background color
+                                                    onPrimary: Colors.black,
+                                                    // header text color
                                                     onSurface: Colors.black,
                                                     surfaceTint: PeeroreumColor
                                                         .white // body text color
@@ -979,7 +979,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                                         fontWeight:
                                                                             FontWeight.w500,
                                                                         color: PeeroreumColor
-                                                                            .primaryPuple[200], // 여기에 적절한 색상을 선택합니다.
+                                                                            .primaryPuple[200],
                                                                       ),
                                                                     ),
                                                                     TextSpan(
@@ -1192,7 +1192,7 @@ class _CreateWeduState extends State<CreateWedu> {
       'hashTags': _tag,
     };
     if (_image != null) {
-      file = await diop.MultipartFile.fromFile(_image!.path);
+      file = await dio.MultipartFile.fromFile(_image!.path);
       weduMap.addAll({"file": file});
     }
     Get.toNamed('/wedu/create_invitaion', arguments: weduMap);

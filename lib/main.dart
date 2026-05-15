@@ -10,17 +10,14 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/bottomNaviBar.dart';
-import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
 import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signin_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
-import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_list_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_invitation.dart';
-import 'package:peeroreum_client/screens/wedu/encouragement_checklist_screen.dart';
 import 'package:peeroreum_client/screens/wedu/encouragement_list_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -28,10 +25,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
-import 'package:peeroreum_client/screens/sign/signin_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'firebase_options.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 
 // 네이티브 딥링크 채널 (Kakao 인텐트 처리용)
 const _deepLinkChannel = MethodChannel('com.peeroreum/deeplink');
@@ -48,6 +45,8 @@ void main() async {
   } catch (_) {
     // 네이티브에서 이미 자동 초기화된 경우 무시
   }
+
+  ApiClient().init();
 
   const nativeAppKey = "a17f729816582e161afaae9395c1f1b5";
   KakaoSdk.init(nativeAppKey: nativeAppKey);
@@ -144,7 +143,7 @@ void main() async {
     }
   });
 
-  runApp(PeeroreumApp(isLoggedIn, firebaseToken ?? '', isNewUser ?? true));
+  runApp(PeeroreumApp(isLoggedIn, firebaseToken ?? '', isNewUser));
   // 첫 프레임 완료 후 앱 준비 완료 플래그 설정
   WidgetsBinding.instance.addPostFrameCallback((_) => _appReady = true);
 }
@@ -216,15 +215,15 @@ class PeeroreumApp extends StatelessWidget {
     return GetMaterialApp(
       builder: (context, child) {
         return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
             child: child!);
       },
-      localizationsDelegates: [
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
       theme: ThemeData(
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
                   statusBarColor: PeeroreumColor.white,
                   statusBarIconBrightness: Brightness.dark,
@@ -233,7 +232,7 @@ class PeeroreumApp extends StatelessWidget {
       title: 'Peeroreum',
       home: isNewUser
           ? OnBoarding()
-          : (isLoggedIn ? bottomNaviBar(firebaseToken, 0) : EmailSignIn()),
+          : (isLoggedIn ? BottomNaviBar(firebaseToken, 0) : EmailSignIn()),
       // initialRoute: isLoggedIn? '/home' : '/signIn/email',
       // routes: {
       //   '/signIn': (context) => SignIn(),
@@ -267,7 +266,7 @@ class PeeroreumApp extends StatelessWidget {
         ),
         GetPage(
           name: '/home',
-          page: () => bottomNaviBar(firebaseToken, 0),
+          page: () => BottomNaviBar(firebaseToken, 0),
         ),
         GetPage(
           name: '/wedu',
@@ -299,13 +298,13 @@ class PeeroreumApp extends StatelessWidget {
         ),
         GetPage(
           name: '/report',
-          page: () => Report(
+          page: () => const Report(
             data: "상세 data 아직 추가 안 됨",
           ),
         ),
         GetPage(
           name: '/home/iedu',
-          page: () => bottomNaviBar(firebaseToken, 1),
+          page: () => BottomNaviBar(firebaseToken, 1),
         ),
         GetPage(
           name: '/home/alert',

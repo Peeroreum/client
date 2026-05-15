@@ -1,10 +1,8 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, prefer_is_empty
 
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
@@ -19,8 +17,8 @@ import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../../api/PeeroreumApi.dart';
 import '../../model/Member.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 
 class EmailSignIn extends StatefulWidget {
   const EmailSignIn({super.key});
@@ -36,27 +34,27 @@ class _EmailSignInState extends State<EmailSignIn> {
   MemberInfo memberInfo = MemberInfo();
   SignIn signIn = SignIn();
 
-  final id_controller = TextEditingController();
-  final pw_controller = TextEditingController();
-  var is_checked = false;
-  bool is_Enabled = false;
-  bool pw_visible = true;
+  final idController = TextEditingController();
+  final pwController = TextEditingController();
+  var isChecked = false;
+  bool isEnabled = false;
+  bool pwVisible = true;
 
   void _checkInput() {
-    if (id_controller.text.length >= 5 && pw_controller.text.length >= 5) {
+    if (idController.text.length >= 5 && pwController.text.length >= 5) {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     } else {
       setState(() {
-        is_Enabled = false;
+        isEnabled = false;
       });
     }
   }
 
-  bool id_showClearbutton = false;
+  bool idShowClearButton = false;
 
-  bool pw_showClearbutton = false;
+  bool pwShowClearButton = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +62,8 @@ class _EmailSignInState extends State<EmailSignIn> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
-          id_showClearbutton = false;
-          pw_showClearbutton = false;
+          idShowClearButton = false;
+          pwShowClearButton = false;
         });
       },
       child: Scaffold(
@@ -96,23 +94,23 @@ class _EmailSignInState extends State<EmailSignIn> {
                     Column(
                       children: [
                         TextFormField(
-                          controller: id_controller,
+                          controller: idController,
                           onTap: () {
-                            if (id_controller.text.length > 0) {
+                            if (idController.text.length > 0) {
                               setState(() {
-                                id_showClearbutton = true;
+                                idShowClearButton = true;
                               });
                             }
                             setState(() {
-                              pw_showClearbutton = false;
+                              pwShowClearButton = false;
                             });
                           },
                           onChanged: (value) {
                             _checkInput();
                             if (value.length > 0) {
-                              id_showClearbutton = true;
+                              idShowClearButton = true;
                             } else {
-                              id_showClearbutton = false;
+                              idShowClearButton = false;
                             }
                           },
                           textInputAction: TextInputAction.next,
@@ -138,12 +136,12 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   color: PeeroreumColor.gray[600]),
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
-                              suffixIcon: id_showClearbutton
+                              suffixIcon: idShowClearButton
                                   ? IconButton(
                                       onPressed: () {
-                                        id_controller.clear();
+                                        idController.clear();
                                         setState(() {
-                                          id_showClearbutton = false;
+                                          idShowClearButton = false;
                                           _checkInput();
                                         });
                                       },
@@ -157,27 +155,27 @@ class _EmailSignInState extends State<EmailSignIn> {
                           height: 8.0,
                         ),
                         TextFormField(
-                          controller: pw_controller,
+                          controller: pwController,
                           onTap: () {
-                            if (pw_controller.text.length > 0) {
+                            if (pwController.text.length > 0) {
                               setState(() {
-                                pw_showClearbutton = true;
+                                pwShowClearButton = true;
                               });
                             }
                             setState(() {
-                              id_showClearbutton = false;
+                              idShowClearButton = false;
                             });
                           },
                           onChanged: (value) {
                             _checkInput();
                             if (value.length > 0) {
-                              pw_showClearbutton = true;
+                              pwShowClearButton = true;
                             } else {
-                              pw_showClearbutton = false;
+                              pwShowClearButton = false;
                             }
                           },
                           textInputAction: TextInputAction.done,
-                          obscureText: pw_visible,
+                          obscureText: pwVisible,
                           obscuringCharacter: '●',
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w400),
@@ -204,12 +202,12 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  pw_showClearbutton
+                                  pwShowClearButton
                                       ? GestureDetector(
                                           onTap: () {
-                                            pw_controller.clear();
+                                            pwController.clear();
                                             setState(() {
-                                              pw_showClearbutton = false;
+                                              pwShowClearButton = false;
                                               _checkInput();
                                             });
                                           },
@@ -227,11 +225,11 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        pw_visible = !pw_visible;
+                                        pwVisible = !pwVisible;
                                       });
                                     },
                                     child: SvgPicture.asset(
-                                      !pw_visible
+                                      !pwVisible
                                           ? "assets/icons/eye_on.svg"
                                           : "assets/icons/eye_off.svg",
                                       color: PeeroreumColor.gray[600],
@@ -244,28 +242,27 @@ class _EmailSignInState extends State<EmailSignIn> {
                           ),
                         ),
                         SizedBox(
-                          height: 20.0, //40.0
+                          height: 20.0,
                         ),
                         SizedBox(
                           width: double.infinity,
                           height: 48.0,
                           child: TextButton(
-                            onPressed: is_Enabled
+                            onPressed: isEnabled
                                 ? () async {
-                                    signIn.email = id_controller.text;
-                                    signIn.password = pw_controller.text;
-                                    var result = await http.post(
-                                        Uri.parse('${API.hostConnect}/login'),
-                                        body: jsonEncode(signIn),
-                                        headers: {
-                                          'Content-Type': 'application/json'
-                                        });
+                                    signIn.email = idController.text;
+                                    signIn.password = pwController.text;
+                                    var result = await ApiClient().post(
+                                        '/login',
+                                        data: signIn);
                                     if (result.statusCode == 200) {
-                                      var data = jsonDecode(utf8
-                                          .decode(result.bodyBytes))['data'];
+                                      var data = result.data['data'];
                                       secureStorage.write(
                                           key: "accessToken",
                                           value: data['accessToken']);
+                                      secureStorage.write(
+                                          key: "refreshToken",
+                                          value: data['refreshToken']);
                                       secureStorage.write(
                                           key: "email", value: data['email']);
                                       secureStorage.write(
@@ -303,7 +300,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 padding: MaterialStatePropertyAll(
                                     EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 12)),
-                                backgroundColor: is_Enabled
+                                backgroundColor: isEnabled
                                     ? MaterialStateProperty.all(
                                         PeeroreumColor.primaryPuple[400])
                                     : MaterialStateProperty.all(
@@ -515,25 +512,30 @@ class _EmailSignInState extends State<EmailSignIn> {
   }
 
   Future<void> fetchSocialLogin(String socialAccount) async {
-    var result = await http.get(
-        Uri.parse('${API.hostConnect}/socialLogin?email=${socialAccount}'),
-        headers: {'Content-Type': 'application/json'});
+    try {
+      var result = await ApiClient().post(
+          '/socialLogin',
+          data: {'email': socialAccount});
 
-    if (result.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(result.bodyBytes))['data'];
-      secureStorage.write(key: "accessToken", value: data['accessToken']);
-      secureStorage.write(key: "email", value: data['email']);
-      secureStorage.write(key: "nickname", value: data['nickname']);
-      secureStorage.write(key: "profileImage", value: data['profileImage']);
-      secureStorage.write(key: "grade", value: data['grade'].toString());
-      PendingDeepLink.handleAfterLogin();
-      Get.offAllNamed('/home');
-    } else if (result.statusCode == 404) {
-      Member member = Member();
-      member.username = socialAccount;
-      Get.to(() => SignUp(member), transition: Transition.noTransition);
-    } else {
-      print("소셜 로그인 실패");
+      if (result.statusCode == 200) {
+        var data = result.data['data'];
+        secureStorage.write(key: "accessToken", value: data['accessToken']);
+        secureStorage.write(key: "refreshToken", value: data['refreshToken']);
+        secureStorage.write(key: "email", value: data['email']);
+        secureStorage.write(key: "nickname", value: data['nickname']);
+        secureStorage.write(key: "profileImage", value: data['profileImage']);
+        secureStorage.write(key: "grade", value: data['grade']?.toString());
+        PendingDeepLink.handleAfterLogin();
+        Get.offAllNamed('/home');
+      } else if (result.statusCode == 404) {
+        Member member = Member();
+        member.username = socialAccount;
+        Get.to(() => SignUp(member), transition: Transition.noTransition);
+      } else {
+        print("소셜 로그인 실패");
+      }
+    } catch (e) {
+      print("소셜 로그인 에러: $e");
     }
   }
 

@@ -1,16 +1,13 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use, non_constant_identifier_names, prefer_typing_uninitialized_variables
-
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -35,7 +32,6 @@ class _CreateIeduState extends State<CreateIedu> {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
-  var token;
   var my_grade;
   int? _grade;
   String? _subject;
@@ -45,7 +41,7 @@ class _CreateIeduState extends State<CreateIedu> {
   late Future initFuture;
 
   final ImagePicker picker = ImagePicker();
-  List<XFile> _images = [];
+  final List<XFile> _images = [];
 
   FocusNode ContentFocusNode = FocusNode();
   Map<String, Color> focusColor = {
@@ -62,8 +58,7 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   Future<void> fetchStatus() async {
-    token = await FlutterSecureStorage().read(key: "accessToken");
-    my_grade = await FlutterSecureStorage().read(key: "grade");
+    my_grade = await const FlutterSecureStorage().read(key: "grade");
     _grade ??= int.parse(my_grade!) - 1;
   }
 
@@ -96,7 +91,7 @@ class _CreateIeduState extends State<CreateIedu> {
     );
   }
 
-  void check_validation() {
+  void checkValidation() {
     if (titleCheck != "" && contentCheck != "") {
       setState(() {
         _nextColor = PeeroreumColor.primaryPuple[400]!;
@@ -128,7 +123,7 @@ class _CreateIeduState extends State<CreateIedu> {
           }
         },
       ),
-      title: Text(
+      title: const Text(
         '질문하기',
         style: TextStyle(
           fontFamily: 'Pretendard',
@@ -139,7 +134,7 @@ class _CreateIeduState extends State<CreateIedu> {
       centerTitle: true,
       actions: [
         Container(
-          padding: EdgeInsets.only(right: 20),
+          padding: const EdgeInsets.only(right: 20),
           child: GestureDetector(
             onTap: () {
               if (_nextColor == PeeroreumColor.primaryPuple[400]) {
@@ -149,7 +144,7 @@ class _CreateIeduState extends State<CreateIedu> {
               }
             },
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
+              margin: const EdgeInsets.symmetric(vertical: 20),
               child: Text(
                 '완료',
                 style: TextStyle(
@@ -168,16 +163,16 @@ class _CreateIeduState extends State<CreateIedu> {
 
   Widget bodyWidget() {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       child: Column(
         children: [
-          dropdown_body(),
+          dropdownBody(),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: TextFormField(
               controller: titleController,
               maxLines: null,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
               cursorColor: PeeroreumColor.gray[600],
               decoration: InputDecoration(
                   hintText: '제목을 입력하세요.',
@@ -191,7 +186,7 @@ class _CreateIeduState extends State<CreateIedu> {
                   border: InputBorder.none),
               onChanged: (value) {
                 titleCheck = value;
-                check_validation();
+                checkValidation();
               },
             ),
           ),
@@ -205,7 +200,7 @@ class _CreateIeduState extends State<CreateIedu> {
               FocusScope.of(context).requestFocus(ContentFocusNode);
             },
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Column(
                 children: [
                   TextFormField(
@@ -213,7 +208,7 @@ class _CreateIeduState extends State<CreateIedu> {
                     focusNode: ContentFocusNode,
                     maxLines: null,
                     minLines: 6,
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                     cursorColor: PeeroreumColor.gray[600],
                     decoration: InputDecoration(
                         hintText: '궁금했던 학습 질문을 동료에게 물어보세요.',
@@ -227,12 +222,12 @@ class _CreateIeduState extends State<CreateIedu> {
                         border: InputBorder.none),
                     onChanged: (value) {
                       contentCheck = value;
-                      check_validation();
+                      checkValidation();
                     },
                   ),
                   if (contentController.text == "") guidance(),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 16, 0, 40),
+                    margin: const EdgeInsets.fromLTRB(0, 16, 0, 40),
                     child: photos(),
                   ),
                 ],
@@ -244,7 +239,7 @@ class _CreateIeduState extends State<CreateIedu> {
     );
   }
 
-  dropdown_body() {
+  dropdownBody() {
     return Row(
       children: [
         // 학년
@@ -268,7 +263,7 @@ class _CreateIeduState extends State<CreateIedu> {
           },
           child: Container(
             height: 40,
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
@@ -284,12 +279,12 @@ class _CreateIeduState extends State<CreateIedu> {
                       : my_grade != null
                           ? grades[int.parse(my_grade!)]
                           : "선택",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
                       color: PeeroreumColor.black),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 SvgPicture.asset('assets/icons/down.svg'),
@@ -297,7 +292,7 @@ class _CreateIeduState extends State<CreateIedu> {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 8,
         ),
         // 과목
@@ -335,12 +330,12 @@ class _CreateIeduState extends State<CreateIedu> {
                 children: [
                   Text(
                     _subject ?? '선택',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
                         color: PeeroreumColor.black),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   SvgPicture.asset('assets/icons/down.svg'),
@@ -349,7 +344,7 @@ class _CreateIeduState extends State<CreateIedu> {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 8,
         ),
         // 상세 과목
@@ -376,7 +371,7 @@ class _CreateIeduState extends State<CreateIedu> {
             },
             child: Container(
               height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
@@ -390,12 +385,12 @@ class _CreateIeduState extends State<CreateIedu> {
                 children: [
                   Text(
                     _detailSubject ?? '선택',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
                         color: PeeroreumColor.black),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   SvgPicture.asset('assets/icons/down.svg'),
@@ -423,15 +418,15 @@ class _CreateIeduState extends State<CreateIedu> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '학년',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -461,11 +456,11 @@ class _CreateIeduState extends State<CreateIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           grades[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -495,15 +490,15 @@ class _CreateIeduState extends State<CreateIedu> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '과목',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -535,11 +530,11 @@ class _CreateIeduState extends State<CreateIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           subjects[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -569,15 +564,15 @@ class _CreateIeduState extends State<CreateIedu> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '세부 과목',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -605,11 +600,11 @@ class _CreateIeduState extends State<CreateIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
                         child: Text(
                           DetailSubjects[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -645,7 +640,7 @@ class _CreateIeduState extends State<CreateIedu> {
                   color: PeeroreumColor.gray[600],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 4,
               ),
               C1_12px_R(
@@ -663,7 +658,7 @@ class _CreateIeduState extends State<CreateIedu> {
                 'assets/icons/x_circle.svg',
                 color: PeeroreumColor.gray[600],
               ),
-              SizedBox(
+              const SizedBox(
                 width: 4,
               ),
               C1_12px_R(
@@ -681,7 +676,7 @@ class _CreateIeduState extends State<CreateIedu> {
                 'assets/icons/x_circle.svg',
                 color: PeeroreumColor.gray[600],
               ),
-              SizedBox(
+              const SizedBox(
                 width: 4,
               ),
               C1_12px_R(
@@ -725,7 +720,7 @@ class _CreateIeduState extends State<CreateIedu> {
               child: Container(
                 width: 24,
                 height: 24,
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: SvgPicture.asset(
                   'assets/icons/x_circle.svg',
                   color: PeeroreumColor.black.withOpacity(0.4),
@@ -754,7 +749,7 @@ class _CreateIeduState extends State<CreateIedu> {
           ),
           Container(
             color: PeeroreumColor.gray[50],
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             child: Row(
               children: [
                 GestureDetector(
@@ -772,7 +767,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         'assets/icons/camera.svg',
                         color: PeeroreumColor.gray[500],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 4,
                       ),
                       T4_16px(
@@ -782,14 +777,14 @@ class _CreateIeduState extends State<CreateIedu> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 16,
                 ),
                 GestureDetector(
                   onTap: () async {
                     if (_images.length < 5) {
                       final dynamic whiteboardImage =
-                          await Get.to(() => WhiteboardIedu());
+                          await Get.to(() => const WhiteboardIedu());
                       setState(() {
                         if (whiteboardImage != null) {
                           _images.add(whiteboardImage);
@@ -807,7 +802,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         'assets/icons/notepad.svg',
                         color: PeeroreumColor.gray[500],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 4,
                       ),
                       T4_16px(
@@ -848,12 +843,7 @@ class _CreateIeduState extends State<CreateIedu> {
       'grade': _grade! + 1,
     };
 
-    var dio1 = dio.Dio();
-    var formData = dio.FormData();
-
-    dio1.options.contentType = 'multipart/form-data';
-    dio1.options.headers = {'Authorization': 'Bearer $token'};
-    formData = dio.FormData.fromMap(IeduMap);
+    var formData = dio.FormData.fromMap(IeduMap);
 
     for (var image in _images) {
       var file = await dio.MultipartFile.fromFile(image.path);
@@ -861,8 +851,7 @@ class _CreateIeduState extends State<CreateIedu> {
     }
 
     try {
-      var response =
-          await dio1.post('${API.hostConnect}/question', data: formData);
+      var response = await ApiClient().postForm('/question', formData);
 
       if (response.statusCode == 200) {
         PeeroreumToast.show(context, '질문 작성이 완료되었어요.');
@@ -893,8 +882,8 @@ class _CreateIeduState extends State<CreateIedu> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 20),
-          contentPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
@@ -913,7 +902,7 @@ class _CreateIeduState extends State<CreateIedu> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Text(
@@ -926,7 +915,7 @@ class _CreateIeduState extends State<CreateIedu> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -938,11 +927,10 @@ class _CreateIeduState extends State<CreateIedu> {
                           Get.back(result: false);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
+                          backgroundColor: PeeroreumColor.gray[300],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
-                            // 모양
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -956,7 +944,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () {
@@ -964,13 +952,13 @@ class _CreateIeduState extends State<CreateIedu> {
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.primaryPuple[400],
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '확인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',

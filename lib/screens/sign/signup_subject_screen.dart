@@ -1,7 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,13 +7,12 @@ import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:http/http.dart' as http;
-
-import '../../api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 
 class SignUpSubject extends StatefulWidget {
   Member member;
-  SignUpSubject(this.member);
+
+  SignUpSubject(this.member, {super.key});
 
   @override
   State<SignUpSubject> createState() => _SignUpSubjectState(member);
@@ -25,6 +20,7 @@ class SignUpSubject extends StatefulWidget {
 
 class _SignUpSubjectState extends State<SignUpSubject> {
   Member member;
+
   _SignUpSubjectState(this.member);
 
   final subjects = Subject.subject;
@@ -89,34 +85,34 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         body: SafeArea(
           child: Container(
             color: PeeroreumColor.white,
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                     height: 40,
                     width: double.maxFinite,
                     child: LinearPercentIndicator(
                       animateFromLastPercent: true,
                       lineHeight: 8.0,
                       percent: 1,
-                      progressColor: Color.fromARGB(255, 114, 96, 248),
+                      progressColor: const Color.fromARGB(255, 114, 96, 248),
                       backgroundColor: Colors.grey[100],
-                      barRadius: Radius.circular(10),
+                      barRadius: const Radius.circular(10),
                     )),
                 Container(
                   width: double.maxFinite,
-                  padding: EdgeInsets.fromLTRB(10, 16, 10, 56),
+                  padding: const EdgeInsets.fromLTRB(10, 16, 10, 56),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("자신 있는 과목과 보완하고 싶은\n과목의 성취 수준을 알려주세요.",
+                      const Text("자신 있는 과목과 보완하고 싶은\n과목의 성취 수준을 알려주세요.",
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                               color: Colors.black)),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text("유사한 성취 수준의 친구가 있는 같이방을 추천해 드릴게요.",
@@ -129,11 +125,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                   ),
                 ),
                 Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           '자신 있는 과목',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -141,7 +137,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               fontWeight: FontWeight.w500,
                               color: Colors.black),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Row(
@@ -159,7 +155,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               },
                               child: Container(
                                 height: 40,
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 8),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
@@ -179,7 +175,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                               ? PeeroreumColor.black
                                               : PeeroreumColor.gray[600]),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 8,
                                     ),
                                     SvgPicture.asset('assets/icons/down.svg'),
@@ -187,7 +183,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 16,
                             ),
                             Expanded(
@@ -202,12 +198,12 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                             return goodDetail();
                                           })
                                       : PeeroreumToast.show(
-                                          context, '과목을 먼저 선택해주세요.',
+                                          context, '과목을 먼저 선택해 주세요.',
                                           isError: true);
                                 },
                                 child: Container(
                                   height: 40,
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
@@ -228,10 +224,10 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                                 ? PeeroreumColor.black
                                                 : PeeroreumColor.gray[600]),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 8,
                                       ),
-                                      Spacer(),
+                                      const Spacer(),
                                       SvgPicture.asset('assets/icons/down.svg'),
                                     ],
                                   ),
@@ -240,7 +236,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         GestureDetector(
@@ -254,12 +250,12 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                       return goodLevel();
                                     })
                                 : PeeroreumToast.show(
-                                    context, '세부 과목을 먼저 선택해주세요.',
+                                    context, '세부 과목을 먼저 선택해 주세요.',
                                     isError: true);
                           },
                           child: Container(
                             height: 40,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
@@ -279,7 +275,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                           ? PeeroreumColor.black
                                           : PeeroreumColor.gray[600]),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 8,
                                 ),
                                 Spacer(),
@@ -290,15 +286,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         ),
                       ],
                     )),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         '보완하고 싶은 과목',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -306,7 +302,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       Row(
@@ -324,7 +320,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                             },
                             child: Container(
                               height: 40,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
@@ -344,7 +340,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                             ? PeeroreumColor.black
                                             : PeeroreumColor.gray[600]),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 8,
                                   ),
                                   SvgPicture.asset('assets/icons/down.svg'),
@@ -352,7 +348,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 16,
                           ),
                           Expanded(
@@ -372,7 +368,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                               },
                               child: Container(
                                 height: 40,
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 8),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
@@ -393,10 +389,10 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                                   ? PeeroreumColor.black
                                                   : PeeroreumColor.gray[600]),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 8,
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
                                     SvgPicture.asset('assets/icons/down.svg'),
                                   ],
                                 ),
@@ -405,7 +401,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       GestureDetector(
@@ -424,8 +420,8 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                         },
                         child: Container(
                           height: 40,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
@@ -444,10 +440,10 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                                         ? PeeroreumColor.black
                                         : PeeroreumColor.gray[600]),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 8,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               SvgPicture.asset('assets/icons/down.svg'),
                             ],
                           ),
@@ -462,7 +458,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         ),
         bottomNavigationBar: SafeArea(
           child: Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
             child: SizedBox(
               height: 48,
               child: TextButton(
@@ -479,7 +475,18 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                     signUpAPI();
                   }
                 },
-                child: Text(
+                style: ButtonStyle(
+                    backgroundColor: isEnabled
+                        ? MaterialStateProperty.all(
+                            PeeroreumColor.primaryPuple[400])
+                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+                child: const Text(
                   '다음',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
@@ -487,17 +494,6 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       fontSize: 16.0,
                       color: Colors.white),
                 ),
-                style: ButtonStyle(
-                    backgroundColor: isEnabled
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
           ),
@@ -510,7 +506,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -520,15 +516,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '과목',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -559,11 +555,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           Subject.subject[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -582,7 +578,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -592,15 +588,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '세부 과목',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -628,11 +624,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           goodDetailSubjects[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -651,7 +647,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -661,15 +657,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '성취 수준을 선택해 주세요',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -695,11 +691,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           _levels[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -718,7 +714,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -728,15 +724,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '과목',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -767,11 +763,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           Subject.subject[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -790,7 +786,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -800,15 +796,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '세부 과목',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -835,11 +831,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           badDetailSubjects[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -858,7 +854,7 @@ class _SignUpSubjectState extends State<SignUpSubject> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -868,15 +864,15 @@ class _SignUpSubjectState extends State<SignUpSubject> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
+              child: const Text(
                 '성취 수준을 선택해 주세요',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
@@ -902,11 +898,11 @@ class _SignUpSubjectState extends State<SignUpSubject> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           _levels[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -922,13 +918,12 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await http.post(Uri.parse('${API.hostConnect}/signup'),
-        body: jsonEncode(member),
-        headers: {'Content-Type': 'application/json'});
+    var result = await ApiClient().post('/signup', data: member);
     if (result.statusCode == 200) {
-      var data = jsonDecode(utf8.decode(result.bodyBytes))['data'];
-      FlutterSecureStorage secureStorage = FlutterSecureStorage();
+      var data = result.data['data'];
+      FlutterSecureStorage secureStorage = const FlutterSecureStorage();
       secureStorage.write(key: "accessToken", value: data['accessToken']);
+      secureStorage.write(key: "refreshToken", value: data['refreshToken']);
       secureStorage.write(key: "email", value: data['email']);
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);

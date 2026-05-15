@@ -1,18 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
 import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import '../../api/PeeroreumApi.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -22,7 +19,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  static final storage = FlutterSecureStorage();
+  static const storage = FlutterSecureStorage();
   var socialAccount = "";
 
   @override
@@ -34,7 +31,7 @@ class _SignInState extends State<SignIn> {
           color: PeeroreumColor.white,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.symmetric(vertical: 80),
+          padding: const EdgeInsets.symmetric(vertical: 80),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -43,22 +40,26 @@ class _SignInState extends State<SignIn> {
                 height: 236.0,
                 width: 170.0,
               ),
-              SizedBox(height: 112),
+              const SizedBox(height: 112),
               Container(
-                padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 8.0),
+                padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 8.0),
                 child: Column(
                   children: [
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.1,
                     ),
-                    Container(
+                    SizedBox(
                       width: 350.0,
                       height: 48.0,
                       child: TextButton(
                         onPressed: () {
                           kakaoSignIn();
                         },
-                        child: Text(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              const Color.fromARGB(255, 254, 229, 0)),
+                        ),
+                        child: const Text(
                           '카카오 로그인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -66,21 +67,21 @@ class _SignInState extends State<SignIn> {
                               fontSize: 16.0,
                               color: Colors.black87),
                         ),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Color.fromARGB(255, 254, 229, 0)),
-                        ),
                       ),
                     ),
-                    Padding(padding: EdgeInsets.only(bottom: 8.0)),
-                    Container(
+                    const Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                    SizedBox(
                       width: 350.0,
                       height: 48.0,
                       child: TextButton(
                         onPressed: () {
                           googleSignIn();
                         },
-                        child: Text(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.grey[200]),
+                        ),
+                        child: const Text(
                           '구글 로그인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -88,13 +89,9 @@ class _SignInState extends State<SignIn> {
                               fontSize: 16.0,
                               color: Colors.black87),
                         ),
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.grey[200]),
-                        ),
                       ),
                     ),
-                    Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                    const Padding(padding: EdgeInsets.only(bottom: 8.0)),
                     Container(
                       width: 350.0,
                       height: 48.0,
@@ -102,17 +99,17 @@ class _SignInState extends State<SignIn> {
                         onPressed: () {
                           Get.toNamed('/signIn/email');
                         },
-                        child: Text(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.grey[200]),
+                        ),
+                        child: const Text(
                           '이메일 로그인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w600,
                               fontSize: 16.0,
                               color: Colors.black87),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.grey[200]),
                         ),
                       ),
                     ),
@@ -160,22 +157,32 @@ class _SignInState extends State<SignIn> {
   }
 
   Future<void> fetchSocialLogin(String socialAccount) async {
-    var result = await http.post(
-        Uri.parse('${API.hostConnect}/socialLogin'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': socialAccount}));
+    try {
+      var result = await ApiClient().post(
+        '/socialLogin',
+        data: {'email': socialAccount},
+      );
 
-    if (result.statusCode == 200) {
-      var accessToken = jsonDecode(result.body)['data'];
-      storage.write(key: "memberInfo", value: accessToken);
-      PendingDeepLink.handleAfterLogin();
-      Get.offAllNamed('/wedu');
-    } else if (result.statusCode == 404) {
-      Member member = Member();
-      member.username = socialAccount;
-      Get.to(() => SignUpNickname(member), transition: Transition.noTransition);
-    } else {
-      print("소셜 로그인 실패");
+      if (result.statusCode == 200) {
+        var data = result.data['data'];
+        storage.write(key: "accessToken", value: data['accessToken']);
+        storage.write(key: "refreshToken", value: data['refreshToken']);
+        storage.write(key: "email", value: data['email']);
+        storage.write(key: "nickname", value: data['nickname']);
+        storage.write(key: "profileImage", value: data['profileImage']);
+        storage.write(key: "grade", value: data['grade']?.toString());
+        PendingDeepLink.handleAfterLogin();
+        Get.offAllNamed('/wedu');
+      } else if (result.statusCode == 404) {
+        Member member = Member();
+        member.username = socialAccount;
+        Get.to(() => SignUpNickname(member),
+            transition: Transition.noTransition);
+      } else {
+        print("소셜 로그인 실패");
+      }
+    } catch (e) {
+      print("소셜 로그인 에러: $e");
     }
   }
 

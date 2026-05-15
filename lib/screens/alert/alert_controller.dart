@@ -1,68 +1,47 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/screens/alert/alert_model.dart';
 
 class AlertController extends GetxController{
-  var token;
   var activity_alerts = <AlertModel>[].obs;
   var service_alert = <AlertModel>[].obs;
 
   @override
   void onInit(){
     super.onInit();
-    // activity_alerts.assignAll(generateDummyAlerts());
-    // service_alert.assignAll(generateDummyAlerts());
     fetchData();
   }
 
   Future<void> fetchData() async{
-    final getConnect = GetConnect();
-    token = await const FlutterSecureStorage().read(key: "accessToken");
-    const String activityUrl = '${API.hostConnect}/notification/activity';
-    const String serviceUrl = '${API.hostConnect}/notification/service';
-    
     try {
 
       ///////// 활동 알림
 
-      final activityResponse = await getConnect.get(
-        activityUrl,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-      );
+      final activityResponse = await ApiClient().get('/notification/activity');
 
       if (activityResponse.statusCode == 200) {
-        final List<dynamic> data = activityResponse.body['data'] ?? [];
+        final List<dynamic> data = activityResponse.data['data'] ?? [];
         final alertList = data.map((item) => AlertModel.fromJson(item)).toList();
 
         activity_alerts.assignAll(alertList); // alerts 리스트에 데이터를 할당
       } else {
         if (kDebugMode) {
-          print('Failed to fetch alerts: ${activityResponse.statusText}');
+          print('Failed to fetch alerts: ${activityResponse.statusCode}');
         }
       }
 
       ///////// 서비스 알림
 
-      final serviceResponse = await getConnect.get(
-        serviceUrl,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-      );
+      final serviceResponse = await ApiClient().get('/notification/service');
 
       if (serviceResponse.statusCode == 200) {
-        final List<dynamic> serviceData = serviceResponse.body['data'] ?? [];
+        final List<dynamic> serviceData = serviceResponse.data['data'] ?? [];
         final serviceAlertList = serviceData.map((item) => AlertModel.fromJson(item)).toList();
         service_alert.assignAll(serviceAlertList); // Assign service alerts
       } else {
         if (kDebugMode) {
-          print('Failed to fetch service alerts: ${serviceResponse.statusText}');
+          print('Failed to fetch service alerts: ${serviceResponse.statusCode}');
         }
       }
     } catch (e) {
