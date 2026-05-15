@@ -28,6 +28,7 @@ class _ImageDetailState extends State<ImageDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: PeeroreumColor.black,
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -35,13 +36,20 @@ class _ImageDetailState extends State<ImageDetail> {
             items: imageList.map((i) {
               var imageUrl = i.toString();
               return Container(
+                color: PeeroreumColor.black,
                 child: PhotoView(
                   backgroundDecoration: BoxDecoration(
-                    color: PeeroreumColor.black
+                    color: PeeroreumColor.black,
                   ),
                   minScale: PhotoViewComputedScale.contained,
                   filterQuality: FilterQuality.high,
                   imageProvider: NetworkImage(imageUrl),
+                  loadingBuilder: (context, event) => Center(
+                    child: CircularProgressIndicator(
+                      color: PeeroreumColor.white,
+                      strokeWidth: 2,
+                    ),
+                  ),
                 )
               );
               // 여기에 이미지 위젯 생성 코드 추가
