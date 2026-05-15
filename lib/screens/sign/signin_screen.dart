@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:dio/dio.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
@@ -163,6 +164,7 @@ class _SignInState extends State<SignIn> {
       var result = await ApiClient().post(
         '/socialLogin',
         data: {'provider': provider, 'token': token},
+        options: Options(validateStatus: (status) => status != null && status < 500),
       );
 
       if (result.statusCode == 200) {

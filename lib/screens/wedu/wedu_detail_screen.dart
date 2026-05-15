@@ -386,13 +386,11 @@ class _DetailWeduState extends State<DetailWedu> {
 
   void takeFromCamera() async {
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
-      setState(() {
-        _images.add(image);
-      });
-    } else {
-      print('Image selection cancelled');
-    }
+    if (image == null) return;
+
+    setState(() {
+      _images.add(image);
+    });
 
     postImages();
   }
@@ -400,12 +398,12 @@ class _DetailWeduState extends State<DetailWedu> {
   void takeFromGallery() async {
     final List<XFile> selectedImages = await picker.pickMultiImage();
 
-    if (selectedImages != null && selectedImages.isNotEmpty) {
-      setState(() {
-        print("리스트에 이미지 저장");
-        _images.addAll(selectedImages);
-      });
-    }
+    if (selectedImages == null || selectedImages.isEmpty) return;
+
+    setState(() {
+      print("리스트에 이미지 저장");
+      _images.addAll(selectedImages);
+    });
 
     postImages();
   }

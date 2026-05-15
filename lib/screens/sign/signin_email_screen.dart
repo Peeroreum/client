@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, prefer_is_empty
 
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -519,7 +520,8 @@ class _EmailSignInState extends State<EmailSignIn> {
     try {
       var result = await ApiClient().post(
           '/socialLogin',
-          data: {'provider': provider, 'token': token});
+          data: {'provider': provider, 'token': token},
+          options: Options(validateStatus: (status) => status != null && status < 500));
 
       if (result.statusCode == 200) {
         var data = result.data['data'];
