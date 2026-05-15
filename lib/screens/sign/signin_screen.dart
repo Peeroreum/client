@@ -124,43 +124,45 @@ class _SignInState extends State<SignIn> {
   }
 
   void kakaoSignIn() async {
+    OAuthToken? kakaoToken;
     if (await isKakaoTalkInstalled()) {
       try {
-        await UserApi.instance.loginWithKakaoTalk();
+        kakaoToken = await UserApi.instance.loginWithKakaoTalk();
         print('카카오톡으로 로그인 성공');
       } catch (error) {
         print('카카오톡으로 로그인 실패 $error');
-
         if (error is PlatformException && error.code == 'CANCELED') {
           return;
         }
         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
         try {
-          await UserApi.instance.loginWithKakaoAccount();
+          kakaoToken = await UserApi.instance.loginWithKakaoAccount();
           print('카카오계정으로 로그인 성공');
         } catch (error) {
           print('카카오계정으로 로그인 실패 $error');
+          return;
         }
       }
     } else {
       try {
-        await UserApi.instance.loginWithKakaoAccount();
+        kakaoToken = await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
       } catch (error) {
         print('카카오계정으로 로그인 실패 $error');
+        return;
       }
     }
 
-    User user = await UserApi.instance.me();
-    socialAccount = user.kakaoAccount!.email!;
-    fetchSocialLogin(socialAccount);
+    if (kakaoToken == null) return;
+    final User user = await UserApi.instance.me();
+    fetchSocialLogin('kakao', kakaoToken.accessToken, user.kakaoAccount!.email!);
   }
 
-  Future<void> fetchSocialLogin(String socialAccount) async {
+  Future<void> fetchSocialLogin(String provider, String token, String emailForSignup) async {
     try {
       var result = await ApiClient().post(
         '/socialLogin',
-        data: {'email': socialAccount},
+        data: {'provider': provider, 'token': token},
       );
 
       if (result.statusCode == 200) {
@@ -175,7 +177,7 @@ class _SignInState extends State<SignIn> {
         Get.offAllNamed('/wedu');
       } else if (result.statusCode == 404) {
         Member member = Member();
-        member.username = socialAccount;
+        member.username = emailForSignup;
         Get.to(() => SignUpNickname(member),
             transition: Transition.noTransition);
       } else {
@@ -189,12 +191,16 @@ class _SignInState extends State<SignIn> {
   void googleSignIn() async {
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
-    var socialAccount = "";
-    if (googleSignInAccount != null) {
-      socialAccount = googleSignInAccount.email;
-      fetchSocialLogin(socialAccount);
-    } else {
+    if (googleSignInAccount == null) {
       print("구글계정으로 로그인 실패");
+      return;
     }
+    final auth = await googleSignInAccount.authentication;
+    final accessToken = auth.accessToken;
+    if (accessToken == null) {
+      print("구글 액세스 토큰 없음");
+      return;
+    }
+    fetchSocialLogin('google', accessToken, googleSignInAccount.email);
   }
 }

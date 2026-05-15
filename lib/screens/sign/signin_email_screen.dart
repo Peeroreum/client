@@ -465,19 +465,19 @@ class _EmailSignInState extends State<EmailSignIn> {
   }
 
   void kakaoSignIn() async {
+    OAuthToken? kakaoToken;
     if (await isKakaoTalkInstalled()) {
       try {
-        await UserApi.instance.loginWithKakaoTalk();
+        kakaoToken = await UserApi.instance.loginWithKakaoTalk();
         print('카카오톡으로 로그인 성공');
       } catch (error) {
         print('카카오톡으로 로그인 실패 $error');
-
         if (error is PlatformException && error.code == 'CANCELED') {
           return;
         }
         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
         try {
-          await UserApi.instance.loginWithKakaoAccount();
+          kakaoToken = await UserApi.instance.loginWithKakaoAccount();
           print('카카오계정으로 로그인 성공');
         } catch (error) {
           print('카카오계정으로 로그인 실패 $error');
@@ -486,7 +486,7 @@ class _EmailSignInState extends State<EmailSignIn> {
       }
     } else {
       try {
-        await UserApi.instance.loginWithKakaoAccount();
+        kakaoToken = await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
       } catch (error) {
         print('카카오계정으로 로그인 실패 $error');
@@ -494,28 +494,32 @@ class _EmailSignInState extends State<EmailSignIn> {
       }
     }
 
-    User user = await UserApi.instance.me();
-    socialAccount = user.kakaoAccount!.email!;
-    fetchSocialLogin(socialAccount);
+    if (kakaoToken == null) return;
+    final User user = await UserApi.instance.me();
+    fetchSocialLogin('kakao', kakaoToken.accessToken, user.kakaoAccount!.email!);
   }
 
   void googleSignIn() async {
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
-    if (googleSignInAccount != null) {
-      socialAccount = googleSignInAccount.email;
-      fetchSocialLogin(socialAccount);
-    } else {
+    if (googleSignInAccount == null) {
       print("구글계정으로 로그인 실패");
       return;
     }
+    final auth = await googleSignInAccount.authentication;
+    final accessToken = auth.accessToken;
+    if (accessToken == null) {
+      print("구글 액세스 토큰 없음");
+      return;
+    }
+    fetchSocialLogin('google', accessToken, googleSignInAccount.email);
   }
 
-  Future<void> fetchSocialLogin(String socialAccount) async {
+  Future<void> fetchSocialLogin(String provider, String token, String emailForSignup) async {
     try {
       var result = await ApiClient().post(
           '/socialLogin',
-          data: {'email': socialAccount});
+          data: {'provider': provider, 'token': token});
 
       if (result.statusCode == 200) {
         var data = result.data['data'];
@@ -529,7 +533,7 @@ class _EmailSignInState extends State<EmailSignIn> {
         Get.offAllNamed('/home');
       } else if (result.statusCode == 404) {
         Member member = Member();
-        member.username = socialAccount;
+        member.username = emailForSignup;
         Get.to(() => SignUp(member), transition: Transition.noTransition);
       } else {
         print("소셜 로그인 실패");
@@ -540,15 +544,7 @@ class _EmailSignInState extends State<EmailSignIn> {
   }
 
   void appleSignIn() async {
-    final credential = await SignInWithApple.getAppleIDCredential(scopes: [
-      AppleIDAuthorizationScopes.email,
-      AppleIDAuthorizationScopes.fullName
-    ]);
-
-    if (credential != null) {
-      fetchSocialLogin(credential.userIdentifier!);
-    } else {
-      print("애플 로그인 실패");
-    }
+    // Apple Sign-In은 별도 서버 검증 필요 (현재 미지원)
+    print("애플 로그인: 미지원");
   }
 }
