@@ -265,7 +265,7 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/icons/ChatsTeardrop.svg'),
+                SvgPicture.asset('assets/icons/chats_tear_drop2.svg'),
                 const SizedBox(
                   width: 12,
                 ),
@@ -287,7 +287,7 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/icons/BookmarkSimple.svg'),
+                SvgPicture.asset('assets/icons/bookmark_simple.svg'),
                 const SizedBox(
                   width: 12,
                 ),
@@ -340,7 +340,7 @@ class _MyPageState extends State<MyPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset(
-                  'assets/icons/User2.svg',
+                  'assets/icons/user2.svg',
                 ),
                 const SizedBox(
                   width: 12,
@@ -393,7 +393,7 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/icons/Headset.svg'),
+                SvgPicture.asset('assets/icons/headset.svg'),
                 const SizedBox(
                   width: 12,
                 ),
@@ -439,7 +439,7 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/icons/SignOut.svg'),
+                SvgPicture.asset('assets/icons/sign_out.svg'),
                 const SizedBox(
                   width: 12,
                 ),
