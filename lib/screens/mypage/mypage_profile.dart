@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
@@ -126,6 +127,31 @@ class _MyPageProfileState extends State<MyPageProfile> {
         PeeroreumToast.show(context, "프로필 이미지가 변경되었어요.");
       } else {
         print("프로필이미지 ${profileChange.statusMessage}");
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
+  }
+
+  deleteProfileImageAPI() async {
+    try {
+      var result = await ApiClient().put('/member/delete/profileImage');
+      if (result.statusCode == 200) {
+        setState(() { profileImage = null; });
+        await storage.delete(key: 'profileImage');
+        PeeroreumToast.show(context, "프로필 이미지가 삭제되었어요.");
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
+  }
+
+  deleteBackgroundImageAPI() async {
+    try {
+      var result = await ApiClient().put('/member/delete/backgroundImage');
+      if (result.statusCode == 200) {
+        setState(() { backgroundImage = null; });
+        PeeroreumToast.show(context, "배경 이미지가 삭제되었어요.");
       }
     } catch (e) {
       print('Unexpected error: $e');
@@ -420,6 +446,24 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ),
             ),
+            if (profileImage != null)
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () async {
+                  Get.back();
+                  await deleteProfileImageAPI();
+                },
+                child: SizedBox(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '프로필 삭제', color: PeeroreumColor.error),
+                    ],
+                  ),
+                ),
+              ),
             InkWell(
               splashColor: Colors.transparent,
               highlightColor: PeeroreumColor.gray[100],
@@ -442,20 +486,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
               splashColor: Colors.transparent,
               highlightColor: PeeroreumColor.gray[100],
               onTap: () async {
-                XFile? image1;
-                final ImagePicker picker1 = ImagePicker();
-                final XFile? pickedFile1 =
-                    await picker1.pickImage(source: ImageSource.gallery);
-                if (pickedFile1 != null) {
-                  setState(() {
-                    image1 = XFile(pickedFile1.path);
-                    if (image1 != null) {
-                      setState(() {
-                        backgroundImageAPI(image1);
-                        Get.back();
-                      });
-                    }
-                  });
+                final selected = await showCustomImagePicker(context, multiple: false);
+                if (selected == null || selected.isEmpty) return;
+                final cropped = await cropImage(context, selected.first);
+                if (cropped != null) {
+                  backgroundImageAPI(cropped);
+                  Get.back();
                 }
               },
               child: const SizedBox(
@@ -468,6 +504,24 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ),
             ),
+            if (backgroundImage != null)
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () async {
+                  Get.back();
+                  await deleteBackgroundImageAPI();
+                },
+                child: SizedBox(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '배경 삭제', color: PeeroreumColor.error),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -509,12 +563,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        final ImagePicker picker = ImagePicker();
-                        final XFile? pickedFile =
-                            await picker.pickImage(source: ImageSource.gallery);
-                        if (pickedFile != null) {
+                        final selected = await showCustomImagePicker(context, multiple: false);
+                        if (selected == null || selected.isEmpty) return;
+                        final cropped = await cropImage(context, selected.first);
+                        if (cropped != null) {
                           setState(() {
-                            image = XFile(pickedFile.path);
+                            image = cropped;
                           });
                         }
                       },

@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
@@ -43,7 +44,6 @@ class _DetailWeduState extends State<DetailWedu> {
 
   var email, nickname;
 
-  final ImagePicker picker = ImagePicker();
   final List<XFile> _images = [];
 
   List<dynamic> successList = [];
@@ -384,27 +384,12 @@ class _DetailWeduState extends State<DetailWedu> {
     }
   }
 
-  void takeFromCamera() async {
-    final XFile? image = await picker.pickImage(source: ImageSource.camera);
-    if (image == null) return;
-
+  void openImagePicker() async {
+    final selected = await showCustomImagePicker(context);
+    if (selected == null || selected.isEmpty) return;
     setState(() {
-      _images.add(image);
+      _images.addAll(selected);
     });
-
-    postImages();
-  }
-
-  void takeFromGallery() async {
-    final List<XFile> selectedImages = await picker.pickMultiImage();
-
-    if (selectedImages == null || selectedImages.isEmpty) return;
-
-    setState(() {
-      print("리스트에 이미지 저장");
-      _images.addAll(selectedImages);
-    });
-
     postImages();
   }
 
@@ -2031,99 +2016,6 @@ class _DetailWeduState extends State<DetailWedu> {
 
   void showDoChallengeBottomSheet() {
     _images.clear();
-    showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) {
-          return Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-              color: PeeroreumColor.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.0),
-                topRight: Radius.circular(16.0),
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '인증 방식을 선택하세요.',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: PeeroreumColor.gray[800],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromCamera();
-                            Get.back();
-                          },
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding: MaterialStateProperty.all(
-                                  const EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
-                          child: const Text(
-                            '카메라',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            takeFromGallery();
-                            Get.back();
-                          },
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
-                              padding: MaterialStateProperty.all(
-                                  const EdgeInsets.all(12)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ))),
-                          child: const Text(
-                            '갤러리',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: PeeroreumColor.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
+    openImagePicker();
   }
 }

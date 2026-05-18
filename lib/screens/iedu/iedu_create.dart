@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:peeroreum_client/data/Subject.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
@@ -40,7 +41,6 @@ class _CreateIeduState extends State<CreateIedu> {
   int detailSubject = 0;
   late Future initFuture;
 
-  final ImagePicker picker = ImagePicker();
   final List<XFile> _images = [];
 
   FocusNode ContentFocusNode = FocusNode();
@@ -821,17 +821,19 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   void takeFromGallery() async {
-    final List<XFile> selectedImages = await picker.pickMultiImage();
-
-    if (selectedImages.isNotEmpty) {
-      setState(() {
-        if (selectedImages.length + _images.length < 6) {
-          _images.addAll(selectedImages);
-        } else {
-          PeeroreumToast.show(context, '사진 첨부는 5장까지 가능해요.');
-        }
-      });
-    }
+    final selected = await showCustomImagePicker(
+      context,
+      multiple: true,
+      maxCount: 5 - _images.length,
+    );
+    if (selected == null || selected.isEmpty) return;
+    setState(() {
+      if (selected.length + _images.length <= 5) {
+        _images.addAll(selected);
+      } else {
+        PeeroreumToast.show(context, '사진 첨부는 5장까지 가능해요.');
+      }
+    });
   }
 
   Future<void> postIedu() async {
