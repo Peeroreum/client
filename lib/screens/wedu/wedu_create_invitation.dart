@@ -108,9 +108,12 @@ class _CreateInvitationState extends State<CreateInvitation> {
     isImagePickerActive = true;
     final selected = await showCustomImagePicker(context, multiple: false);
     if (selected != null && selected.isNotEmpty) {
-      setState(() {
-        _image = selected.first;
-      });
+      final cropped = await cropImage(context, selected.first);
+      if (cropped != null) {
+        setState(() {
+          _image = cropped;
+        });
+      }
     }
     isImagePickerActive = false;
   }

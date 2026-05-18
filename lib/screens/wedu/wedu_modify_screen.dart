@@ -167,9 +167,11 @@ class _ModifyWeduState extends State<ModifyWedu> {
 
   Future getImage() async {
     final selected = await showCustomImagePicker(context, multiple: false);
-    if (selected != null && selected.isNotEmpty) {
+    if (selected == null || selected.isEmpty) return;
+    final cropped = await cropImage(context, selected.first);
+    if (cropped != null) {
       setState(() {
-        _image = selected.first;
+        _image = cropped;
       });
     }
   }

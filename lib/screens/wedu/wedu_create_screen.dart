@@ -99,9 +99,11 @@ class _CreateWeduState extends State<CreateWedu> {
   XFile? _image;
   Future getImage() async {
     final selected = await showCustomImagePicker(context, multiple: false);
-    if (selected != null && selected.isNotEmpty) {
+    if (selected == null || selected.isEmpty) return;
+    final cropped = await cropImage(context, selected.first);
+    if (cropped != null) {
       setState(() {
-        _image = selected.first;
+        _image = cropped;
       });
     }
   }

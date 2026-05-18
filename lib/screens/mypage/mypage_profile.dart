@@ -444,8 +444,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
               highlightColor: PeeroreumColor.gray[100],
               onTap: () async {
                 final selected = await showCustomImagePicker(context, multiple: false);
-                if (selected != null && selected.isNotEmpty) {
-                  backgroundImageAPI(selected.first);
+                if (selected == null || selected.isEmpty) return;
+                final cropped = await cropImage(context, selected.first);
+                if (cropped != null) {
+                  backgroundImageAPI(cropped);
                   Get.back();
                 }
               },
@@ -501,9 +503,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     GestureDetector(
                       onTap: () async {
                         final selected = await showCustomImagePicker(context, multiple: false);
-                        if (selected != null && selected.isNotEmpty) {
+                        if (selected == null || selected.isEmpty) return;
+                        final cropped = await cropImage(context, selected.first);
+                        if (cropped != null) {
                           setState(() {
-                            image = selected.first;
+                            image = cropped;
                           });
                         }
                       },

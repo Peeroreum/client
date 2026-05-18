@@ -1,9 +1,34 @@
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+
+/// 이미지를 크롭합니다. 취소 시 null 반환.
+Future<XFile?> cropImage(BuildContext context, XFile image) async {
+  final cropped = await ImageCropper().cropImage(
+    sourcePath: image.path,
+    uiSettings: [
+      AndroidUiSettings(
+        toolbarTitle: '이미지 편집',
+        toolbarColor: Colors.black,
+        toolbarWidgetColor: Colors.white,
+        activeControlsWidgetColor: PeeroreumColor.primaryPuple[400]!,
+        lockAspectRatio: false,
+        hideBottomControls: false,
+      ),
+      IOSUiSettings(
+        title: '이미지 편집',
+        doneButtonTitle: '완료',
+        cancelButtonTitle: '취소',
+        resetButtonHidden: false,
+      ),
+    ],
+  );
+  return cropped != null ? XFile(cropped.path) : null;
+}
 
 /// 커스텀 갤러리 피커를 바텀시트로 표시합니다.
 /// [multiple] false이면 1장만 선택 가능합니다.
