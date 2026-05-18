@@ -77,7 +77,7 @@ class _HomeWeduState extends State<HomeWedu> {
           !_isLoading) {
         loadMoreData();
       }
-      if (_scrollController.offset ==
+      if (_scrollController.offset <=
           _scrollController.position.minScrollExtent) {
         setState(() {
           _isUp = true;
@@ -293,75 +293,124 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Widget bodyWidget() {
-    return Scaffold(
-      backgroundColor: PeeroreumColor.white,
-      appBar: roomBody(),
-      body: NestedScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              if (inRoomData.isNotEmpty)
-                SliverAppBar(
-                  expandedHeight: 200,
-                  pinned: false,
-                  floating: true,
-                  backgroundColor: PeeroreumColor.white,
-                  elevation: 0,
-                  flexibleSpace: LayoutBuilder(
-                    builder:
-                        (BuildContext context, BoxConstraints constraints) {
-                      return FlexibleSpaceBar(
-                        collapseMode: CollapseMode.parallax,
-                        background: Column(
-                          children: [
-                            SizedBox(
-                              height: 180,
-                              child: inRoomBody(),
+    return Column(
+      children: [
+        if (inRoomData.isNotEmpty) ...[
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onVerticalDragEnd: (details) {
+              final dy = details.velocity.pixelsPerSecond.dy;
+              if (dy < -200 && _isUp) {
+                setState(() => _isUp = false);
+              } else if (dy > 200 && !_isUp) {
+                setState(() => _isUp = true);
+              }
+            },
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            "참여 중인 같이방",
+                            style: TextStyle(
+                              color: PeeroreumColor.black,
+                              fontFamily: 'Pretendard',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                             ),
-                            const SizedBox(
-                              height: 20,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${inRoomData.length}',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: PeeroreumColor.gray[600],
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: () => Get.to(() => const InWedu()),
+                        child: Text(
+                          '전체보기',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: PeeroreumColor.gray[500],
+                          ),
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   ),
                 ),
-            ];
-          },
-          body: data.isEmpty
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    sliver(),
-                    Image.asset(
-                      'assets/images/no_wedu_oreum.png',
-                      width: 150,
-                    ),
-                    const Text(
-                      '찾으시는 같이방이 없어요 🥲',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: PeeroreumColor.black,
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeInOut,
+                  height: _isUp ? 200 : 0,
+                  child: ClipRect(
+                    child: OverflowBox(
+                      maxHeight: 200,
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 180, child: inRoomBody()),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
-                  ],
-                )
-              : Column(
-                  children: [
-                    sliver(),
-                    Container(
-                      height: _isUp ? 0 : 1,
-                      color: PeeroreumColor.gray[200],
-                    ),
-                    Expanded(child: listViewBody()),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                  ],
-                )),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onVerticalDragEnd: (details) {
+            final dy = details.velocity.pixelsPerSecond.dy;
+            if (dy < -200 && _isUp) {
+              setState(() => _isUp = false);
+            } else if (dy > 200 && !_isUp) {
+              setState(() => _isUp = true);
+            }
+          },
+          child: sliver(),
+        ),
+        Container(height: _isUp ? 0 : 1, color: PeeroreumColor.gray[200]),
+        if (data.isEmpty)
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/no_wedu_oreum.png',
+                  width: 150,
+                ),
+                const Text(
+                  '찾으시는 같이방이 없어요 🥲',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else ...[
+          Expanded(child: listViewBody()),
+          const SizedBox(height: 8),
+        ],
+      ],
     );
   }
 
@@ -392,58 +441,6 @@ class _HomeWeduState extends State<HomeWedu> {
         ),
         dropDownBody(),
       ],
-    );
-  }
-
-  PreferredSizeWidget roomBody() {
-    return AppBar(
-      backgroundColor: PeeroreumColor.white,
-      shadowColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      titleSpacing: 0,
-      automaticallyImplyLeading: false,
-      title: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  "참여 중인 같이방",
-                  style: TextStyle(
-                      color: PeeroreumColor.black,
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  '${inRoomData.length}',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.gray[600]),
-                ),
-              ],
-            ),
-            GestureDetector(
-                onTap: () {
-                  Get.to(() => const InWedu());
-                },
-                child: Text('전체보기',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[500])))
-          ],
-        ),
-      ),
     );
   }
 
@@ -1200,3 +1197,4 @@ class _HomeWeduState extends State<HomeWedu> {
     super.dispose();
   }
 }
+
