@@ -5,6 +5,7 @@ import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -77,7 +78,7 @@ class _HomeWeduState extends State<HomeWedu> {
           !_isLoading) {
         loadMoreData();
       }
-      if (_scrollController.offset ==
+      if (_scrollController.offset <=
           _scrollController.position.minScrollExtent) {
         setState(() {
           _isUp = true;
@@ -293,75 +294,162 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Widget bodyWidget() {
-    return Scaffold(
-      backgroundColor: PeeroreumColor.white,
-      appBar: roomBody(),
-      body: NestedScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              if (inRoomData.isNotEmpty)
-                SliverAppBar(
-                  expandedHeight: 200,
-                  pinned: false,
-                  floating: true,
-                  backgroundColor: PeeroreumColor.white,
-                  elevation: 0,
-                  flexibleSpace: LayoutBuilder(
-                    builder:
-                        (BuildContext context, BoxConstraints constraints) {
-                      return FlexibleSpaceBar(
-                        collapseMode: CollapseMode.parallax,
-                        background: Column(
-                          children: [
-                            SizedBox(
-                              height: 180,
-                              child: inRoomBody(),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-            ];
+    return Column(
+      children: [
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onVerticalDragEnd: (details) {
+            final dy = details.velocity.pixelsPerSecond.dy;
+            if (dy < -200 && _isUp) {
+              setState(() => _isUp = false);
+            } else if (dy > 200 && !_isUp) {
+              setState(() => _isUp = true);
+            }
           },
-          body: data.isEmpty
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    sliver(),
-                    Image.asset(
-                      'assets/images/no_wedu_oreum.png',
-                      width: 150,
+                    Row(
+                      children: [
+                        T3_18px(
+                          text: '참여 중인 같이방',
+                          color: PeeroreumColor.gray[800],
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${inRoomData.length}',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.gray[600],
+                          ),
+                        ),
+                      ],
                     ),
-                    const Text(
-                      '찾으시는 같이방이 없어요 🥲',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: PeeroreumColor.black,
+                    GestureDetector(
+                      onTap: () => Get.to(() => const InWedu()),
+                      child: Text(
+                        '전체보기',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: PeeroreumColor.gray[500],
+                        ),
                       ),
                     ),
                   ],
-                )
-              : Column(
-                  children: [
-                    sliver(),
-                    Container(
-                      height: _isUp ? 0 : 1,
-                      color: PeeroreumColor.gray[200],
+                ),
+              ),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.easeInOut,
+                height: _isUp ? 200 : 0,
+                child: ClipRect(
+                  child: OverflowBox(
+                    maxHeight: 200,
+                    alignment: Alignment.topCenter,
+                    child: inRoomData.isEmpty
+                        ? SizedBox(
+                            height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const T4_16px(
+                                    text: '참여 중인 같이방이 없어요',
+                                    color: PeeroreumColor.black),
+                                const SizedBox(height: 20),
+                                GestureDetector(
+                                  onTap: () => Get.to(() => CreateWedu()),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      color: PeeroreumColor.primaryPuple[400],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const T4_16px(
+                                        text: '같이방 만들러 가기',
+                                        color: PeeroreumColor.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Column(
+                            children: [
+                              SizedBox(height: 180, child: inRoomBody()),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onVerticalDragEnd: (details) {
+            final dy = details.velocity.pixelsPerSecond.dy;
+            if (dy < -200 && _isUp) {
+              setState(() => _isUp = false);
+            } else if (dy > 200 && !_isUp) {
+              setState(() => _isUp = true);
+            }
+          },
+          child: sliver(),
+        ),
+        Container(height: _isUp ? 0 : 1, color: PeeroreumColor.gray[200]),
+        if (data.isEmpty)
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/no_wedu_oreum.png',
+                  width: 150,
+                ),
+                const Text(
+                  '찾으시는 같이방이 없어요 🥲',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: PeeroreumColor.black,
+                  ),
+                ),
+                if (inRoomData.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () => Get.to(() => CreateWedu()),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: PeeroreumColor.primaryPuple[400],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const T4_16px(
+                          text: '같이방 만들러 가기',
+                          color: PeeroreumColor.white),
                     ),
-                    Expanded(child: listViewBody()),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                  ],
-                )),
+                  ),
+                ],
+              ],
+            ),
+          )
+        else ...[
+          Expanded(child: listViewBody()),
+          const SizedBox(height: 8),
+        ],
+      ],
     );
   }
 
@@ -377,73 +465,11 @@ class _HomeWeduState extends State<HomeWedu> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '같이방',
-                style: TextStyle(
-                  color: PeeroreumColor.gray[800],
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Pretendard',
-                ),
-              ),
-            ],
+            children: [T3_18px(text: '같이방', color: PeeroreumColor.gray[800])],
           ),
         ),
         dropDownBody(),
       ],
-    );
-  }
-
-  PreferredSizeWidget roomBody() {
-    return AppBar(
-      backgroundColor: PeeroreumColor.white,
-      shadowColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      titleSpacing: 0,
-      automaticallyImplyLeading: false,
-      title: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  "참여 중인 같이방",
-                  style: TextStyle(
-                      color: PeeroreumColor.black,
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  '${inRoomData.length}',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.gray[600]),
-                ),
-              ],
-            ),
-            GestureDetector(
-                onTap: () {
-                  Get.to(() => const InWedu());
-                },
-                child: Text('전체보기',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: PeeroreumColor.gray[500])))
-          ],
-        ),
-      ),
     );
   }
 
