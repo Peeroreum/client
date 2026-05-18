@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/data/NotificationSetting.dart';
+import 'package:peeroreum_client/data/notification_setting.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 
 class MyPageNotification extends StatefulWidget {

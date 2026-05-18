@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/data/Onboarding_check.dart';
+import 'package:peeroreum_client/data/onboarding_check.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 

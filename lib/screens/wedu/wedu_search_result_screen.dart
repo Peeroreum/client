@@ -10,7 +10,7 @@ import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_room_info_sheet.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../data/WeduSearchHistory.dart';
+import '../../data/wedu_search_history.dart';
 
 class SearchResultWedu extends StatefulWidget {
   final String keyword;

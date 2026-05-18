@@ -5,7 +5,7 @@ import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/data/Subject.dart';
+import 'package:peeroreum_client/data/subject.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 

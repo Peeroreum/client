@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/data/Checklist.dart';
+import 'package:peeroreum_client/data/check_list.dart';
 import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 
 import '../../api/NotificationApi.dart';

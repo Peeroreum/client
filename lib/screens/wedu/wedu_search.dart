@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search_result_screen.dart';
 
-import '../../data/WeduSearchHistory.dart';
+import '../../data/wedu_search_history.dart';
 
 class searchWedu extends StatefulWidget {
   const searchWedu({super.key});

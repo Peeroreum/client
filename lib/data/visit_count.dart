@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,20 +29,22 @@ class VisitCount {
   }
 
   static updateVisitCount() async {
-    var inviResult = await ApiClient().put('/member/activeDays');
-    if (inviResult.statusCode == 200) {
-      return inviResult.data['data'];
+    var result = await ApiClient().put('/member/activeDays');
+    if (result.statusCode == 200) {
+      return result.data['data'];
     } else {
-      print("에러${inviResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${result.statusCode}");
+      }
     }
   }
 
   static fetchVisitCount() async {
     var nickname = await const FlutterSecureStorage().read(key: "nickname");
 
-    var profileinfo = await ApiClient().get('/member/profile', queryParameters: {'nickname': nickname});
-    if (profileinfo.statusCode == 200) {
-      var data = profileinfo.data['data'];
+    var profileInfo = await ApiClient().get('/member/profile', queryParameters: {'nickname': nickname});
+    if (profileInfo.statusCode == 200) {
+      var data = profileInfo.data['data'];
       return data['activeDaysCount'];
     }
   }

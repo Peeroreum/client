@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:peeroreum_client/data/Onboarding_check.dart';
+import 'package:peeroreum_client/data/onboarding_check.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:peeroreum_client/fcmSetting.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
