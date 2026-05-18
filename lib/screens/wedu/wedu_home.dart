@@ -425,6 +425,23 @@ class _HomeWeduState extends State<HomeWedu> {
                     color: PeeroreumColor.black,
                   ),
                 ),
+                if (inRoomData.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () => Get.to(() => CreateWedu()),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: PeeroreumColor.primaryPuple[400],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const T4_16px(
+                          text: '같이방 만들러 가기',
+                          color: PeeroreumColor.white),
+                    ),
+                  ),
+                ],
               ],
             ),
           )
