@@ -7,6 +7,7 @@ import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/PeeroreumToast.dart';
 import 'package:peeroreum_client/designs/PeeroreumColor.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
@@ -101,18 +102,18 @@ class _CreateInvitationState extends State<CreateInvitation> {
   }
 
   XFile? _image;
-  final ImagePicker picker = ImagePicker();
 
-  Future getImage(ImageSource imageSource) async {
-    if (isImagePickerActive) {
-      return;
-    }
+  Future getImage() async {
+    if (isImagePickerActive) return;
     isImagePickerActive = true;
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
-    if (pickedFile != null) {
-      setState(() {
-        _image = XFile(pickedFile.path);
-      });
+    final selected = await showCustomImagePicker(context, multiple: false);
+    if (selected != null && selected.isNotEmpty) {
+      final cropped = await cropImage(context, selected.first);
+      if (cropped != null) {
+        setState(() {
+          _image = cropped;
+        });
+      }
     }
     isImagePickerActive = false;
   }
@@ -448,7 +449,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       },
                                     );
                                   } else if (index == 6) {
-                                    await getImage(ImageSource.gallery);
+                                    await getImage();
                                     if (_image != null) {
                                       _backgroundColor =
                                           const Color(0xfffffffe);

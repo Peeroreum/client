@@ -10,6 +10,7 @@ import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
@@ -63,7 +64,6 @@ class _DetailIeduState extends State<DetailIedu> {
   String comment = "";
   bool isSubmittable = false;
 
-  final ImagePicker picker = ImagePicker();
   XFile? _image;
   //----------------
   List<dynamic> commentData = [];
@@ -915,116 +915,14 @@ class _DetailIeduState extends State<DetailIedu> {
     );
   }
 
-  void takeFromCamera() async {
-    final XFile? image = await picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
+  void showImagePickerSheet() async {
+    final selected = await showCustomImagePicker(context, multiple: false);
+    if (selected != null && selected.isNotEmpty) {
       setState(() {
-        _image = image;
-        isSubmittable = true;
-      });
-    } else {
-      // 이미지 선택이 취소되었을 때
-      print('Image selection cancelled');
-    }
-  }
-
-  void takeFromGallery() async {
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() {
-        print("리스트에 이미지 저장");
-        _image = image;
+        _image = selected.first;
         isSubmittable = true;
       });
     }
-  }
-
-  void showImagePickerSheet() {
-    showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) {
-          return Container(
-            decoration: const BoxDecoration(
-              color: PeeroreumColor.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.0),
-                topRight: Radius.circular(16.0),
-              ),
-            ),
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              takeFromCamera();
-                              Get.back();
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    PeeroreumColor.primaryPuple[400]),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.all(12)),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ))),
-                            child: const Text(
-                              '카메라',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: PeeroreumColor.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              takeFromGallery();
-                              Get.back();
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    PeeroreumColor.primaryPuple[400]),
-                                padding: MaterialStateProperty.all(
-                                    const EdgeInsets.all(12)),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ))),
-                            child: const Text(
-                              '갤러리',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: PeeroreumColor.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-            ),
-          );
-        });
   }
 
   deleteQuestionBottomSheet(writerName) {
