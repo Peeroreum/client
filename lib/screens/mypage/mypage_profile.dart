@@ -133,6 +133,31 @@ class _MyPageProfileState extends State<MyPageProfile> {
     }
   }
 
+  deleteProfileImageAPI() async {
+    try {
+      var result = await ApiClient().put('/member/delete/profileImage');
+      if (result.statusCode == 200) {
+        setState(() { profileImage = null; });
+        await storage.delete(key: 'profileImage');
+        PeeroreumToast.show(context, "프로필 이미지가 삭제되었어요.");
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
+  }
+
+  deleteBackgroundImageAPI() async {
+    try {
+      var result = await ApiClient().put('/member/delete/backgroundImage');
+      if (result.statusCode == 200) {
+        setState(() { backgroundImage = null; });
+        PeeroreumToast.show(context, "배경 이미지가 삭제되었어요.");
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
+  }
+
   backgroundImageAPI(var _image1) async {
     var image1 = await dio.MultipartFile.fromFile(_image1!.path);
     var imageMap1 = <String, dynamic>{'profileImage': image1};
@@ -421,6 +446,24 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ),
             ),
+            if (profileImage != null)
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () async {
+                  Get.back();
+                  await deleteProfileImageAPI();
+                },
+                child: SizedBox(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '프로필 삭제', color: PeeroreumColor.error),
+                    ],
+                  ),
+                ),
+              ),
             InkWell(
               splashColor: Colors.transparent,
               highlightColor: PeeroreumColor.gray[100],
@@ -461,6 +504,24 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 ),
               ),
             ),
+            if (backgroundImage != null)
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: PeeroreumColor.gray[100],
+                onTap: () async {
+                  Get.back();
+                  await deleteBackgroundImageAPI();
+                },
+                child: SizedBox(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      B3_18px_R(text: '배경 삭제', color: PeeroreumColor.error),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
