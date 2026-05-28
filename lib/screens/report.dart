@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
@@ -289,7 +289,7 @@ class _ReportState extends State<Report> {
                                 otherReason != "" &&
                                 detailReason != "")
                         ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
+                            PeeroreumColor.primaryPurple[400])
                         : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                     padding: MaterialStateProperty.all(
                         EdgeInsets.symmetric(vertical: 12)),
@@ -407,14 +407,14 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: reason[0]
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[0])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          color: PeeroreumColor.primaryPurple[400],
                         )
                     ],
                   ),
@@ -445,14 +445,14 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: reason[1]
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[1])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          color: PeeroreumColor.primaryPurple[400],
                         )
                     ],
                   ),
@@ -484,14 +484,14 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: (reason[2])
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[2])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          color: PeeroreumColor.primaryPurple[400],
                         )
                     ],
                   ),
@@ -523,14 +523,14 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: reason[3]
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[3])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          color: PeeroreumColor.primaryPurple[400],
                         )
                     ],
                   ),
@@ -551,7 +551,7 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                 },
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
+                        PeeroreumColor.primaryPurple[400]),
                     padding: MaterialStateProperty.all(
                         EdgeInsets.symmetric(vertical: 12)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

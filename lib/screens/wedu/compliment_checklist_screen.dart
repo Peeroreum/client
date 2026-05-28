@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:peeroreum_client/api/NotificationApi.dart';
 import 'package:peeroreum_client/data/check_list.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:get/get.dart';
 
 class ComplimentCheckList extends StatefulWidget {
@@ -186,7 +186,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                               SizedBox(
                                 width: 4,
                               ),
-                              T5_14px(
+                              T5(
                                 text: "전체선택",
                                 color: PeeroreumColor.gray[500],
                               ),
@@ -244,7 +244,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                 ),
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
+                        PeeroreumColor.primaryPurple[400]),
                     padding: MaterialStateProperty.all(
                         EdgeInsets.symmetric(vertical: 12)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -336,14 +336,14 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: (isCheckedList[index]
-                                  ? PeeroreumColor.primaryPuple[400]!
+                                  ? PeeroreumColor.primaryPurple[400]!
                                   : PeeroreumColor.gray[200]!),
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(4.0),
                             color: isActiveList[index]
                                 ? (isCheckedList[index]
-                                    ? PeeroreumColor.primaryPuple[400]!
+                                    ? PeeroreumColor.primaryPurple[400]!
                                     : PeeroreumColor.white)
                                 : PeeroreumColor.gray[300]!,
                           ),

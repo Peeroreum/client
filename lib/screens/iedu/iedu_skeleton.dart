@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SkeletonIedu extends StatefulWidget {
@@ -154,7 +154,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                 shape: CircleBorder(),
                 onPressed: () {},
                 elevation: 5,
-                backgroundColor: PeeroreumColor.primaryPuple[400],
+                backgroundColor: PeeroreumColor.primaryPurple[400],
                 child: SizedBox(
                   width: 24,
                   child: SvgPicture.asset(

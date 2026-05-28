@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:peeroreum_client/data/subject.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 
 class CreateIedu extends StatefulWidget {
@@ -94,7 +94,7 @@ class _CreateIeduState extends State<CreateIedu> {
   void checkValidation() {
     if (titleCheck != "" && contentCheck != "") {
       setState(() {
-        _nextColor = PeeroreumColor.primaryPuple[400]!;
+        _nextColor = PeeroreumColor.primaryPurple[400]!;
       });
     } else {
       setState(() {
@@ -137,7 +137,7 @@ class _CreateIeduState extends State<CreateIedu> {
           padding: const EdgeInsets.only(right: 20),
           child: GestureDetector(
             onTap: () {
-              if (_nextColor == PeeroreumColor.primaryPuple[400]) {
+              if (_nextColor == PeeroreumColor.primaryPurple[400]) {
                 postIedu();
               } else {
                 return;
@@ -625,7 +625,7 @@ class _CreateIeduState extends State<CreateIedu> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          B4_14px_R(
+          B4r(
             text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요.',
             color: PeeroreumColor.gray[600],
           ),
@@ -643,7 +643,7 @@ class _CreateIeduState extends State<CreateIedu> {
               const SizedBox(
                 width: 4,
               ),
-              C1_12px_R(
+              C1r(
                 text: '비방, 욕설을 포함하는 글',
                 color: PeeroreumColor.gray[600],
               ),
@@ -661,7 +661,7 @@ class _CreateIeduState extends State<CreateIedu> {
               const SizedBox(
                 width: 4,
               ),
-              C1_12px_R(
+              C1r(
                 text: '무료 행사를 포함한 홍보 목적의 글',
                 color: PeeroreumColor.gray[600],
               ),
@@ -679,7 +679,7 @@ class _CreateIeduState extends State<CreateIedu> {
               const SizedBox(
                 width: 4,
               ),
-              C1_12px_R(
+              C1r(
                 text: '기타 오프라인 모임 조장 목적의 글',
                 color: PeeroreumColor.gray[600],
               ),
@@ -770,7 +770,7 @@ class _CreateIeduState extends State<CreateIedu> {
                       const SizedBox(
                         width: 4,
                       ),
-                      T4_16px(
+                      T4(
                         text: '사진 첨부',
                         color: PeeroreumColor.gray[500],
                       ),
@@ -805,7 +805,7 @@ class _CreateIeduState extends State<CreateIedu> {
                       const SizedBox(
                         width: 4,
                       ),
-                      T4_16px(
+                      T4(
                         text: '화이트 보드',
                         color: PeeroreumColor.gray[500],
                       ),
@@ -953,7 +953,7 @@ class _CreateIeduState extends State<CreateIedu> {
                           Get.back(result: true);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(

@@ -4,8 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 
 /// wedu_home.dart / wedu_search_result_screen.dart / 딥링크 진입 모두에서
 /// 재사용하는 같이방 참여 바텀시트.
@@ -240,7 +240,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
             child: Text('확인',
                 style: TextStyle(
                     fontFamily: 'Pretendard',
-                    color: PeeroreumColor.primaryPuple[400])),
+                    color: PeeroreumColor.primaryPurple[400])),
           ),
         ],
       ),
@@ -287,7 +287,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             decoration: BoxDecoration(
               border: Border.all(
-                  width: 1, color: PeeroreumColor.primaryPuple[400]!),
+                  width: 1, color: PeeroreumColor.primaryPurple[400]!),
               borderRadius: const BorderRadius.all(Radius.circular(100)),
             ),
             child: Row(
@@ -296,13 +296,13 @@ class WeduRoomInfoSheet extends StatelessWidget {
               children: [
                 Text('#',
                     style: TextStyle(
-                        color: PeeroreumColor.primaryPuple[200],
+                        color: PeeroreumColor.primaryPurple[200],
                         fontSize: 12,
                         fontWeight: FontWeight.w500)),
                 const SizedBox(width: 2),
                 Text(hashTagsList[i].toString(),
                     style: TextStyle(
-                        color: PeeroreumColor.primaryPuple[400],
+                        color: PeeroreumColor.primaryPurple[400],
                         fontSize: 12,
                         fontWeight: FontWeight.w500)),
               ],
@@ -547,7 +547,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                       image: NetworkImage(invitationUrl), fit: BoxFit.cover),
-                  color: PeeroreumColor.primaryPuple[400],
+                  color: PeeroreumColor.primaryPurple[400],
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -625,7 +625,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
                             onPressed: onEnroll,
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
-                                  PeeroreumColor.primaryPuple[400]),
+                                  PeeroreumColor.primaryPurple[400]),
                               padding: MaterialStateProperty.all(
                                   const EdgeInsets.symmetric(vertical: 12)),
                               shape: MaterialStateProperty.all<

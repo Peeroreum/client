@@ -3,10 +3,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
@@ -270,7 +270,7 @@ class _DetailIeduState extends State<DetailIedu> {
                   constraints: const BoxConstraints(),
                   child: isBookmarked != null && isBookmarked
                       ? SvgPicture.asset('assets/icons/bookmark_fill.svg',
-                          color: PeeroreumColor.primaryPuple[400])
+                          color: PeeroreumColor.primaryPurple[400])
                       : SvgPicture.asset('assets/icons/bookmark.svg',
                           color: PeeroreumColor.black),
                 ),
@@ -331,7 +331,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        T2_20px(text: title),
+                        T2(text: title),
                       ],
                     ),
                   ),
@@ -425,13 +425,13 @@ class _DetailIeduState extends State<DetailIedu> {
                                   date.substring(0, 4),
                               child: Row(
                                 children: [
-                                  C1_12px_M(
+                                  C1m(
                                       text: date.substring(0, 4),
                                       color: PeeroreumColor.gray[400]),
                                   const SizedBox(
                                     width: 2,
                                   ),
-                                  C1_12px_M(
+                                  C1m(
                                       text: '/',
                                       color: PeeroreumColor.gray[400]),
                                   const SizedBox(
@@ -439,33 +439,33 @@ class _DetailIeduState extends State<DetailIedu> {
                                   ),
                                 ],
                               )),
-                          C1_12px_M(
+                          C1m(
                               text: date.substring(5, 7),
                               color: PeeroreumColor.gray[400]),
                           const SizedBox(
                             width: 2,
                           ),
-                          C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
+                          C1m(text: '/', color: PeeroreumColor.gray[400]),
                           const SizedBox(
                             width: 2,
                           ),
-                          C1_12px_M(
+                          C1m(
                               text: date.substring(8, 10),
                               color: PeeroreumColor.gray[400]),
                           const SizedBox(
                             width: 4,
                           ),
-                          C1_12px_M(
+                          C1m(
                               text: date.substring(11, 13),
                               color: PeeroreumColor.gray[400]),
                           const SizedBox(
                             width: 2,
                           ),
-                          C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
+                          C1m(text: ':', color: PeeroreumColor.gray[400]),
                           const SizedBox(
                             width: 2,
                           ),
-                          C1_12px_M(
+                          C1m(
                               text: date.substring(14, 16),
                               color: PeeroreumColor.gray[400]),
                         ],
@@ -476,7 +476,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     height: 16,
                   ),
                   Column(
-                    children: [B4_14px_R(text: contents)],
+                    children: [B4r(text: contents)],
                   ),
                   const SizedBox(
                     height: 16,
@@ -571,7 +571,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                     const BoxConstraints(minWidth: 17, minHeight: 16),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: C1_12px_M(
+                                    child: C1m(
                                         text: '$likesNum',
                                         color: PeeroreumColor.gray[600]))),
                           ],
@@ -596,7 +596,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                   const BoxConstraints(minWidth: 17, minHeight: 16),
                               child: Align(
                                   alignment: Alignment.centerLeft,
-                                  child: C1_12px_M(
+                                  child: C1m(
                                       text: '$commentsNum',
                                       color: PeeroreumColor.gray[600]))),
                         ],
@@ -618,7 +618,7 @@ class _DetailIeduState extends State<DetailIedu> {
               visible: isQselected,
               child: selectedData != null
                   ? Container(
-                      color: PeeroreumColor.primaryPuple[50]!,
+                      color: PeeroreumColor.primaryPurple[50]!,
                       child: MakeComment(
                         index: 0,
                         id: selectedData["id"],
@@ -821,11 +821,11 @@ class _DetailIeduState extends State<DetailIedu> {
                           child: SizedBox(
                             height: 24,
                             child: Center(
-                              child: T5_14px(
+                              child: T5(
                                 text: '등록',
                                 color: isSubmittable == false
                                     ? PeeroreumColor.gray[500]
-                                    : PeeroreumColor.primaryPuple[400],
+                                    : PeeroreumColor.primaryPurple[400],
                               ),
                             ),
                           ),
@@ -861,7 +861,7 @@ class _DetailIeduState extends State<DetailIedu> {
                           const SizedBox(
                             width: 4,
                           ),
-                          T4_16px(
+                          T4(
                             text: '사진 첨부',
                             color: PeeroreumColor.gray[500],
                           )
@@ -896,7 +896,7 @@ class _DetailIeduState extends State<DetailIedu> {
                           const SizedBox(
                             width: 4,
                           ),
-                          T4_16px(
+                          T4(
                             text: '화이트 보드',
                             color: PeeroreumColor.gray[500],
                           )
@@ -1400,7 +1400,7 @@ class _MakeCommentState extends State<MakeComment> {
                                 width: 8,
                               ),
                               Flexible(
-                                  child: B4_14px_M(
+                                  child: B4m(
                                 text: widget.name,
                               )),
                               if (nickname == widget.name &&
@@ -1436,12 +1436,12 @@ class _MakeCommentState extends State<MakeComment> {
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        color: PeeroreumColor.primaryPuple[400],
+                                        color: PeeroreumColor.primaryPurple[400],
                                         borderRadius: BorderRadius.circular(4)),
                                     width: 57,
                                     height: 24,
                                     child: const Center(
-                                        child: C1_12px_Sb(
+                                        child: C1sb(
                                       text: '채택하기',
                                       color: PeeroreumColor.white,
                                     )),
@@ -1453,12 +1453,12 @@ class _MakeCommentState extends State<MakeComment> {
                                     widget.isChosen == true,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[400],
+                                      color: PeeroreumColor.primaryPurple[400],
                                       borderRadius: BorderRadius.circular(4)),
                                   width: 57,
                                   height: 24,
                                   child: const Center(
-                                      child: C1_12px_Sb(
+                                      child: C1sb(
                                     text: '채택완료',
                                     color: PeeroreumColor.white,
                                   )),
@@ -1475,7 +1475,7 @@ class _MakeCommentState extends State<MakeComment> {
                                   width: 57,
                                   height: 24,
                                   child: const Center(
-                                      child: C1_12px_Sb(
+                                      child: C1sb(
                                     text: '채택하기',
                                     color: PeeroreumColor.white,
                                   )),
@@ -1524,7 +1524,7 @@ class _MakeCommentState extends State<MakeComment> {
                         visible: widget.isDeleted ||
                             (!widget.isDeleted &&
                                 widget.comment.toString().isNotEmpty),
-                        child: B4_14px_R(
+                        child: B4r(
                           text:
                               widget.isDeleted ? '삭제된 댓글입니다.' : widget.comment,
                           color: widget.isDeleted
@@ -1577,53 +1577,53 @@ class _MakeCommentState extends State<MakeComment> {
                               DateTime.now().toString().substring(0, 4),
                           child: Row(
                             children: [
-                              C1_12px_M(
+                              C1m(
                                 text: createdTime.toString().substring(0, 4),
                                 color: PeeroreumColor.gray[400],
                               ),
                               const SizedBox(
                                 width: 2,
                               ),
-                              C1_12px_M(
+                              C1m(
                                   text: '/', color: PeeroreumColor.gray[400]),
                               const SizedBox(
                                 width: 2,
                               )
                             ],
                           )),
-                      C1_12px_M(
+                      C1m(
                           text: createdTime.toString().substring(5, 7),
                           color: PeeroreumColor.gray[400]),
                       const SizedBox(
                         width: 2,
                       ),
-                      C1_12px_M(text: '/', color: PeeroreumColor.gray[400]),
+                      C1m(text: '/', color: PeeroreumColor.gray[400]),
                       const SizedBox(
                         width: 2,
                       ),
-                      C1_12px_M(
+                      C1m(
                           text: createdTime.toString().substring(8, 10),
                           color: PeeroreumColor.gray[400]),
                       const SizedBox(
                         width: 4,
                       ),
-                      C1_12px_M(
+                      C1m(
                           text: createdTime.toString().substring(11, 13),
                           color: PeeroreumColor.gray[400]),
                       const SizedBox(
                         width: 2,
                       ),
-                      C1_12px_M(text: ':', color: PeeroreumColor.gray[400]),
+                      C1m(text: ':', color: PeeroreumColor.gray[400]),
                       const SizedBox(
                         width: 2,
                       ),
-                      C1_12px_M(
+                      C1m(
                           text: createdTime.toString().substring(14, 16),
                           color: PeeroreumColor.gray[400]),
                       const SizedBox(
                         width: 8,
                       ),
-                      C1_12px_M(text: '|', color: PeeroreumColor.gray[200]),
+                      C1m(text: '|', color: PeeroreumColor.gray[200]),
                       const SizedBox(
                         width: 8,
                       ),
@@ -1653,7 +1653,7 @@ class _MakeCommentState extends State<MakeComment> {
                                     const BoxConstraints(minWidth: 17, minHeight: 16),
                                 child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: C1_12px_M(
+                                    child: C1m(
                                         text: '${widget.likesNum}',
                                         color: PeeroreumColor.gray[600]))),
                           ],
@@ -1679,7 +1679,7 @@ class _MakeCommentState extends State<MakeComment> {
                               const SizedBox(
                                 width: 8,
                               ),
-                              C1_12px_M(
+                              C1m(
                                   text: '|', color: PeeroreumColor.gray[200]),
                               const SizedBox(
                                 width: 8,
@@ -1698,7 +1698,7 @@ class _MakeCommentState extends State<MakeComment> {
                                       minWidth: 17, minHeight: 16),
                                   child: Align(
                                       alignment: Alignment.centerLeft,
-                                      child: C1_12px_M(
+                                      child: C1m(
                                           text: '${widget.commentsNum}',
                                           color: PeeroreumColor.gray[600]))),
                             ],
@@ -2023,7 +2023,7 @@ class _MakeCommentState extends State<MakeComment> {
                           Get.back(result: true);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(

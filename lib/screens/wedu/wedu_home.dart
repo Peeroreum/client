@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
@@ -316,7 +316,7 @@ class _HomeWeduState extends State<HomeWedu> {
                   children: [
                     Row(
                       children: [
-                        T3_18px(
+                        T3(
                           text: '참여 중인 같이방',
                           color: PeeroreumColor.gray[800],
                         ),
@@ -361,7 +361,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const T4_16px(
+                                const T4(
                                     text: '참여 중인 같이방이 없어요',
                                     color: PeeroreumColor.black),
                                 const SizedBox(height: 20),
@@ -371,10 +371,10 @@ class _HomeWeduState extends State<HomeWedu> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 16),
                                     decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[400],
+                                      color: PeeroreumColor.primaryPurple[400],
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: const T4_16px(
+                                    child: const T4(
                                         text: '같이방 만들러 가기',
                                         color: PeeroreumColor.white),
                                   ),
@@ -433,10 +433,10 @@ class _HomeWeduState extends State<HomeWedu> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 16),
                       decoration: BoxDecoration(
-                        color: PeeroreumColor.primaryPuple[400],
+                        color: PeeroreumColor.primaryPurple[400],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const T4_16px(
+                      child: const T4(
                           text: '같이방 만들러 가기',
                           color: PeeroreumColor.white),
                     ),
@@ -465,7 +465,7 @@ class _HomeWeduState extends State<HomeWedu> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [T3_18px(text: '같이방', color: PeeroreumColor.gray[800])],
+            children: [T3(text: '같이방', color: PeeroreumColor.gray[800])],
           ),
         ),
         dropDownBody(),
@@ -638,7 +638,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.primaryPuple[400]),
+                            color: PeeroreumColor.primaryPurple[400]),
                       )
                     ],
                   ),
@@ -1059,7 +1059,7 @@ class _HomeWeduState extends State<HomeWedu> {
             } else {
               return RefreshIndicator(
                 onRefresh: () => fetchData(),
-                color: PeeroreumColor.primaryPuple[400],
+                color: PeeroreumColor.primaryPurple[400],
                 child: SafeArea(
                   child: Container(
                     color: PeeroreumColor.white,
@@ -1193,7 +1193,7 @@ class _HomeWeduState extends State<HomeWedu> {
                             Get.back();
                           },
                           style: TextButton.styleFrom(
-                            backgroundColor: PeeroreumColor.primaryPuple[400],
+                            backgroundColor: PeeroreumColor.primaryPurple[400],
                             padding: const EdgeInsets.symmetric(
                                 vertical: 12, horizontal: 16),
                             shape: RoundedRectangleBorder(

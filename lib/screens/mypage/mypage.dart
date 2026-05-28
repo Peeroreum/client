@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/data/visit_count.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_inquiry.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_scrap.dart';
@@ -247,7 +247,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '내 같이방',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -269,7 +269,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '내 질의응답',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -291,7 +291,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '스크랩',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -321,7 +321,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '알림 설정',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -345,7 +345,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '계정 관리',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -397,7 +397,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '문의하기',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -419,7 +419,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '버전 정보',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -443,7 +443,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '로그아웃',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -532,7 +532,7 @@ class _MyPageState extends State<MyPage> {
                           await logout();
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(

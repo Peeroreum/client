@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_api.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_controller.dart';
@@ -75,9 +75,9 @@ class MyPageProfileFriend extends StatelessWidget {
       child: Column(
         children: [
           TabBar(
-              indicatorColor: PeeroreumColor.primaryPuple[400],
+              indicatorColor: PeeroreumColor.primaryPurple[400],
               indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: PeeroreumColor.primaryPuple[400],
+              labelColor: PeeroreumColor.primaryPurple[400],
               unselectedLabelColor: PeeroreumColor.gray[800],
               unselectedLabelStyle: TextStyle(
                 color: PeeroreumColor.gray[800],
@@ -86,7 +86,7 @@ class MyPageProfileFriend extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
               labelStyle: TextStyle(
-                color: PeeroreumColor.primaryPuple[400],
+                color: PeeroreumColor.primaryPurple[400],
                 fontFamily: 'Pretendard',
                 fontSize: 18,
                 fontWeight: FontWeight.w600,

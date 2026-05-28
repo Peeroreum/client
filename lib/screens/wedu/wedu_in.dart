@@ -1,7 +1,7 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
@@ -83,9 +83,9 @@ class _InWeduState extends State<InWedu> {
         child: Column(
           children: [
             TabBar(
-                indicatorColor: PeeroreumColor.primaryPuple[400],
+                indicatorColor: PeeroreumColor.primaryPurple[400],
                 indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: PeeroreumColor.primaryPuple[400],
+                labelColor: PeeroreumColor.primaryPurple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
                   color: PeeroreumColor.gray[800],
@@ -94,7 +94,7 @@ class _InWeduState extends State<InWedu> {
                   fontWeight: FontWeight.w400,
                 ),
                 labelStyle: TextStyle(
-                  color: PeeroreumColor.primaryPuple[400],
+                  color: PeeroreumColor.primaryPurple[400],
                   fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -447,7 +447,7 @@ class _InWeduState extends State<InWedu> {
                           Text(
                             "${ingGroup[index]["progress"]}% 달성",
                             style: TextStyle(
-                                color: PeeroreumColor.primaryPuple[400],
+                                color: PeeroreumColor.primaryPurple[400],
                                 fontFamily: 'Pretendard',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600),
@@ -465,8 +465,8 @@ class _InWeduState extends State<InWedu> {
                             100,
                         backgroundColor: PeeroreumColor.gray[200],
                         linearGradient: LinearGradient(colors: [
-                          PeeroreumColor.primaryPuple[400]!,
-                          PeeroreumColor.primaryPuple[200]!
+                          PeeroreumColor.primaryPurple[400]!,
+                          PeeroreumColor.primaryPurple[200]!
                         ]),
                         barRadius: const Radius.circular(8),
                       )

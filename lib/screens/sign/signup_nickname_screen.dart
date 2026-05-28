@@ -6,7 +6,7 @@ import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_grade_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-import '../../designs/PeeroreumColor.dart';
+import '../../designs/peeroreum_color.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 
 class SignUpNickname extends StatefulWidget {
@@ -178,7 +178,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                   fontWeight: FontWeight.w400,
                                   fontSize: 12,
                                   color: checkNickname && !isDuplicateNickname
-                                      ? PeeroreumColor.primaryPuple[400]
+                                      ? PeeroreumColor.primaryPurple[400]
                                       : PeeroreumColor.gray[600]),
                               errorText: checkError(),
                               errorBorder: OutlineInputBorder(
@@ -207,7 +207,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: BorderSide(
                                           color: PeeroreumColor
-                                              .primaryPuple[400]!),
+                                              .primaryPurple[400]!),
                                     )
                                   : OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -222,7 +222,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                       borderSide: BorderSide(
                                           color: (nicknameFocus
                                               ? PeeroreumColor
-                                                  .primaryPuple[400]!
+                                                  .primaryPurple[400]!
                                               : PeeroreumColor.gray[200]!)),
                                     )
                                   : OutlineInputBorder(
@@ -259,7 +259,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                                           ? SvgPicture.asset(
                                               "assets/icons/check.svg",
                                               color: PeeroreumColor
-                                                  .primaryPuple[400],
+                                                  .primaryPurple[400],
                                             )
                                           : nicknameController.text.isNotEmpty
                                               ? SvgPicture.asset(
@@ -298,7 +298,7 @@ class _SignUpNicknameState extends State<SignUpNickname> {
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
                         checkNickname && !isDuplicateNickname
-                            ? PeeroreumColor.primaryPuple[400]
+                            ? PeeroreumColor.primaryPurple[400]
                             : PeeroreumColor.gray[300]),
                     padding: MaterialStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),

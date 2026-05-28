@@ -10,7 +10,7 @@ import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
 import 'package:peeroreum_client/data/pending_deep_link.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});

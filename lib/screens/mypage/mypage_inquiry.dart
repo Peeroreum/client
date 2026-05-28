@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class MyPageInquiry extends StatefulWidget {
   const MyPageInquiry({super.key});
@@ -278,7 +278,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                                     otherType != "" &&
                                     detailInquiry != "")
                             ? MaterialStateProperty.all(
-                                PeeroreumColor.primaryPuple[400])
+                                PeeroreumColor.primaryPurple[400])
                             : MaterialStateProperty.all(
                                 PeeroreumColor.gray[300]),
                         padding: MaterialStateProperty.all(

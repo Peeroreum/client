@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import './new_password_screen.dart';
 
@@ -171,7 +171,7 @@ class _EmailValidateState extends State<EmailValidate> {
                                       bottom: BorderSide(
                                         color: is_resending
                                             ? PeeroreumColor.gray[400]!
-                                            : PeeroreumColor.primaryPuple[500]!,
+                                            : PeeroreumColor.primaryPurple[500]!,
                                         width: 1,
                                       ),
                                     ),
@@ -184,7 +184,7 @@ class _EmailValidateState extends State<EmailValidate> {
                                         fontSize: 14,
                                         color: is_resending
                                             ? PeeroreumColor.gray[400]
-                                            : PeeroreumColor.primaryPuple[500]),
+                                            : PeeroreumColor.primaryPurple[500]),
                                   ),
                                 ),
                               ),
@@ -237,7 +237,7 @@ class _EmailValidateState extends State<EmailValidate> {
                       style: ButtonStyle(
                         backgroundColor: (is_Enabled && !is_loading)
                             ? MaterialStateProperty.all(
-                                PeeroreumColor.primaryPuple[400])
+                                PeeroreumColor.primaryPurple[400])
                             : MaterialStateProperty.all(
                                 PeeroreumColor.gray[300]),
                         padding: MaterialStateProperty.all(

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -35,9 +35,9 @@ class _CreateInvitationState extends State<CreateInvitation> {
   ];
   List<bool> isFontColorSelected = [false, false, false];
   List<dynamic> backgroundColorSelect = [
-    PeeroreumColor.primaryPuple[400],
-    PeeroreumColor.primaryPuple[200],
-    PeeroreumColor.primaryPuple[50],
+    PeeroreumColor.primaryPurple[400],
+    PeeroreumColor.primaryPurple[200],
+    PeeroreumColor.primaryPurple[50],
     PeeroreumColor.white,
     PeeroreumColor.black,
     const Color(0xffCACACA),
@@ -50,7 +50,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
   ];
   bool nextButton = false;
 
-  Color _backgroundColor = PeeroreumColor.primaryPuple[400]!;
+  Color _backgroundColor = PeeroreumColor.primaryPurple[400]!;
   Color _fontColor = PeeroreumColor.white;
   Color? _savedBackgroundColor;
   Color? _savedFontColor;
@@ -67,11 +67,11 @@ class _CreateInvitationState extends State<CreateInvitation> {
   };
 
   checkColors() {
-    if (_backgroundColor == PeeroreumColor.primaryPuple[400]) {
+    if (_backgroundColor == PeeroreumColor.primaryPurple[400]) {
       isBackgroundSelected = [true, false, false, false, false, false, false];
-    } else if (_backgroundColor == PeeroreumColor.primaryPuple[200]) {
+    } else if (_backgroundColor == PeeroreumColor.primaryPurple[200]) {
       isBackgroundSelected = [false, true, false, false, false, false, false];
-    } else if (_backgroundColor == PeeroreumColor.primaryPuple[50]) {
+    } else if (_backgroundColor == PeeroreumColor.primaryPurple[50]) {
       isBackgroundSelected = [false, false, true, false, false, false, false];
     } else if (_backgroundColor == PeeroreumColor.white) {
       isBackgroundSelected = [false, false, false, true, false, false, false];
@@ -180,7 +180,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: nextButton
-                          ? PeeroreumColor.primaryPuple[400]
+                          ? PeeroreumColor.primaryPurple[400]
                           : PeeroreumColor.gray[400],
                     ),
                   ),
@@ -432,7 +432,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                           '확인',
                                                           style: TextStyle(
                                                               color: PeeroreumColor
-                                                                      .primaryPuple[
+                                                                      .primaryPurple[
                                                                   400],
                                                               fontFamily:
                                                                   'Pretendard'),
@@ -469,7 +469,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       switch (index) {
                                         case 0:
                                           _backgroundColor =
-                                              PeeroreumColor.primaryPuple[400]!;
+                                              PeeroreumColor.primaryPurple[400]!;
                                           _fontColor = PeeroreumColor.white;
                                           _image = null;
                                           isFontColorSelected = [
@@ -480,7 +480,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                           break;
                                         case 1:
                                           _backgroundColor =
-                                              PeeroreumColor.primaryPuple[200]!;
+                                              PeeroreumColor.primaryPurple[200]!;
                                           _fontColor = PeeroreumColor.white;
                                           _image = null;
                                           isFontColorSelected = [
@@ -491,7 +491,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                           break;
                                         case 2:
                                           _backgroundColor =
-                                              PeeroreumColor.primaryPuple[50]!;
+                                              PeeroreumColor.primaryPurple[50]!;
                                           _fontColor = PeeroreumColor.black;
                                           _image = null;
                                           isFontColorSelected = [
@@ -686,7 +686,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                                   FontWeight
                                                                       .w500,
                                                               color: PeeroreumColor
-                                                                      .primaryPuple[
+                                                                      .primaryPurple[
                                                                   400],
                                                               fontFamily:
                                                                   'Pretendard'),

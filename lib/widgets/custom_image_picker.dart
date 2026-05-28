@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 /// 이미지를 크롭합니다. 취소 시 null 반환.
 Future<XFile?> cropImage(BuildContext context, XFile image) async {
@@ -15,7 +15,7 @@ Future<XFile?> cropImage(BuildContext context, XFile image) async {
         toolbarTitle: '이미지 편집',
         toolbarColor: Colors.black,
         toolbarWidgetColor: Colors.white,
-        activeControlsWidgetColor: PeeroreumColor.primaryPuple[400]!,
+        activeControlsWidgetColor: PeeroreumColor.primaryPurple[400]!,
         lockAspectRatio: false,
         hideBottomControls: false,
       ),
@@ -175,12 +175,12 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
                     isSelected ? FontWeight.w600 : FontWeight.w400,
                 fontSize: 16,
                 color: isSelected
-                    ? PeeroreumColor.primaryPuple[400]
+                    ? PeeroreumColor.primaryPurple[400]
                     : PeeroreumColor.black,
               ),
             ),
             trailing: isSelected
-                ? Icon(Icons.check, color: PeeroreumColor.primaryPuple[400])
+                ? Icon(Icons.check, color: PeeroreumColor.primaryPurple[400])
                 : null,
             onTap: () async {
               Navigator.pop(ctx);
@@ -392,7 +392,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 14,
-                color: PeeroreumColor.primaryPuple[400],
+                color: PeeroreumColor.primaryPurple[400],
               ),
             ),
           ),

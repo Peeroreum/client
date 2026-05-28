@@ -3,7 +3,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/data/onboarding_check.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 class OnBoarding extends StatefulWidget {
@@ -40,7 +40,7 @@ class _OnBoardingState extends State<OnBoarding> {
                 dotsCount: 3,
                 decorator: DotsDecorator(
                   color: PeeroreumColor.gray[300]!,
-                  activeColor: PeeroreumColor.primaryPuple[400],
+                  activeColor: PeeroreumColor.primaryPurple[400],
                   size: Size.square(8),
                   activeSize: const Size(20, 8),
                   activeShape: RoundedRectangleBorder(
@@ -122,7 +122,7 @@ class _OnBoardingState extends State<OnBoarding> {
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
+                          PeeroreumColor.primaryPurple[400]),
                       padding: MaterialStateProperty.all(
                           EdgeInsets.symmetric(vertical: 12)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -156,7 +156,7 @@ class _OnBoardingState extends State<OnBoarding> {
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
+                          PeeroreumColor.primaryPurple[400]),
                       padding: MaterialStateProperty.all(
                           EdgeInsets.symmetric(vertical: 12)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(

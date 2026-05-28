@@ -1,8 +1,8 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 
@@ -118,9 +118,9 @@ class _ScrapState extends State<Scrap> {
         child: Column(
           children: [
             TabBar(
-                indicatorColor: PeeroreumColor.primaryPuple[400],
+                indicatorColor: PeeroreumColor.primaryPurple[400],
                 indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: PeeroreumColor.primaryPuple[400],
+                labelColor: PeeroreumColor.primaryPurple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
                   color: PeeroreumColor.gray[800],
@@ -129,7 +129,7 @@ class _ScrapState extends State<Scrap> {
                   fontWeight: FontWeight.w400,
                 ),
                 labelStyle: TextStyle(
-                  color: PeeroreumColor.primaryPuple[400],
+                  color: PeeroreumColor.primaryPurple[400],
                   fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -225,14 +225,14 @@ class _ScrapState extends State<Scrap> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            B4_14px_M(
+            B4m(
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
             const SizedBox(
               width: 4,
             ),
-            B4_14px_M(
+            B4m(
               text: '$totalQnA',
               color: PeeroreumColor.gray[500],
             ),
@@ -278,7 +278,7 @@ class _ScrapState extends State<Scrap> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
-                                    child: T4_16px(
+                                    child: T4(
                                       text: '${questionList[index]['title']}',
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -294,13 +294,13 @@ class _ScrapState extends State<Scrap> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[200],
+                                      color: PeeroreumColor.primaryPurple[200],
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '채택완료',
                                           color: PeeroreumColor.white,
                                         ),
@@ -317,7 +317,7 @@ class _ScrapState extends State<Scrap> {
                                     child: SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '미채택',
                                           color: PeeroreumColor.gray[600],
                                         ),
@@ -375,7 +375,7 @@ class _ScrapState extends State<Scrap> {
                                 width: 8,
                               ),
                               Flexible(
-                                child: B4_14px_M(
+                                child: B4m(
                                   text:
                                       '${questionList[index]["memberProfileDto"]["nickname"]}',
                                   overflow: TextOverflow.ellipsis,
@@ -384,7 +384,7 @@ class _ScrapState extends State<Scrap> {
                               const SizedBox(
                                 width: 8,
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text:
                                     '${timeCheck(questionList[index]["createdTime"])} 전',
                                 color: PeeroreumColor.gray[400],
@@ -397,7 +397,7 @@ class _ScrapState extends State<Scrap> {
                                   color: PeeroreumColor.gray[400],
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '좋아요 ${questionList[index]["likes"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
@@ -409,7 +409,7 @@ class _ScrapState extends State<Scrap> {
                                   color: PeeroreumColor.gray[400],
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '댓글 ${questionList[index]["comments"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
@@ -434,14 +434,14 @@ class _ScrapState extends State<Scrap> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            B4_14px_M(
+            B4m(
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
             const SizedBox(
               width: 4,
             ),
-            B4_14px_M(
+            B4m(
               text: 'NN',
               color: PeeroreumColor.gray[500],
             ),
@@ -494,14 +494,14 @@ class _ScrapState extends State<Scrap> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const T4_16px(
+                            const T4(
                               // text: datas[index]['title'],
                               text: 'Title',
                             ),
                             const SizedBox(
                               height: 4,
                             ),
-                            const B4_14px_R(
+                            const B4r(
                               text: 'content',
                             ),
                             const SizedBox(
@@ -509,7 +509,7 @@ class _ScrapState extends State<Scrap> {
                             ),
                             Row(
                               children: [
-                                C1_12px_M(
+                                C1m(
                                   // text: '${timeCheck(datas[index]["createdTime"])} 전',
                                   text: 'NN 전',
                                   color: PeeroreumColor.gray[400],
@@ -522,7 +522,7 @@ class _ScrapState extends State<Scrap> {
                                     color: PeeroreumColor.gray[400],
                                   ),
                                 ),
-                                C1_12px_M(
+                                C1m(
                                   // text: '좋아요 ${datas[index]["likes"]}개',
                                   text: '좋아요 NN개',
                                   color: PeeroreumColor.gray[400],
@@ -535,7 +535,7 @@ class _ScrapState extends State<Scrap> {
                                     color: PeeroreumColor.gray[400],
                                   ),
                                 ),
-                                C1_12px_M(
+                                C1m(
                                   // text: '댓글 ${datas[index]["comments"]}개',
                                   text: '댓글 NN개',
                                   color: PeeroreumColor.gray[400],

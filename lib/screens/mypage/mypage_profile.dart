@@ -4,15 +4,15 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
@@ -441,7 +441,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    B3_18px_R(text: '프로필 변경'),
+                    B3r(text: '프로필 변경'),
                   ],
                 ),
               ),
@@ -459,7 +459,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      B3_18px_R(text: '프로필 삭제', color: PeeroreumColor.error),
+                      B3r(text: '프로필 삭제', color: PeeroreumColor.error),
                     ],
                   ),
                 ),
@@ -477,7 +477,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    B3_18px_R(text: '닉네임 변경'),
+                    B3r(text: '닉네임 변경'),
                   ],
                 ),
               ),
@@ -499,7 +499,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    B3_18px_R(text: '배경 변경'),
+                    B3r(text: '배경 변경'),
                   ],
                 ),
               ),
@@ -517,7 +517,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      B3_18px_R(text: '배경 삭제', color: PeeroreumColor.error),
+                      B3r(text: '배경 삭제', color: PeeroreumColor.error),
                     ],
                   ),
                 ),
@@ -672,7 +672,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             },
                             style: TextButton.styleFrom(
                               backgroundColor: image != null
-                                  ? PeeroreumColor.primaryPuple[400]
+                                  ? PeeroreumColor.primaryPurple[400]
                                   : PeeroreumColor.gray[300],
                               padding: const EdgeInsets.symmetric(
                                   vertical: 12, horizontal: 16),
@@ -806,7 +806,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                     borderRadius: BorderRadius.circular(8),
                                     borderSide: BorderSide(
                                         color:
-                                            PeeroreumColor.primaryPuple[400]!),
+                                            PeeroreumColor.primaryPurple[400]!),
                                   )
                                 : OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -822,7 +822,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
                                 color: checkNickname && !isDuplicateNickname
-                                    ? PeeroreumColor.primaryPuple[400]
+                                    ? PeeroreumColor.primaryPurple[400]
                                     : PeeroreumColor.gray[600]),
                             errorText: checkError(),
                             errorBorder: OutlineInputBorder(
@@ -889,7 +889,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               style: TextButton.styleFrom(
                                 backgroundColor:
                                     checkNickname && !isDuplicateNickname
-                                        ? PeeroreumColor.primaryPuple[400]
+                                        ? PeeroreumColor.primaryPurple[400]
                                         : PeeroreumColor.gray[300],
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 12, horizontal: 16),
@@ -953,7 +953,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    B3_18px_R(
+                    B3r(
                       text: '$nickname 신고하기',
                       color: PeeroreumColor.error,
                     ),
@@ -1060,7 +1060,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           });
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
@@ -1286,11 +1286,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       : MaterialStateProperty.all<Size>(const Size(124, 40)),
                   backgroundColor: amI
                       ? MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400])
+                          PeeroreumColor.primaryPurple[400])
                       : (isFriend
                           ? MaterialStateProperty.all(PeeroreumColor.gray[300])
                           : MaterialStateProperty.all(
-                              PeeroreumColor.primaryPuple[400])),
+                              PeeroreumColor.primaryPurple[400])),
                   padding: MaterialStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -1360,11 +1360,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    T3_18px(
+                    T3(
                       text: '팔로워',
                       color: PeeroreumColor.gray[800],
                     ),
-                    B3_18px_M(
+                    B3m(
                       text: followerNumber != null ? '$followerNumber' : '0',
                       color: PeeroreumColor.gray[600],
                     ),
@@ -1397,11 +1397,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    T3_18px(
+                    T3(
                       text: '팔로잉',
                       color: PeeroreumColor.gray[800],
                     ),
-                    B3_18px_M(
+                    B3m(
                       text: followingNumber != null ? '$followingNumber' : '0',
                       color: PeeroreumColor.gray[600],
                     ),
@@ -1696,7 +1696,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.primaryPuple[400]),
+                      color: PeeroreumColor.primaryPurple[400]),
                 )
               ],
             ),

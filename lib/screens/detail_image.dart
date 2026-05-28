@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ImageDetail extends StatefulWidget {
@@ -84,7 +84,7 @@ class _ImageDetailState extends State<ImageDetail> {
                   ),
                 ),
                 Container(
-                  child: T4_16px(text: "${initialPage +1} / ${imageList.length}",
+                  child: T4(text: "${initialPage +1} / ${imageList.length}",
                   color: PeeroreumColor.white,),
                 ),
                 Container(

@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
@@ -154,7 +154,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
             weduHashTags != "") &&
         (weduLocked == false || (weduLocked == true && weduPassword != ""))) {
       setState(() {
-        _nextColor = PeeroreumColor.primaryPuple[400]!;
+        _nextColor = PeeroreumColor.primaryPurple[400]!;
       });
     } else {
       setState(() {
@@ -225,7 +225,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
       actions: [
         TextButton(
           onPressed: () {
-            if (_nextColor == PeeroreumColor.primaryPuple[400]) {
+            if (_nextColor == PeeroreumColor.primaryPurple[400]) {
               fetchWedu();
             } else {
               return;
@@ -727,7 +727,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                             return Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: PeeroreumColor.primaryPuple[400]!),
+                                    color: PeeroreumColor.primaryPurple[400]!),
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(20.0),
                                 ),
@@ -751,7 +751,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               color: PeeroreumColor
-                                                  .primaryPuple[200],
+                                                  .primaryPurple[200],
                                             ),
                                           ),
                                           TextSpan(
@@ -761,7 +761,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               color: PeeroreumColor
-                                                  .primaryPuple[400],
+                                                  .primaryPurple[400],
                                             ),
                                           ),
                                         ],

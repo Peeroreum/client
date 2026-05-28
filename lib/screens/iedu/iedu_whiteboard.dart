@@ -10,10 +10,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
 class WhiteboardIedu extends StatefulWidget {
@@ -59,7 +59,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
   late Color _straightColor = straightColorSelect[0];
   List<bool> straightColorSelected = [true, false, false];
   List<Color> straightColorSelect = [
-    PeeroreumColor.primaryPuple[400]!,
+    PeeroreumColor.primaryPurple[400]!,
     PeeroreumColor.black,
     PeeroreumColor.white,
   ];
@@ -67,7 +67,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
   late Color _highlighterColor = highlighterColorSelect[0];
   List<bool> highlighterColorSelected = [true, false, false];
   List<Color> highlighterColorSelect = [
-    PeeroreumColor.primaryPuple[400]!,
+    PeeroreumColor.primaryPurple[400]!,
     PeeroreumColor.black,
     PeeroreumColor.white,
   ];
@@ -146,7 +146,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
                 color: undo > 0
-                    ? PeeroreumColor.primaryPuple[400]
+                    ? PeeroreumColor.primaryPurple[400]
                     : PeeroreumColor.gray[500],
               ),
             ),
@@ -301,7 +301,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                   onTap: () {
                     _drawingController.clear();
                   },
-                  child: T5_14px(
+                  child: T5(
                     text: '모두 지우기',
                     color: PeeroreumColor.gray[500],
                   ),
@@ -906,7 +906,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                               '확인',
                                               style: TextStyle(
                                                   color: PeeroreumColor
-                                                      .primaryPuple[400],
+                                                      .primaryPurple[400],
                                                   fontFamily: 'Pretendard'),
                                             ),
                                           ),
@@ -1073,7 +1073,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                               '확인',
                                               style: TextStyle(
                                                   color: PeeroreumColor
-                                                      .primaryPuple[400],
+                                                      .primaryPurple[400],
                                                   fontFamily: 'Pretendard'),
                                             ),
                                           ),
@@ -1228,7 +1228,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           Navigator.pop(context, true);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
                           padding: EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(

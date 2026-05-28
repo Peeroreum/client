@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import '../signin_screen.dart';
 
@@ -71,7 +71,7 @@ class CompletePassword extends StatelessWidget {
             ),
             style: ButtonStyle(
               backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
+                  MaterialStateProperty.all(PeeroreumColor.primaryPurple[400]),
               padding:
                   MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(

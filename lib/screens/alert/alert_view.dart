@@ -1,8 +1,8 @@
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/alert/alert_controller.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/alert/alert_model.dart';
 import 'package:flutter/material.dart';
 
@@ -56,9 +56,9 @@ class Alert extends GetView<AlertController> {
         child: Column(
           children: [
             TabBar(
-                indicatorColor: PeeroreumColor.primaryPuple[400],
+                indicatorColor: PeeroreumColor.primaryPurple[400],
                 indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: PeeroreumColor.primaryPuple[400],
+                labelColor: PeeroreumColor.primaryPurple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
                   color: PeeroreumColor.gray[800],
@@ -67,7 +67,7 @@ class Alert extends GetView<AlertController> {
                   fontWeight: FontWeight.w400,
                 ),
                 labelStyle: TextStyle(
-                  color: PeeroreumColor.primaryPuple[400],
+                  color: PeeroreumColor.primaryPurple[400],
                   fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -170,15 +170,15 @@ class AlertListView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              C1_12px_M(text: title, color: PeeroreumColor.gray[600]),
+              C1m(text: title, color: PeeroreumColor.gray[600]),
               const Spacer(),
-              C1_12px_M(text: timeago, color: PeeroreumColor.gray[600])
+              C1m(text: timeago, color: PeeroreumColor.gray[600])
             ],
           ),
           SizedBox(
             height: 8,
           ),
-          B4_14px_R(text: body),
+          B4r(text: body),
         ],
       ),
     );

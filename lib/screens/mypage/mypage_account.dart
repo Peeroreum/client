@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
 
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_acount_ps.dart';
 
 class MyPageAccount extends StatefulWidget {
@@ -155,7 +155,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.primaryPuple[400],
+                            color: PeeroreumColor.primaryPurple[400],
                           ),
                         ),
                       ),

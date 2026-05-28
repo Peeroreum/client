@@ -3,9 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import './complete_screen.dart';
 
 class NewPassword extends StatefulWidget {
@@ -228,7 +228,7 @@ class _NewPasswordState extends State<NewPassword> {
                                       fontFamily: "Pretendard",
                                       fontWeight: FontWeight.w400,
                                       fontSize: 12,
-                                      color: PeeroreumColor.primaryPuple[400])
+                                      color: PeeroreumColor.primaryPurple[400])
                                   : TextStyle(
                                       fontFamily: "Pretendard",
                                       fontWeight: FontWeight.w400,
@@ -241,7 +241,7 @@ class _NewPasswordState extends State<NewPassword> {
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: BorderSide(
                                           color: PeeroreumColor
-                                              .primaryPuple[400]!),
+                                              .primaryPurple[400]!),
                                     )
                                   : OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -254,7 +254,7 @@ class _NewPasswordState extends State<NewPassword> {
                                 borderSide: BorderSide(
                                     color: pw_focus
                                         ? (pw_check
-                                            ? PeeroreumColor.primaryPuple[400]!
+                                            ? PeeroreumColor.primaryPurple[400]!
                                             : PeeroreumColor.gray[200]!)
                                         : PeeroreumColor.gray[200]!),
                               ),
@@ -326,14 +326,14 @@ class _NewPasswordState extends State<NewPassword> {
                                 borderSide: BorderSide(
                                     color: pw2_focus
                                         ? (pw2_check
-                                            ? PeeroreumColor.primaryPuple[400]!
+                                            ? PeeroreumColor.primaryPurple[400]!
                                             : PeeroreumColor.gray[200]!)
                                         : PeeroreumColor.gray[200]!)),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
                                     color: pw2_check
-                                        ? PeeroreumColor.primaryPuple[400]!
+                                        ? PeeroreumColor.primaryPurple[400]!
                                         : PeeroreumColor.black)),
                             hintText: '비밀번호를 재입력하세요',
                             hintStyle: TextStyle(
@@ -348,7 +348,7 @@ class _NewPasswordState extends State<NewPassword> {
                                 fontFamily: "Pretendard",
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
-                                color: PeeroreumColor.primaryPuple[400]),
+                                color: PeeroreumColor.primaryPurple[400]),
                             errorText:
                                 !pw2_check && pw2_controller.text.length >= 2
                                     ? "비밀번호가 일치하지 않습니다."
@@ -443,7 +443,7 @@ class _NewPasswordState extends State<NewPassword> {
                 style: ButtonStyle(
                     backgroundColor: (is_Enabled && !is_loading)
                         ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
+                            PeeroreumColor.primaryPurple[400])
                         : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                     padding: MaterialStateProperty.all(
                         EdgeInsets.symmetric(vertical: 12)),
@@ -497,7 +497,7 @@ class _NewPasswordState extends State<NewPassword> {
           padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPuple[400],
+            color: PeeroreumColor.primaryPurple[400],
           ));
     }
     if (pw_controller.text.length >= 2 && !pw_check) {
@@ -530,7 +530,7 @@ class _NewPasswordState extends State<NewPassword> {
           padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPuple[400],
+            color: PeeroreumColor.primaryPurple[400],
           ));
     }
     if (pw2_controller.text.length >= 2 && !pw2_check) {

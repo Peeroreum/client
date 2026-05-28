@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/ranking/ranking_controller.dart';
 
 class Ranking extends StatefulWidget {
@@ -28,7 +28,7 @@ class _RankingState extends State<Ranking> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       appBar: AppBar(
-        title: B2_20px_M(text: "랭킹"),
+        title: B2m(text: "랭킹"),
         centerTitle: true,
         automaticallyImplyLeading: false,
         elevation: 0,
@@ -38,7 +38,7 @@ class _RankingState extends State<Ranking> {
       ),
       body: RefreshIndicator(
         onRefresh: _rankingController.fetchRanking,
-        color: PeeroreumColor.primaryPuple[400],
+        color: PeeroreumColor.primaryPurple[400],
         child: SafeArea(
           child: Container(
             color: PeeroreumColor.white,
@@ -58,7 +58,7 @@ class _RankingState extends State<Ranking> {
                           'assets/images/no_wedu_oreum.png',
                           width: 150,
                         ),
-                        T2_20px(text: "경쟁자가 없어요 지금이에요!!"),
+                        T2(text: "경쟁자가 없어요 지금이에요!!"),
                       ],
                     ),
                   ],
@@ -84,7 +84,7 @@ class _RankingState extends State<Ranking> {
                             onTap: () {
                               rankingHelp();
                             },
-                            child: T5_14px(
+                            child: T5(
                               text: "ⓘ 랭킹 안내",
                               color: PeeroreumColor.gray[500],
                             ),
@@ -204,7 +204,7 @@ class _RankingState extends State<Ranking> {
                       ),
                       Expanded(
                         child: Center(
-                          child: T2_20px(
+                          child: T2(
                             text: "랭킹 안내",
                             color: PeeroreumColor.black,
                           ),
@@ -224,11 +224,11 @@ class _RankingState extends State<Ranking> {
                   SizedBox(
                     height: 40,
                   ),
-                  B3_18px_M(text: "매주 월요일마다 랭킹이 업데이트됩니다."),
+                  B3m(text: "매주 월요일마다 랭킹이 업데이트됩니다."),
                   SizedBox(
                     height: 12,
                   ),
-                  B4_14px_M(text: "목표 달성 횟수, 질문 및 답변 수, 채택 횟수 반영"),
+                  B4m(text: "목표 달성 횟수, 질문 및 답변 수, 채택 횟수 반영"),
                   SizedBox(
                     height: 32,
                   ),
@@ -272,7 +272,7 @@ class _RankingState extends State<Ranking> {
               Container(
                 height: 25,
                 child: Center(
-                  child: T3_18px(text: "${myrank} 위"),
+                  child: T3(text: "${myrank} 위"),
                 ),
               ),
               SizedBox(
@@ -307,13 +307,13 @@ class _RankingState extends State<Ranking> {
                 ),
               ),
               Container(width: 8),
-              B4_14px_M(
+              B4m(
                 text: "${mynickname} (나)",
                 color: PeeroreumColor.gray[800],
               ),
             ],
           ),
-          B4_14px_M(text: "${mypoints} 점"),
+          B4m(text: "${mypoints} 점"),
         ],
       ),
     );
@@ -336,7 +336,7 @@ class _RankingState extends State<Ranking> {
               Container(
                 height: 25,
                 child: Center(
-                  child: T3_18px(text: "${int.parse(ranks.rank)} 위"),
+                  child: T3(text: "${int.parse(ranks.rank)} 위"),
                 ),
               ),
               SizedBox(
@@ -371,13 +371,13 @@ class _RankingState extends State<Ranking> {
                 ),
               ),
               Container(width: 8),
-              B4_14px_M(
+              B4m(
                 text: "${ranks.nickname}",
                 color: PeeroreumColor.gray[800],
               ),
             ],
           ),
-          B4_14px_M(text: "${ranks.points} 점"),
+          B4m(text: "${ranks.points} 점"),
         ],
       ),
     );
@@ -405,9 +405,9 @@ class Ranker extends StatelessWidget {
     return Container(
       child: Column(
         children: [
-          B4_14px_M(
+          B4m(
             text: '$points점',
-            color: PeeroreumColor.primaryPuple[400],
+            color: PeeroreumColor.primaryPurple[400],
           ),
           SizedBox(
             height: 2,
@@ -415,7 +415,7 @@ class Ranker extends StatelessWidget {
           Container(
               height: 24,
               child: Center(
-                  child: B4_14px_M(
+                  child: B4m(
                 text: name,
                 color: PeeroreumColor.gray[800],
               ))),
@@ -441,7 +441,7 @@ class Ranker extends StatelessWidget {
               child: Container(
                 height: 24,
                 child: Center(
-                  child: T4_16px(
+                  child: T4(
                     text: rank,
                     color: PeeroreumColor.gray[600],
                   ),

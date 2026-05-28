@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/data/visit_count.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/FirebaseToken.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/mypage/mypage.dart';
@@ -123,7 +123,7 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/user_three_fill.svg',
-                    color: PeeroreumColor.primaryPuple[400],
+                    color: PeeroreumColor.primaryPurple[400],
                   ),
                   label: '같이해냄'),
               BottomNavigationBarItem(
@@ -133,7 +133,7 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/chats_tear_drop_fill.svg',
-                    color: PeeroreumColor.primaryPuple[400],
+                    color: PeeroreumColor.primaryPurple[400],
                   ),
                   label: '내가해냄'),
               BottomNavigationBarItem(
@@ -143,7 +143,7 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/medal_fill.svg',
-                    color: PeeroreumColor.primaryPuple[400],
+                    color: PeeroreumColor.primaryPurple[400],
                   ),
                   label: '랭킹'),
               BottomNavigationBarItem(
@@ -153,7 +153,7 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/user_fill.svg',
-                    color: PeeroreumColor.primaryPuple[400],
+                    color: PeeroreumColor.primaryPurple[400],
                   ),
                   label: '마이페이지'),
             ],
@@ -161,7 +161,7 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
             unselectedItemColor: PeeroreumColor.gray[400],
             unselectedLabelStyle:
                 const TextStyle(fontFamily: 'Pretendard', fontSize: 12),
-            selectedItemColor: PeeroreumColor.primaryPuple[400],
+            selectedItemColor: PeeroreumColor.primaryPurple[400],
             selectedLabelStyle:
                 const TextStyle(fontFamily: 'Pretendard', fontSize: 12),
             backgroundColor: PeeroreumColor.white,

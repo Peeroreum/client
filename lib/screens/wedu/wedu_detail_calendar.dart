@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/pie_chart.dart';
@@ -464,7 +464,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                                       height: 36,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: PeeroreumColor.primaryPuple[400],
+                                        color: PeeroreumColor.primaryPurple[400],
                                       ),
                                       child: Text(
                                         '${progress[day - 1]}',

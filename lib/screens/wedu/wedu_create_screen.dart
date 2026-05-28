@@ -4,11 +4,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/Wedu.dart';
 import 'package:get/get.dart';
@@ -56,7 +56,7 @@ class _CreateWeduState extends State<CreateWedu> {
             (dropdownChallenge == challenge.last && personalChallenge != "")) &&
         (_isLocked == false || (_isLocked == true && passwordValue != ""))) {
       setState(() {
-        _nextColor = PeeroreumColor.primaryPuple[400]!;
+        _nextColor = PeeroreumColor.primaryPurple[400]!;
       });
     } else {
       setState(() {
@@ -463,7 +463,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                     PeeroreumColor.gray[200],
                                                 colorScheme: ColorScheme.light(
                                                     primary: PeeroreumColor
-                                                        .primaryPuple[100]!,
+                                                        .primaryPurple[100]!,
                                                     // header background color
                                                     onPrimary: Colors.black,
                                                     // header text color
@@ -942,7 +942,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                             BoxDecoration(
                                                           border: Border.all(
                                                               color: PeeroreumColor
-                                                                      .primaryPuple[
+                                                                      .primaryPurple[
                                                                   400]!),
                                                           borderRadius:
                                                               BorderRadius.all(
@@ -979,7 +979,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                                         fontWeight:
                                                                             FontWeight.w500,
                                                                         color: PeeroreumColor
-                                                                            .primaryPuple[200],
+                                                                            .primaryPurple[200],
                                                                       ),
                                                                     ),
                                                                     TextSpan(
@@ -994,7 +994,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                                         fontWeight:
                                                                             FontWeight.w500,
                                                                         color: PeeroreumColor
-                                                                            .primaryPuple[400],
+                                                                            .primaryPurple[400],
                                                                       ),
                                                                     ),
                                                                   ],

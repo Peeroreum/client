@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search_result_screen.dart';
 
 import '../../data/wedu_search_history.dart';
@@ -191,7 +191,7 @@ class _searchWeduState extends State<searchWedu> {
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
                     decoration: BoxDecoration(
                         border: Border.all(
-                            width: 1, color: PeeroreumColor.primaryPuple[400]!),
+                            width: 1, color: PeeroreumColor.primaryPurple[400]!),
                         borderRadius: BorderRadius.all(Radius.circular(16.0))),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -200,7 +200,7 @@ class _searchWeduState extends State<searchWedu> {
                         Text(
                           '#',
                           style: TextStyle(
-                              color: PeeroreumColor.primaryPuple[200]),
+                              color: PeeroreumColor.primaryPurple[200]),
                         ),
                         SizedBox(
                           width: 4,
@@ -208,7 +208,7 @@ class _searchWeduState extends State<searchWedu> {
                         Text(
                           '${_searchHistory[index]["search_word"]}',
                           style: TextStyle(
-                              color: PeeroreumColor.primaryPuple[400]),
+                              color: PeeroreumColor.primaryPurple[400]),
                         ),
                       ],
                     ),

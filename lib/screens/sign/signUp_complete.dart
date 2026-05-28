@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class SignUpComplete extends StatefulWidget {
   @override
@@ -90,7 +90,7 @@ class _SignUpCompleteState extends State<SignUpComplete> {
             ),
             style: ButtonStyle(
               backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
+                  MaterialStateProperty.all(PeeroreumColor.primaryPurple[400]),
               padding:
                   MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(

@@ -19,7 +19,7 @@ final class PeeroreumColor extends Color {
     800: Color.fromARGB(255, 54, 54, 54),
     900: Color.fromARGB(255, 32, 33, 35)
   };
-  static const Map<int, Color> primaryPuple = <int, Color>{
+  static const Map<int, Color> primaryPurple = <int, Color>{
     50: Color.fromARGB(255, 236, 233, 255),
     100: Color.fromARGB(255, 206, 200, 253),
     200: Color.fromARGB(255, 173, 165, 252),

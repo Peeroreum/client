@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/Member.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 
 class MyPageAccountPS extends StatefulWidget {
   const MyPageAccountPS({super.key});
@@ -215,7 +215,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                       fontFamily: "Pretendard",
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
-                      color: PeeroreumColor.primaryPuple[400])
+                      color: PeeroreumColor.primaryPurple[400])
                   : TextStyle(
                       fontFamily: "Pretendard",
                       fontWeight: FontWeight.w400,
@@ -227,7 +227,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                   ? OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide:
-                          BorderSide(color: PeeroreumColor.primaryPuple[400]!),
+                          BorderSide(color: PeeroreumColor.primaryPurple[400]!),
                     )
                   : OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -240,7 +240,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 borderSide: BorderSide(
                     color: (pw1Focus
                         ? (pw1Check
-                            ? PeeroreumColor.primaryPuple[400]!
+                            ? PeeroreumColor.primaryPurple[400]!
                             : PeeroreumColor.gray[200]!)
                         : PeeroreumColor.gray[200]!)),
               ),
@@ -305,14 +305,14 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 borderSide: BorderSide(
                     color: pw2Check
                         ? (pw2Focus
-                            ? PeeroreumColor.primaryPuple[400]!
+                            ? PeeroreumColor.primaryPurple[400]!
                             : PeeroreumColor.gray[200]!)
                         : PeeroreumColor.gray[200]!)),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
                     color: pw2Check
-                        ? PeeroreumColor.primaryPuple[400]!
+                        ? PeeroreumColor.primaryPurple[400]!
                         : PeeroreumColor.black)),
             hintText: '비밀번호를 재입력하세요',
             hintStyle: TextStyle(
@@ -325,7 +325,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 fontFamily: "Pretendard",
                 fontWeight: FontWeight.w400,
                 fontSize: 12,
-                color: PeeroreumColor.primaryPuple[400]),
+                color: PeeroreumColor.primaryPurple[400]),
             errorText: !pw2Check && pw2Controller.text.length >= 2
                 ? "비밀번호가 일치하지 않습니다."
                 : null,
@@ -381,7 +381,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPuple[400],
+            color: PeeroreumColor.primaryPurple[400],
           ));
     }
     if (pw1Controller.text.length >= 2 && !pw1Check) {
@@ -414,7 +414,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPuple[400],
+            color: PeeroreumColor.primaryPurple[400],
           ));
     }
     if (pw2Controller.text.length >= 2 && !pw2Check) {
@@ -463,7 +463,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
               style: ButtonStyle(
                   backgroundColor: (pw1Check && pw2Check)
                       ? MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400])
+                          PeeroreumColor.primaryPurple[400])
                       : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                   padding: MaterialStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 12)),

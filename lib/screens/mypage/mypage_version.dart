@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class MyPageVersion extends StatefulWidget {
   const MyPageVersion({super.key});
@@ -81,7 +81,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
                 ? peer_version()
                 : Center(
                     child: CircularProgressIndicator(
-                        color: PeeroreumColor.primaryPuple[400])),
+                        color: PeeroreumColor.primaryPurple[400])),
           ),
         ],
       ),
@@ -139,7 +139,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
           decoration: BoxDecoration(
             border: Border.all(
               width: 1,
-              color: PeeroreumColor.primaryPuple[400]!,
+              color: PeeroreumColor.primaryPurple[400]!,
             ),
             borderRadius: BorderRadius.circular(100),
           ),
@@ -148,7 +148,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
             child: Text(
               '최신버전',
               style: TextStyle(
-                color: PeeroreumColor.primaryPuple[400],
+                color: PeeroreumColor.primaryPurple[400],
                 fontFamily: 'Pretendard',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,

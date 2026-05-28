@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumButton.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_button.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_subject_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -169,7 +169,7 @@ class _SignUpGradeState extends State<SignUpGrade> {
                 style: ButtonStyle(
                     backgroundColor: isEnabled
                         ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
+                            PeeroreumColor.primaryPurple[400])
                         : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                     padding: MaterialStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),

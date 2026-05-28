@@ -3,11 +3,11 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
@@ -361,7 +361,7 @@ class _DetailWeduState extends State<DetailWedu> {
                           height: 48,
                           width: double.maxFinite,
                           decoration: BoxDecoration(
-                              color: PeeroreumColor.primaryPuple[400],
+                              color: PeeroreumColor.primaryPurple[400],
                               borderRadius: BorderRadius.circular(8)),
                           child: const Center(
                             child: Text(
@@ -567,7 +567,7 @@ class _DetailWeduState extends State<DetailWedu> {
                   },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
+                          PeeroreumColor.primaryPurple[400]),
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -1062,7 +1062,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             percent: percent,
                             backgroundColor: PeeroreumColor.gray[200],
                             linearGradient: LinearGradient(colors: [
-                              PeeroreumColor.primaryPuple[400]!,
+                              PeeroreumColor.primaryPurple[400]!,
                               const Color(0xffada5fc)
                             ]),
                             barRadius: const Radius.circular(8),
@@ -1084,7 +1084,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color:
-                                            PeeroreumColor.primaryPuple[400]),
+                                            PeeroreumColor.primaryPurple[400]),
                                   ),
                                   const SizedBox(
                                     width: 2,
@@ -1096,7 +1096,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color:
-                                            PeeroreumColor.primaryPuple[400]),
+                                            PeeroreumColor.primaryPurple[400]),
                                   ),
                                   const SizedBox(
                                     width: 2,
@@ -1108,7 +1108,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color:
-                                            PeeroreumColor.primaryPuple[400]),
+                                            PeeroreumColor.primaryPurple[400]),
                                   ),
                                 ],
                               ),
@@ -1155,7 +1155,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                 padding:
                                     const EdgeInsets.fromLTRB(12, 2, 12, 2),
                                 decoration: BoxDecoration(
-                                    color: PeeroreumColor.primaryPuple[50],
+                                    color: PeeroreumColor.primaryPurple[50],
                                     borderRadius: BorderRadius.circular(16)),
                                 child: Center(
                                   child: Text(
@@ -1164,7 +1164,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
-                                      color: PeeroreumColor.primaryPuple[400],
+                                      color: PeeroreumColor.primaryPurple[400],
                                     ),
                                   ),
                                 ),

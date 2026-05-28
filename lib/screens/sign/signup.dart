@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -83,7 +83,7 @@ class _SignUpState extends State<SignUp> {
           },
           style: ButtonStyle(
               backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
+                  MaterialStateProperty.all(PeeroreumColor.primaryPurple[400]),
               padding:
                   MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -203,7 +203,7 @@ class _serviceTermsState extends State<serviceTerms> {
                             ),
                             borderRadius: BorderRadius.circular(4.0),
                             color: isCheckedList[0]
-                                ? PeeroreumColor.primaryPuple[400]!
+                                ? PeeroreumColor.primaryPurple[400]!
                                 : PeeroreumColor.white),
                         child: isCheckedList[0]
                             ? Center(
@@ -263,7 +263,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                 ),
                                 borderRadius: BorderRadius.circular(4.0),
                                 color: isCheckedList[1]
-                                    ? PeeroreumColor.primaryPuple[400]!
+                                    ? PeeroreumColor.primaryPurple[400]!
                                     : PeeroreumColor.white),
                             child: Center(
                               child: Icon(
@@ -326,7 +326,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                 ),
                                 borderRadius: BorderRadius.circular(4.0),
                                 color: isCheckedList[2]
-                                    ? PeeroreumColor.primaryPuple[400]!
+                                    ? PeeroreumColor.primaryPurple[400]!
                                     : PeeroreumColor.white),
                             child: Center(
                               child: Icon(
@@ -389,7 +389,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                   ),
                                   borderRadius: BorderRadius.circular(4.0),
                                   color: isCheckedList[3]
-                                      ? PeeroreumColor.primaryPuple[400]!
+                                      ? PeeroreumColor.primaryPurple[400]!
                                       : PeeroreumColor.white),
                               child: Center(
                                 child: Icon(
@@ -452,7 +452,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                   ),
                                   borderRadius: BorderRadius.circular(4.0),
                                   color: isCheckedList[4]
-                                      ? PeeroreumColor.primaryPuple[400]!
+                                      ? PeeroreumColor.primaryPurple[400]!
                                       : PeeroreumColor.white),
                               child: Center(
                                 child: Icon(
@@ -496,7 +496,7 @@ class _serviceTermsState extends State<serviceTerms> {
                     style: ButtonStyle(
                         backgroundColor: button
                             ? MaterialStateProperty.all(
-                                PeeroreumColor.primaryPuple[400])
+                                PeeroreumColor.primaryPurple[400])
                             : MaterialStateProperty.all(
                                 PeeroreumColor.gray[300]),
                         padding: MaterialStateProperty.all(

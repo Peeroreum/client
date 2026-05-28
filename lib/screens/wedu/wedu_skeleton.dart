@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SkeletonWedu extends StatefulWidget {

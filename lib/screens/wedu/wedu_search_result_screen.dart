@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_room_info_sheet.dart';
 import 'package:share_plus/share_plus.dart';
@@ -249,7 +249,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   height: 48,
                                   width: 185,
                                   decoration: BoxDecoration(
-                                    color: PeeroreumColor.primaryPuple[400],
+                                    color: PeeroreumColor.primaryPurple[400],
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
@@ -264,7 +264,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                       const SizedBox(
                                         width: 8,
                                       ),
-                                      const T4_16px(
+                                      const T4(
                                         text: '같이방 만들러 가기',
                                         color: PeeroreumColor.white,
                                       )
@@ -569,7 +569,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                         Get.back();
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: PeeroreumColor.primaryPuple[400],
+                        backgroundColor: PeeroreumColor.primaryPurple[400],
                         padding: const EdgeInsets.symmetric(
                             vertical: 12, horizontal: 16),
                         shape: RoundedRectangleBorder(

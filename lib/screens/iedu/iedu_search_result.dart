@@ -5,11 +5,11 @@ import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/data/i_edu_read.dart';
 import 'package:peeroreum_client/data/i_edu_search_history.dart';
 import 'package:peeroreum_client/data/subject.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peroreum_toast.dart';
 
 class SearchResultIedu extends StatefulWidget {
   final String keyword;
@@ -326,7 +326,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                           width: 208,
                                           decoration: BoxDecoration(
                                             color: PeeroreumColor
-                                                .primaryPuple[400],
+                                                .primaryPurple[400],
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
@@ -343,7 +343,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                               const SizedBox(
                                                 width: 8,
                                               ),
-                                              const T4_16px(
+                                              const T4(
                                                 text: '내가해냄 질문하러 가기',
                                                 color: PeeroreumColor.white,
                                               )
@@ -623,7 +623,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: 'UP',
                                           color: Color(0xFFF03A2E),
                                         ),
@@ -637,7 +637,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                   )
                                 : Container(),
                             Flexible(
-                                child: T4_16px(
+                                child: T4(
                               text: data[index]['title'],
                               overflow: TextOverflow.ellipsis,
                             )),
@@ -652,13 +652,13 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               decoration: BoxDecoration(
-                                color: PeeroreumColor.primaryPuple[200],
+                                color: PeeroreumColor.primaryPurple[200],
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '채택완료',
                                     color: PeeroreumColor.white,
                                   ),
@@ -678,7 +678,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               child: SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '미채택',
                                     color: PeeroreumColor.gray[600],
                                   ),
@@ -734,7 +734,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           width: 8,
                         ),
                         Flexible(
-                          child: B4_14px_M(
+                          child: B4m(
                             text: data[index]["memberProfileDto"]["nickname"],
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -742,7 +742,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                         const SizedBox(
                           width: 8,
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '${timeCheck(data[index]["createdTime"])} 전',
                           color: PeeroreumColor.gray[400],
                         ),
@@ -753,7 +753,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             color: PeeroreumColor.gray[600],
                           ),
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '좋아요 ${data[index]["likes"]}개',
                           color: PeeroreumColor.gray[400],
                         ),
@@ -764,7 +764,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             color: PeeroreumColor.gray[600],
                           ),
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '댓글 ${data[index]["comments"]}개',
                           color: PeeroreumColor.gray[400],
                         ),

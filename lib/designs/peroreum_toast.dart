@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 
 class PeeroreumToast {
   static OverlayEntry? _currentOverlay;
@@ -51,25 +52,17 @@ class PeeroreumToast {
                             : 'assets/icons/check_circle_fill.svg',
                         colorFilter: ColorFilter.mode(
                           isError
-                              ? Color.fromARGB(255, 251, 232, 232)
-                              : Color.fromARGB(255, 222, 245, 226),
+                              ? const Color.fromARGB(255, 251, 232, 232)
+                              : const Color.fromARGB(255, 222, 245, 226),
                           BlendMode.srcIn,
                         ),
                         width: 20,
                         height: 20,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        message,
-                        style: const TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          height: 1.5,
-                          letterSpacing: -0.35,
-                          color: PeeroreumColor.white,
-                        ),
-                        textAlign: TextAlign.center,
+                      B4m(
+                        text: message,
+                        color: PeeroreumColor.white,
                       ),
                     ],
                   ),

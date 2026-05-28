@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/data/i_edu_read.dart';
 import 'package:peeroreum_client/data/subject.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
@@ -138,7 +138,7 @@ class _HomeIeduState extends State<HomeIedu> {
           } else {
             return RefreshIndicator(
               onRefresh: () => fetchStatus(),
-              color: PeeroreumColor.primaryPuple[400],
+              color: PeeroreumColor.primaryPurple[400],
               child: SafeArea(
                 child: Container(
                   color: PeeroreumColor.white,
@@ -313,7 +313,7 @@ class _HomeIeduState extends State<HomeIedu> {
                 Get.to(() => const CreateIedu());
               },
               elevation: 5,
-              backgroundColor: PeeroreumColor.primaryPuple[400],
+              backgroundColor: PeeroreumColor.primaryPurple[400],
               child: SizedBox(
                 width: 24,
                 child: SvgPicture.asset(
@@ -796,7 +796,7 @@ class _HomeIeduState extends State<HomeIedu> {
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: 'UP',
                                           color: Color(0xFFF03A2E),
                                         ),
@@ -810,7 +810,7 @@ class _HomeIeduState extends State<HomeIedu> {
                                   )
                                 : Container(),
                             Flexible(
-                                child: T4_16px(
+                                child: T4(
                               text: data[index]['title'],
                               overflow: TextOverflow.ellipsis,
                             )),
@@ -825,13 +825,13 @@ class _HomeIeduState extends State<HomeIedu> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               decoration: BoxDecoration(
-                                color: PeeroreumColor.primaryPuple[200],
+                                color: PeeroreumColor.primaryPurple[200],
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '채택완료',
                                     color: PeeroreumColor.white,
                                   ),
@@ -851,7 +851,7 @@ class _HomeIeduState extends State<HomeIedu> {
                               child: SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '미채택',
                                     color: PeeroreumColor.gray[600],
                                   ),
@@ -907,7 +907,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           width: 8,
                         ),
                         Flexible(
-                          child: B4_14px_M(
+                          child: B4m(
                             text: data[index]["memberProfileDto"]["nickname"],
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -915,7 +915,7 @@ class _HomeIeduState extends State<HomeIedu> {
                         const SizedBox(
                           width: 8,
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '${timeCheck(data[index]["createdTime"])} 전',
                           color: PeeroreumColor.gray[400],
                         ),
@@ -926,7 +926,7 @@ class _HomeIeduState extends State<HomeIedu> {
                             color: PeeroreumColor.gray[400],
                           ),
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '좋아요 ${data[index]["likes"]}개',
                           color: PeeroreumColor.gray[400],
                         ),
@@ -937,7 +937,7 @@ class _HomeIeduState extends State<HomeIedu> {
                             color: PeeroreumColor.gray[400],
                           ),
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '댓글 ${data[index]["comments"]}개',
                           color: PeeroreumColor.gray[400],
                         ),

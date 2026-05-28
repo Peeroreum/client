@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 
-import '../../designs/PeeroreumColor.dart';
+import '../../designs/peeroreum_color.dart';
 import 'package:get/get.dart';
 
 class EncouragementList extends StatefulWidget {

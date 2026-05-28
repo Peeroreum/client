@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumButton.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_button.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/Member.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -109,7 +109,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
+                          PeeroreumColor.primaryPurple[400]),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -338,7 +338,7 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                 style: ButtonStyle(
                     backgroundColor: isEnabled
                         ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
+                            PeeroreumColor.primaryPurple[400])
                         : MaterialStateProperty.all(PeeroreumColor.gray[300]),
                     padding: MaterialStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),

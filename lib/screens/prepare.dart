@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class Prepare extends StatelessWidget {
   const Prepare({super.key});

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/data/notification_setting.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class MyPageNotification extends StatefulWidget {
   const MyPageNotification({super.key});
@@ -157,7 +157,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
           // height: 26,
           child: CupertinoSwitch(
             value: _allChecked,
-            activeColor: PeeroreumColor.primaryPuple[400],
+            activeColor: PeeroreumColor.primaryPurple[400],
             trackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
@@ -211,7 +211,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
           // height: 26,
           child: CupertinoSwitch(
             value: _weduChecked,
-            activeColor: PeeroreumColor.primaryPuple[400],
+            activeColor: PeeroreumColor.primaryPurple[400],
             trackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
@@ -263,7 +263,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
           // height: 26,
           child: CupertinoSwitch(
             value: _iduChecked,
-            activeColor: PeeroreumColor.primaryPuple[400],
+            activeColor: PeeroreumColor.primaryPurple[400],
             trackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
@@ -315,7 +315,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
           // height: 26,
           child: CupertinoSwitch(
             value: _rankChecked,
-            activeColor: PeeroreumColor.primaryPuple[400],
+            activeColor: PeeroreumColor.primaryPurple[400],
             trackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
