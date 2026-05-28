@@ -1,12 +1,29 @@
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
-/// 이미지를 크롭합니다. 취소 시 null 반환.
+/// 이미지 압축. 최대 1080px, 품질 85%.
+Future<XFile> compressImage(XFile image) async {
+  final dir = await getTemporaryDirectory();
+  final targetPath =
+      '${dir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+  final result = await FlutterImageCompress.compressAndGetFile(
+    image.path,
+    targetPath,
+    minWidth: 1080,
+    minHeight: 1080,
+    quality: 85,
+  );
+  return result != null ? XFile(result.path) : image;
+}
+
+/// 이미지 크롭. 취소 시 null 반환.
 Future<XFile?> cropImage(BuildContext context, XFile image) async {
   final cropped = await ImageCropper().cropImage(
     sourcePath: image.path,
@@ -27,7 +44,8 @@ Future<XFile?> cropImage(BuildContext context, XFile image) async {
       ),
     ],
   );
-  return cropped != null ? XFile(cropped.path) : null;
+  if (cropped == null) return null;
+  return await compressImage(XFile(cropped.path));
 }
 
 /// 커스텀 갤러리 피커를 바텀시트로 표시합니다.
@@ -140,7 +158,8 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null && mounted) {
-      Navigator.pop(context, [image]);
+      final compressed = await compressImage(image);
+      Navigator.pop(context, [compressed]);
     }
   }
 
@@ -148,7 +167,10 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
     final files = <XFile>[];
     for (final asset in _selectedPhotos) {
       final file = await asset.file;
-      if (file != null) files.add(XFile(file.path));
+      if (file != null) {
+        final compressed = await compressImage(XFile(file.path));
+        files.add(compressed);
+      }
     }
     if (mounted) Navigator.pop(context, files);
   }
