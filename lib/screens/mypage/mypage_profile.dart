@@ -13,7 +13,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
-import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';

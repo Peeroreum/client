@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/designs/peroreum_toast.dart';
 
 class MyPageAccountPS extends StatefulWidget {

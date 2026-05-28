@@ -11,14 +11,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:peeroreum_client/model/MemberInfo.dart';
-import 'package:peeroreum_client/model/SignIn.dart';
+import 'package:peeroreum_client/model/member_info.dart';
+import 'package:peeroreum_client/model/sign_in.dart';
 import 'package:peeroreum_client/screens/sign/password_change/email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../../model/Member.dart';
+import '../../model/member.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
 
 class EmailSignIn extends StatefulWidget {

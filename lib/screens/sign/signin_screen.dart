@@ -6,7 +6,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:dio/dio.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
 import 'package:peeroreum_client/data/pending_deep_link.dart';

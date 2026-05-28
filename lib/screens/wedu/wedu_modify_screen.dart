@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:textfield_tags/textfield_tags.dart';
-import 'package:peeroreum_client/model/Wedu.dart';
+import 'package:peeroreum_client/model/wedu.dart';
 
 class ModifyWedu extends StatefulWidget {
   ModifyWedu(

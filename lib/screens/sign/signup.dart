@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 

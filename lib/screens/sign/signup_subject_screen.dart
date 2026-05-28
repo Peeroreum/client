@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:peeroreum_client/designs/peroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/data/subject.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:peeroreum_client/api/ApiClient.dart';

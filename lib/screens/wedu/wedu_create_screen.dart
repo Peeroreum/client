@@ -10,7 +10,7 @@ import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:textfield_tags/textfield_tags.dart';
-import 'package:peeroreum_client/model/Wedu.dart';
+import 'package:peeroreum_client/model/wedu.dart';
 import 'package:get/get.dart';
 
 DateTime date = DateTime.now().add(const Duration(days: 66));

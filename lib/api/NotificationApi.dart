@@ -1,5 +1,5 @@
 import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/model/NotificationRequest.dart';
+import 'package:peeroreum_client/model/notification_request.dart';
 
 class NotificationApi {
   static sendCompliment(
