@@ -47,10 +47,11 @@ class _MyPageVersionState extends State<MyPageVersion> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
-      title: Text(
+      title: const Text(
         "버전정보",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -69,7 +70,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
@@ -78,7 +79,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
               ),
             ),
             child: packageInfo != null
-                ? peer_version()
+                ? peerVersion()
                 : Center(
                     child: CircularProgressIndicator(
                         color: PeeroreumColor.primaryPurple[400])),
@@ -88,7 +89,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
     );
   }
 
-  Widget peer_version() {
+  Widget peerVersion() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -99,16 +100,16 @@ class _MyPageVersionState extends State<MyPageVersion> {
               width: 48,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14.4),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                       image: AssetImage('assets/images/peeroreum_logo.png'))),
             ),
-            SizedBox(
+            const SizedBox(
               width: 16,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   '피어오름',
                   style: TextStyle(
                     color: PeeroreumColor.black,
@@ -117,7 +118,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Text(
@@ -132,7 +133,7 @@ class _MyPageVersionState extends State<MyPageVersion> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           width: 16,
         ),
         Container(

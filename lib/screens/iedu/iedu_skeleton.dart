@@ -32,9 +32,8 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(20, 16, 20, 16),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
                   child: Row(
-                    //드롭다운
                     children: [
                       Container(
                         width: 71,
@@ -43,7 +42,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[200]),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Container(
@@ -53,7 +52,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[200]),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Container(
@@ -69,7 +68,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                 Expanded(
                   child: ListView.separated(
                     shrinkWrap: true,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     separatorBuilder: (BuildContext context, int index) {
                       return Container(
                         height: 8,
@@ -78,8 +77,8 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                     itemCount: 6,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 20),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border:
@@ -95,7 +94,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                                       borderRadius: BorderRadius.circular(8),
                                       color: PeeroreumColor.gray[200]),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 Container(
                                   width: 42,
                                   height: 20,
@@ -105,7 +104,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 12,
                             ),
                             Row(
@@ -118,7 +117,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                                     color: PeeroreumColor.gray[200],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 8,
                                 ),
                                 Container(
@@ -128,7 +127,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                                       borderRadius: BorderRadius.circular(8),
                                       color: PeeroreumColor.gray[200]),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 8,
                                 ),
                                 Container(
@@ -151,7 +150,7 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 20, 10),
               child: FloatingActionButton(
-                shape: CircleBorder(),
+                shape: const CircleBorder(),
                 onPressed: () {},
                 elevation: 5,
                 backgroundColor: PeeroreumColor.primaryPurple[400],
@@ -159,7 +158,8 @@ class _SkeletonIeduState extends State<SkeletonIedu> {
                   width: 24,
                   child: SvgPicture.asset(
                     'assets/icons/pencil_with_line.svg',
-                    color: PeeroreumColor.white,
+                    colorFilter: const ColorFilter.mode(
+                        PeeroreumColor.white, BlendMode.srcIn),
                   ),
                 ),
               ),

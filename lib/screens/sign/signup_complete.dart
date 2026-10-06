@@ -4,12 +4,14 @@ import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class SignUpComplete extends StatefulWidget {
+  const SignUpComplete({super.key});
+
   @override
   State<SignUpComplete> createState() => _SignUpCompleteState();
 }
 
 class _SignUpCompleteState extends State<SignUpComplete> {
-  var nickname;
+  String? nickname;
   @override
   void initState() {
     super.initState();
@@ -37,20 +39,20 @@ class _SignUpCompleteState extends State<SignUpComplete> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 40),
+                  margin: const EdgeInsets.only(top: 40),
                   width: 320,
                   height: 320,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage('assets/images/signup_complete.png')),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 79,
                 ),
                 Text(
                   '$nickname님, 가입을 환영해요!',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -72,31 +74,31 @@ class _SignUpCompleteState extends State<SignUpComplete> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          margin: EdgeInsets.fromLTRB(20, 0, 20, 30),
+          margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
           width: double.maxFinite,
           height: 48,
           child: TextButton(
             onPressed: () {
               Get.offAllNamed('/home');
             },
-            child: Text(
+            style: ButtonStyle(
+              backgroundColor:
+                  WidgetStateProperty.all(PeeroreumColor.primaryPurple[400]),
+              padding:
+                  WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 12)),
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+            child: const Text(
               '피어오름 사용하러 가기',
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: PeeroreumColor.white,
-              ),
-            ),
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPurple[400]),
-              padding:
-                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
               ),
             ),
           ),

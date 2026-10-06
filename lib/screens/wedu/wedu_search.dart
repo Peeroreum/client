@@ -1,25 +1,26 @@
-// ignore_for_file: prefer_const_constructors, camel_case_types, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_search_result_screen.dart';
 
 import '../../data/wedu_search_history.dart';
 
-class searchWedu extends StatefulWidget {
-  const searchWedu({super.key});
+class SearchWedu extends StatefulWidget {
+  const SearchWedu({super.key});
 
   @override
-  State<searchWedu> createState() => _searchWeduState();
+  State<SearchWedu> createState() => _SearchWeduState();
 }
 
-class _searchWeduState extends State<searchWedu> {
+class _SearchWeduState extends State<SearchWedu> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, String>> _searchHistory = [];
 
+  @override
   void initState() {
     super.initState();
     _loadSearchHistory();
@@ -45,7 +46,7 @@ class _searchWeduState extends State<searchWedu> {
     _loadSearchHistory();
   }
 
-  bool search_clear = false;
+  bool searchClear = false;
 
   PreferredSizeWidget appbarWidget() {
     return AppBar(
@@ -58,7 +59,7 @@ class _searchWeduState extends State<searchWedu> {
           // iconSize: 24,
           icon: SvgPicture.asset(
             'assets/icons/arrow-left.svg',
-            color: PeeroreumColor.gray[800],
+            colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
           ),
           onPressed: () {
             Get.back();
@@ -70,9 +71,9 @@ class _searchWeduState extends State<searchWedu> {
           child: SearchBar(
             controller: _searchController,
             onTap: () {
-              if (_searchController.text.length > 0) {
+              if (_searchController.text.isNotEmpty) {
                 setState(() {
-                  search_clear = true;
+                  searchClear = true;
                 });
               }
             },
@@ -85,38 +86,38 @@ class _searchWeduState extends State<searchWedu> {
               }
             },
             onChanged: (value) {
-              if (value.length > 0) {
+              if (value.isNotEmpty) {
                 setState(() {
-                  search_clear = true;
+                  searchClear = true;
                 });
               } else {
                 setState(() {
-                  search_clear = false;
+                  searchClear = false;
                 });
               }
             },
             backgroundColor:
-                MaterialStateProperty.all(PeeroreumColor.gray[100]),
-            elevation: MaterialStateProperty.all(0),
+                WidgetStateProperty.all(PeeroreumColor.gray[100]),
+            elevation: WidgetStateProperty.all(0),
             constraints: BoxConstraints(minHeight: 40),
             hintText: '같이방에서 함께 공부해요!',
-            hintStyle: MaterialStateProperty.all(TextStyle(
+            hintStyle: WidgetStateProperty.all(TextStyle(
                 color: PeeroreumColor.gray[600],
                 fontFamily: 'Pretendard',
                 fontSize: 14,
                 fontWeight: FontWeight.w400)),
             trailing: [
-              search_clear
+              searchClear
                   ? GestureDetector(
                       onTap: () {
                         _searchController.clear();
                         setState(() {
-                          search_clear = false;
+                          searchClear = false;
                         });
                       },
                       child: SvgPicture.asset(
                         'assets/icons/x_circle.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ))
                   : Container(),
               SizedBox(
@@ -133,7 +134,7 @@ class _searchWeduState extends State<searchWedu> {
                 },
                 child: SvgPicture.asset(
                   'assets/icons/search.svg',
-                  color: Colors.grey[600],
+                  colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
                 ),
               ),
               SizedBox(
@@ -313,7 +314,7 @@ class _searchWeduState extends State<searchWedu> {
                               },
                               child: SvgPicture.asset(
                                 'assets/icons/x.svg',
-                                color: PeeroreumColor.gray[800],
+                                colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                               ),
                             )
                           ],
@@ -341,7 +342,7 @@ class _searchWeduState extends State<searchWedu> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
-          search_clear = false;
+          searchClear = false;
         });
       },
       child: Scaffold(

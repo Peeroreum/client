@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/alert/alert_controller.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 
 class Alert extends GetView<AlertController> {
   Alert({super.key});
+
   final AlertController alertController = Get.put(AlertController());
 
   @override
@@ -33,10 +35,11 @@ class Alert extends GetView<AlertController> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
-      title: Text(
+      title: const Text(
         "알림",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -72,7 +75,7 @@ class Alert extends GetView<AlertController> {
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
-                tabs: [
+                tabs: const [
                   Tab(
                     text: '활동 알림',
                   ),
@@ -86,7 +89,7 @@ class Alert extends GetView<AlertController> {
             ),
             Expanded(
               child: TabBarView(children: [
-                Obx(() => alertController.activity_alerts.isNotEmpty
+                Obx(() => alertController.activityAlerts.isNotEmpty
                     ? activities()
                     : Center(
                         child: Text(
@@ -97,7 +100,7 @@ class Alert extends GetView<AlertController> {
                             fontSize: 16,
                             color: PeeroreumColor.gray[600]),
                       ))),
-                Obx(() => alertController.service_alert.isNotEmpty
+                Obx(() => alertController.serviceAlert.isNotEmpty
                     ? services()
                     : Center(
                         child: Text(
@@ -117,17 +120,19 @@ class Alert extends GetView<AlertController> {
   }
 
   Widget buildAlertListView(List<AlertModel> alerts) {
-    print(alerts);
+    if (kDebugMode) {
+      print(alerts);
+    }
     return ListView.separated(
       itemCount: alerts.length,
-      separatorBuilder: (context, index) => const Divider(), // 구분선 추가
+      separatorBuilder: (context, index) => const Divider(),
       itemBuilder: (context, index) {
         final alert = alerts[index];
         return AlertListView(
           title: alert.title!,
-          body: alert.body!, // AlertModel에서 적절한 필드 사용
+          body: alert.body!,
           type: alert.type!,
-          timeago: alert.timeago!, // AlertModel에서 적절한 필드 사용
+          timeAgo: alert.timeago!,
         );
       },
     );
@@ -135,13 +140,13 @@ class Alert extends GetView<AlertController> {
 
   Widget activities() {
     return Obx(() {
-      return buildAlertListView(alertController.activity_alerts);
+      return buildAlertListView(alertController.activityAlerts);
     });
   }
 
   Widget services() {
     return Obx(() {
-      return buildAlertListView(alertController.service_alert);
+      return buildAlertListView(alertController.serviceAlert);
     });
   }
 }
@@ -150,13 +155,13 @@ class AlertListView extends StatelessWidget {
   final String title;
   final String body;
   final String type;
-  final String timeago;
+  final String timeAgo;
 
   const AlertListView(
       {required this.title,
       required this.body,
       required this.type,
-      required this.timeago,
+      required this.timeAgo,
       super.key});
 
   @override
@@ -172,10 +177,10 @@ class AlertListView extends StatelessWidget {
             children: [
               C1m(text: title, color: PeeroreumColor.gray[600]),
               const Spacer(),
-              C1m(text: timeago, color: PeeroreumColor.gray[600])
+              C1m(text: timeAgo, color: PeeroreumColor.gray[600])
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           B4r(text: body),

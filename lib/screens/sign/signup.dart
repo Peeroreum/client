@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -9,16 +7,22 @@ import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignUp extends StatefulWidget {
-  Member member;
-  SignUp(this.member);
+  final Member member;
+
+  const SignUp(this.member, {super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState(member);
+  State<SignUp> createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
-  Member member;
-  _SignUpState(this.member);
+  late Member member;
+
+  @override
+  void initState() {
+    super.initState();
+    member = widget.member;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +35,10 @@ class _SignUpState extends State<SignUp> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Image.asset("assets/images/signup_ready.png"),
-              SizedBox(
+              const SizedBox(
                 height: 80,
               ),
-              Text(
+              const Text(
                 '안녕하세요, 오르미예요!',
                 style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -42,7 +46,7 @@ class _SignUpState extends State<SignUp> {
                     fontWeight: FontWeight.w600,
                     color: PeeroreumColor.black),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               Text(
@@ -66,7 +70,7 @@ class _SignUpState extends State<SignUp> {
       color: PeeroreumColor.white,
       padding: MediaQuery.of(context).viewInsets.bottom > 0
           ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
-          : EdgeInsets.fromLTRB(20, 8, 20, 28),
+          : const EdgeInsets.fromLTRB(20, 8, 20, 28),
       width: MediaQuery.of(context).size.width,
       child: SizedBox(
         height: 48,
@@ -77,22 +81,22 @@ class _SignUpState extends State<SignUp> {
               context: context,
               isScrollControlled: true,
               builder: (context) {
-                return serviceTerms(member);
+                return ServiceTerms(member);
               },
             );
           },
           style: ButtonStyle(
               backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPurple[400]),
-              padding:
-                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  WidgetStateProperty.all(PeeroreumColor.primaryPurple[400]),
+              padding: WidgetStateProperty.all(
+                  const EdgeInsets.symmetric(vertical: 12)),
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                 borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
                     ? BorderRadius.zero
                     : BorderRadius.circular(8.0),
               ))),
-          child: Text(
+          child: const Text(
             '다음',
             style: TextStyle(
                 fontFamily: 'Pretendard',
@@ -106,24 +110,31 @@ class _SignUpState extends State<SignUp> {
   }
 }
 
-class serviceTerms extends StatefulWidget {
-  Member member;
-  serviceTerms(this.member);
+class ServiceTerms extends StatefulWidget {
+  final Member member;
+
+  const ServiceTerms(this.member, {super.key});
 
   @override
-  State<serviceTerms> createState() => _serviceTermsState(member);
+  State<ServiceTerms> createState() => _ServiceTermsState();
 }
 
-class _serviceTermsState extends State<serviceTerms> {
-  Member member;
-  _serviceTermsState(this.member);
+class _ServiceTermsState extends State<ServiceTerms> {
+  late Member member;
+
+  @override
+  void initState() {
+    super.initState();
+    member = widget.member;
+  }
 
   bool button = false; //다음 button
 
   List<bool> isCheckedList = [false, false, false, false, false];
+
   // 약관 전체 동의 // 만 14세 이상입니다. // 이용약관 동의 // 개인정보 동의 // 이벤트마케팅동의 (선택)
 
-  void Check() {
+  void check() {
     if (isCheckedList[1] == isCheckedList[2] &&
         isCheckedList[2] == isCheckedList[3] &&
         isCheckedList[3] == isCheckedList[4]) {
@@ -148,8 +159,8 @@ class _serviceTermsState extends State<serviceTerms> {
   Widget serviceTerms() {
     return Container(
       width: double.maxFinite,
-      decoration: BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+      decoration: const BoxDecoration(
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -157,14 +168,14 @@ class _serviceTermsState extends State<serviceTerms> {
       ),
       child: SafeArea(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20, 16, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.fromLTRB(0, 24, 0, 16),
-                child: Text(
+                padding: const EdgeInsets.fromLTRB(0, 24, 0, 16),
+                child: const Text(
                   '피어오름 서비스 약관에 동의해 주세요.',
                   textAlign: TextAlign.start,
                   style: TextStyle(
@@ -177,7 +188,7 @@ class _serviceTermsState extends State<serviceTerms> {
               ),
               Container(
                 //약관 전체 동의
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Row(
                   children: [
                     InkWell(
@@ -190,7 +201,7 @@ class _serviceTermsState extends State<serviceTerms> {
                           } else if (isCheckedList[0] == false) {
                             isCheckedList = [false, false, false, false, false];
                           }
-                          Check();
+                          check();
                         });
                       },
                       child: Container(
@@ -206,7 +217,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                 ? PeeroreumColor.primaryPurple[400]!
                                 : PeeroreumColor.white),
                         child: isCheckedList[0]
-                            ? Center(
+                            ? const Center(
                                 child: Icon(
                                   Icons.check,
                                   color: Colors.white,
@@ -216,7 +227,7 @@ class _serviceTermsState extends State<serviceTerms> {
                             : null,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 8,
                     ),
                     Text(
@@ -234,14 +245,12 @@ class _serviceTermsState extends State<serviceTerms> {
                 ),
               ),
               Container(
-                //devider
-                // margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                 color: PeeroreumColor.gray[200],
                 height: 1,
               ),
               Container(
                 //만 14세 이상입니다.
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
                     Row(
@@ -250,7 +259,7 @@ class _serviceTermsState extends State<serviceTerms> {
                           onTap: () {
                             setState(() {
                               isCheckedList[1] = !isCheckedList[1];
-                              Check();
+                              check();
                             });
                           },
                           child: Container(
@@ -265,7 +274,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                 color: isCheckedList[1]
                                     ? PeeroreumColor.primaryPurple[400]!
                                     : PeeroreumColor.white),
-                            child: Center(
+                            child: const Center(
                               child: Icon(
                                 Icons.check,
                                 color: Colors.white,
@@ -274,7 +283,7 @@ class _serviceTermsState extends State<serviceTerms> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         Text(
@@ -288,7 +297,7 @@ class _serviceTermsState extends State<serviceTerms> {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     GestureDetector(
                       onTap: () {
                         launchUrl(Uri.parse(
@@ -296,7 +305,8 @@ class _serviceTermsState extends State<serviceTerms> {
                       },
                       child: SvgPicture.asset(
                         "assets/icons/right.svg",
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                     ),
                   ],
@@ -304,7 +314,7 @@ class _serviceTermsState extends State<serviceTerms> {
               ),
               Container(
                 //이용약관 동의
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
                     Row(
@@ -313,7 +323,7 @@ class _serviceTermsState extends State<serviceTerms> {
                           onTap: () {
                             setState(() {
                               isCheckedList[2] = !isCheckedList[2];
-                              Check();
+                              check();
                             });
                           },
                           child: Container(
@@ -328,7 +338,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                 color: isCheckedList[2]
                                     ? PeeroreumColor.primaryPurple[400]!
                                     : PeeroreumColor.white),
-                            child: Center(
+                            child: const Center(
                               child: Icon(
                                 Icons.check,
                                 color: Colors.white,
@@ -337,7 +347,7 @@ class _serviceTermsState extends State<serviceTerms> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         Text(
@@ -351,7 +361,7 @@ class _serviceTermsState extends State<serviceTerms> {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     GestureDetector(
                       onTap: () {
                         launchUrl(Uri.parse(
@@ -359,7 +369,8 @@ class _serviceTermsState extends State<serviceTerms> {
                       },
                       child: SvgPicture.asset(
                         "assets/icons/right.svg",
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                     ),
                   ],
@@ -367,7 +378,7 @@ class _serviceTermsState extends State<serviceTerms> {
               ),
               Container(
                 //개인정보 수집 및 이용 동의
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
                     Row(
@@ -376,7 +387,7 @@ class _serviceTermsState extends State<serviceTerms> {
                           onTap: () {
                             setState(() {
                               isCheckedList[3] = !isCheckedList[3];
-                              Check();
+                              check();
                             });
                           },
                           child: Container(
@@ -391,7 +402,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                   color: isCheckedList[3]
                                       ? PeeroreumColor.primaryPurple[400]!
                                       : PeeroreumColor.white),
-                              child: Center(
+                              child: const Center(
                                 child: Icon(
                                   Icons.check,
                                   color: Colors.white,
@@ -399,7 +410,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                 ),
                               )),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         Text(
@@ -413,7 +424,7 @@ class _serviceTermsState extends State<serviceTerms> {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     GestureDetector(
                       onTap: () {
                         launchUrl(Uri.parse(
@@ -421,7 +432,8 @@ class _serviceTermsState extends State<serviceTerms> {
                       },
                       child: SvgPicture.asset(
                         "assets/icons/right.svg",
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                     ),
                   ],
@@ -429,7 +441,7 @@ class _serviceTermsState extends State<serviceTerms> {
               ),
               Container(
                 //(선택) 이벤트, 마케팅 및 혜택 알림 동의
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
                     Row(
@@ -439,7 +451,7 @@ class _serviceTermsState extends State<serviceTerms> {
                             // 전체 동의 로직
                             setState(() {
                               isCheckedList[4] = !isCheckedList[4];
-                              Check();
+                              check();
                             });
                           },
                           child: Container(
@@ -454,7 +466,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                   color: isCheckedList[4]
                                       ? PeeroreumColor.primaryPurple[400]!
                                       : PeeroreumColor.white),
-                              child: Center(
+                              child: const Center(
                                 child: Icon(
                                   Icons.check,
                                   color: Colors.white,
@@ -462,7 +474,7 @@ class _serviceTermsState extends State<serviceTerms> {
                                 ),
                               )),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         Text(
@@ -476,13 +488,13 @@ class _serviceTermsState extends State<serviceTerms> {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                   ],
                 ),
               ),
               Container(
                 color: PeeroreumColor.white,
-                margin: EdgeInsets.fromLTRB(0, 28, 0, 8),
+                margin: const EdgeInsets.fromLTRB(0, 28, 0, 8),
                 width: MediaQuery.of(context).size.width,
                 child: SizedBox(
                   height: 48,
@@ -495,21 +507,19 @@ class _serviceTermsState extends State<serviceTerms> {
                         : null,
                     style: ButtonStyle(
                         backgroundColor: button
-                            ? MaterialStateProperty.all(
+                            ? WidgetStateProperty.all(
                                 PeeroreumColor.primaryPurple[400])
-                            : MaterialStateProperty.all(
-                                PeeroreumColor.gray[300]),
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 12)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
+                            : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                        padding: WidgetStateProperty.all(
+                            const EdgeInsets.symmetric(vertical: 12)),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
                           borderRadius:
                               MediaQuery.of(context).viewInsets.bottom > 0
                                   ? BorderRadius.zero
                                   : BorderRadius.circular(8.0),
                         ))),
-                    child: Text(
+                    child: const Text(
                       '다음',
                       style: TextStyle(
                           fontFamily: 'Pretendard',

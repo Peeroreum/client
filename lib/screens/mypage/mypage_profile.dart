@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/model/member.dart';
@@ -21,20 +21,18 @@ import 'package:peeroreum_client/screens/mypage/profile_friend/mypage_profile_fr
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MyPageProfile extends StatefulWidget {
-  String nickname;
-  bool amI;
+  final String nickname;
+  final bool amI;
 
-  MyPageProfile(this.nickname, this.amI, {super.key});
+  const MyPageProfile(this.nickname, this.amI, {super.key});
 
   @override
-  State<MyPageProfile> createState() => _MyPageProfileState(nickname, amI);
+  State<MyPageProfile> createState() => _MyPageProfileState();
 }
 
 class _MyPageProfileState extends State<MyPageProfile> {
-  String nickname;
-  bool amI;
-
-  _MyPageProfileState(this.nickname, this.amI);
+  late String nickname;
+  late bool amI;
 
   FlutterSecureStorage storage = const FlutterSecureStorage();
   final nicknameController = TextEditingController();
@@ -61,12 +59,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
   ];
   bool isFriend = false;
   List<dynamic> badges = [];
-  var grade;
-  var profileImage;
-  var backgroundImage;
-  var followerNumber;
-  var followingNumber;
-  var withPeerDay;
+  String? grade;
+  String? profileImage;
+  String? backgroundImage;
+  int followerNumber = 0;
+  int followingNumber = 0;
+  int withPeerDay = 0;
   Member member = Member();
   final changeNicknameController = TextEditingController();
   final GlobalKey _shareButtonKey = GlobalKey();
@@ -74,6 +72,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
   @override
   void initState() {
     super.initState();
+    nickname = widget.nickname;
+    amI = widget.amI;
     fetchData();
   }
 
@@ -83,10 +83,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (inWeduResult.statusCode == 200) {
         inRoomData = inWeduResult.data['data'];
       } else {
-        print("내같이방 에러 ${inWeduResult.statusCode}");
+        if (kDebugMode) {
+          print("내 같이방 에러 ${inWeduResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
 
     try {
@@ -103,20 +107,24 @@ class _MyPageProfileState extends State<MyPageProfile> {
         withPeerDay = data['activeDaysCount'];
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
-  profileImageAPI(var _image) async {
-    var image = await dio.MultipartFile.fromFile(_image!.path);
-    var imageMap = <String, dynamic>{'profileImage': image};
+  profileImageAPI(var image) async {
+    var image0 = await dio.MultipartFile.fromFile(image!.path);
+    var imageMap = <String, dynamic>{'profileImage': image0};
     dio.FormData imageData = dio.FormData.fromMap(imageMap);
 
     try {
       var profileChange =
           await ApiClient().putForm('/member/change/profileImage', imageData);
       if (profileChange.statusCode == 200) {
-        print("프로필이미지 성공 ${profileChange.statusMessage}");
+        if (kDebugMode) {
+          print("프로필 이미지 성공 ${profileChange.statusMessage}");
+        }
         var data = profileChange.data['data'];
         setState(() {
           profileImage = data;
@@ -124,12 +132,17 @@ class _MyPageProfileState extends State<MyPageProfile> {
         if (amI) {
           await storage.write(key: 'profileImage', value: profileImage);
         }
+        if (!mounted) return;
         PeeroreumToast.show(context, "프로필 이미지가 변경되었어요.");
       } else {
-        print("프로필이미지 ${profileChange.statusMessage}");
+        if (kDebugMode) {
+          print("프로필 이미지 ${profileChange.statusMessage}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -137,12 +150,17 @@ class _MyPageProfileState extends State<MyPageProfile> {
     try {
       var result = await ApiClient().put('/member/delete/profileImage');
       if (result.statusCode == 200) {
-        setState(() { profileImage = null; });
+        setState(() {
+          profileImage = null;
+        });
         await storage.delete(key: 'profileImage');
+        if (!mounted) return;
         PeeroreumToast.show(context, "프로필 이미지가 삭제되었어요.");
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -150,34 +168,46 @@ class _MyPageProfileState extends State<MyPageProfile> {
     try {
       var result = await ApiClient().put('/member/delete/backgroundImage');
       if (result.statusCode == 200) {
-        setState(() { backgroundImage = null; });
+        setState(() {
+          backgroundImage = null;
+        });
+        if (!mounted) return;
         PeeroreumToast.show(context, "배경 이미지가 삭제되었어요.");
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
-  backgroundImageAPI(var _image1) async {
-    var image1 = await dio.MultipartFile.fromFile(_image1!.path);
-    var imageMap1 = <String, dynamic>{'profileImage': image1};
+  backgroundImageAPI(var image) async {
+    var image0 = await dio.MultipartFile.fromFile(image!.path);
+    var imageMap1 = <String, dynamic>{'profileImage': image0};
     dio.FormData imageData = dio.FormData.fromMap(imageMap1);
 
     try {
       var backgroundChange = await ApiClient()
           .putForm('/member/change/backgroundImage', imageData);
       if (backgroundChange.statusCode == 200) {
-        print("배경이미지 성공 ${backgroundChange.statusMessage}");
+        if (kDebugMode) {
+          print("배경 이미지 성공 ${backgroundChange.statusMessage}");
+        }
         var data = backgroundChange.data['data'];
         setState(() {
           backgroundImage = data;
         });
+        if (!mounted) return;
         PeeroreumToast.show(context, "배경 이미지가 변경되었어요.");
       } else {
-        print("배경이미지 ${backgroundChange.statusMessage}");
+        if (kDebugMode) {
+          print("배경 이미지 ${backgroundChange.statusMessage}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -193,13 +223,18 @@ class _MyPageProfileState extends State<MyPageProfile> {
         if (amI) {
           await storage.write(key: 'nickname', value: nickname);
         }
+        if (!mounted) return;
         Get.back();
         PeeroreumToast.show(context, "닉네임이 변경되었어요.");
       } else {
-        print("닉네임변경 에러${changeMyNickname.statusCode}");
+        if (kDebugMode) {
+          print("닉네임변경 에러${changeMyNickname.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -207,6 +242,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     try {
       var friendName =
           await ApiClient().post('/member/friend/follow?nickname=$nickname');
+      if (!mounted) return;
       if (friendName.statusCode == 200) {
         setState(() {
           isFriend = true;
@@ -222,9 +258,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
         setState(() {
           isFriend = false;
         });
-        print("친구팔로 에러${friendName.statusCode}");
+        if (kDebugMode) {
+          print("친구팔로 에러${friendName.statusCode}");
+        }
       }
     } catch (e) {
+      if (!mounted) return;
       PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
     }
     setState(() {});
@@ -234,6 +273,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     try {
       var friendName = await ApiClient()
           .delete('/member/friend/unfollow?nickname=$nickname');
+      if (!mounted) return;
       if (friendName.statusCode == 200) {
         setState(() {
           isFriend = false;
@@ -244,10 +284,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
         setState(() {
           isFriend = true;
         });
-        print("친구언팔 에러${friendName.statusCode}");
+        if (kDebugMode) {
+          print("친구언팔 에러${friendName.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
       setState(() {
         isFriend = true;
       });
@@ -258,6 +302,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     try {
       var friendName = await ApiClient()
           .get('/member/profile?nickname=${nicknameController.text}');
+      if (!mounted) return;
       if (friendName.statusCode == 200) {
         //check_friend(nickname_controller.text);
         if (nicknameController.text == nickname) {
@@ -274,10 +319,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
       } else if (friendName.statusCode == 404) {
         PeeroreumToast.show(context, "존재하지 않는 회원이에요.");
       } else {
-        print("친구찾기 에러${friendName.statusCode}");
+        if (kDebugMode) {
+          print("친구찾기 에러${friendName.statusCode}");
+        }
       }
     } catch (e) {
-      print("Unexpected error: $e");
+      if (kDebugMode) {
+        print("Unexpected error: $e");
+      }
     }
   }
 
@@ -292,10 +341,14 @@ class _MyPageProfileState extends State<MyPageProfile> {
         setState(() {
           isFriend = false;
         });
-        print("친구체크 에러${myFriend.statusCode}");
+        if (kDebugMode) {
+          print("친구체크 에러${myFriend.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
       setState(() {
         isFriend = false;
       });
@@ -312,7 +365,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container(color: PeeroreumColor.white);
             } else if (snapshot.hasError) {
-              // 에러 발생 시
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
               return bodyWidget();
@@ -330,7 +382,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
         onPressed: () {
           Get.back();
@@ -359,7 +412,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   margin: const EdgeInsets.only(right: 4),
                   constraints: const BoxConstraints(),
                   child: SvgPicture.asset('assets/icons/search.svg',
-                      color: PeeroreumColor.black),
+                      colorFilter: const ColorFilter.mode(
+                          PeeroreumColor.black, BlendMode.srcIn)),
                 ),
                 onTap: () {
                   showSearchFriendDialog();
@@ -376,7 +430,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     'assets/icons/icon_dots_mono.svg',
                     height: 24,
                     width: 24,
-                    color: PeeroreumColor.black,
+                    colorFilter: const ColorFilter.mode(
+                        PeeroreumColor.black, BlendMode.srcIn),
                   ),
                 ),
                 onTap: () {
@@ -454,7 +509,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   Get.back();
                   await deleteProfileImageAPI();
                 },
-                child: SizedBox(
+                child: const SizedBox(
                   height: 56,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -486,8 +541,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
               splashColor: Colors.transparent,
               highlightColor: PeeroreumColor.gray[100],
               onTap: () async {
-                final selected = await showCustomImagePicker(context, multiple: false);
+                final selected =
+                    await showCustomImagePicker(context, multiple: false);
                 if (selected == null || selected.isEmpty) return;
+                if (!mounted) return;
                 final cropped = await cropImage(context, selected.first);
                 if (cropped != null) {
                   backgroundImageAPI(cropped);
@@ -512,7 +569,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   Get.back();
                   await deleteBackgroundImageAPI();
                 },
-                child: SizedBox(
+                child: const SizedBox(
                   height: 56,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -563,9 +620,13 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        final selected = await showCustomImagePicker(context, multiple: false);
+                        final selected = await showCustomImagePicker(context,
+                            multiple: false);
                         if (selected == null || selected.isEmpty) return;
-                        final cropped = await cropImage(context, selected.first);
+                        if (!mounted) return;
+                        final cropped = await cropImage(
+                            context, // ignore: use_build_context_synchronously
+                            selected.first);
                         if (cropped != null) {
                           setState(() {
                             image = cropped;
@@ -599,7 +660,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                         //fit: BoxFit.cover,
                                       )
                                     : DecorationImage(
-                                        image: NetworkImage(profileImage),
+                                        image: NetworkImage(profileImage!),
                                         //fit: BoxFit.cover,
                                       ))
                                 : (image != null
@@ -644,7 +705,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 12, horizontal: 16),
                               shape: RoundedRectangleBorder(
-                                // 모양
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
@@ -725,7 +785,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   });
                 }
               } catch (e) {
-                print("Unexpected error: $e");
+                if (kDebugMode) {
+                  print("Unexpected error: $e");
+                }
               }
             }
 
@@ -784,8 +846,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                             }
                           },
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(
-                                r'[a-z|A-Z|0-9|_|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ]'))
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9_ㄱ-ㅎㅏ-ㅣ가-힣ᆞᆢㆍᄀ-ᄒ]'))
                           ],
                           decoration: InputDecoration(
                             hintText: '닉네임은 30일마다 1회만 변경 가능해요.',
@@ -945,8 +1007,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
               splashColor: Colors.transparent,
               highlightColor: PeeroreumColor.gray[100],
               onTap: () {
-                Get.to(() =>
-                    Report(data: "[프로필] 유저 신고\n" + "유저 아이디 : $nickname\n"));
+                Get.to(
+                    () => Report(data: "[프로필] 유저 신고\n" "유저 아이디 : $nickname\n"));
               },
               child: SizedBox(
                 height: 56,
@@ -1037,7 +1099,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
-                            // 모양
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -1123,8 +1184,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
           ? BoxDecoration(
               image: DecorationImage(
                 colorFilter: ColorFilter.mode(
-                    PeeroreumColor.black.withOpacity(0.2), BlendMode.darken),
-                image: NetworkImage(backgroundImage),
+                    PeeroreumColor.black.withValues(alpha: 0.2),
+                    BlendMode.darken),
+                image: NetworkImage(backgroundImage!),
                 fit: BoxFit.cover,
               ),
               borderRadius: const BorderRadius.all(Radius.circular(16)))
@@ -1132,7 +1194,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
               color: PeeroreumColor.gray[200],
               borderRadius: const BorderRadius.all(Radius.circular(16))),
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -1156,18 +1217,16 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         fontWeight: FontWeight.w500),
                   ),
                   Container(width: 2),
-                  withPeerDay == null
-                      ? Container()
-                      : Text(
-                          "$withPeerDay",
-                          style: TextStyle(
-                              color: backgroundImage != null
-                                  ? PeeroreumColor.white
-                                  : PeeroreumColor.black,
-                              fontFamily: 'Pretendard',
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500),
-                        ),
+                  Text(
+                    "$withPeerDay",
+                    style: TextStyle(
+                        color: backgroundImage != null
+                            ? PeeroreumColor.white
+                            : PeeroreumColor.black,
+                        fontFamily: 'Pretendard',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
                 ],
               ),
               const SizedBox(
@@ -1191,7 +1250,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       shape: BoxShape.circle,
                       border: Border.all(
                         width: 2,
-                        color: PeeroreumColor.white.withOpacity(0.0),
+                        color: PeeroreumColor.white.withValues(alpha: 0.0),
                       )),
                   child: Container(
                     height: 80,
@@ -1200,7 +1259,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       shape: BoxShape.circle,
                       image: profileImage != null
                           ? DecorationImage(
-                              image: NetworkImage(profileImage),
+                              image: NetworkImage(profileImage!),
                               fit: BoxFit.cover)
                           : const DecorationImage(
                               image: AssetImage(
@@ -1236,12 +1295,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
               onPressed: () async {
                 if ((isFriend == true) && (amI == false)) {
                   unfollow();
-                  print('친구 언팔로우 프린트 메세지입니다');
                 } else if ((isFriend == false) && (amI == false)) {
                   follow();
-                  print('친구 팔로우 프린트 메세지 입니다');
                 } else if ((isFriend == false) && (amI == true)) {
-                  print('프로필 공유');
                   final available =
                       await ShareClient.instance.isKakaoTalkSharingAvailable();
                   if (available) {
@@ -1251,9 +1307,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
                         templateArgs: {'UserName': nickname},
                       );
                       await ShareClient.instance.launchKakaoTalk(uri);
-                      print('카카오톡 공유 완료');
                     } catch (error) {
-                      print('카카오톡 공유 실패 $error');
+                      if (kDebugMode) {
+                        print('카카오톡 공유 실패 $error');
+                      }
                       final box = _shareButtonKey.currentContext
                           ?.findRenderObject() as RenderBox?;
                       final rect = box == null
@@ -1276,24 +1333,26 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     );
                   }
                 } else {
-                  print('error');
+                  if (kDebugMode) {
+                    print('error');
+                  }
                 }
                 setState(() {});
               },
               style: ButtonStyle(
                   maximumSize: amI
-                      ? MaterialStateProperty.all<Size>(const Size(138, 40))
-                      : MaterialStateProperty.all<Size>(const Size(124, 40)),
+                      ? WidgetStateProperty.all<Size>(const Size(138, 40))
+                      : WidgetStateProperty.all<Size>(const Size(124, 40)),
                   backgroundColor: amI
-                      ? MaterialStateProperty.all(
+                      ? WidgetStateProperty.all(
                           PeeroreumColor.primaryPurple[400])
                       : (isFriend
-                          ? MaterialStateProperty.all(PeeroreumColor.gray[300])
-                          : MaterialStateProperty.all(
+                          ? WidgetStateProperty.all(PeeroreumColor.gray[300])
+                          : WidgetStateProperty.all(
                               PeeroreumColor.primaryPurple[400])),
-                  padding: MaterialStateProperty.all(
+                  padding: WidgetStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
                   ))),
@@ -1303,13 +1362,16 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   amI
                       ? SvgPicture.asset(
                           'assets/icons/share.svg',
-                          color: PeeroreumColor.white,
+                          colorFilter: const ColorFilter.mode(
+                              PeeroreumColor.white, BlendMode.srcIn),
                         )
                       : SvgPicture.asset(
                           'assets/icons/plus_user.svg',
-                          color: isFriend
-                              ? PeeroreumColor.gray[600]
-                              : PeeroreumColor.white,
+                          colorFilter: ColorFilter.mode(
+                              isFriend
+                                  ? PeeroreumColor.gray[600]!
+                                  : PeeroreumColor.white,
+                              BlendMode.srcIn),
                         ),
                   const SizedBox(
                     width: 10,
@@ -1365,7 +1427,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       color: PeeroreumColor.gray[800],
                     ),
                     B3m(
-                      text: followerNumber != null ? '$followerNumber' : '0',
+                      text: '$followerNumber',
                       color: PeeroreumColor.gray[600],
                     ),
                   ],
@@ -1402,7 +1464,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       color: PeeroreumColor.gray[800],
                     ),
                     B3m(
-                      text: followingNumber != null ? '$followingNumber' : '0',
+                      text: '$followingNumber',
                       color: PeeroreumColor.gray[600],
                     ),
                   ],
@@ -1553,7 +1615,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
   Widget inRoomBody() {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
-      // shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: inRoomData.length,
       separatorBuilder: (BuildContext context, int index) {
@@ -1663,7 +1724,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       padding: const EdgeInsets.symmetric(horizontal: 2.0),
                       child: SvgPicture.asset(
                         'assets/icons/dot.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                     ),
                     Text('${inRoomData[roomIndex]["attendingPeopleNum"]!}명',
@@ -1676,7 +1738,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                       padding: const EdgeInsets.symmetric(horizontal: 2.0),
                       child: SvgPicture.asset(
                         'assets/icons/dot.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                     ),
                     Text('D-${inRoomData[roomIndex]["dday"]!}',

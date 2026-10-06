@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/data/visit_count.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
@@ -23,10 +24,10 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  var token;
-  var nickname;
-  var profileImage;
-  var grade;
+  String? token;
+  String? nickname;
+  String? profileImage;
+  String? grade;
   var withPeerDay = 0;
   List<dynamic> data = [];
   List<dynamic> inroomData = [];
@@ -133,7 +134,7 @@ class _MyPageState extends State<MyPage> {
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
           onTap: () {
-            Get.to(() => MyPageProfile(nickname, true));
+            Get.to(() => MyPageProfile(nickname!, true));
           },
           child: Container(
             padding: const EdgeInsets.all(16),
@@ -149,7 +150,7 @@ class _MyPageState extends State<MyPage> {
                       border: Border.all(
                           width: 2,
                           color: grade != null
-                              ? PeeroreumColor.gradeColor[int.parse(grade)]!
+                              ? PeeroreumColor.gradeColor[int.parse(grade!)]!
                               : const Color.fromARGB(255, 186, 188, 189)),
                     ),
                     child: Container(
@@ -163,7 +164,7 @@ class _MyPageState extends State<MyPage> {
                         ),
                         image: profileImage != null
                             ? DecorationImage(
-                                image: NetworkImage(profileImage),
+                                image: NetworkImage(profileImage!),
                                 fit: BoxFit.cover)
                             : const DecorationImage(
                                 image: AssetImage(
@@ -186,7 +187,8 @@ class _MyPageState extends State<MyPage> {
                 SvgPicture.asset(
                   'assets/icons/right.svg',
                   height: 24,
-                  color: PeeroreumColor.gray[600],
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.gray[600]!, BlendMode.srcIn),
                 ),
               ],
             ),
@@ -353,28 +355,6 @@ class _MyPageState extends State<MyPage> {
             ),
           ),
         ),
-        // TextButton(
-        //   onPressed: () => {PeeroreumToast.show(context, "준비 중입니다.")},
-        //   style: TextButton.styleFrom(
-        //       minimumSize: Size.fromHeight(56),
-        //       padding: EdgeInsets.symmetric(horizontal: 20)
-        //
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.start,
-        //     children: [
-        //       Text(
-        //         '멤버십/구독 관리',
-        //         style: TextStyle(
-        //           color: PeeroreumColor.gray[800],
-        //           fontSize: 16,
-        //           fontWeight: FontWeight.w600,
-        //           fontFamily: 'Pretendard',
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
@@ -562,9 +542,13 @@ class _MyPageState extends State<MyPage> {
   Future<void> logout() async {
     try {
       await ApiClient().post('/logout');
-      print("logout 성공");
+      if (kDebugMode) {
+        print("logout 성공");
+      }
     } catch (e) {
-      print("logout 예외 발생: $e");
+      if (kDebugMode) {
+        print("logout 예외 발생: $e");
+      }
     } finally {
       const FlutterSecureStorage().deleteAll();
       Get.offAllNamed('/signIn/email');

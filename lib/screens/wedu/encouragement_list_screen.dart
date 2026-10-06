@@ -7,17 +7,19 @@ import '../../designs/peeroreum_color.dart';
 import 'package:get/get.dart';
 
 class EncouragementList extends StatefulWidget {
+  const EncouragementList({super.key});
+
   @override
   State<EncouragementList> createState() => _EncouragementListState();
 }
 
 class _EncouragementListState extends State<EncouragementList> {
   List<dynamic> notSuccessList = [];
-  bool am_i = false;
-  var mynickname;
+  bool amI = false;
+  String? myNickname;
 
   Future<void> fetchDatas() async {
-    mynickname = await FlutterSecureStorage().read(key: "nickname");
+    myNickname = await const FlutterSecureStorage().read(key: "nickname");
   }
 
   @override
@@ -38,14 +40,14 @@ class _EncouragementListState extends State<EncouragementList> {
               leading: IconButton(
                 icon: SvgPicture.asset(
                   'assets/icons/x.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                   width: 18,
                 ),
                 onPressed: () {
                   Get.back();
                 },
               ),
-              title: Text(
+              title: const Text(
                 '미달성',
                 style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -56,12 +58,11 @@ class _EncouragementListState extends State<EncouragementList> {
               centerTitle: true,
             ),
             body: SafeArea(
-              child: Container(
-                child: Column(
+              child: Column(
                   children: [
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 13, horizontal: 20),
+                          const EdgeInsets.symmetric(vertical: 13, horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -75,7 +76,7 @@ class _EncouragementListState extends State<EncouragementList> {
                                     fontSize: 14,
                                     color: PeeroreumColor.gray[500]),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 4,
                               ),
                               Text(
@@ -86,7 +87,7 @@ class _EncouragementListState extends State<EncouragementList> {
                                     fontSize: 14,
                                     color: PeeroreumColor.gray[500]),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 2,
                               ),
                               Text(
@@ -110,7 +111,6 @@ class _EncouragementListState extends State<EncouragementList> {
                     notOkList()
                   ],
                 ),
-              ),
             ),
           );
         });
@@ -125,14 +125,14 @@ class _EncouragementListState extends State<EncouragementList> {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (mynickname == notSuccessList[index]['nickname']) {
-                    am_i = true;
+                  if (myNickname == notSuccessList[index]['nickname']) {
+                    amI = true;
                   }
                   Get.to(() =>
-                      MyPageProfile(notSuccessList[index]['nickname'], am_i));
+                      MyPageProfile(notSuccessList[index]['nickname'], amI));
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Row(
                     children: [
                       Container(
@@ -159,18 +159,18 @@ class _EncouragementListState extends State<EncouragementList> {
                                     image: NetworkImage(
                                         notSuccessList[index]["profileImage"]),
                                     fit: BoxFit.cover)
-                                : DecorationImage(
+                                : const DecorationImage(
                                     image:
                                         AssetImage('assets/images/user.jpg')),
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Text(
-                        (notSuccessList[index]['nickname'] == mynickname)
-                            ? '$mynickname (나)'
+                        (notSuccessList[index]['nickname'] == myNickname)
+                            ? '$myNickname (나)'
                             : notSuccessList[index]['nickname'],
                         style: TextStyle(
                             fontFamily: 'Pretendard',

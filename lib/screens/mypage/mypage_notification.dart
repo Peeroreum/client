@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,7 +17,8 @@ class _MyPageNotificationState extends State<MyPageNotification> {
   bool _weduChecked = false;
   bool _iduChecked = false;
   bool _rankChecked = false;
-  void Check() {
+
+  void check() {
     if (_weduChecked || _iduChecked || _rankChecked) {
       setState(() {
         _allChecked = false;
@@ -45,9 +44,9 @@ class _MyPageNotificationState extends State<MyPageNotification> {
 
     setState(() {
       _allChecked = setTypes![0] == "true";
-      _weduChecked = setTypes![1] == "true";
-      _iduChecked = setTypes![2] == "true";
-      _rankChecked = setTypes![3] == "true";
+      _weduChecked = setTypes[1] == "true";
+      _iduChecked = setTypes[2] == "true";
+      _rankChecked = setTypes[3] == "true";
     });
   }
 
@@ -82,10 +81,11 @@ class _MyPageNotificationState extends State<MyPageNotification> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
-      title: Text(
+      title: const Text(
         "알림 설정",
         style: TextStyle(
             color: PeeroreumColor.black,
@@ -104,7 +104,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: all_noti(),
+            child: allNotification(),
           ),
           Container(
             height: 8,
@@ -114,15 +114,15 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                wedu_noti(),
+                weduNotification(),
                 Container(
                   height: 20,
                 ),
-                idu_noti(),
+                iduNotification(),
                 Container(
                   height: 20,
                 ),
-                rank_noti(),
+                rankNotification(),
               ],
             ),
           ),
@@ -131,11 +131,11 @@ class _MyPageNotificationState extends State<MyPageNotification> {
     );
   }
 
-  Widget all_noti() {
+  Widget allNotification() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
+        const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -149,16 +149,14 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           width: 16,
         ),
         SizedBox(
-          // width: 26,
-          // height: 26,
           child: CupertinoSwitch(
             value: _allChecked,
-            activeColor: PeeroreumColor.primaryPurple[400],
-            trackColor: PeeroreumColor.gray[200],
+            activeTrackColor: PeeroreumColor.primaryPurple[400],
+            inactiveTrackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
                 _allChecked = value;
@@ -173,14 +171,14 @@ class _MyPageNotificationState extends State<MyPageNotification> {
     );
   }
 
-  Widget wedu_noti() {
+  Widget weduNotification() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               '같이해냄 알림',
               style: TextStyle(
                 fontFamily: 'Pretendard',
@@ -189,7 +187,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
                 color: PeeroreumColor.black,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Text(
@@ -203,20 +201,18 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           width: 16,
         ),
         SizedBox(
-          // width: 26,
-          // height: 26,
           child: CupertinoSwitch(
             value: _weduChecked,
-            activeColor: PeeroreumColor.primaryPurple[400],
-            trackColor: PeeroreumColor.gray[200],
+            activeTrackColor: PeeroreumColor.primaryPurple[400],
+            inactiveTrackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
                 _weduChecked = value;
-                Check();
+                check();
               });
             },
           ),
@@ -225,14 +221,14 @@ class _MyPageNotificationState extends State<MyPageNotification> {
     );
   }
 
-  Widget idu_noti() {
+  Widget iduNotification() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               '내가해냄 알림',
               style: TextStyle(
                 fontFamily: 'Pretendard',
@@ -241,7 +237,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
                 color: PeeroreumColor.black,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Text(
@@ -255,20 +251,18 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           width: 16,
         ),
         SizedBox(
-          // width: 26,
-          // height: 26,
           child: CupertinoSwitch(
             value: _iduChecked,
-            activeColor: PeeroreumColor.primaryPurple[400],
-            trackColor: PeeroreumColor.gray[200],
+            activeTrackColor: PeeroreumColor.primaryPurple[400],
+            inactiveTrackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
                 _iduChecked = value;
-                Check();
+                check();
               });
             },
           ),
@@ -277,14 +271,14 @@ class _MyPageNotificationState extends State<MyPageNotification> {
     );
   }
 
-  Widget rank_noti() {
+  Widget rankNotification() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               '랭킹 알림',
               style: TextStyle(
                 fontFamily: 'Pretendard',
@@ -293,7 +287,7 @@ class _MyPageNotificationState extends State<MyPageNotification> {
                 color: PeeroreumColor.black,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Text(
@@ -307,20 +301,18 @@ class _MyPageNotificationState extends State<MyPageNotification> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           width: 16,
         ),
         SizedBox(
-          // width: 26,
-          // height: 26,
           child: CupertinoSwitch(
             value: _rankChecked,
-            activeColor: PeeroreumColor.primaryPurple[400],
-            trackColor: PeeroreumColor.gray[200],
+            activeTrackColor: PeeroreumColor.primaryPurple[400],
+            inactiveTrackColor: PeeroreumColor.gray[200],
             onChanged: (value) {
               setState(() {
                 _rankChecked = value;
-                Check();
+                check();
               });
             },
           ),

@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/member.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 
 class MyPageAccountPS extends StatefulWidget {
   const MyPageAccountPS({super.key});
@@ -24,8 +25,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
   bool pw1Check = false;
   bool pw2Check = false;
 
-  bool pw1ShowClearbutton = false;
-  bool pw2ShowClearbutton = false;
+  bool pw1ShowClearButton = false;
+  bool pw2ShowClearButton = false;
 
   bool pw1Focus = false;
   bool pw2Focus = false;
@@ -47,8 +48,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        pw1ShowClearbutton = false;
-        pw2ShowClearbutton = false;
+        pw1ShowClearButton = false;
+        pw2ShowClearButton = false;
         pw1Focus = false;
         pw2Focus = false;
       },
@@ -74,7 +75,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -128,12 +130,12 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
             onTap: () {
               setState(() {
                 pw1Focus = true;
-                pw2ShowClearbutton = false;
+                pw2ShowClearButton = false;
                 pw2Focus = false;
               });
               if (pw1Controller.text.isNotEmpty) {
                 setState(() {
-                  pw1ShowClearbutton = true;
+                  pw1ShowClearButton = true;
                 });
               }
             },
@@ -141,17 +143,17 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
               _checkInput();
               setState(() {
                 if (value.isNotEmpty) {
-                  pw1ShowClearbutton = true;
+                  pw1ShowClearButton = true;
                   if (pw1Controller.text == pw2Controller.text) {
                     pw2Check = true;
                   } else {
                     pw2Check = false;
                   }
                 } else {
-                  pw1ShowClearbutton = false;
+                  pw1ShowClearButton = false;
                 }
                 if (RegExp(
-                        r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
+                        r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!%*#?~^<>,.&+=@$])[A-Za-z\d!%*#?~^<>,.&+=@$]{8,12}$')
                     .hasMatch(pw1Controller.text)) {
                   pw1Check = true;
                 } else {
@@ -186,19 +188,20 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                 children: [
                   Container(
                       padding: const EdgeInsets.only(left: 12),
-                      child: pw1ShowClearbutton
+                      child: pw1ShowClearButton
                           ? GestureDetector(
                               onTap: () {
                                 pw1Controller.clear();
                                 setState(() {
-                                  pw1ShowClearbutton = false;
+                                  pw1ShowClearButton = false;
                                   pw1Check = false;
                                 });
                                 _checkInput();
                               },
                               child: SvgPicture.asset(
                                 "assets/icons/x_circle.svg",
-                                color: PeeroreumColor.gray[200],
+                                colorFilter: ColorFilter.mode(
+                                    PeeroreumColor.gray[200]!, BlendMode.srcIn),
                               ))
                           : null),
                   const SizedBox(
@@ -274,11 +277,11 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
             setState(() {
               pw2Focus = true;
               pw1Focus = false;
-              pw1ShowClearbutton = false;
+              pw1ShowClearButton = false;
             });
             if (pw2Controller.text.isNotEmpty) {
               setState(() {
-                pw2ShowClearbutton = true;
+                pw2ShowClearButton = true;
               });
             }
           },
@@ -286,9 +289,9 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
             _checkInput();
             setState(() {
               if (value.isNotEmpty) {
-                pw2ShowClearbutton = true;
+                pw2ShowClearButton = true;
               } else {
-                pw2ShowClearbutton = false;
+                pw2ShowClearButton = false;
               }
               if (pw1Controller.text == pw2Controller.text) {
                 pw2Check = true;
@@ -342,24 +345,26 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
             focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: const BorderSide(color: PeeroreumColor.error)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             suffixIcon: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                pw2ShowClearbutton
+                pw2ShowClearButton
                     ? GestureDetector(
                         onTap: () {
                           pw2Controller.clear();
                           setState(() {
-                            pw2ShowClearbutton = false;
+                            pw2ShowClearButton = false;
                             pw2Check = false;
                             _checkInput();
                           });
                         },
                         child: SvgPicture.asset(
                           "assets/icons/x_circle.svg",
-                          color: PeeroreumColor.gray[200],
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[200]!, BlendMode.srcIn),
                         ),
                       )
                     : const SizedBox(),
@@ -381,7 +386,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPurple[400],
+            colorFilter: ColorFilter.mode(
+                PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
           ));
     }
     if (pw1Controller.text.length >= 2 && !pw1Check) {
@@ -389,7 +395,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
-            color: PeeroreumColor.error,
+            colorFilter:
+                const ColorFilter.mode(PeeroreumColor.error, BlendMode.srcIn),
           ));
     }
     return GestureDetector(
@@ -402,7 +409,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
         padding: const EdgeInsets.only(right: 16),
         child: SvgPicture.asset(
           pw1Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
-          color: PeeroreumColor.gray[600],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
         ),
       ),
     );
@@ -414,7 +422,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPurple[400],
+            colorFilter: ColorFilter.mode(
+                PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
           ));
     }
     if (pw2Controller.text.length >= 2 && !pw2Check) {
@@ -422,7 +431,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
-            color: PeeroreumColor.error,
+            colorFilter:
+                const ColorFilter.mode(PeeroreumColor.error, BlendMode.srcIn),
           ));
     }
     return GestureDetector(
@@ -435,7 +445,8 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
         padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
         child: SvgPicture.asset(
           pw2Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
-          color: PeeroreumColor.gray[600],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
         ),
       ),
     );
@@ -462,12 +473,12 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
                   : null,
               style: ButtonStyle(
                   backgroundColor: (pw1Check && pw2Check)
-                      ? MaterialStateProperty.all(
+                      ? WidgetStateProperty.all(
                           PeeroreumColor.primaryPurple[400])
-                      : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                  padding: MaterialStateProperty.all(
+                      : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                  padding: WidgetStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
                         ? BorderRadius.zero
@@ -489,14 +500,16 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
   }
 
   Future<void> psChangeAPI() async {
-    var result = await ApiClient().put(
-        '/member/change/pw?password=${pw2Controller.text}',
-        data: member);
+    var result = await ApiClient()
+        .put('/member/change/pw?password=${pw2Controller.text}', data: member);
+    if (!mounted) return;
     if (result.statusCode == 200) {
       PeeroreumToast.show(context, "비밀번호가 변경되었어요.");
       Get.back();
     } else {
-      print(result.statusCode);
+      if (kDebugMode) {
+        print(result.statusCode);
+      }
       PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.");
     }
   }

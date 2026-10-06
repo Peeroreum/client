@@ -50,10 +50,6 @@ class RankingController extends GetxController {
     loadMy();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {

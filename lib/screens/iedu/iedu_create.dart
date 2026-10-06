@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:peeroreum_client/data/subject.dart';
@@ -26,14 +27,14 @@ class _CreateIeduState extends State<CreateIedu> {
   final subjects = Subject.subject;
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
-  List<String> DetailSubjects = [];
+  List<String> detailSubjects = [];
   Color _nextColor = PeeroreumColor.gray[500]!;
   String titleCheck = "";
   String contentCheck = "";
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
-  var my_grade;
+  String? myGrade;
   int? _grade;
   String? _subject;
   String? _detailSubject;
@@ -43,10 +44,10 @@ class _CreateIeduState extends State<CreateIedu> {
 
   final List<XFile> _images = [];
 
-  FocusNode ContentFocusNode = FocusNode();
+  FocusNode contentFocusNode = FocusNode();
   Map<String, Color> focusColor = {
     "grade": PeeroreumColor.gray[200]!,
-    "subjet": PeeroreumColor.gray[200]!,
+    "subject": PeeroreumColor.gray[200]!,
     "detailSubject": PeeroreumColor.gray[200]!
   };
 
@@ -58,8 +59,8 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   Future<void> fetchStatus() async {
-    my_grade = await const FlutterSecureStorage().read(key: "grade");
-    _grade ??= int.parse(my_grade!) - 1;
+    myGrade = await const FlutterSecureStorage().read(key: "grade");
+    _grade ??= int.parse(myGrade!) - 1;
   }
 
   @override
@@ -68,9 +69,12 @@ class _CreateIeduState extends State<CreateIedu> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: WillPopScope(
-        onWillPop: () async {
-          return await onBackKey();
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) return;
+          final shouldPop = await onBackKey();
+          if (shouldPop == true && mounted) Get.back();
         },
         child: Container(
           color: PeeroreumColor.white,
@@ -197,7 +201,7 @@ class _CreateIeduState extends State<CreateIedu> {
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              FocusScope.of(context).requestFocus(ContentFocusNode);
+              FocusScope.of(context).requestFocus(contentFocusNode);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -205,7 +209,7 @@ class _CreateIeduState extends State<CreateIedu> {
                 children: [
                   TextFormField(
                     controller: contentController,
-                    focusNode: ContentFocusNode,
+                    focusNode: contentFocusNode,
                     maxLines: null,
                     minLines: 6,
                     style: const TextStyle(color: Colors.black),
@@ -247,7 +251,9 @@ class _CreateIeduState extends State<CreateIedu> {
           onTap: () {
             setState(() {
               focusColor["grade"] = PeeroreumColor.black;
-              print(focusColor["grade"]);
+              if (kDebugMode) {
+                print(focusColor["grade"]);
+              }
             });
             showModalBottomSheet(
                 context: context,
@@ -276,8 +282,8 @@ class _CreateIeduState extends State<CreateIedu> {
                 Text(
                   _grade != null
                       ? grades[_grade!]
-                      : my_grade != null
-                          ? grades[int.parse(my_grade!)]
+                      : myGrade != null
+                          ? grades[int.parse(myGrade!)]
                           : "선택",
                   style: const TextStyle(
                       fontFamily: 'Pretendard',
@@ -317,7 +323,7 @@ class _CreateIeduState extends State<CreateIedu> {
             },
             child: Container(
               height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
@@ -519,7 +525,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         setState(() {
                           _subject = subjects[index];
                           subject = index;
-                          DetailSubjects = ((index != 0 && _grade! < 3)
+                          detailSubjects = ((index != 0 && _grade! < 3)
                               ? middleSubjects[_subject]
                               : highSubjects[_subject])!;
                           _detailSubject = null;
@@ -585,16 +591,18 @@ class _CreateIeduState extends State<CreateIedu> {
           Expanded(
             child: ListView.builder(
                 scrollDirection: Axis.vertical,
-                itemCount: DetailSubjects.length,
+                itemCount: detailSubjects.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         setState(() {
-                          _detailSubject = DetailSubjects[index];
+                          _detailSubject = detailSubjects[index];
                           detailSubject = index;
-                          print(
-                              '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          if (kDebugMode) {
+                            print(
+                                '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          }
                         });
                         Get.back();
                       },
@@ -603,7 +611,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
                         child: Text(
-                          DetailSubjects[index],
+                          detailSubjects[index],
                           style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
@@ -637,7 +645,8 @@ class _CreateIeduState extends State<CreateIedu> {
               SizedBox(
                 child: SvgPicture.asset(
                   'assets/icons/x_circle.svg',
-                  color: PeeroreumColor.gray[600],
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.gray[600]!, BlendMode.srcIn),
                 ),
               ),
               const SizedBox(
@@ -656,7 +665,8 @@ class _CreateIeduState extends State<CreateIedu> {
             children: [
               SvgPicture.asset(
                 'assets/icons/x_circle.svg',
-                color: PeeroreumColor.gray[600],
+                colorFilter: ColorFilter.mode(
+                    PeeroreumColor.gray[600]!, BlendMode.srcIn),
               ),
               const SizedBox(
                 width: 4,
@@ -674,7 +684,8 @@ class _CreateIeduState extends State<CreateIedu> {
             children: [
               SvgPicture.asset(
                 'assets/icons/x_circle.svg',
-                color: PeeroreumColor.gray[600],
+                colorFilter: ColorFilter.mode(
+                    PeeroreumColor.gray[600]!, BlendMode.srcIn),
               ),
               const SizedBox(
                 width: 4,
@@ -723,7 +734,9 @@ class _CreateIeduState extends State<CreateIedu> {
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: SvgPicture.asset(
                   'assets/icons/x_circle.svg',
-                  color: PeeroreumColor.black.withOpacity(0.4),
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.black.withValues(alpha: 0.4),
+                      BlendMode.srcIn),
                 ),
               ),
               onTap: () {
@@ -765,7 +778,8 @@ class _CreateIeduState extends State<CreateIedu> {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/camera.svg',
-                        color: PeeroreumColor.gray[500],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[500]!, BlendMode.srcIn),
                       ),
                       const SizedBox(
                         width: 4,
@@ -800,7 +814,8 @@ class _CreateIeduState extends State<CreateIedu> {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/notepad.svg',
-                        color: PeeroreumColor.gray[500],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[500]!, BlendMode.srcIn),
                       ),
                       const SizedBox(
                         width: 4,
@@ -837,7 +852,7 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   Future<void> postIedu() async {
-    var IeduMap = <String, dynamic>{
+    var ieduMap = <String, dynamic>{
       'title': titleController.text,
       'content': contentController.text,
       'subject': subject + 1,
@@ -845,7 +860,7 @@ class _CreateIeduState extends State<CreateIedu> {
       'grade': _grade! + 1,
     };
 
-    var formData = dio.FormData.fromMap(IeduMap);
+    var formData = dio.FormData.fromMap(ieduMap);
 
     for (var image in _images) {
       var file = await dio.MultipartFile.fromFile(image.path);
@@ -855,6 +870,7 @@ class _CreateIeduState extends State<CreateIedu> {
     try {
       var response = await ApiClient().postForm('/question', formData);
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         PeeroreumToast.show(context, '질문 작성이 완료되었어요.');
         Get.offAllNamed('/home/iedu');
@@ -863,17 +879,25 @@ class _CreateIeduState extends State<CreateIedu> {
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
+        if (kDebugMode) {
+          print('Dio error!');
+          print('STATUS: ${e.response?.statusCode}');
+          print('DATA: ${e.response?.data}');
+          print('HEADERS: ${e.response?.headers}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+          print(e.message);
+        }
       }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }

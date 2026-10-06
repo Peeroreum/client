@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
@@ -15,16 +16,14 @@ import '../../data/wedu_search_history.dart';
 class SearchResultWedu extends StatefulWidget {
   final String keyword;
 
-  SearchResultWedu(this.keyword, {super.key});
+  const SearchResultWedu(this.keyword, {super.key});
 
   @override
-  State<SearchResultWedu> createState() => _SearchResultWeduState(keyword);
+  State<SearchResultWedu> createState() => _SearchResultWeduState();
 }
 
 class _SearchResultWeduState extends State<SearchResultWedu> {
-  String keyword;
-
-  _SearchResultWeduState(this.keyword);
+  late String keyword;
 
   List<Map<String, String>> _searchHistory = [];
   List<dynamic> data = [];
@@ -37,6 +36,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   @override
   void initState() {
     super.initState();
+    keyword = widget.keyword;
     fetchData();
     fetchInRoomData();
   }
@@ -45,16 +45,20 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     var weduResult = await ApiClient().get('/wedu/search/$keyword');
     if (weduResult.statusCode == 200) {
       data = weduResult.data['data'];
-      print("데이터 fetch 완료 \n $data");
+      if (kDebugMode) {
+        print("데이터 fetch 완료 \n $data");
+      }
     } else {
-      print("에러${weduResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${weduResult.statusCode}");
+      }
     }
 
     await fetchImage(data);
   }
 
   fetchImage(datas) async {
-    var inviData;
+    dynamic inviData;
     for (var data in datas) {
       inviData = await fetchInvitation(data['id']);
       this.inviData.addAll({data['id']: inviData});
@@ -68,7 +72,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     if (inviResult.statusCode == 200) {
       return inviResult.data['data'];
     } else {
-      print("에러${inviResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${inviResult.statusCode}");
+      }
     }
   }
 
@@ -137,7 +143,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               leading: IconButton(
                 icon: SvgPicture.asset(
                   'assets/icons/arrow-left.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onPressed: () {
                   Get.back(result: _searchHistory);
@@ -152,11 +158,11 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                     Get.back(result: _searchHistory);
                   },
                   backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.gray[100]),
-                  elevation: MaterialStateProperty.all(0),
+                      WidgetStateProperty.all(PeeroreumColor.gray[100]),
+                  elevation: WidgetStateProperty.all(0),
                   constraints: const BoxConstraints(minHeight: 40),
                   hintText: '같이방에서 함께 공부해요!',
-                  hintStyle: MaterialStateProperty.all(TextStyle(
+                  hintStyle: WidgetStateProperty.all(TextStyle(
                       color: PeeroreumColor.gray[600],
                       fontFamily: 'Pretendard',
                       fontSize: 14,
@@ -172,7 +178,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             },
                             child: SvgPicture.asset(
                               'assets/icons/x_circle.svg',
-                              color: PeeroreumColor.gray[600],
+                              colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                             ))
                         : Container(),
                     const SizedBox(
@@ -190,7 +196,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                       },
                       child: SvgPicture.asset(
                         'assets/icons/search.svg',
-                        color: Colors.grey[600],
+                        colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
                       ),
                     ),
                     const SizedBox(
@@ -241,7 +247,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  Get.to(() => CreateWedu());
+                                  Get.to(() => const CreateWedu());
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
@@ -259,7 +265,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                     children: [
                                       SvgPicture.asset(
                                         'assets/icons/plus_square2.svg',
-                                        color: PeeroreumColor.white,
+                                        colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                                       ),
                                       const SizedBox(
                                         width: 8,
@@ -394,11 +400,11 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             ),
                             data[index]['locked'].toString() == "true"
                                 ? SvgPicture.asset('assets/icons/lock.svg',
-                                    color: PeeroreumColor.gray[400], width: 12)
+                                    colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn), width: 12)
                                 : Container(),
                             data[index]['locked'].toString() == "true"
                                 ? const SizedBox(width: 4)
-                                : SizedBox(),
+                                : const SizedBox(),
                             Flexible(
                               child: Text(
                                 data[index]["title"]!,
@@ -480,13 +486,16 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   void enrollWedu(index) async {
     var id = data[index]['id'];
     var enrollResult = await ApiClient().post('/wedu/$id/enroll');
+    if (!mounted) return;
     if (enrollResult.statusCode == 200) {
       PeeroreumToast.show(context, "같이방에 참여했어요!");
     } else if (enrollResult.statusCode == 409) {
       PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
     } else {
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.');
-      print('에러${enrollResult.statusCode}');
+      if (kDebugMode) {
+        print('에러${enrollResult.statusCode}');
+      }
     }
   }
 

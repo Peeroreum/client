@@ -12,7 +12,7 @@ class AlertModel {
   factory AlertModel.fromJson(Map<String, dynamic> json) => AlertModel(
         title: json['title'],
         body: json['body'],
-        type: json['type'].toString() ?? "0",
+        type: json['type']?.toString() ?? "0",
         createdTime:
             DateTime.parse(json['createdTime']), // JSON에서 createdTime 파싱
       );

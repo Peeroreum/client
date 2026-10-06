@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,11 +8,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:peeroreum_client/data/onboarding_check.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:peeroreum_client/fcmSetting.dart';
+import 'package:peeroreum_client/fcm_setting.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
-import 'package:peeroreum_client/screens/bottomNaviBar.dart';
+import 'package:peeroreum_client/screens/bottom_navi_bar.dart';
 import 'package:peeroreum_client/screens/report.dart';
-import 'package:peeroreum_client/screens/sign/signUp_complete.dart';
+import 'package:peeroreum_client/screens/sign/signup_complete.dart';
 import 'package:peeroreum_client/screens/sign/sign_onboarding_screen.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signin_screen.dart';
@@ -28,7 +29,7 @@ import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'firebase_options.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 
 // 네이티브 딥링크 채널 (Kakao 인텐트 처리용)
 const _deepLinkChannel = MethodChannel('com.peeroreum/deeplink');
@@ -59,27 +60,31 @@ void main() async {
     if (call.method == 'onDeepLink') {
       // 같이방 딥링크
       final roomId = call.arguments as String?;
-      print('[DeepLink] onDeepLink from native: $roomId');
+      if (kDebugMode) {
+        print('[DeepLink] onDeepLink from native: $roomId');
+      }
       if (roomId == null) return;
       final loggedIn = await checkLogIn();
       if (loggedIn) {
         final ctx = Get.context;
-        if (ctx != null) WeduJoinFromLink.show(ctx, roomId);
+        if (ctx != null) WeduJoinFromLink.show(ctx, roomId); // ignore: use_build_context_synchronously
       } else {
         PendingDeepLink.roomId = roomId;
-        Get.offAll(() => EmailSignIn());
+        Get.offAll(() => const EmailSignIn());
       }
     } else if (call.method == 'onDeepLinkProfile') {
       // 프로필 딥링크
       final nickname = call.arguments as String?;
-      print('[DeepLink] onDeepLinkProfile from native: $nickname');
+      if (kDebugMode) {
+        print('[DeepLink] onDeepLinkProfile from native: $nickname');
+      }
       if (nickname == null) return;
       final loggedIn = await checkLogIn();
       if (loggedIn) {
         Get.to(() => MyPageProfile(nickname, false));
       } else {
         PendingDeepLink.profileNickname = nickname;
-        Get.offAll(() => EmailSignIn());
+        Get.offAll(() => const EmailSignIn());
       }
     }
   });
@@ -89,10 +94,14 @@ void main() async {
     final roomId = await _deepLinkChannel
         .invokeMethod<String>('getInitialRoomId')
         .timeout(const Duration(seconds: 3), onTimeout: () => null);
-    print('[DeepLink] getInitialRoomId from native: $roomId');
+    if (kDebugMode) {
+      print('[DeepLink] getInitialRoomId from native: $roomId');
+    }
     if (roomId != null) PendingDeepLink.roomId = roomId;
   } catch (e) {
-    print('[DeepLink] getInitialRoomId error: $e');
+    if (kDebugMode) {
+      print('[DeepLink] getInitialRoomId error: $e');
+    }
   }
 
   // 콜드 스타트: nickname
@@ -100,31 +109,42 @@ void main() async {
     final nickname = await _deepLinkChannel
         .invokeMethod<String>('getInitialNickname')
         .timeout(const Duration(seconds: 3), onTimeout: () => null);
-    print('[DeepLink] getInitialNickname from native: $nickname');
+    if (kDebugMode) {
+      print('[DeepLink] getInitialNickname from native: $nickname');
+    }
     if (nickname != null) PendingDeepLink.profileNickname = nickname;
   } catch (e) {
-    print('[DeepLink] getInitialNickname error: $e');
+    if (kDebugMode) {
+      print('[DeepLink] getInitialNickname error: $e');
+    }
   }
 
   // app_links: iOS 전용 (Android는 MethodChannel로 cold/warm start 모두 처리하므로 중복 방지)
   // iOS cold/warm start 모두 AppDelegate MethodChannel로 처리하므로 getInitialLink() 불필요
   final appLinks = AppLinks();
   appLinks.uriLinkStream.listen((uri) async {
-    print('[DeepLink] uriLinkStream: $uri');
+    if (kDebugMode) {
+      print('[DeepLink] uriLinkStream: $uri');
+    }
     if (Platform.isAndroid) return; // Android는 MethodChannel이 모두 처리
-    if (uri.scheme.startsWith('kakaoa')) return; // iOS Kakao 스킴은 AppDelegate MethodChannel이 처리
+    if (uri.scheme.startsWith('kakaoa')) {
+      return; // iOS Kakao 스킴은 AppDelegate MethodChannel이 처리
+    }
 
     // 같이방
     final roomId = extractRoomId(uri);
     if (roomId != null) {
       final loggedIn = await checkLogIn();
-      if (!_appReady) { PendingDeepLink.roomId = roomId; return; }
+      if (!_appReady) {
+        PendingDeepLink.roomId = roomId;
+        return;
+      }
       if (loggedIn) {
         final ctx = Get.context;
-        if (ctx != null) WeduJoinFromLink.show(ctx, roomId);
+        if (ctx != null) WeduJoinFromLink.show(ctx, roomId); // ignore: use_build_context_synchronously
       } else {
         PendingDeepLink.roomId = roomId;
-        Get.offAll(() => EmailSignIn());
+        Get.offAll(() => const EmailSignIn());
       }
       return;
     }
@@ -133,12 +153,15 @@ void main() async {
     final nickname = extractNickname(uri);
     if (nickname != null) {
       final loggedIn = await checkLogIn();
-      if (!_appReady) { PendingDeepLink.profileNickname = nickname; return; }
+      if (!_appReady) {
+        PendingDeepLink.profileNickname = nickname;
+        return;
+      }
       if (loggedIn) {
         Get.to(() => MyPageProfile(nickname, false));
       } else {
         PendingDeepLink.profileNickname = nickname;
-        Get.offAll(() => EmailSignIn());
+        Get.offAll(() => const EmailSignIn());
       }
     }
   });
@@ -149,15 +172,15 @@ void main() async {
 }
 
 Future<bool> checkUser() async {
-  bool? isnewhere = await OnboardingCheck.getUserType();
-  if (isnewhere != false) {
-    isnewhere = true;
+  bool? isNewHere = await OnboardingCheck.getUserType();
+  if (isNewHere != false) {
+    isNewHere = true;
   }
-  return isnewhere!;
+  return isNewHere!;
 }
 
 Future<bool> checkLogIn() async {
-  final secureStorage = FlutterSecureStorage();
+  const secureStorage = FlutterSecureStorage();
   String? token = await secureStorage.read(key: 'accessToken');
   return token != null;
 }
@@ -171,7 +194,9 @@ String? extractRoomId(Uri uri) {
   }
   // 2) 카카오 스킴: kakaoa{key}://kakaolink?roomId={roomId}
   if (uri.scheme.startsWith('kakaoa') && uri.host == 'kakaolink') {
-    print('[DeepLink] Kakao URI queryParams=${uri.queryParameters}');
+    if (kDebugMode) {
+      print('[DeepLink] Kakao URI queryParams=${uri.queryParameters}');
+    }
     final roomId = uri.queryParameters['roomId'];
     if (roomId != null && roomId.isNotEmpty) return roomId;
     // 구버전 호환
@@ -203,10 +228,11 @@ String? extractNickname(Uri uri) {
 }
 
 class PeeroreumApp extends StatelessWidget {
-  bool isLoggedIn;
-  bool isNewUser;
-  String firebaseToken;
-  PeeroreumApp(this.isLoggedIn, this.firebaseToken, this.isNewUser,
+  final bool isLoggedIn;
+  final bool isNewUser;
+  final String firebaseToken;
+
+  const PeeroreumApp(this.isLoggedIn, this.firebaseToken, this.isNewUser,
       {super.key});
 
   // This widget is the root of your application.
@@ -215,7 +241,8 @@ class PeeroreumApp extends StatelessWidget {
     return GetMaterialApp(
       builder: (context, child) {
         return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1.0)),
             child: child!);
       },
       localizationsDelegates: const [
@@ -231,38 +258,22 @@ class PeeroreumApp extends StatelessWidget {
                   systemNavigationBarIconBrightness: Brightness.dark))),
       title: 'Peeroreum',
       home: isNewUser
-          ? OnBoarding()
-          : (isLoggedIn ? BottomNaviBar(firebaseToken, 0) : EmailSignIn()),
-      // initialRoute: isLoggedIn? '/home' : '/signIn/email',
-      // routes: {
-      //   '/signIn': (context) => SignIn(),
-      //   '/signIn/email': (context) => EmailSignIn(),
-      //   '/signUp/email': (context) => EmailSignUp(),
-      //   '/home': (context) => bottomNaviBar(firebaseToken, 1),
-      //   '/wedu': (context) => HomeWedu(),
-      //   '/wedu/create_invitaion': (context) => CreateInvitation(),
-      //   'wedu/my': (context) => InWedu(),
-      //   '/wedu/challenge/ok': (context) => ComplimentList(),
-      //   '/wedu/challenge/notok': (context) => EncouragementList(),
-      //   //'/wedu/challenge/ok/compliment':(context) => ComplimentCheckList(),
-      //   //'/wedu/challenge/notok/encouragement':(context) => EncouragementCheckList(),
-      //   'signUp/onBoarding': (context) => OnBoarding(),
-      //   'signUp/Complete': (context) => SignUpComplete(),
-      //   '/report': (context) => Report(data: "상세 data 아직 추가 안 됨",),
-      //   '/home/iedu': (context) => bottomNaviBar(firebaseToken, 2),
-      // },
+          ? const OnBoarding()
+          : (isLoggedIn
+              ? BottomNaviBar(firebaseToken, 0)
+              : const EmailSignIn()),
       getPages: [
         GetPage(
           name: '/signIn',
-          page: () => SignIn(),
+          page: () => const SignIn(),
         ),
         GetPage(
           name: '/signIn/email',
-          page: () => EmailSignIn(),
+          page: () => const EmailSignIn(),
         ),
         GetPage(
           name: '/signUp/email',
-          page: () => EmailSignUp(),
+          page: () => const EmailSignUp(),
         ),
         GetPage(
           name: '/home',
@@ -270,31 +281,31 @@ class PeeroreumApp extends StatelessWidget {
         ),
         GetPage(
           name: '/wedu',
-          page: () => HomeWedu(),
+          page: () => const HomeWedu(),
         ),
         GetPage(
           name: '/wedu/create_invitaion',
-          page: () => CreateInvitation(),
+          page: () => const CreateInvitation(),
         ),
         GetPage(
           name: '/wedu/my',
-          page: () => InWedu(),
+          page: () => const InWedu(),
         ),
         GetPage(
           name: '/wedu/challenge/ok',
-          page: () => ComplimentList(),
+          page: () => const ComplimentList(),
         ),
         GetPage(
           name: '/wedu/challenge/notok',
-          page: () => EncouragementList(),
+          page: () => const EncouragementList(),
         ),
         GetPage(
           name: '/signUp/onBoarding',
-          page: () => OnBoarding(),
+          page: () => const OnBoarding(),
         ),
         GetPage(
           name: '/signUp/Complete',
-          page: () => SignUpComplete(),
+          page: () => const SignUpComplete(),
         ),
         GetPage(
           name: '/report',

@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +21,7 @@ const List<int> headcount = <int>[10, 30, 50, 70, 100];
 List<String> challenge = <String>['문제 30개 풀기', '공부 2시간', '기타'];
 
 class CreateWedu extends StatefulWidget {
-  CreateWedu({super.key});
+  const CreateWedu({super.key});
 
   @override
   State<CreateWedu> createState() => _CreateWeduState();
@@ -28,7 +29,7 @@ class CreateWedu extends StatefulWidget {
 
 class _CreateWeduState extends State<CreateWedu> {
   Wedu wedu = Wedu();
-  List<String> _tag = [];
+  final List<String> _tag = [];
 
   String dropdownSubject = subject.first;
   String dropdownGrade = grade.first;
@@ -50,7 +51,7 @@ class _CreateWeduState extends State<CreateWedu> {
 
   Color _nextColor = PeeroreumColor.gray[500]!;
 
-  void check_validation() {
+  void checkValidation() {
     if (nameValue != "" &&
         ((dropdownChallenge != null && dropdownChallenge != challenge.last) ||
             (dropdownChallenge == challenge.last && personalChallenge != "")) &&
@@ -65,7 +66,7 @@ class _CreateWeduState extends State<CreateWedu> {
     }
   }
 
-  void check_subject(value) {
+  void checkSubject(value) {
     switch (value) {
       case '국어':
         challenge.insert(2, '지문 분석');
@@ -87,19 +88,22 @@ class _CreateWeduState extends State<CreateWedu> {
     }
   }
 
-  void change_challenge(value) {
+  void changeChallenge(value) {
     if (challenge.length == 3) {
-      check_subject(value);
+      checkSubject(value);
     } else if (challenge.length == 4) {
       challenge.removeAt(2);
-      check_subject(value);
+      checkSubject(value);
     }
   }
 
   XFile? _image;
   Future getImage() async {
     final selected = await showCustomImagePicker(context, multiple: false);
-    if (selected == null || selected.isEmpty) return;
+    if (selected == null || selected.isEmpty) {
+      return;
+    }
+    if (!mounted) return;
     final cropped = await cropImage(context, selected.first);
     if (cropped != null) {
       setState(() {
@@ -145,7 +149,7 @@ class _CreateWeduState extends State<CreateWedu> {
               Get.back();
             },
           ),
-          title: Text(
+          title: const Text(
             '같이방 만들기',
             style: TextStyle(
               fontFamily: 'Pretendard',
@@ -156,7 +160,7 @@ class _CreateWeduState extends State<CreateWedu> {
           centerTitle: true,
           actions: [
             Container(
-              padding: EdgeInsets.only(right: 20),
+              padding: const EdgeInsets.only(right: 20),
               child: GestureDetector(
                 onTap: () {
                   if (nameValue != "" && (dropdownChallenge != null)) {
@@ -166,7 +170,7 @@ class _CreateWeduState extends State<CreateWedu> {
                   }
                 },
                 child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 20),
+                  margin: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
                     '다음',
                     style: TextStyle(
@@ -191,7 +195,7 @@ class _CreateWeduState extends State<CreateWedu> {
                     height: 25,
                   ),
                   Container(
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       maxHeight: 120,
                       maxWidth: 120,
                     ),
@@ -229,7 +233,7 @@ class _CreateWeduState extends State<CreateWedu> {
                           child: Align(
                             alignment: Alignment.bottomRight,
                             child: Container(
-                                padding: EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: PeeroreumColor.gray[200],
@@ -245,17 +249,16 @@ class _CreateWeduState extends State<CreateWedu> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Container(
-                    alignment: Alignment(0.0, 0.0),
-                    margin: EdgeInsets.fromLTRB(20, 0, 20, 120),
+                    alignment: const Alignment(0.0, 0.0),
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 120),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                            child: Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
@@ -266,7 +269,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                 fontSize: 14,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 8,
                             ),
                             SizedBox(
@@ -274,11 +277,11 @@ class _CreateWeduState extends State<CreateWedu> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                     //isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                         vertical: 12, horizontal: 16),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(
+                                      borderSide: const BorderSide(
                                         color: PeeroreumColor.black,
                                       ),
                                     ),
@@ -311,14 +314,14 @@ class _CreateWeduState extends State<CreateWedu> {
                                 onChanged: (value) {
                                   setState(() {
                                     nameValue = value;
-                                    check_validation();
+                                    checkValidation();
                                   });
                                 },
                               ),
                             ),
                           ],
-                        )),
-                        SizedBox(
+                        ),
+                        const SizedBox(
                           height: 20,
                         ),
                         Row(
@@ -335,7 +338,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     color: PeeroreumColor.black,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 8,
                                 ),
                                 DecoratedBox(
@@ -349,7 +352,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     width: 146,
                                     child: DropdownButton2(
                                       isExpanded: false,
-                                      underline: SizedBox.shrink(),
+                                      underline: const SizedBox.shrink(),
                                       dropdownStyleData: DropdownStyleData(
                                         elevation: 0,
                                         decoration: BoxDecoration(
@@ -360,7 +363,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                           color: PeeroreumColor.white,
                                         ),
                                       ),
-                                      menuItemStyleData: MenuItemStyleData(
+                                      menuItemStyleData: const MenuItemStyleData(
                                         height: 44,
                                       ),
                                       value: dropdownSubject,
@@ -381,7 +384,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                           value: value,
                                           child: Text(
                                             value,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: PeeroreumColor.black,
                                               fontFamily: 'Pretendard',
                                               fontSize: 14,
@@ -393,7 +396,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                       onChanged: (String? value) {
                                         setState(() {
                                           dropdownSubject = value!;
-                                          change_challenge(value);
+                                          changeChallenge(value);
                                           dropdownChallenge = null;
                                         });
                                       },
@@ -403,7 +406,7 @@ class _CreateWeduState extends State<CreateWedu> {
                               ],
                             ),
                             Container(
-                              margin: EdgeInsets.only(left: 20),
+                              margin: const EdgeInsets.only(left: 20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -433,7 +436,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                           ))
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Container(
@@ -448,13 +451,13 @@ class _CreateWeduState extends State<CreateWedu> {
                                           context: context,
                                           // 팝업으로 띄우기 때문에 context 전달
                                           initialDate: DateTime.now()
-                                              .add(Duration(days: 66)),
+                                              .add(const Duration(days: 66)),
                                           // 달력을 띄웠을 때 선택된 날짜. 위에서 date 변수에 오늘 날짜를 넣었으므로 오늘 날짜가 선택돼서 나옴
                                           firstDate: DateTime.now()
-                                              .add(Duration(days: 66)),
+                                              .add(const Duration(days: 66)),
                                           // 시작 년도
                                           lastDate: DateTime.now()
-                                              .add(Duration(days: 1 * 365)),
+                                              .add(const Duration(days: 1 * 365)),
                                           helpText: '',
                                           builder: (context, child) {
                                             return Theme(
@@ -492,7 +495,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                         }
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             vertical: 8, horizontal: 12),
                                         decoration: BoxDecoration(
                                           border: Border.all(
@@ -543,7 +546,7 @@ class _CreateWeduState extends State<CreateWedu> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   '학년',
                                   style: TextStyle(
                                     fontFamily: 'Pretendard',
@@ -551,7 +554,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 8,
                                 ),
                                 DecoratedBox(
@@ -565,7 +568,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     width: 80,
                                     child: DropdownButton2(
                                       isExpanded: false,
-                                      underline: SizedBox.shrink(),
+                                      underline: const SizedBox.shrink(),
                                       dropdownStyleData: DropdownStyleData(
                                         elevation: 0,
                                         decoration: BoxDecoration(
@@ -576,7 +579,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                           color: PeeroreumColor.white,
                                         ),
                                       ),
-                                      menuItemStyleData: MenuItemStyleData(
+                                      menuItemStyleData: const MenuItemStyleData(
                                         height: 44,
                                       ),
                                       value: dropdownGrade,
@@ -597,7 +600,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                           value: value,
                                           child: Text(
                                             value,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: PeeroreumColor.black,
                                               fontFamily: 'Pretendard',
                                               fontSize: 14,
@@ -617,7 +620,7 @@ class _CreateWeduState extends State<CreateWedu> {
                               ],
                             ),
                             Container(
-                              margin: EdgeInsets.only(left: 20),
+                              margin: const EdgeInsets.only(left: 20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -653,10 +656,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                             color: PeeroreumColor.white,
                                           ),
                                         ),
-                                        menuItemStyleData: MenuItemStyleData(
+                                        menuItemStyleData: const MenuItemStyleData(
                                           height: 44,
                                         ),
-                                        underline: SizedBox.shrink(),
+                                        underline: const SizedBox.shrink(),
                                         value: dropdownHeadcount,
                                         buttonStyleData: const ButtonStyleData(
                                           padding: EdgeInsets.symmetric(
@@ -675,7 +678,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                             value: value,
                                             child: Text(
                                               "$value",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: PeeroreumColor.black,
                                                 fontFamily: 'Pretendard',
                                                 fontSize: 14,
@@ -722,7 +725,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: DropdownButton2(
-                                  hint: Text(
+                                  hint: const Text(
                                     '챌린지를 설정하세요',
                                     style: TextStyle(
                                       fontFamily: 'pretendard',
@@ -739,10 +742,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                       color: PeeroreumColor.white,
                                     ),
                                   ),
-                                  menuItemStyleData: MenuItemStyleData(
+                                  menuItemStyleData: const MenuItemStyleData(
                                     height: 44,
                                   ),
-                                  underline: SizedBox.shrink(),
+                                  underline: const SizedBox.shrink(),
                                   value: dropdownChallenge,
                                   buttonStyleData: const ButtonStyleData(
                                     padding: EdgeInsets.symmetric(
@@ -761,7 +764,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                       value: value,
                                       child: Text(
                                         value,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: PeeroreumColor.black,
                                           fontFamily: 'Pretendard',
                                           fontSize: 14,
@@ -773,14 +776,13 @@ class _CreateWeduState extends State<CreateWedu> {
                                   onChanged: (String? value) {
                                     setState(() {
                                       dropdownChallenge = value!;
-                                      check_validation();
+                                      checkValidation();
                                     });
                                   },
                                 ),
                               ),
                             ),
-                            Container(
-                              child: Visibility(
+                            Visibility(
                                 maintainState: true,
                                 maintainAnimation: true,
                                 visible: dropdownChallenge == challenge.last,
@@ -798,13 +800,13 @@ class _CreateWeduState extends State<CreateWedu> {
                                           decoration: InputDecoration(
                                               //isDense: true,
                                               contentPadding:
-                                                  EdgeInsets.symmetric(
+                                                  const EdgeInsets.symmetric(
                                                       vertical: 12,
                                                       horizontal: 16),
                                               focusedBorder: OutlineInputBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(8),
-                                                borderSide: BorderSide(
+                                                borderSide: const BorderSide(
                                                   color: PeeroreumColor.black,
                                                 ),
                                               ),
@@ -816,7 +818,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                         .gray[200]!,
                                                   )),
                                               hintText: '챌린지 내용을 입력해 주세요.',
-                                              hintStyle: TextStyle(
+                                              hintStyle: const TextStyle(
                                                 fontFamily: 'Pretendard',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w400,
@@ -824,19 +826,17 @@ class _CreateWeduState extends State<CreateWedu> {
                                           onChanged: (value) {
                                             setState(() {
                                               personalChallenge = value;
-                                              check_validation();
+                                              checkValidation();
                                             });
                                           },
                                         ),
                                       )
                                     ]),
                               ),
-                            ),
                             const SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              child: Column(
+                            Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('같이방 해시태그',
@@ -854,7 +854,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                     child: TextFieldTags<String>(
                                       textfieldTagsController: _controller,
                                       initialTags: null,
-                                      textSeparators: [' '],
+                                      textSeparators: const [' '],
                                       validator: (String tag) {
                                         if (_controller.getTags!
                                             .contains(tag)) {
@@ -891,7 +891,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                             focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8),
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: PeeroreumColor.black,
                                                 width: 1.0,
                                               ),
@@ -899,7 +899,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                             errorBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8),
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: PeeroreumColor.error,
                                               ),
                                             ),
@@ -913,19 +913,19 @@ class _CreateWeduState extends State<CreateWedu> {
                                                     .tags.isNotEmpty)
                                                 ? "#피어오름"
                                                 : "#피어오름 #오르미",
-                                            hintStyle: TextStyle(
+                                            hintStyle: const TextStyle(
                                                 fontFamily: 'Pretendard',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w400),
                                             //errorText: error,
                                             prefixIconConstraints:
-                                                BoxConstraints(
+                                                const BoxConstraints(
                                                     maxWidth: 350 * 0.8),
                                             prefixIcon: inputFieldValues
                                                     .tags.isNotEmpty
                                                 ? SingleChildScrollView(
                                                     padding:
-                                                        EdgeInsets.symmetric(
+                                                        const EdgeInsets.symmetric(
                                                             horizontal: 16),
                                                     controller: inputFieldValues
                                                         .tagScrollController,
@@ -945,7 +945,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                                       .primaryPurple[
                                                                   400]!),
                                                           borderRadius:
-                                                              BorderRadius.all(
+                                                              const BorderRadius.all(
                                                             Radius.circular(
                                                                 20.0),
                                                           ),
@@ -1001,8 +1001,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                                                 ),
                                                               ),
                                                               onTap: () {
-                                                                print(
-                                                                    "$tag selected");
+                                                                if (kDebugMode) {
+                                                                  print(
+                                                                      "$tag selected");
+                                                                }
                                                               },
                                                             ),
                                                             const SizedBox(
@@ -1040,12 +1042,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                   ),
                                 ],
                               ),
-                            ),
                             const SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              child: Row(
+                            Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -1061,7 +1061,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                             fontSize: 14,
                                             color: PeeroreumColor.black),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 8,
                                       ),
                                       Text(
@@ -1075,19 +1075,17 @@ class _CreateWeduState extends State<CreateWedu> {
                                     ],
                                   ),
                                   CupertinoSwitch(
-                                      activeColor: Color(0xff7260f8),
+                                      activeTrackColor: const Color(0xff7260f8),
                                       value: _isLocked,
                                       onChanged: (bool value) {
                                         setState(() {
                                           _isLocked = value;
-                                          check_validation();
+                                          checkValidation();
                                         });
                                       }),
                                 ],
                               ),
-                            ),
-                            Container(
-                              child: Visibility(
+                            Visibility(
                                   maintainState: true,
                                   maintainAnimation: true,
                                   visible: _isLocked,
@@ -1095,11 +1093,11 @@ class _CreateWeduState extends State<CreateWedu> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 20,
                                       ),
-                                      Text('비밀번호'),
-                                      SizedBox(
+                                      const Text('비밀번호'),
+                                      const SizedBox(
                                         height: 8,
                                       ),
                                       SizedBox(
@@ -1114,11 +1112,11 @@ class _CreateWeduState extends State<CreateWedu> {
                                             decoration: InputDecoration(
                                                 isDense: true,
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         vertical: 12,
                                                         horizontal: 16),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                    const OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                     color: PeeroreumColor.black,
                                                   ),
@@ -1137,7 +1135,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                     '비밀번호는 영문 또는 숫자만 설정 가능해요.',
                                                 counterText:
                                                     "${passwordValue.length} / $maxPassword",
-                                                hintStyle: TextStyle(
+                                                hintStyle: const TextStyle(
                                                   fontFamily: 'Pretendard',
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w400,
@@ -1156,13 +1154,12 @@ class _CreateWeduState extends State<CreateWedu> {
                                             onChanged: (value) {
                                               setState(() {
                                                 passwordValue = value;
-                                                check_validation();
+                                                checkValidation();
                                               });
                                             }),
                                       )
                                     ],
                                   )),
-                            ),
                           ],
                         )
                       ],
@@ -1178,7 +1175,7 @@ class _CreateWeduState extends State<CreateWedu> {
   }
 
   void fetchWedu() async {
-    var file;
+    dio.MultipartFile file;
     var weduMap = <String, dynamic>{
       'title': nameValue,
       'subject': subject.indexOf(dropdownSubject) + 1,
@@ -1203,8 +1200,8 @@ class _CreateWeduState extends State<CreateWedu> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              insetPadding: EdgeInsets.symmetric(horizontal: 20),
-              contentPadding: EdgeInsets.all(20),
+              insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+              contentPadding: const EdgeInsets.all(20),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
               backgroundColor: PeeroreumColor.white,
@@ -1217,7 +1214,7 @@ class _CreateWeduState extends State<CreateWedu> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 24,
                         ),
                         const Expanded(
@@ -1238,7 +1235,7 @@ class _CreateWeduState extends State<CreateWedu> {
                           },
                           child: SvgPicture.asset(
                             'assets/icons/x.svg',
-                            color: PeeroreumColor.gray[800],
+                            colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                           ),
                         )
                       ],

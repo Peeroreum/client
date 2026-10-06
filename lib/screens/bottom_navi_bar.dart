@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/data/visit_count.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/firebase_token.dart';
@@ -15,19 +16,17 @@ import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 
 class BottomNaviBar extends StatefulWidget {
-  String firebaseToken;
-  var selectedIndex;
+  final String firebaseToken;
+  final int selectedIndex;
 
-  BottomNaviBar(this.firebaseToken, this.selectedIndex, {super.key});
+  const BottomNaviBar(this.firebaseToken, this.selectedIndex, {super.key});
 
   @override
-  State<BottomNaviBar> createState() =>
-      _BottomNaviBarState(firebaseToken, selectedIndex);
+  State<BottomNaviBar> createState() => _BottomNaviBarState();
 }
 
 class _BottomNaviBarState extends State<BottomNaviBar> {
-  String firebaseToken;
-  var selectedIndex;
+  late int _selectedIndex;
 
   final List _pages = [
     const HomeWedu(),
@@ -36,11 +35,10 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
     const MyPage(),
   ];
 
-  _BottomNaviBarState(this.firebaseToken, this.selectedIndex);
-
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedIndex;
     postFirebaseToken();
     visitCount();
     _handlePendingDeepLink();
@@ -49,8 +47,10 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
   void _handlePendingDeepLink() {
     final roomId = PendingDeepLink.roomId;
     final profileNickname = PendingDeepLink.profileNickname;
-    print(
-        '[DeepLink] _handlePendingDeepLink roomId=$roomId profileNickname=$profileNickname');
+    if (kDebugMode) {
+      print(
+          '[DeepLink] _handlePendingDeepLink roomId=$roomId profileNickname=$profileNickname');
+    }
 
     if (roomId != null) {
       PendingDeepLink.roomId = null;
@@ -78,14 +78,20 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
   postFirebaseToken() async {
     try {
       var result = await ApiClient().post('/member/firebasetoken',
-          data: FirebaseToken(firebaseToken: firebaseToken).toJson());
+          data: FirebaseToken(firebaseToken: widget.firebaseToken).toJson());
       if (result.statusCode == 200) {
-        print("firebaseToken post 성공");
+        if (kDebugMode) {
+          print("firebaseToken post 성공");
+        }
       } else {
-        print("firebaseToken post 실패 ${result.statusCode}");
+        if (kDebugMode) {
+          print("firebaseToken post 실패 ${result.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -106,58 +112,56 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
         ),
         child: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
-              // BottomNavigationBarItem(
-              //     icon: SvgPicture.asset(
-              //       'assets/icons/home.svg',
-              //       color: PeeroreumColor.gray[400],
-              //     ),
-              //     activeIcon: SvgPicture.asset(
-              //       'assets/icons/home_fill.svg',
-              //       color: PeeroreumColor.primaryPuple[400],
-              //     ),
-              //     label: '홈'),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(
                     'assets/icons/user_three.svg',
-                    color: PeeroreumColor.gray[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.gray[400]!, BlendMode.srcIn),
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/user_three_fill.svg',
-                    color: PeeroreumColor.primaryPurple[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
                   ),
                   label: '같이해냄'),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(
                     'assets/icons/chats_tear_drop.svg',
-                    color: PeeroreumColor.gray[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.gray[400]!, BlendMode.srcIn),
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/chats_tear_drop_fill.svg',
-                    color: PeeroreumColor.primaryPurple[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
                   ),
                   label: '내가해냄'),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(
                     'assets/icons/medal.svg',
-                    color: PeeroreumColor.gray[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.gray[400]!, BlendMode.srcIn),
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/medal_fill.svg',
-                    color: PeeroreumColor.primaryPurple[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
                   ),
                   label: '랭킹'),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(
                     'assets/icons/user.svg',
-                    color: PeeroreumColor.gray[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.gray[400]!, BlendMode.srcIn),
                   ),
                   activeIcon: SvgPicture.asset(
                     'assets/icons/user_fill.svg',
-                    color: PeeroreumColor.primaryPurple[400],
+                    colorFilter: ColorFilter.mode(
+                        PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
                   ),
                   label: '마이페이지'),
             ],
-            currentIndex: selectedIndex,
+            currentIndex: _selectedIndex,
             unselectedItemColor: PeeroreumColor.gray[400],
             unselectedLabelStyle:
                 const TextStyle(fontFamily: 'Pretendard', fontSize: 12),
@@ -169,7 +173,7 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
             type: BottomNavigationBarType.fixed,
             onTap: (int index) {
               setState(() {
-                selectedIndex = index;
+                _selectedIndex = index;
               });
             }),
       ),
@@ -179,7 +183,7 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[selectedIndex],
+      body: _pages[_selectedIndex],
       bottomNavigationBar: bottomNavigatorBarWidget(),
     );
   }

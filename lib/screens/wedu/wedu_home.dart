@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
@@ -26,7 +27,7 @@ class HomeWedu extends StatefulWidget {
 }
 
 class _HomeWeduState extends State<HomeWedu> {
-  var nickname;
+  String? nickname;
   int selectedIndex = 1;
   List<dynamic> data = [];
   List<dynamic> inRoomData = [];
@@ -122,10 +123,14 @@ class _HomeWeduState extends State<HomeWedu> {
       if (inWeduResult.statusCode == 200) {
         inRoomData = inWeduResult.data['data'];
       } else {
-        print("에러${inWeduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러${inWeduResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -142,10 +147,14 @@ class _HomeWeduState extends State<HomeWedu> {
         data = weduResult.data['data'];
         fetchImage(data);
       } else {
-        print("에러${weduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러${weduResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
     if (mounted) {
       setState(() {});
@@ -153,7 +162,7 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   fetchImage(datas) async {
-    var inviData;
+    dynamic inviData;
     for (var data in datas) {
       inviData = await fetchInvitation(data['id']);
       this.inviData.addAll({data['id']: inviData});
@@ -182,13 +191,17 @@ class _HomeWeduState extends State<HomeWedu> {
           _isLoading = false;
         });
       } else {
-        print("에러${weduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러${weduResult.statusCode}");
+        }
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
       setState(() {
         _isLoading = false;
       });
@@ -215,7 +228,7 @@ class _HomeWeduState extends State<HomeWedu> {
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () {
-                  Get.to(() => const searchWedu());
+                  Get.to(() => const SearchWedu());
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -227,7 +240,7 @@ class _HomeWeduState extends State<HomeWedu> {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/search.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                       const SizedBox(width: 8.0),
                       SizedBox(
@@ -262,14 +275,14 @@ class _HomeWeduState extends State<HomeWedu> {
                 margin: const EdgeInsets.only(right: 8),
                 child: SvgPicture.asset(
                   'assets/icons/plus_square2.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                   width: 24,
                   height: 24,
                 ),
               ),
               onTap: () {
                 if (inRoomData.length < 10) {
-                  Get.to(() => CreateWedu());
+                  Get.to(() => const CreateWedu());
                 } else {
                   PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.');
                 }
@@ -278,7 +291,7 @@ class _HomeWeduState extends State<HomeWedu> {
             GestureDetector(
               child: SvgPicture.asset(
                 'assets/icons/bell_none.svg',
-                color: PeeroreumColor.gray[800],
+                colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
               ),
               onTap: () {
                 Get.to(() => Alert());
@@ -366,7 +379,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                     color: PeeroreumColor.black),
                                 const SizedBox(height: 20),
                                 GestureDetector(
-                                  onTap: () => Get.to(() => CreateWedu()),
+                                  onTap: () => Get.to(() => const CreateWedu()),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 16),
@@ -428,7 +441,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 if (inRoomData.isNotEmpty) ...[
                   const SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () => Get.to(() => CreateWedu()),
+                    onTap: () => Get.to(() => const CreateWedu()),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 16),
@@ -595,7 +608,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 const EdgeInsets.symmetric(horizontal: 2.0),
                             child: SvgPicture.asset(
                               'assets/icons/dot.svg',
-                              color: PeeroreumColor.gray[600],
+                              colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                             ),
                           ),
                           Text(
@@ -610,7 +623,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                 const EdgeInsets.symmetric(horizontal: 2.0),
                             child: SvgPicture.asset(
                               'assets/icons/dot.svg',
-                              color: PeeroreumColor.gray[600],
+                              colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                             ),
                           ),
                           inRoomData[roomIndex]["dday"] > 0
@@ -678,7 +691,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       ),
                       iconStyleData: IconStyleData(
                         icon: SvgPicture.asset('assets/icons/down.svg',
-                            color: PeeroreumColor.gray[600]),
+                            colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn)),
                       ),
                       dropdownStyleData: DropdownStyleData(
                         elevation: 0,
@@ -734,7 +747,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       ),
                       iconStyleData: IconStyleData(
                         icon: SvgPicture.asset('assets/icons/down.svg',
-                            color: PeeroreumColor.gray[600]),
+                            colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn)),
                       ),
                       dropdownStyleData: DropdownStyleData(
                         elevation: 0,
@@ -791,7 +804,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 ),
                 iconStyleData: IconStyleData(
                   icon: SvgPicture.asset('assets/icons/down.svg',
-                      color: PeeroreumColor.gray[600]),
+                      colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn)),
                 ),
                 dropdownStyleData: DropdownStyleData(
                   elevation: 0,
@@ -915,7 +928,7 @@ class _HomeWeduState extends State<HomeWedu> {
                               ),
                               data[index]['locked'].toString() == "true"
                                   ? SvgPicture.asset('assets/icons/lock.svg',
-                                      color: PeeroreumColor.gray[400],
+                                      colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                       width: 12)
                                   : const SizedBox(),
                               data[index]['locked'].toString() == "true"
@@ -949,7 +962,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text('${data[index]["attendingPeopleNum"]!}명',
@@ -963,7 +976,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               data[index]["dday"] > 0
@@ -1001,8 +1014,6 @@ class _HomeWeduState extends State<HomeWedu> {
                       (inviData[data[index]['id']]?['invitationUrl'] ?? '')
                           .toString();
                   final roomName = data[index]['title'] as String? ?? '';
-                  final storeUrl = Uri.parse(
-                      'https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client');
                   final available =
                       await ShareClient.instance.isKakaoTalkSharingAvailable();
                   if (available) {
@@ -1041,6 +1052,7 @@ class _HomeWeduState extends State<HomeWedu> {
             },
           );
         }
+        return null;
       },
     );
   }
@@ -1078,10 +1090,14 @@ class _HomeWeduState extends State<HomeWedu> {
       if (inviResult.statusCode == 200) {
         return inviResult.data['data'];
       } else {
-        print("에러${inviResult.statusCode}");
+        if (kDebugMode) {
+          print("에러${inviResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -1089,13 +1105,16 @@ class _HomeWeduState extends State<HomeWedu> {
     var id = data[index]['id'];
     try {
       var enrollResult = await ApiClient().post('/wedu/$id/enroll');
+      if (!mounted) return;
       if (enrollResult.statusCode == 200) {
         PeeroreumToast.show(context, "같이방에 참여했어요!");
       } else {
         PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
       }
     } catch (e) {
-      print("Unexpected error: $e");
+      if (kDebugMode) {
+        print("Unexpected error: $e");
+      }
     }
     setState(() {});
   }

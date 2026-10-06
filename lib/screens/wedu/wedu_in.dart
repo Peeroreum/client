@@ -1,9 +1,10 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class InWedu extends StatefulWidget {
@@ -34,7 +35,9 @@ class _InWeduState extends State<InWedu> {
       ingGroup = data["ingWedus"];
       completeGroup = data['endWedus'];
     } else {
-      print("에러${result.statusCode}");
+      if (kDebugMode) {
+        print("에러${result.statusCode}");
+      }
     }
   }
 
@@ -60,7 +63,7 @@ class _InWeduState extends State<InWedu> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -256,7 +259,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(
@@ -272,7 +275,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(
@@ -412,7 +415,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(
@@ -428,7 +431,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(

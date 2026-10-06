@@ -6,17 +6,19 @@ import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:get/get.dart';
 
 class ComplimentList extends StatefulWidget {
+  const ComplimentList({super.key});
+
   @override
   State<ComplimentList> createState() => _ComplimentListState();
 }
 
 class _ComplimentListState extends State<ComplimentList> {
   List<dynamic> successList = [];
-  bool am_i = false;
-  var mynickname;
+  bool amI = false;
+  String? myNickname;
 
   Future<void> fetchDatas() async {
-    mynickname = await FlutterSecureStorage().read(key: "nickname");
+    myNickname = await const FlutterSecureStorage().read(key: "nickname");
   }
 
   @override
@@ -35,14 +37,14 @@ class _ComplimentListState extends State<ComplimentList> {
               leading: IconButton(
                 icon: SvgPicture.asset(
                   'assets/icons/x.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                   width: 18,
                 ),
                 onPressed: () {
                   Get.back();
                 },
               ),
-              title: Text(
+              title: const Text(
                 '달성',
                 style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -53,12 +55,11 @@ class _ComplimentListState extends State<ComplimentList> {
               centerTitle: true,
             ),
             body: SafeArea(
-              child: Container(
-                child: Column(
+              child: Column(
                   children: [
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 13, horizontal: 20),
+                          const EdgeInsets.symmetric(vertical: 13, horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -72,7 +73,7 @@ class _ComplimentListState extends State<ComplimentList> {
                                     fontSize: 14,
                                     color: PeeroreumColor.gray[500]),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 4,
                               ),
                               Text(
@@ -83,7 +84,7 @@ class _ComplimentListState extends State<ComplimentList> {
                                     fontSize: 14,
                                     color: PeeroreumColor.gray[500]),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 2,
                               ),
                               Text(
@@ -107,7 +108,6 @@ class _ComplimentListState extends State<ComplimentList> {
                     okList()
                   ],
                 ),
-              ),
             ),
           );
         });
@@ -123,14 +123,14 @@ class _ComplimentListState extends State<ComplimentList> {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (mynickname == successList[index]['nickname']) {
-                    am_i = true;
+                  if (myNickname == successList[index]['nickname']) {
+                    amI = true;
                   }
                   Get.to(() =>
-                      MyPageProfile(successList[index]['nickname'], am_i));
+                      MyPageProfile(successList[index]['nickname'], amI));
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Row(
                     children: [
                       Container(
@@ -157,18 +157,18 @@ class _ComplimentListState extends State<ComplimentList> {
                                     image: NetworkImage(
                                         successList[index]["profileImage"]),
                                     fit: BoxFit.cover)
-                                : DecorationImage(
+                                : const DecorationImage(
                                     image:
                                         AssetImage('assets/images/user.jpg')),
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Text(
-                        (successList[index]['nickname'] == mynickname)
-                            ? '$mynickname (나)'
+                        (successList[index]['nickname'] == myNickname)
+                            ? '$myNickname (나)'
                             : successList[index]['nickname'],
                         style: TextStyle(
                             fontFamily: 'Pretendard',

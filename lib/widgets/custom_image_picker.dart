@@ -159,6 +159,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null && mounted) {
       final compressed = await compressImage(image);
+      if (!mounted) return;
       Navigator.pop(context, [compressed]);
     }
   }
@@ -357,7 +358,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
             },
           ),
           if (isSelected)
-            Container(color: Colors.black.withOpacity(0.25)),
+            Container(color: Colors.black.withValues(alpha: 0.25)),
           Positioned(
             top: 6,
             right: 6,
@@ -367,7 +368,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected
-                    ? Colors.black.withOpacity(0.55)
+                    ? Colors.black.withValues(alpha: 0.55)
                     : Colors.transparent,
                 border: Border.all(color: Colors.white, width: 1),
               ),

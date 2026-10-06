@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_acount_ps.dart';
 
@@ -16,7 +17,7 @@ class MyPageAccount extends StatefulWidget {
 }
 
 class _MyPageAccountState extends State<MyPageAccount> {
-  var email;
+  String? email;
 
   fetchStatus() async {
     email = await const FlutterSecureStorage().read(key: "email");
@@ -26,9 +27,13 @@ class _MyPageAccountState extends State<MyPageAccount> {
     var result = await ApiClient().delete('/member');
 
     if (result.statusCode == 200) {
-      print("회원 탈퇴 성공");
+      if (kDebugMode) {
+        print("회원 탈퇴 성공");
+      }
     } else {
-      print("회원 탈퇴 실패 ${result.statusCode}");
+      if (kDebugMode) {
+        print("회원 탈퇴 실패 ${result.statusCode}");
+      }
     }
 
     return result.statusCode ?? 500;
@@ -58,7 +63,8 @@ class _MyPageAccountState extends State<MyPageAccount> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -189,7 +195,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           insetPadding: const EdgeInsets.symmetric(horizontal: 20),
           contentPadding: const EdgeInsets.all(20),
@@ -197,7 +203,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
           content: SizedBox(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(dialogContext).size.width,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -269,13 +275,14 @@ class _MyPageAccountState extends State<MyPageAccount> {
                       child: TextButton(
                         onPressed: () async {
                           int statusCode = await deleteAllMember();
-                          if (statusCode == 200) {
-                            await const FlutterSecureStorage().deleteAll();
-                            Get.offAllNamed('/signIn/email');
-                          } else {
+                          if (!mounted) return;
+                          if (statusCode != 200) {
                             PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.",
                                 isError: true);
+                            return;
                           }
+                          await const FlutterSecureStorage().deleteAll();
+                          Get.offAllNamed('/signIn/email');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,

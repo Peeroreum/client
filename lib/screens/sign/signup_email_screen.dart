@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/sign/signup.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 
 class EmailSignUp extends StatefulWidget {
   const EmailSignUp({super.key});
@@ -184,8 +184,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                                 },
                                                 child: SvgPicture.asset(
                                                   "assets/icons/x_circle.svg",
-                                                  color:
-                                                      PeeroreumColor.gray[200],
+                                                  colorFilter: ColorFilter.mode(
+                                                      PeeroreumColor.gray[200]!,
+                                                      BlendMode.srcIn),
                                                 ))
                                             : null),
                                     const SizedBox(
@@ -199,8 +200,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                       child: idCheck
                                           ? SvgPicture.asset(
                                               "assets/icons/check.svg",
-                                              color: PeeroreumColor
-                                                  .primaryPurple[400],
+                                              colorFilter: ColorFilter.mode(
+                                                  PeeroreumColor
+                                                      .primaryPurple[400]!,
+                                                  BlendMode.srcIn),
                                             )
                                           : const SizedBox(),
                                     ),
@@ -212,7 +215,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                         child: idDuplicate
                                             ? SvgPicture.asset(
                                                 "assets/icons/warning_circle.svg",
-                                                color: PeeroreumColor.error,
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        PeeroreumColor.error,
+                                                        BlendMode.srcIn),
                                               )
                                             : const SizedBox())
                                   ],
@@ -300,7 +306,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                 pw1ShowClearButton = false;
                               }
                               if (RegExp(
-                                      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
+                                      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!%*#?~^<>,.&+=@$])[A-Za-z\d!%*#?~^<>,.&+=@$]{8,12}$')
                                   .hasMatch(pw1Controller.text)) {
                                 setState(() {
                                   pw1Check = true;
@@ -355,7 +361,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                               },
                                               child: SvgPicture.asset(
                                                 "assets/icons/x_circle.svg",
-                                                color: PeeroreumColor.gray[200],
+                                                colorFilter: ColorFilter.mode(
+                                                    PeeroreumColor.gray[200]!,
+                                                    BlendMode.srcIn),
                                               ))
                                           : null),
                                   const SizedBox(
@@ -534,7 +542,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                                           },
                                           child: SvgPicture.asset(
                                             "assets/icons/x_circle.svg",
-                                            color: PeeroreumColor.gray[200],
+                                            colorFilter: ColorFilter.mode(
+                                                PeeroreumColor.gray[200]!,
+                                                BlendMode.srcIn),
                                           ),
                                         )
                                       : const SizedBox(),
@@ -579,12 +589,12 @@ class _EmailSignUpState extends State<EmailSignUp> {
                     : null,
                 style: ButtonStyle(
                     backgroundColor: ((idCheck && pw1Check && pw2Check))
-                        ? MaterialStateProperty.all(
+                        ? WidgetStateProperty.all(
                             PeeroreumColor.primaryPurple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
+                        : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
                           ? BorderRadius.zero
@@ -609,7 +619,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
   validateEmail() async {
     idDuplicate = await isDuplicatedEmail();
     setState(() {
-      if (RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+      if (RegExp(r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
               .hasMatch(idController.text) &&
           !idDuplicate) {
         idCheck = true;
@@ -662,7 +672,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPurple[400],
+            colorFilter: ColorFilter.mode(
+                PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
           ));
     }
     if (pw1Controller.text.length >= 2 && !pw1Check) {
@@ -670,7 +681,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
-            color: PeeroreumColor.error,
+            colorFilter:
+                const ColorFilter.mode(PeeroreumColor.error, BlendMode.srcIn),
           ));
     }
     return GestureDetector(
@@ -683,7 +695,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
         padding: const EdgeInsets.only(right: 16),
         child: SvgPicture.asset(
           pw1Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
-          color: PeeroreumColor.gray[600],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
         ),
       ),
     );
@@ -695,7 +708,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPurple[400],
+            colorFilter: ColorFilter.mode(
+                PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
           ));
     }
     if (pw2Controller.text.length >= 2 && !pw2Check) {
@@ -703,7 +717,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
           padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
-            color: PeeroreumColor.error,
+            colorFilter:
+                const ColorFilter.mode(PeeroreumColor.error, BlendMode.srcIn),
           ));
     }
     return GestureDetector(
@@ -716,7 +731,8 @@ class _EmailSignUpState extends State<EmailSignUp> {
         padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
         child: SvgPicture.asset(
           pw2Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
-          color: PeeroreumColor.gray[600],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
         ),
       ),
     );

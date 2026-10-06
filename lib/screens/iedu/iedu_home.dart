@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/data/i_edu_read.dart';
 import 'package:peeroreum_client/data/subject.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
@@ -38,8 +39,8 @@ class _HomeIeduState extends State<HomeIedu> {
   List<String> isReadList = [];
   bool whyrano = false;
 
-  var nickname;
-  var profileImage;
+  String? nickname;
+  String? profileImage;
   int? _grade;
   String? _subject;
   String? _detailSubject;
@@ -167,13 +168,19 @@ class _HomeIeduState extends State<HomeIedu> {
       var ieduResult = await ApiClient().get(
           '/question?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage');
       if (ieduResult.statusCode == 200) {
-        print("성공 fetchIeduData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("성공 fetchIeduData ${ieduResult.statusCode}");
+        }
         data = ieduResult.data['data'];
       } else {
-        print("에러 fetchIeduData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러 fetchIeduData ${ieduResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
     if (mounted) {
       setState(() {});
@@ -196,15 +203,21 @@ class _HomeIeduState extends State<HomeIedu> {
           data.addAll(addedData);
           _isLoading = false;
         });
-        print("성공 loadMoreData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("성공 loadMoreData ${ieduResult.statusCode}");
+        }
       } else {
-        print("에러 loadMoreData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러 loadMoreData ${ieduResult.statusCode}");
+        }
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
       setState(() {
         _isLoading = false;
       });
@@ -233,12 +246,14 @@ class _HomeIeduState extends State<HomeIedu> {
                   decoration: BoxDecoration(
                       color: PeeroreumColor.gray[100],
                       borderRadius: BorderRadius.circular(37.0)),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12.0),
                   child: Row(
                     children: [
                       SvgPicture.asset(
                         'assets/icons/search.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                       const SizedBox(width: 8.0),
                       SizedBox(
@@ -270,7 +285,8 @@ class _HomeIeduState extends State<HomeIedu> {
               child: GestureDetector(
                 child: SvgPicture.asset(
                   'assets/icons/bell_none.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onTap: () {
                   Get.to(() => Alert());
@@ -318,7 +334,8 @@ class _HomeIeduState extends State<HomeIedu> {
                 width: 24,
                 child: SvgPicture.asset(
                   'assets/icons/pencil_with_line.svg',
-                  color: PeeroreumColor.white,
+                  colorFilter: const ColorFilter.mode(
+                      PeeroreumColor.white, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -405,7 +422,8 @@ class _HomeIeduState extends State<HomeIedu> {
               },
               child: Container(
                 height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -462,7 +480,8 @@ class _HomeIeduState extends State<HomeIedu> {
               },
               child: Container(
                 height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -559,8 +578,8 @@ class _HomeIeduState extends State<HomeIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           grades[index],
                           style: const TextStyle(
@@ -644,8 +663,8 @@ class _HomeIeduState extends State<HomeIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           subjectList[index],
                           style: const TextStyle(
@@ -707,8 +726,10 @@ class _HomeIeduState extends State<HomeIedu> {
                         setState(() {
                           _detailSubject = detailSubjects[index];
                           detailSubject = index;
-                          print(
-                              '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          if (kDebugMode) {
+                            print(
+                                '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          }
                           fetchIeduData();
                         });
                         Get.back();
@@ -720,8 +741,8 @@ class _HomeIeduState extends State<HomeIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           detailSubjects[index],
                           style: const TextStyle(
@@ -759,8 +780,8 @@ class _HomeIeduState extends State<HomeIedu> {
                   Read.saveRead(isReadList);
                 }
               });
-              await Get.to(() =>
-                  DetailIedu(data[index]['id'], data[index]['selected']));
+              await Get.to(
+                  () => DetailIedu(data[index]['id'], data[index]['selected']));
               fetchIeduData();
             },
             child: Container(
@@ -923,7 +944,8 @@ class _HomeIeduState extends State<HomeIedu> {
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
                           child: SvgPicture.asset(
                             'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[400],
+                            colorFilter: ColorFilter.mode(
+                                PeeroreumColor.gray[400]!, BlendMode.srcIn),
                           ),
                         ),
                         C1m(
@@ -934,7 +956,8 @@ class _HomeIeduState extends State<HomeIedu> {
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
                           child: SvgPicture.asset(
                             'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[400],
+                            colorFilter: ColorFilter.mode(
+                                PeeroreumColor.gray[400]!, BlendMode.srcIn),
                           ),
                         ),
                         C1m(
@@ -949,6 +972,7 @@ class _HomeIeduState extends State<HomeIedu> {
             ),
           );
         }
+        return null;
       },
     );
   }

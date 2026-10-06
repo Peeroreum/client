@@ -1,24 +1,25 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import './new_password_screen.dart';
 
 class EmailValidate extends StatefulWidget {
   final String email;
-  EmailValidate(this.email);
+
+  const EmailValidate(this.email, {super.key});
 
   @override
   State<EmailValidate> createState() => _EmailValidateState();
 }
 
 class _EmailValidateState extends State<EmailValidate> {
-  final code_controller = TextEditingController();
-  bool is_Enabled = false;
-  bool is_loading = false;
-  bool is_resending = false;
+  final codeController = TextEditingController();
+  bool isEnabled = false;
+  bool isLoading = false;
+  bool isResending = false;
   late Timer _timer;
   int _secondsRemaining = 300;
 
@@ -36,7 +37,7 @@ class _EmailValidateState extends State<EmailValidate> {
 
   void startTimer() {
     _secondsRemaining = 300;
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
         timer.cancel();
         return;
@@ -58,13 +59,13 @@ class _EmailValidateState extends State<EmailValidate> {
   }
 
   void _checkInput() {
-    if (code_controller.text.length == 6) {
+    if (codeController.text.length == 6) {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     } else {
       setState(() {
-        is_Enabled = false;
+        isEnabled = false;
       });
     }
   }
@@ -101,11 +102,11 @@ class _EmailValidateState extends State<EmailValidate> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             '인증번호 전송 완료',
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
@@ -113,8 +114,8 @@ class _EmailValidateState extends State<EmailValidate> {
                                 fontSize: 20,
                                 color: PeeroreumColor.black),
                           ),
-                          SizedBox(height: 4),
-                          Text(
+                          const SizedBox(height: 4),
+                          const Text(
                             '메일함을 확인해 주세요.',
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
@@ -122,9 +123,9 @@ class _EmailValidateState extends State<EmailValidate> {
                                 fontSize: 16,
                                 color: PeeroreumColor.black),
                           ),
-                          SizedBox(height: 24),
+                          const SizedBox(height: 24),
                           TextFormField(
-                            controller: code_controller,
+                            controller: codeController,
                             keyboardType: TextInputType.number,
                             maxLength: 6,
                             onChanged: (value) {
@@ -142,7 +143,7 @@ class _EmailValidateState extends State<EmailValidate> {
                                   vertical: 12, horizontal: 16),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: PeeroreumColor.black,
                                 ),
                               ),
@@ -155,13 +156,13 @@ class _EmailValidateState extends State<EmailValidate> {
                             ),
                             cursorColor: PeeroreumColor.gray[600],
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Row(
                             children: [
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               GestureDetector(
                                 onTap: () {
-                                  if (!is_resending) {
+                                  if (!isResending) {
                                     resendEmail();
                                   }
                                 },
@@ -169,9 +170,10 @@ class _EmailValidateState extends State<EmailValidate> {
                                   decoration: BoxDecoration(
                                     border: Border(
                                       bottom: BorderSide(
-                                        color: is_resending
+                                        color: isResending
                                             ? PeeroreumColor.gray[400]!
-                                            : PeeroreumColor.primaryPurple[500]!,
+                                            : PeeroreumColor
+                                                .primaryPurple[500]!,
                                         width: 1,
                                       ),
                                     ),
@@ -182,13 +184,14 @@ class _EmailValidateState extends State<EmailValidate> {
                                         fontFamily: 'Pretendard',
                                         fontWeight: FontWeight.w400,
                                         fontSize: 14,
-                                        color: is_resending
+                                        color: isResending
                                             ? PeeroreumColor.gray[400]
-                                            : PeeroreumColor.primaryPurple[500]),
+                                            : PeeroreumColor
+                                                .primaryPurple[500]),
                                   ),
                                 ),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Text(
                                 '$timerText 남음',
                                 style: TextStyle(
@@ -197,7 +200,7 @@ class _EmailValidateState extends State<EmailValidate> {
                                     fontSize: 14,
                                     color: PeeroreumColor.gray[600]),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                             ],
                           ),
                         ],
@@ -205,20 +208,32 @@ class _EmailValidateState extends State<EmailValidate> {
                     ),
                   ),
                 ),
-                // 버튼을 body 하단에 배치 (bottomSheet 대신)
                 Padding(
-                  padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   child: SizedBox(
                     height: 48,
                     width: double.infinity,
                     child: TextButton(
-                      onPressed: (is_Enabled && !is_loading)
+                      onPressed: (isEnabled && !isLoading)
                           ? () {
                               verifyCode();
                             }
                           : null,
-                      child: is_loading
-                          ? SizedBox(
+                      style: ButtonStyle(
+                        backgroundColor: (isEnabled && !isLoading)
+                            ? WidgetStateProperty.all(
+                                PeeroreumColor.primaryPurple[400])
+                            : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                        padding: WidgetStateProperty.all(
+                            const EdgeInsets.symmetric(vertical: 12)),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                      child: isLoading
+                          ? const SizedBox(
                               height: 24,
                               width: 24,
                               child: CircularProgressIndicator(
@@ -226,7 +241,7 @@ class _EmailValidateState extends State<EmailValidate> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : Text(
+                          : const Text(
                               '다음',
                               style: TextStyle(
                                   fontFamily: 'Pretendard',
@@ -234,21 +249,6 @@ class _EmailValidateState extends State<EmailValidate> {
                                   fontSize: 16.0,
                                   color: PeeroreumColor.white),
                             ),
-                      style: ButtonStyle(
-                        backgroundColor: (is_Enabled && !is_loading)
-                            ? MaterialStateProperty.all(
-                                PeeroreumColor.primaryPurple[400])
-                            : MaterialStateProperty.all(
-                                PeeroreumColor.gray[300]),
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 12)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                      ),
                     ),
                   ),
                 ),
@@ -262,13 +262,14 @@ class _EmailValidateState extends State<EmailValidate> {
 
   verifyCode() async {
     setState(() {
-      is_loading = true;
+      isLoading = true;
     });
     var result = await ApiClient().post(
-      '/member/password/verify?email=${Uri.encodeComponent(widget.email)}&code=${Uri.encodeComponent(code_controller.text)}',
+      '/member/password/verify?email=${Uri.encodeComponent(widget.email)}&code=${Uri.encodeComponent(codeController.text)}',
     );
+    if (!mounted) return;
     setState(() {
-      is_loading = false;
+      isLoading = false;
     });
     if (result.statusCode == 200) {
       var data = result.data;
@@ -294,13 +295,14 @@ class _EmailValidateState extends State<EmailValidate> {
 
   resendEmail() async {
     setState(() {
-      is_resending = true;
+      isResending = true;
     });
     var result = await ApiClient().post(
       '/member/password/email?email=${Uri.encodeComponent(widget.email)}',
     );
+    if (!mounted) return;
     setState(() {
-      is_resending = false;
+      isResending = false;
     });
     if (result.statusCode == 200) {
       var data = result.data;

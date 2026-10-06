@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
@@ -11,24 +12,23 @@ import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/report.dart';
 
 class DetailIedu extends StatefulWidget {
   final int id;
-  final bool isQselected;
-  const DetailIedu(this.id, this.isQselected, {super.key});
+  final bool isQuestionSelected;
+  const DetailIedu(this.id, this.isQuestionSelected, {super.key});
 
   @override
-  State<DetailIedu> createState() => _DetailIeduState(id, isQselected);
+  State<DetailIedu> createState() => _DetailIeduState();
 }
 
 class _DetailIeduState extends State<DetailIedu> {
-  _DetailIeduState(this.id, this.isQselected);
-
-  var id, nickname;
+  late int id;
+  String? nickname;
   TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
@@ -56,7 +56,7 @@ class _DetailIeduState extends State<DetailIedu> {
   dynamic isBookmarked;
   int likesNum = 0;
   int commentsNum = 0;
-  dynamic isQselected;
+  late bool isQuestionSelected;
 
   int selectedParent = -1;
 
@@ -77,7 +77,7 @@ class _DetailIeduState extends State<DetailIedu> {
 
     await fetchIeduQuestionData();
     await fetchIeduAnswerData();
-    await fetchSelectedQuestion(isQselected);
+    await fetchSelectedQuestion(isQuestionSelected);
   }
 
   fetchSelectedQuestion(bool selectExist) async {
@@ -88,10 +88,14 @@ class _DetailIeduState extends State<DetailIedu> {
           selectedData = selectedQuestionResult.data['data'];
           sltProfileData = selectedData['memberProfileDto'];
         } else {
-          print("fetchIeduQuestionData에러${selectedQuestionResult.statusCode}");
+          if (kDebugMode) {
+            print("fetchIeduQuestionData 에러${selectedQuestionResult.statusCode}");
+          }
         }
       } catch (e) {
-        print('Unexpected error: $e');
+        if (kDebugMode) {
+          print('Unexpected error: $e');
+        }
       }
     }
     setState(() {});
@@ -114,33 +118,49 @@ class _DetailIeduState extends State<DetailIedu> {
         isBookmarked = questionData['bookmarked'];
         likesNum = questionData['likes'];
         commentsNum = questionData['comments'];
-        print(questionImage);
+        if (kDebugMode) {
+          print(questionImage);
+        }
       } else if (inIeduQuestionResult.statusCode == 404) {
         Get.offAllNamed('/home/iedu');
-        print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
+        if (kDebugMode) {
+          print("fetchIeduQuestionData ${inIeduQuestionResult.statusCode}");
+        }
       } else {
-        print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
+        if (kDebugMode) {
+          print("fetchIeduQuestionData에러${inIeduQuestionResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
     setState(() {});
   }
 
   fetchIeduAnswerData() async {
     page = 0;
-    print(page);
+    if (kDebugMode) {
+      print(page);
+    }
     try {
       var inIeduAnswerResult = await ApiClient().get('/answer?questionId=$id&page=$page');
       if (inIeduAnswerResult.statusCode == 200) {
         commentData = inIeduAnswerResult.data['data'];
-        print(commentData);
+        if (kDebugMode) {
+          print(commentData);
+        }
         setState(() {});
       } else {
-        print("fetchIeduAnswerData에러${inIeduAnswerResult.statusCode}");
+        if (kDebugMode) {
+          print("fetchIeduAnswerData 에러${inIeduAnswerResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
     setState(() {});
   }
@@ -148,6 +168,8 @@ class _DetailIeduState extends State<DetailIedu> {
   @override
   void initState() {
     super.initState();
+    id = widget.id;
+    isQuestionSelected = widget.isQuestionSelected;
     initFuture = fetchData();
     _textController = TextEditingController();
     _scrollController.addListener(() {
@@ -184,10 +206,14 @@ class _DetailIeduState extends State<DetailIedu> {
           _isLoading = false;
         });
       } else {
-        print("에러${inIeduAnswerResult.statusCode}");
+        if (kDebugMode) {
+          print("에러${inIeduAnswerResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
       setState(() {
         _isLoading = false;
       });
@@ -196,18 +222,14 @@ class _DetailIeduState extends State<DetailIedu> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (selectedParent != -1) {
-          setState(() {
-            selectedParent = -1;
-          });
-          // 뒤로 가기 버튼을 눌렀을 때 선택된 부모가 있으면 화면을 뒤로 가지 않고 selectedParent를 초기화합니다.
-          return false;
-        } else {
-          // 선택된 부모가 없는 경우에는 뒤로 가기 동작을 허용합니다.
-          return true;
-        }
+    return PopScope(
+      canPop: selectedParent == -1,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        // 선택된 부모가 있으면 pop 없이 selectedParent만 초기화
+        setState(() {
+          selectedParent = -1;
+        });
       },
       child: GestureDetector(
         onTap: () {
@@ -250,7 +272,7 @@ class _DetailIeduState extends State<DetailIedu> {
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
         onPressed: () {
           Get.back();
@@ -270,12 +292,14 @@ class _DetailIeduState extends State<DetailIedu> {
                   constraints: const BoxConstraints(),
                   child: isBookmarked != null && isBookmarked
                       ? SvgPicture.asset('assets/icons/bookmark_fill.svg',
-                          color: PeeroreumColor.primaryPurple[400])
+                          colorFilter: ColorFilter.mode(PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn))
                       : SvgPicture.asset('assets/icons/bookmark.svg',
-                          color: PeeroreumColor.black),
+                          colorFilter: const ColorFilter.mode(PeeroreumColor.black, BlendMode.srcIn)),
                 ),
                 onTap: () {
-                  print(isBookmarked);
+                  if (kDebugMode) {
+                    print(isBookmarked);
+                  }
                   postBookmark();
                 },
               ),
@@ -290,7 +314,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     'assets/icons/icon_dots_mono.svg',
                     height: 24,
                     width: 24,
-                    color: PeeroreumColor.black,
+                    colorFilter: const ColorFilter.mode(PeeroreumColor.black, BlendMode.srcIn),
                   ),
                 ),
                 onTap: () async {
@@ -372,7 +396,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                     border: Border.all(
                                       width: 2,
                                       color:
-                                          PeeroreumColor.white.withOpacity(0.0),
+                                          PeeroreumColor.white.withValues(alpha:0.0),
                                     )),
                                 child: Container(
                                   height: 24,
@@ -385,8 +409,10 @@ class _DetailIeduState extends State<DetailIedu> {
                                                 .image,
                                             fit: BoxFit.cover,
                                             onError: (exception, stackTrace) {
-                                              print(
+                                              if (kDebugMode) {
+                                                print(
                                                   'Error loading image: $exception');
+                                              }
                                             },
                                           )
                                         : const DecorationImage(
@@ -496,7 +522,7 @@ class _DetailIeduState extends State<DetailIedu> {
                                     initialPage: selectedIndex));
                               },
                               child: Container(
-                                margin: EdgeInsets.only(bottom: 16),
+                                margin: const EdgeInsets.only(bottom: 16),
                                 width: double.maxFinite,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
@@ -615,7 +641,7 @@ class _DetailIeduState extends State<DetailIedu> {
               color: PeeroreumColor.gray[100],
             ),
             Visibility(
-              visible: isQselected,
+              visible: isQuestionSelected,
               child: selectedData != null
                   ? Container(
                       color: PeeroreumColor.primaryPurple[50]!,
@@ -627,7 +653,7 @@ class _DetailIeduState extends State<DetailIedu> {
                         profileImage: selectedData['memberProfileDto']
                             ['profileImage'],
                         name: selectedData['memberProfileDto']['nickname'],
-                        isQwselected: isQselected,
+                        isQuestionSelected: isQuestionSelected,
                         isChosen: selectedData["isSelected"],
                         comment: selectedData["content"],
                         commentImage: selectedData["images"],
@@ -657,7 +683,7 @@ class _DetailIeduState extends State<DetailIedu> {
                     profileImage: commentData['memberProfileDto']
                         ['profileImage'],
                     name: commentData['memberProfileDto']['nickname'],
-                    isQwselected: isQselected,
+                    isQuestionSelected: isQuestionSelected,
                     isChosen: commentData["isSelected"],
                     comment: commentData["content"],
                     commentImage: commentData["images"],
@@ -702,7 +728,7 @@ class _DetailIeduState extends State<DetailIedu> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 height: 212,
                 width: double.maxFinite,
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha:0.4),
                 child: Container(
                   height: 180,
                   width: double.maxFinite,
@@ -809,7 +835,9 @@ class _DetailIeduState extends State<DetailIedu> {
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
-                            print(selectedParent);
+                            if (kDebugMode) {
+                              print(selectedParent);
+                            }
                             if (isSubmittable) {
                               postAnswer();
                               setState(() {
@@ -850,12 +878,12 @@ class _DetailIeduState extends State<DetailIedu> {
                       },
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: 24,
                             height: 24,
                             child: SvgPicture.asset(
                               'assets/icons/camera3.svg',
-                              color: PeeroreumColor.gray[500],
+                              colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                             ),
                           ),
                           const SizedBox(
@@ -887,11 +915,9 @@ class _DetailIeduState extends State<DetailIedu> {
                       },
                       child: Row(
                         children: [
-                          Container(
-                            child: SvgPicture.asset(
-                              'assets/icons/notepad.svg',
-                              color: PeeroreumColor.gray[500],
-                            ),
+                          SvgPicture.asset(
+                            'assets/icons/notepad.svg',
+                            colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                           ),
                           const SizedBox(
                             width: 4,
@@ -966,10 +992,7 @@ class _DetailIeduState extends State<DetailIedu> {
               behavior: HitTestBehavior.translucent,
               onTap: () {
                 Get.to(() => Report(
-                      data: "[내가해냄] 내가 해냄 질문 신고\n" +
-                          "날짜 : $date\n" +
-                          "질문 아이디 : $id\n" +
-                          "업로드한 사람 : $name\n",
+                      data: "[내가해냄] 내가 해냄 질문 신고\n" "날짜 : $date\n" "질문 아이디 : $id\n" "업로드한 사람 : $name\n",
                     ));
               },
               child: Container(
@@ -1095,13 +1118,13 @@ class _DetailIeduState extends State<DetailIedu> {
   Future<void> postAnswer() async {
     var formData = dio.FormData();
 
-    var IeduAnswerMap = <String, dynamic>{
+    var ieduAnswerMap = <String, dynamic>{
       'content': _textController.text,
       'questionId': '$id',
       'parentAnswerId': '$selectedParent'
     };
 
-    formData = dio.FormData.fromMap(IeduAnswerMap);
+    formData = dio.FormData.fromMap(ieduAnswerMap);
 
     if (_image != null) {
       var file = await dio.MultipartFile.fromFile(_image!.path);
@@ -1111,6 +1134,7 @@ class _DetailIeduState extends State<DetailIedu> {
     try {
       var response = await ApiClient().postForm('/answer', formData);
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         fetchData();
         setState(() {
@@ -1124,7 +1148,10 @@ class _DetailIeduState extends State<DetailIedu> {
         PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
@@ -1151,27 +1178,39 @@ class _DetailIeduState extends State<DetailIedu> {
     try {
       if (isBookmarked == false) {
         var response = await ApiClient().post('/bookmark/question/$id');
+        if (!mounted) return;
         if (response.statusCode == 200) {
-          print('북마크 요청이 성공했습니다.');
+          if (kDebugMode) {
+            print('북마크 요청이 성공했습니다.');
+          }
           fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
-          print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          if (kDebugMode) {
+            print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          }
         }
       } else if (isBookmarked == true) {
         var response = await ApiClient().delete('/bookmark/question/$id');
+        if (!mounted) return;
         if (response.statusCode == 200) {
-          print('북마크 삭제 요청이 성공했습니다.');
+          if (kDebugMode) {
+            print('북마크 삭제 요청이 성공했습니다.');
+          }
           fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
-          print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          if (kDebugMode) {
+            print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          }
         }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -1179,27 +1218,39 @@ class _DetailIeduState extends State<DetailIedu> {
     try {
       if (isLiked == false) {
         var response = await ApiClient().post('/like/question/$id');
+        if (!mounted) return;
         if (response.statusCode == 200) {
-          print('질문 좋아요 요청이 성공했습니다.');
+          if (kDebugMode) {
+            print('질문 좋아요 요청이 성공했습니다.');
+          }
           fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
-          print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          if (kDebugMode) {
+            print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          }
         }
       } else if (isLiked == true) {
         var response = await ApiClient().delete('/like/question/$id');
+        if (!mounted) return;
         if (response.statusCode == 200) {
-          print('질문 좋아요 삭제 요청이 성공했습니다.');
+          if (kDebugMode) {
+            print('질문 좋아요 삭제 요청이 성공했습니다.');
+          }
           fetchData();
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
-          print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          if (kDebugMode) {
+            print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          }
         }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
     fetchIeduQuestionData();
   }
@@ -1207,16 +1258,23 @@ class _DetailIeduState extends State<DetailIedu> {
   Future<void> deleteQuestion() async {
     try {
       var response = await ApiClient().delete('/question/$id');
+      if (!mounted) return;
       if (response.statusCode == 200) {
-        print('질문 삭제 요청이 성공했습니다.');
+        if (kDebugMode) {
+          print('질문 삭제 요청이 성공했습니다.');
+        }
       } else if (response.statusCode == 404) {
         PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
       } else {
         PeeroreumToast.show(context, '채택 완료 질문은 삭제할 수 없어요.', isError: true);
-        print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        if (kDebugMode) {
+          print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 }
@@ -1228,7 +1286,7 @@ class MakeComment extends StatefulWidget {
   final dynamic grade;
   final dynamic profileImage;
   final dynamic name;
-  final dynamic isQwselected;
+  final dynamic isQuestionSelected;
   final dynamic isChosen;
   final dynamic comment;
   final List<dynamic>? commentImage;
@@ -1248,7 +1306,7 @@ class MakeComment extends StatefulWidget {
     required this.grade,
     this.profileImage,
     required this.name,
-    required this.isQwselected,
+    required this.isQuestionSelected,
     required this.isChosen,
     required this.comment,
     this.commentImage,
@@ -1267,7 +1325,7 @@ class MakeComment extends StatefulWidget {
 
 class _MakeCommentState extends State<MakeComment> {
   String createdTime = DateTime.now().toString();
-  var nickname;
+  String? nickname;
 
   @override
   void initState() {
@@ -1308,7 +1366,7 @@ class _MakeCommentState extends State<MakeComment> {
               margin: const EdgeInsets.only(right: 8),
               child: SvgPicture.asset(
                 'assets/icons/forward.svg',
-                color: PeeroreumColor.gray[600],
+                colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
               ),
             ),
           ),
@@ -1374,7 +1432,7 @@ class _MakeCommentState extends State<MakeComment> {
                                         border: Border.all(
                                           width: 2,
                                           color: PeeroreumColor.white
-                                              .withOpacity(0.0),
+                                              .withValues(alpha:0.0),
                                         )),
                                     child: Container(
                                       height: 24,
@@ -1416,18 +1474,18 @@ class _MakeCommentState extends State<MakeComment> {
                                 width: 12,
                               ),
                               Visibility(
-                                visible: (widget.isQwselected == false) &&
+                                visible: (widget.isQuestionSelected == false) &&
                                     (nickname == widget.qWriter) &&
                                     (widget.qWriter != widget.name),
                                 child: GestureDetector(
                                   onTap: () async {
-                                    final _dState =
+                                    final dState0 =
                                         context.findAncestorStateOfType<
                                             _DetailIeduState>();
                                     if (await checkSelect()) {
-                                      if (_dState != null) {
-                                        _dState.setState(() {
-                                          _dState.isQselected = true;
+                                      if (dState0 != null) {
+                                        dState0.setState(() {
+                                          dState0.isQuestionSelected = true;
                                         });
                                       }
                                       selectAnswer();
@@ -1449,7 +1507,7 @@ class _MakeCommentState extends State<MakeComment> {
                                 ),
                               ),
                               Visibility(
-                                visible: widget.isQwselected == true &&
+                                visible: widget.isQuestionSelected == true &&
                                     widget.isChosen == true,
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -1465,7 +1523,7 @@ class _MakeCommentState extends State<MakeComment> {
                                 ),
                               ),
                               Visibility(
-                                visible: widget.isQwselected == true &&
+                                visible: widget.isQuestionSelected == true &&
                                     widget.isChosen == false &&
                                     nickname == widget.qWriter,
                                 child: Container(
@@ -1631,7 +1689,9 @@ class _MakeCommentState extends State<MakeComment> {
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           postALike(widget.id, widget.isLiked);
-                          print('${widget.id}, ${widget.isLiked}');
+                          if (kDebugMode) {
+                            print('${widget.id}, ${widget.isLiked}');
+                          }
                           widget.updateData();
                         },
                         child: Row(
@@ -1670,7 +1730,9 @@ class _MakeCommentState extends State<MakeComment> {
                                 dState.selectedParent = widget.id;
                                 FocusScope.of(context)
                                     .requestFocus(dState._focusNode);
-                                print(widget.id);
+                                if (kDebugMode) {
+                                  print(widget.id);
+                                }
                               });
                             }
                           },
@@ -1757,10 +1819,7 @@ class _MakeCommentState extends State<MakeComment> {
               behavior: HitTestBehavior.translucent,
               onTap: () {
                 Get.to(() => Report(
-                      data: "[내가해냄] 내가 해냄 답변 신고\n" +
-                          "날짜 : ${widget.createdTime}\n" +
-                          "답변 아이디 : ${widget.id}\n" +
-                          "업로드한 사람 : ${widget.name}\n",
+                      data: "[내가해냄] 내가 해냄 답변 신고\n" "날짜 : ${widget.createdTime}\n" "답변 아이디 : ${widget.id}\n" "업로드한 사람 : ${widget.name}\n",
                     ));
               },
               child: Container(
@@ -1895,27 +1954,39 @@ class _MakeCommentState extends State<MakeComment> {
     try {
       if (answerLike == false) {
         var response = await ApiClient().post('/like/answer/$answerID');
+        if (!mounted) return;
         if (response.statusCode == 200) {
-          print('답변 좋아요 요청이 성공했습니다.');
+          if (kDebugMode) {
+            print('답변 좋아요 요청이 성공했습니다.');
+          }
           setState(() {});
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
-          print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          if (kDebugMode) {
+            print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          }
         }
       } else if (answerLike == true) {
         var response = await ApiClient().delete('/like/answer/$answerID');
+        if (!mounted) return;
         if (response.statusCode == 200) {
-          print('답변 좋아요 삭제 요청이 성공했습니다.');
+          if (kDebugMode) {
+            print('답변 좋아요 삭제 요청이 성공했습니다.');
+          }
           setState(() {});
         } else if (response.statusCode == 404) {
           PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
-          print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          if (kDebugMode) {
+            print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+          }
         }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -1923,27 +1994,41 @@ class _MakeCommentState extends State<MakeComment> {
     try {
       var response = await ApiClient().delete('/answer/$answerID');
       if (response.statusCode == 200) {
-        print('답변 삭제 요청이 성공했습니다.');
+        if (kDebugMode) {
+          print('답변 삭제 요청이 성공했습니다.');
+        }
         setState(() {});
       } else {
-        print('답변 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        if (kDebugMode) {
+          print('답변 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
   Future<void> selectAnswer() async {
-    print(widget.id);
+    if (kDebugMode) {
+      print(widget.id);
+    }
     try {
       var response = await ApiClient().put('/answer/${widget.id}/select');
       if (response.statusCode == 200) {
-        print('답변 채택 요청이 성공했습니다.');
+        if (kDebugMode) {
+          print('답변 채택 요청이 성공했습니다.');
+        }
       } else {
-        print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        if (kDebugMode) {
+          print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 

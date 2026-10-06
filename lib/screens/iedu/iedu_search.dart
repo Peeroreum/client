@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/data/i_edu_search_history.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
@@ -17,6 +17,7 @@ class _SearchIeduState extends State<SearchIedu> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, String>> _searchHistory = [];
 
+  @override
   void initState() {
     super.initState();
     _loadSearchHistory();
@@ -42,7 +43,7 @@ class _SearchIeduState extends State<SearchIedu> {
     _loadSearchHistory();
   }
 
-  bool search_clear = false;
+  bool searchClear = false;
 
   PreferredSizeWidget appbarWidget() {
     return AppBar(
@@ -53,7 +54,8 @@ class _SearchIeduState extends State<SearchIedu> {
         leading: IconButton(
           icon: SvgPicture.asset(
             'assets/icons/arrow-left.svg',
-            color: PeeroreumColor.gray[800],
+            colorFilter:
+                ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
           ),
           onPressed: () {
             Get.back();
@@ -61,13 +63,13 @@ class _SearchIeduState extends State<SearchIedu> {
         ),
         titleSpacing: 0,
         title: Container(
-          margin: EdgeInsets.fromLTRB(0, 12, 20, 12),
+          margin: const EdgeInsets.fromLTRB(0, 12, 20, 12),
           child: SearchBar(
             controller: _searchController,
             onTap: () {
-              if (_searchController.text.length > 0) {
+              if (_searchController.text.isNotEmpty) {
                 setState(() {
-                  search_clear = true;
+                  searchClear = true;
                 });
               }
             },
@@ -80,41 +82,41 @@ class _SearchIeduState extends State<SearchIedu> {
               }
             },
             onChanged: (value) {
-              if (value.length > 0) {
+              if (value.isNotEmpty) {
                 setState(() {
-                  search_clear = true;
+                  searchClear = true;
                 });
               } else {
                 setState(() {
-                  search_clear = false;
+                  searchClear = false;
                 });
               }
             },
-            backgroundColor:
-                MaterialStateProperty.all(PeeroreumColor.gray[100]),
-            elevation: MaterialStateProperty.all(0),
-            constraints: BoxConstraints(minHeight: 40),
+            backgroundColor: WidgetStateProperty.all(PeeroreumColor.gray[100]),
+            elevation: WidgetStateProperty.all(0),
+            constraints: const BoxConstraints(minHeight: 40),
             hintText: '모르는 문제를 검색해 보세요!',
-            hintStyle: MaterialStateProperty.all(TextStyle(
+            hintStyle: WidgetStateProperty.all(TextStyle(
                 color: PeeroreumColor.gray[600],
                 fontFamily: 'Pretendard',
                 fontSize: 14,
                 fontWeight: FontWeight.w400)),
             trailing: [
-              search_clear
+              searchClear
                   ? GestureDetector(
                       onTap: () {
                         _searchController.clear();
                         setState(() {
-                          search_clear = false;
+                          searchClear = false;
                         });
                       },
                       child: SvgPicture.asset(
                         'assets/icons/x_circle.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ))
                   : Container(),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               GestureDetector(
@@ -128,10 +130,11 @@ class _SearchIeduState extends State<SearchIedu> {
                 },
                 child: SvgPicture.asset(
                   'assets/icons/search.svg',
-                  color: Colors.grey[600],
+                  colorFilter:
+                      ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 8,
               )
             ],
@@ -156,7 +159,7 @@ class _SearchIeduState extends State<SearchIedu> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 '최근 검색어',
                 style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -186,7 +189,8 @@ class _SearchIeduState extends State<SearchIedu> {
             itemCount: _searchHistory.length,
             itemBuilder: (context, index) {
               return Container(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 child: Column(
                   children: [
                     Row(
@@ -223,7 +227,7 @@ class _SearchIeduState extends State<SearchIedu> {
                         ),
                         Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 8,
                             ),
                             GestureDetector(
@@ -235,7 +239,8 @@ class _SearchIeduState extends State<SearchIedu> {
                               },
                               child: SvgPicture.asset(
                                 'assets/icons/x.svg',
-                                color: PeeroreumColor.gray[800],
+                                colorFilter: ColorFilter.mode(
+                                    PeeroreumColor.gray[800]!, BlendMode.srcIn),
                               ),
                             )
                           ],
@@ -248,7 +253,7 @@ class _SearchIeduState extends State<SearchIedu> {
             },
             separatorBuilder: (BuildContext context, int index) {
               return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Divider(color: PeeroreumColor.gray[100]));
             },
           ),
@@ -263,7 +268,7 @@ class _SearchIeduState extends State<SearchIedu> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
-          search_clear = false;
+          searchClear = false;
         });
       },
       child: Scaffold(

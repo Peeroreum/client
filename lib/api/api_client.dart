@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart' as getx;
-import 'package:peeroreum_client/api/PeeroreumApi.dart';
+import 'package:peeroreum_client/api/peeroreum_api.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
@@ -62,7 +62,7 @@ class ApiClient {
     ));
   }
 
-  void _redirectToLogin() async {
+  Future<void> _redirectToLogin() async {
     await _storage.deleteAll();
     getx.Get.offAllNamed('/login');
   }

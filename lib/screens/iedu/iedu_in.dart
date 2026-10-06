@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
@@ -46,22 +47,30 @@ class _InIeduState extends State<InIedu> {
 
     var ieduQuestion = await ApiClient().get('/question/my', queryParameters: {'page': currentPage});
     if (ieduQuestion.statusCode == 200) {
-      print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      if (kDebugMode) {
+        print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      }
       dataQ = ieduQuestion.data["data"];
       totalQ = dataQ['total'];
       question = dataQ["questionListReadDtos"];
     } else {
-      print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      if (kDebugMode) {
+        print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      }
     }
 
     var ieduAnswer = await ApiClient().get('/answer/my');
     if (ieduAnswer.statusCode == 200) {
-      print("성공 ieduAnswer ${ieduAnswer.statusCode}");
+      if (kDebugMode) {
+        print("성공 ieduAnswer ${ieduAnswer.statusCode}");
+      }
       dataA = ieduAnswer.data['data'];
       totalA = dataA['total'];
       answer = dataA["questionListReadDtos"];
     } else {
-      print("에러 ieduAnswer ${ieduAnswer.statusCode}");
+      if (kDebugMode) {
+        print("에러 ieduAnswer ${ieduAnswer.statusCode}");
+      }
     }
   }
 
@@ -70,19 +79,23 @@ class _InIeduState extends State<InIedu> {
       _isLoading = true;
     });
 
-    List<dynamic> addedDatas = [];
+    List<dynamic> addedData = [];
     currentPage++;
     var ieduQuestion = await ApiClient().get('/question/my', queryParameters: {'page': currentPage});
     if (ieduQuestion.statusCode == 200) {
-      print("성공 ieduQuestion ${ieduQuestion.statusCode}");
-      addedDatas = ieduQuestion.data["data"];
+      if (kDebugMode) {
+        print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      }
+      addedData = ieduQuestion.data["data"];
       setState(() {
-        dataQ.addAll(addedDatas);
+        dataQ.addAll(addedData);
         question = dataQ["questionListReadDtos"];
         _isLoading = false;
       });
     } else {
-      print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      if (kDebugMode) {
+        print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      }
     }
   }
 
@@ -108,7 +121,7 @@ class _InIeduState extends State<InIedu> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -356,7 +369,7 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
                               C1m(
@@ -368,7 +381,7 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
                               C1m(
@@ -383,6 +396,7 @@ class _InIeduState extends State<InIedu> {
                   ),
                 );
               }
+              return null;
             },
           ),
         ),
@@ -527,7 +541,7 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
                               C1m(
@@ -539,7 +553,7 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
                               C1m(

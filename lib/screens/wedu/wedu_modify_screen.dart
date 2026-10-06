@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
@@ -16,7 +17,7 @@ import 'package:textfield_tags/textfield_tags.dart';
 import 'package:peeroreum_client/model/wedu.dart';
 
 class ModifyWedu extends StatefulWidget {
-  ModifyWedu(
+  const ModifyWedu(
       this.id,
       this.weduTitle,
       this.weduImage,
@@ -30,31 +31,20 @@ class ModifyWedu extends StatefulWidget {
       this.weduPassword,
       {super.key});
 
-  int id;
-  dynamic weduTitle = '';
-  dynamic weduImage;
-  dynamic weduDday = '';
-  dynamic weduSubject = '';
-  dynamic weduGrade = '';
-  dynamic weduAttendingPeopleNum = '';
-  dynamic weduMaxPeopleNum = '';
-  List<dynamic> weduHashTags = [];
-  dynamic weduLocked = false;
-  dynamic weduPassword = '';
+  final int id;
+  final dynamic weduTitle;
+  final dynamic weduImage;
+  final dynamic weduDday;
+  final dynamic weduSubject;
+  final dynamic weduGrade;
+  final dynamic weduAttendingPeopleNum;
+  final dynamic weduMaxPeopleNum;
+  final List<dynamic> weduHashTags;
+  final dynamic weduLocked;
+  final dynamic weduPassword;
 
   @override
-  State<ModifyWedu> createState() => _ModifyWeduState(
-      id,
-      weduTitle,
-      weduImage,
-      weduDday,
-      weduSubject,
-      weduGrade,
-      weduAttendingPeopleNum,
-      weduMaxPeopleNum,
-      weduHashTags,
-      weduLocked,
-      weduPassword);
+  State<ModifyWedu> createState() => _ModifyWeduState();
 }
 
 List<int> headcount = <int>[10, 30, 50, 70, 100];
@@ -80,30 +70,20 @@ const List<String> grade = <String>[
 ];
 
 class _ModifyWeduState extends State<ModifyWedu> {
-  _ModifyWeduState(
-      this.id,
-      this.weduTitle,
-      this.weduImage,
-      this.weduDday,
-      this.weduSubject,
-      this.weduGrade,
-      this.weduAttendingPeopleNum,
-      this.weduMaxPeopleNum,
-      this.weduHashTags,
-      this.weduLocked,
-      this.weduPassword);
-
-  int id;
-  dynamic weduTitle;
-  dynamic weduImage;
-  dynamic weduDday;
-  dynamic weduSubject;
-  dynamic weduGrade;
-  dynamic weduAttendingPeopleNum;
-  dynamic weduMaxPeopleNum;
-  List<dynamic> weduHashTags;
-  dynamic weduLocked;
-  dynamic weduPassword;
+  late int id;
+  late dynamic weduTitle;
+  late dynamic weduImage;
+  late dynamic weduDday;
+  late dynamic weduSubject;
+  late dynamic weduGrade;
+  late dynamic weduAttendingPeopleNum;
+  late dynamic weduMaxPeopleNum;
+  late List<dynamic> weduHashTags;
+  late final List<dynamic> _initialHashTags;
+  late final bool _initialLocked;
+  late final String _initialPassword;
+  late dynamic weduLocked;
+  late dynamic weduPassword;
 
   late DateTime date = DateTime.now().add(Duration(days: weduDday));
 
@@ -128,10 +108,24 @@ class _ModifyWeduState extends State<ModifyWedu> {
   @override
   void initState() {
     super.initState();
+    id = widget.id;
+    weduTitle = widget.weduTitle;
+    weduImage = widget.weduImage;
+    weduDday = widget.weduDday;
+    weduSubject = widget.weduSubject;
+    weduGrade = widget.weduGrade;
+    weduAttendingPeopleNum = widget.weduAttendingPeopleNum;
+    weduMaxPeopleNum = widget.weduMaxPeopleNum;
+    weduHashTags = List.of(widget.weduHashTags);
+    _initialHashTags = List.of(widget.weduHashTags);
+    weduLocked = widget.weduLocked;
+    weduPassword = widget.weduPassword;
     _controller = TextfieldTagsController<String>();
     pwController = TextEditingController(text: weduPassword);
     weduPassword ??= '';
     checkLocked();
+    _initialLocked = weduLocked;
+    _initialPassword = weduPassword;
     for (int i = 0; i < headcount.length; i++) {
       if (weduMaxPeopleNum == headcount[i]) {
         dropdownHeadcount = headcount[i];
@@ -149,9 +143,12 @@ class _ModifyWeduState extends State<ModifyWedu> {
   }
 
   void checkValidation() {
-    if ((weduImage != _image ||
-            weduMaxPeopleNum != dropdownHeadcount ||
-            weduHashTags != "") &&
+    final isChanged = _image != null ||
+        weduMaxPeopleNum != dropdownHeadcount ||
+        !listEquals(weduHashTags, _initialHashTags) ||
+        weduLocked != _initialLocked ||
+        weduPassword != _initialPassword;
+    if (isChanged &&
         (weduLocked == false || (weduLocked == true && weduPassword != ""))) {
       setState(() {
         _nextColor = PeeroreumColor.primaryPurple[400]!;
@@ -167,12 +164,16 @@ class _ModifyWeduState extends State<ModifyWedu> {
 
   Future getImage() async {
     final selected = await showCustomImagePicker(context, multiple: false);
-    if (selected == null || selected.isEmpty) return;
+    if (selected == null || selected.isEmpty) {
+      return;
+    }
+    if (!mounted) return;
     final cropped = await cropImage(context, selected.first);
     if (cropped != null) {
       setState(() {
         _image = cropped;
       });
+      checkValidation();
     }
   }
 
@@ -673,6 +674,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                 return '태그 5개 제한';
               } else {
                 weduHashTags.add(tag);
+                checkValidation();
                 return null;
               }
             },
@@ -779,6 +781,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                                     onTap: () {
                                       inputFieldValues.onTagDelete(tag);
                                       weduHashTags.remove(tag);
+                                      checkValidation();
                                     },
                                   )
                                 ],
@@ -829,7 +832,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
               ],
             ),
             CupertinoSwitch(
-                activeColor: const Color(0xff7260f8),
+                activeTrackColor: const Color(0xff7260f8),
                 value: weduLocked,
                 onChanged: (bool value) {
                   setState(() {
@@ -910,7 +913,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
   }
 
   void fetchWedu() async {
-    var file;
+    dio.MultipartFile file;
     var weduMap = <String, dynamic>{
       'maximumPeople': dropdownHeadcount,
       'hashTags': weduHashTags,
@@ -927,6 +930,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
   modifyAPI(weduMap) async {
     dio.FormData formData = dio.FormData.fromMap(weduMap);
     var weduModify = await ApiClient().putForm('/wedu/$id', formData);
+    if (!mounted) return;
     if (weduModify.statusCode == 200) {
       PeeroreumToast.show(context, '같이방 수정을 완료했어요.');
       Get.back();
@@ -934,7 +938,9 @@ class _ModifyWeduState extends State<ModifyWedu> {
       Get.back();
       Get.to(() => DetailWedu(id));
     } else {
-      print("에러${weduModify.statusCode}");
+      if (kDebugMode) {
+        print("에러${weduModify.statusCode}");
+      }
       PeeroreumToast.show(context, '같이방 수정을 실패했어요.', isError: true);
     }
   }

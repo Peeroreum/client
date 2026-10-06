@@ -1,5 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/screens/ranking/ranking_model.dart';
 
 class RankingProvider extends GetConnect implements GetxService {
@@ -8,13 +9,11 @@ class RankingProvider extends GetConnect implements GetxService {
     if (response.statusCode == 200) {
       return rankingFromJson(response.data);
     } else {
-      print("에러${response.statusCode}");
+      if (kDebugMode) {
+        print("에러${response.statusCode}");
+      }
       return null;
     }
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 }

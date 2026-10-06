@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:peeroreum_client/designs/peroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 
 /// wedu_home.dart / wedu_search_result_screen.dart / 딥링크 진입 모두에서
 /// 재사용하는 같이방 참여 바텀시트.
@@ -146,11 +147,15 @@ class WeduRoomInfoSheet extends StatelessWidget {
         'roomId': roomId,
       };
     } on dio.DioException catch (e) {
-      print(
-          '[WeduRoomInfoSheet] fetchData DioException: ${e.response?.statusCode}');
+      if (kDebugMode) {
+        print(
+            '[WeduRoomInfoSheet] fetchData DioException: ${e.response?.statusCode}');
+      }
       return null;
     } catch (e) {
-      print('[WeduRoomInfoSheet] fetchData error: $e');
+      if (kDebugMode) {
+        print('[WeduRoomInfoSheet] fetchData error: $e');
+      }
       return null;
     }
   }
@@ -168,7 +173,9 @@ class WeduRoomInfoSheet extends StatelessWidget {
       return;
     }
 
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
 
     final roomData = data['roomData'] as Map<String, dynamic>;
 
@@ -253,11 +260,15 @@ class WeduRoomInfoSheet extends StatelessWidget {
       if (res.statusCode == 200) {
         Get.back();
         final ctx = Get.context;
-        if (ctx != null) PeeroreumToast.show(ctx, '같이방에 참여했어요!');
+        if (ctx != null && ctx.mounted) {
+          PeeroreumToast.show(ctx, '같이방에 참여했어요!');
+        }
       }
     } on dio.DioException catch (e) {
       final ctx = Get.context;
-      if (ctx == null) return;
+      if (ctx == null || !ctx.mounted) {
+        return;
+      }
       if (e.response?.statusCode == 409) {
         PeeroreumToast.show(ctx, '이미 참여 중인 같이방이에요.');
       } else if (e.response?.statusCode == 404) {
@@ -273,7 +284,9 @@ class WeduRoomInfoSheet extends StatelessWidget {
   // ──────────────────────────────────────────────────────────────
 
   Widget _buildHashTags() {
-    if (hashTagsList.isEmpty) return Container();
+    if (hashTagsList.isEmpty) {
+      return Container();
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: SizedBox(
@@ -416,7 +429,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
                             children: [
                               if (locked)
                                 SvgPicture.asset('assets/icons/lock.svg',
-                                    color: PeeroreumColor.gray[400]),
+                                    colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn)),
                               if (locked) const SizedBox(width: 4),
                               SizedBox(
                                 width: locked
@@ -451,7 +464,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text('$attendingPeopleNum명',
@@ -465,7 +478,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               dDay != null && (dDay as num) > 0
@@ -568,12 +581,12 @@ class WeduRoomInfoSheet extends StatelessWidget {
                       child: TextButton(
                         onPressed: () => Get.back(),
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
+                          backgroundColor: WidgetStateProperty.all(
                               PeeroreumColor.gray[300]),
-                          padding: MaterialStateProperty.all(
+                          padding: WidgetStateProperty.all(
                               const EdgeInsets.symmetric(vertical: 12)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -597,11 +610,11 @@ class WeduRoomInfoSheet extends StatelessWidget {
                           child: TextButton(
                             onPressed: onClose ?? () => Get.back(),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
+                              backgroundColor: WidgetStateProperty.all(
                                   PeeroreumColor.gray[300]),
-                              padding: MaterialStateProperty.all(
+                              padding: WidgetStateProperty.all(
                                   const EdgeInsets.symmetric(vertical: 12)),
-                              shape: MaterialStateProperty.all<
+                              shape: WidgetStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
@@ -624,11 +637,11 @@ class WeduRoomInfoSheet extends StatelessWidget {
                           child: TextButton(
                             onPressed: onEnroll,
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
+                              backgroundColor: WidgetStateProperty.all(
                                   PeeroreumColor.primaryPurple[400]),
-                              padding: MaterialStateProperty.all(
+                              padding: WidgetStateProperty.all(
                                   const EdgeInsets.symmetric(vertical: 12)),
-                              shape: MaterialStateProperty.all<
+                              shape: WidgetStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),

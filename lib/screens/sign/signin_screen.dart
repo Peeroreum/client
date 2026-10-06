@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -5,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:dio/dio.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
 
@@ -57,7 +58,7 @@ class _SignInState extends State<SignIn> {
                           kakaoSignIn();
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
+                          backgroundColor: WidgetStateProperty.all(
                               const Color.fromARGB(255, 254, 229, 0)),
                         ),
                         child: const Text(
@@ -80,7 +81,7 @@ class _SignInState extends State<SignIn> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.grey[200]),
+                              WidgetStateProperty.all(Colors.grey[200]),
                         ),
                         child: const Text(
                           '구글 로그인',
@@ -93,7 +94,7 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                     const Padding(padding: EdgeInsets.only(bottom: 8.0)),
-                    Container(
+                    SizedBox(
                       width: 350.0,
                       height: 48.0,
                       child: TextButton(
@@ -102,7 +103,7 @@ class _SignInState extends State<SignIn> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.grey[200]),
+                              WidgetStateProperty.all(Colors.grey[200]),
                         ),
                         child: const Text(
                           '이메일 로그인',
@@ -129,32 +130,42 @@ class _SignInState extends State<SignIn> {
     if (await isKakaoTalkInstalled()) {
       try {
         kakaoToken = await UserApi.instance.loginWithKakaoTalk();
-        print('카카오톡으로 로그인 성공');
+        if (kDebugMode) {
+          print('카카오톡으로 로그인 성공');
+        }
       } catch (error) {
-        print('카카오톡으로 로그인 실패 $error');
+        if (kDebugMode) {
+          print('카카오톡으로 로그인 실패 $error');
+        }
         if (error is PlatformException && error.code == 'CANCELED') {
           return;
         }
         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
         try {
           kakaoToken = await UserApi.instance.loginWithKakaoAccount();
-          print('카카오계정으로 로그인 성공');
+          if (kDebugMode) {
+            print('카카오계정으로 로그인 성공');
+          }
         } catch (error) {
-          print('카카오계정으로 로그인 실패 $error');
+          if (kDebugMode) {
+            print('카카오계정으로 로그인 실패 $error');
+          }
           return;
         }
       }
     } else {
       try {
         kakaoToken = await UserApi.instance.loginWithKakaoAccount();
-        print('카카오계정으로 로그인 성공');
+        if (kDebugMode) {
+          print('카카오계정으로 로그인 성공');
+        }
       } catch (error) {
-        print('카카오계정으로 로그인 실패 $error');
+        if (kDebugMode) {
+          print('카카오계정으로 로그인 실패 $error');
+        }
         return;
       }
     }
-
-    if (kakaoToken == null) return;
     final User user = await UserApi.instance.me();
     fetchSocialLogin('kakao', kakaoToken.accessToken, user.kakaoAccount!.email!);
   }
@@ -183,10 +194,14 @@ class _SignInState extends State<SignIn> {
         Get.to(() => SignUpNickname(member),
             transition: Transition.noTransition);
       } else {
-        print("소셜 로그인 실패");
+        if (kDebugMode) {
+          print("소셜 로그인 실패");
+        }
       }
     } catch (e) {
-      print("소셜 로그인 에러: $e");
+      if (kDebugMode) {
+        print("소셜 로그인 에러: $e");
+      }
     }
   }
 
@@ -194,13 +209,17 @@ class _SignInState extends State<SignIn> {
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
     if (googleSignInAccount == null) {
-      print("구글계정으로 로그인 실패");
+      if (kDebugMode) {
+        print("구글계정으로 로그인 실패");
+      }
       return;
     }
     final auth = await googleSignInAccount.authentication;
     final accessToken = auth.accessToken;
     if (accessToken == null) {
-      print("구글 액세스 토큰 없음");
+      if (kDebugMode) {
+        print("구글 액세스 토큰 없음");
+      }
       return;
     }
     fetchSocialLogin('google', accessToken, googleSignInAccount.email);
