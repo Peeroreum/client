@@ -2,68 +2,54 @@ import UIKit
 import Flutter
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
     private var initialRoomId: String? = nil
     private var initialNickname: String? = nil
     private var deepLinkChannel: FlutterMethodChannel? = nil
-    /// 콜드 스타트에서 이미 처리한 URL — application:open:url: 중복 호출 방지
-    private var coldStartHandledUrl: String? = nil
+    private let deepLinkSceneDelegate = DeepLinkSceneDelegate()
 
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        GeneratedPluginRegistrant.register(with: self)
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
 
-        // super 호출로 Flutter 엔진 및 window 초기화
-        let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    // UIScene 환경에서 Flutter 엔진이 생성된 뒤 호출 — 플러그인 등록 및 MethodChannel 설정
+    func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+        // 다른 플러그인보다 먼저 카카오 링크를 받도록 플러그인 등록 전에 설정
+        if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "PeeroreumDeepLink") {
+            setUpDeepLink(with: registrar)
+        }
+        GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    }
 
-        // window 초기화 이후 MethodChannel 설정
-        if let controller = window?.rootViewController as? FlutterViewController {
-            deepLinkChannel = FlutterMethodChannel(
-                name: "com.peeroreum/deeplink",
-                binaryMessenger: controller.binaryMessenger
-            )
-            deepLinkChannel?.setMethodCallHandler { [weak self] call, result in
-                if call.method == "getInitialRoomId" {
-                    result(self?.initialRoomId)
-                } else if call.method == "getInitialNickname" {
-                    result(self?.initialNickname)
-                } else {
-                    result(FlutterMethodNotImplemented)
-                }
+    private func setUpDeepLink(with registrar: FlutterPluginRegistrar) {
+        deepLinkChannel = FlutterMethodChannel(
+            name: "com.peeroreum/deeplink",
+            binaryMessenger: registrar.messenger()
+        )
+        deepLinkChannel?.setMethodCallHandler { [weak self] call, result in
+            if call.method == "getInitialRoomId" {
+                result(self?.initialRoomId)
+            } else if call.method == "getInitialNickname" {
+                result(self?.initialNickname)
+            } else {
+                result(FlutterMethodNotImplemented)
             }
         }
 
-        // 콜드 스타트: 앱이 꺼진 상태에서 링크로 열릴 때
-        if let url = launchOptions?[.url] as? URL {
-            coldStartHandledUrl = url.absoluteString
-            handleKakaoLink(url, isColdStart: true)
+        deepLinkSceneDelegate.onUrl = { [weak self] url, isColdStart in
+            self?.handleKakaoLink(url, isColdStart: isColdStart) ?? false
         }
-
-        return result
+        registrar.addSceneDelegate(deepLinkSceneDelegate)
     }
 
-    // 웜 스타트: 앱이 떠 있는 상태에서 링크로 열릴 때
-    // (iOS cold start에서도 didFinishLaunchingWithOptions 이후 이 메서드가 한 번 더 호출되므로 중복 방지 처리)
-    override func application(
-        _ app: UIApplication,
-        open url: URL,
-        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-    ) -> Bool {
-        // 콜드 스타트에서 이미 처리한 URL이면 건너뜀
-        if let handled = coldStartHandledUrl, handled == url.absoluteString {
-            coldStartHandledUrl = nil
-            return true
+    @discardableResult
+    private func handleKakaoLink(_ url: URL, isColdStart: Bool) -> Bool {
+        guard url.scheme?.hasPrefix("kakaoa") == true && url.host == "kakaolink" else {
+            return false
         }
-        if url.scheme?.hasPrefix("kakaoa") == true && url.host == "kakaolink" {
-            handleKakaoLink(url, isColdStart: false)
-            return true
-        }
-        return super.application(app, open: url, options: options)
-    }
-
-    private func handleKakaoLink(_ url: URL, isColdStart: Bool) {
         let query = url.query ?? ""
 
         // 같이방: peeroreum://wedu/{roomId} 형태로 넘어오는 경우
@@ -74,7 +60,7 @@ import Flutter
             if !roomId.isEmpty {
                 if isColdStart { initialRoomId = roomId }
                 else { deepLinkChannel?.invokeMethod("onDeepLink", arguments: roomId) }
-                return
+                return true
             }
         }
 
@@ -85,14 +71,36 @@ import Flutter
             if let roomId = items.first(where: { $0.name == "roomId" })?.value, !roomId.isEmpty {
                 if isColdStart { initialRoomId = roomId }
                 else { deepLinkChannel?.invokeMethod("onDeepLink", arguments: roomId) }
-                return
+                return true
             }
 
             if let nickname = items.first(where: { $0.name == "nickname" })?.value, !nickname.isEmpty {
                 if isColdStart { initialNickname = nickname }
                 else { deepLinkChannel?.invokeMethod("onDeepLinkProfile", arguments: nickname) }
-                return
+                return true
             }
         }
+        return false
+    }
+}
+
+/// 카카오 링크로 앱이 열릴 때 URL을 받는 Scene 생명주기 델리게이트
+final class DeepLinkSceneDelegate: NSObject, FlutterSceneLifeCycleDelegate {
+    var onUrl: ((URL, Bool) -> Bool)?
+
+    // 콜드 스타트: 앱이 꺼진 상태에서 링크로 열릴 때
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions?
+    ) -> Bool {
+        guard let url = connectionOptions?.urlContexts.first?.url else { return false }
+        return onUrl?(url, true) ?? false
+    }
+
+    // 웜 스타트: 앱이 떠 있는 상태에서 링크로 열릴 때
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) -> Bool {
+        guard let url = URLContexts.first?.url else { return false }
+        return onUrl?(url, false) ?? false
     }
 }
