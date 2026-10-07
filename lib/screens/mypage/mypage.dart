@@ -159,9 +159,6 @@ class _MyPageState extends State<MyPage> {
                         Border.all(width: 1, color: PeeroreumColor.gray[100]!),
                     borderRadius: const BorderRadius.all(Radius.circular(8.0))),
                 child: fourthCol()),
-            const SizedBox(
-              height: 8,
-            ),
             TextButton(
               onPressed: logoutModal,
               style: TextButton.styleFrom(
