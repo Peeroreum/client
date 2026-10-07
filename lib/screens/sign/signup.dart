@@ -301,7 +301,7 @@ class _ServiceTermsState extends State<ServiceTerms> {
                     GestureDetector(
                       onTap: () {
                         launchUrl(Uri.parse(
-                            "https://www.notion.so/ormee/2e9ac6484ea08073b23bca6e894989ca"));
+                            "https://teachlog.notion.site/2e9ac6484ea08073b23bca6e894989ca?pvs=143"));
                       },
                       child: SvgPicture.asset(
                         "assets/icons/right.svg",
@@ -365,7 +365,7 @@ class _ServiceTermsState extends State<ServiceTerms> {
                     GestureDetector(
                       onTap: () {
                         launchUrl(Uri.parse(
-                            "https://www.notion.so/ormee/1b5a5f1566fe4b51ba76820fbed005ff"));
+                            "https://teachlog.notion.site/1b5a5f1566fe4b51ba76820fbed005ff?pvs=143"));
                       },
                       child: SvgPicture.asset(
                         "assets/icons/right.svg",
@@ -428,7 +428,7 @@ class _ServiceTermsState extends State<ServiceTerms> {
                     GestureDetector(
                       onTap: () {
                         launchUrl(Uri.parse(
-                            "https://www.notion.so/ormee/68e35d866d544911ac35ee254e227b6c"));
+                            "https://teachlog.notion.site/68e35d866d544911ac35ee254e227b6c?pvs=143"));
                       },
                       child: SvgPicture.asset(
                         "assets/icons/right.svg",

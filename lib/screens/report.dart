@@ -43,7 +43,7 @@ class _ReportState extends State<Report> {
     final smtpServer = gmail(username, password);
     final message = Message()
       ..from = Address(username, 'Mail Service')
-      ..recipients.add('peeroreum.help@gmail.com')
+      ..recipients.add('peer@teachlog.kr')
       ..subject = reason[3] == false
           ? selectedReason
           : '$selectedReason-$otherReason' //신고 사유에 따른 이메일 제목 설정
