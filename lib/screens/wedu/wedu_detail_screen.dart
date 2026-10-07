@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
 import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:intl/intl.dart';
@@ -85,7 +86,7 @@ class _DetailWeduState extends State<DetailWedu> {
         '${_getInviteLink(roomId)}\n\n'
         '앱이 없다면 설치 후 참여해요 🙌\n'
         '• 안드로이드: https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client\n'
-        '• iOS: https://apps.apple.com/app/id피어오름앱ID';
+        '• iOS: https://apps.apple.com/app/id6476135072';
   }
 
   Future<void> _shareRoom() async {
@@ -504,7 +505,19 @@ class _DetailWeduState extends State<DetailWedu> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(color: PeeroreumColor.white);
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Scaffold(
+            backgroundColor: PeeroreumColor.white,
+            appBar: AppBar(
+              backgroundColor: PeeroreumColor.white,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: ErrorRetryView(
+              onRetry: () => setState(() {
+                initFuture = fetchDatas();
+              }),
+            ),
+          );
         } else {
           return Scaffold(
             backgroundColor: PeeroreumColor.white,
@@ -1194,16 +1207,23 @@ class _DetailWeduState extends State<DetailWedu> {
                   ),
                 ),
                 Card(
+                  // 색을 지정하지 않으면 Material 3 기본 카드색(회색 틴트)이 칠해짐
+                  color: PeeroreumColor.white,
+                  surfaceTintColor: Colors.transparent,
+                  clipBehavior: Clip.antiAlias,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       side: BorderSide(color: PeeroreumColor.gray[200]!)),
                   child: Theme(
-                    data: ThemeData(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent)
-                        .copyWith(dividerColor: Colors.transparent),
+                    data: Theme.of(context).copyWith(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        dividerColor: Colors.transparent),
                     child: ExpansionTile(
+                        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                        shape: const Border(),
+                        collapsedShape: const Border(),
                         backgroundColor: PeeroreumColor.white,
                         collapsedBackgroundColor: PeeroreumColor.white,
                         trailing: SvgPicture.asset(
@@ -1212,8 +1232,7 @@ class _DetailWeduState extends State<DetailWedu> {
                               : 'assets/icons/up.svg',
                           colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                         ),
-                        title: Container(
-                          color: PeeroreumColor.white,
+                        title: SizedBox(
                           child: Row(
                             children: [
                               Container(
@@ -1244,8 +1263,8 @@ class _DetailWeduState extends State<DetailWedu> {
                                   style: TextStyle(
                                       overflow: TextOverflow.ellipsis,
                                       fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
                                       color: PeeroreumColor.gray[800]),
                                 ),
                               ),
@@ -2020,6 +2039,9 @@ class _DetailWeduState extends State<DetailWedu> {
         if (kDebugMode) {
           print("챌린지 인증 삭제 실패 ${result.statusCode}");
         }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
@@ -2059,6 +2081,9 @@ class _DetailWeduState extends State<DetailWedu> {
         if (kDebugMode) {
           print("같이방 나가기 실패 ${result.statusCode}");
         }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
@@ -2098,6 +2123,9 @@ class _DetailWeduState extends State<DetailWedu> {
         if (kDebugMode) {
           print("같이방 삭제 실패 ${result.statusCode}");
         }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {

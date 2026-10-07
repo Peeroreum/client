@@ -125,6 +125,13 @@ class WeduRoomInfoSheet extends StatelessWidget {
         ApiClient().get('/wedu/$roomId/invitation'),
         ApiClient().get('/wedu/in', queryParameters: {'nickname': nickname}),
       ]);
+      if (results.any((r) => r.statusCode != 200)) {
+        if (kDebugMode) {
+          print('[WeduRoomInfoSheet] fetchData 실패: '
+              '${results.map((r) => r.statusCode).toList()}');
+        }
+        return null;
+      }
 
       final roomRaw = results[0].data['data'] as Map<String, dynamic>? ?? {};
       final inviData = results[1].data['data'] as Map<String, dynamic>? ?? {};
@@ -237,12 +244,9 @@ class WeduRoomInfoSheet extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              if (passwordController.text == roomData['password']) {
-                Get.back();
-                _doEnroll(roomId);
-              } else {
-                PeeroreumToast.show(ctx, '비밀번호가 일치하지 않아요.', isError: true);
-              }
+              // 비밀번호는 서버에서 확인
+              Get.back();
+              _doEnroll(roomId, password: passwordController.text);
             },
             child: Text('확인',
                 style: TextStyle(
@@ -254,26 +258,26 @@ class WeduRoomInfoSheet extends StatelessWidget {
     );
   }
 
-  static Future<void> _doEnroll(String roomId) async {
+  static Future<void> _doEnroll(String roomId, {String? password}) async {
     try {
-      final res = await ApiClient().post('/wedu/$roomId/enroll');
+      final res = await ApiClient().post('/wedu/$roomId/enroll',
+          data: password == null ? null : {'password': password});
       if (res.statusCode == 200) {
         Get.back();
-        final ctx = Get.context;
-        if (ctx != null && ctx.mounted) {
-          PeeroreumToast.show(ctx, '같이방에 참여했어요!');
-        }
       }
-    } on dio.DioException catch (e) {
       final ctx = Get.context;
       if (ctx == null || !ctx.mounted) {
         return;
       }
-      if (e.response?.statusCode == 409) {
-        PeeroreumToast.show(ctx, '이미 참여 중인 같이방이에요.');
-      } else if (e.response?.statusCode == 404) {
-        PeeroreumToast.show(ctx, '존재하지 않는 같이방입니다.');
-      } else {
+      switch (res.statusCode) {
+        case 200:
+          PeeroreumToast.show(ctx, '같이방에 참여했어요!');
+        default:
+          PeeroreumToast.show(ctx, ApiClient.errorMessage(res), isError: true);
+      }
+    } catch (e) {
+      final ctx = Get.context;
+      if (ctx != null && ctx.mounted) {
         PeeroreumToast.show(ctx, '잠시 후에 다시 시도해 주세요.');
       }
     }
@@ -313,7 +317,8 @@ class WeduRoomInfoSheet extends StatelessWidget {
                         fontSize: 12,
                         fontWeight: FontWeight.w500)),
                 const SizedBox(width: 2),
-                Text(hashTagsList[i].toString(),
+                // 태그 값에 '#'이 포함돼 저장된 경우가 있어 앞의 '#'은 제거
+                Text(hashTagsList[i].toString().replaceFirst(RegExp(r'^#+'), ''),
                     style: TextStyle(
                         color: PeeroreumColor.primaryPurple[400],
                         fontSize: 12,
@@ -334,7 +339,8 @@ class WeduRoomInfoSheet extends StatelessWidget {
     final title = roomData['title'] as String? ?? '';
     final grade = roomData['grade'];
     final attendingPeopleNum = roomData['attendingPeopleNum'] ?? 0;
-    final dDay = roomData['dDay'];
+    // showFromLink에서 'dday'로 정규화해 넘기므로 두 키 모두 확인
+    final num? dDay = (roomData['dday'] ?? roomData['dDay']) as num?;
 
     final gradeText = (grade != null) ? _gradeList[(grade as num).toInt()] : '';
     final subjectText =
@@ -473,6 +479,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       color: PeeroreumColor.gray[600])),
+                              if (dDay != null)
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 2.0),
@@ -481,20 +488,18 @@ class WeduRoomInfoSheet extends StatelessWidget {
                                   colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
-                              dDay != null && (dDay as num) > 0
-                                  ? Text('D-$dDay',
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: PeeroreumColor.gray[600]))
-                                  : Text(
-                                      'D+${dDay.toString().replaceAll('-', '')}',
-                                      style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: PeeroreumColor.gray[600])),
+                              if (dDay != null)
+                                Text(
+                                    dDay > 0
+                                        ? 'D-$dDay'
+                                        : dDay == 0
+                                            ? 'D-Day'
+                                            : 'D+${dDay.abs()}',
+                                    style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: PeeroreumColor.gray[600])),
                             ],
                           ),
                         ],

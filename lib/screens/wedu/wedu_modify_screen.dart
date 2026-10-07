@@ -929,7 +929,14 @@ class _ModifyWeduState extends State<ModifyWedu> {
 
   modifyAPI(weduMap) async {
     dio.FormData formData = dio.FormData.fromMap(weduMap);
-    var weduModify = await ApiClient().putForm('/wedu/$id', formData);
+    final dynamic weduModify;
+    try {
+      weduModify = await ApiClient().putForm('/wedu/$id', formData);
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, '같이방 수정을 실패했어요.', isError: true);
+      return;
+    }
     if (!mounted) return;
     if (weduModify.statusCode == 200) {
       PeeroreumToast.show(context, '같이방 수정을 완료했어요.');

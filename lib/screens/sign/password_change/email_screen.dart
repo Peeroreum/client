@@ -204,6 +204,13 @@ class _EmailSearchState extends State<EmailSearch> {
                     ? () async {
                         final exists = await isExistingEmail();
                         if (!mounted) return;
+                        if (exists == null) {
+                          PeeroreumToast.show(
+                              context, // ignore: use_build_context_synchronously
+                              "잠시 후에 다시 시도해 주세요.",
+                              isError: true);
+                          return;
+                        }
                         if (!exists) {
                           PeeroreumToast.show(
                               context, // ignore: use_build_context_synchronously
@@ -252,12 +259,13 @@ class _EmailSearchState extends State<EmailSearch> {
     );
   }
 
-  isExistingEmail() async {
-    var result = await ApiClient().get('/signup/email/${emailController.text}');
-    if (result.statusCode == 409) {
-      return true;
-    } else {
-      return false;
+  Future<bool?> isExistingEmail() async {
+    try {
+      var result =
+          await ApiClient().get('/signup/email/${emailController.text}');
+      return result.statusCode == 409;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -265,9 +273,19 @@ class _EmailSearchState extends State<EmailSearch> {
     setState(() {
       isLoading = true;
     });
-    var result = await ApiClient().post(
-      '/member/password/email?email=${Uri.encodeComponent(emailController.text)}',
-    );
+    final dynamic result;
+    try {
+      result = await ApiClient().post(
+        '/member/password/email?email=${Uri.encodeComponent(emailController.text)}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.", isError: true);
+      return;
+    }
     if (!mounted) return;
     setState(() {
       isLoading = false;

@@ -22,10 +22,12 @@ class _InWeduState extends State<InWedu> {
   List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
 
+  late Future<void> _initFuture;
+
   @override
   void initState() {
     super.initState();
-    fetchData();
+    _initFuture = fetchData();
   }
 
   Future<void> fetchData() async {
@@ -46,7 +48,7 @@ class _InWeduState extends State<InWedu> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchData(),
+          future: _initFuture,
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -313,8 +315,12 @@ class _InWeduState extends State<InWedu> {
       },
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () {
-            Get.to(() => DetailWedu(ingGroup[index]["id"]));
+          onTap: () async {
+            await Get.to(() => DetailWedu(ingGroup[index]["id"]));
+            if (!mounted) return;
+            setState(() {
+              _initFuture = fetchData();
+            });
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

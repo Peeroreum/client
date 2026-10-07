@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
+import 'package:peeroreum_client/screens/main_tab.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:peeroreum_client/designs/peeroreum_toast.dart';
@@ -73,6 +75,7 @@ class _HomeWeduState extends State<HomeWedu> {
   void initState() {
     super.initState();
     initFuture = fetchData();
+    MainTab.selected.addListener(_onTabSelected);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
@@ -106,7 +109,20 @@ class _HomeWeduState extends State<HomeWedu> {
         '${getInviteLink(roomId)}\n\n'
         '앱이 없다면 설치 후 참여해요 🙌\n'
         '• 안드로이드: https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client\n'
-        '• iOS: https://apps.apple.com/app/id피어오름앱ID';
+        '• iOS: https://apps.apple.com/app/id6476135072';
+  }
+
+  // 다른 탭(마이페이지 등)에서 같이방 참여 상태가 바뀔 수 있어 다시 열 때 참여 중인 방만 갱신
+  Future<void> _onTabSelected() async {
+    if (MainTab.selected.value != MainTab.wedu || !mounted) return;
+    await fetchInWeduData();
+    if (mounted) setState(() {});
+  }
+
+  // 검색·생성·전체보기 화면에서 같이방 참여 상태가 바뀔 수 있어 돌아오면 다시 불러옴
+  Future<void> _openAndRefresh(Widget Function() page) async {
+    await Get.to(page);
+    if (mounted) await fetchData();
   }
 
   Future<void> fetchData() async {
@@ -227,9 +243,7 @@ class _HomeWeduState extends State<HomeWedu> {
             Flexible(
               fit: FlexFit.loose,
               child: GestureDetector(
-                onTap: () {
-                  Get.to(() => const SearchWedu());
-                },
+                onTap: () => _openAndRefresh(() => const SearchWedu()),
                 child: Container(
                   decoration: BoxDecoration(
                       color: PeeroreumColor.gray[100],
@@ -282,7 +296,7 @@ class _HomeWeduState extends State<HomeWedu> {
               ),
               onTap: () {
                 if (inRoomData.length < 10) {
-                  Get.to(() => const CreateWedu());
+                  _openAndRefresh(() => const CreateWedu());
                 } else {
                   PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.');
                 }
@@ -346,7 +360,7 @@ class _HomeWeduState extends State<HomeWedu> {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () => Get.to(() => const InWedu()),
+                      onTap: () => _openAndRefresh(() => const InWedu()),
                       child: Text(
                         '전체보기',
                         style: TextStyle(
@@ -379,7 +393,7 @@ class _HomeWeduState extends State<HomeWedu> {
                                     color: PeeroreumColor.black),
                                 const SizedBox(height: 20),
                                 GestureDetector(
-                                  onTap: () => Get.to(() => const CreateWedu()),
+                                  onTap: () => _openAndRefresh(() => const CreateWedu()),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 16),
@@ -441,7 +455,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 if (inRoomData.isNotEmpty) ...[
                   const SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () => Get.to(() => const CreateWedu()),
+                    onTap: () => _openAndRefresh(() => const CreateWedu()),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 16),
@@ -487,9 +501,8 @@ class _HomeWeduState extends State<HomeWedu> {
   }
 
   Widget inRoomBody() {
-    return FutureBuilder<void>(
-        future: fetchInWeduData(),
-        builder: (context, snapshot) {
+    return Builder(
+        builder: (context) {
           return ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1042,8 +1055,6 @@ class _HomeWeduState extends State<HomeWedu> {
                     data[index]['locked'].toString() == 'true'
                         ? insertPassword(index)
                         : enrollWedu(index);
-                    fetchData();
-                    setState(() {});
                   } else {
                     PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.');
                   }
@@ -1067,7 +1078,11 @@ class _HomeWeduState extends State<HomeWedu> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SkeletonWedu();
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return ErrorRetryView(
+                onRetry: () => setState(() {
+                  initFuture = fetchData();
+                }),
+              );
             } else {
               return RefreshIndicator(
                 onRefresh: () => fetchData(),
@@ -1101,15 +1116,18 @@ class _HomeWeduState extends State<HomeWedu> {
     }
   }
 
-  void enrollWedu(index) async {
+  void enrollWedu(index, {String? password}) async {
     var id = data[index]['id'];
     try {
-      var enrollResult = await ApiClient().post('/wedu/$id/enroll');
+      var enrollResult = await ApiClient().post('/wedu/$id/enroll',
+          data: password == null ? null : {'password': password});
       if (!mounted) return;
       if (enrollResult.statusCode == 200) {
         PeeroreumToast.show(context, "같이방에 참여했어요!");
+        await fetchData();
       } else {
-        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.");
+        PeeroreumToast.show(context, ApiClient.errorMessage(enrollResult),
+            isError: true);
       }
     } catch (e) {
       if (kDebugMode) {
@@ -1204,12 +1222,10 @@ class _HomeWeduState extends State<HomeWedu> {
                       Expanded(
                         child: TextButton(
                           onPressed: () {
-                            passwordController.text == data[index]['password']
-                                ? enrollWedu(index)
-                                : PeeroreumToast.show(
-                                    context, '비밀번호가 일치하지 않아요.',
-                                    isError: true);
+                            // 비밀번호는 서버에서 확인
                             Get.back();
+                            enrollWedu(index,
+                                password: passwordController.text);
                           },
                           style: TextButton.styleFrom(
                             backgroundColor: PeeroreumColor.primaryPurple[400],
@@ -1240,6 +1256,7 @@ class _HomeWeduState extends State<HomeWedu> {
 
   @override
   void dispose() {
+    MainTab.selected.removeListener(_onTabSelected);
     // TODO: implement dispose
     _scrollController.dispose();
     super.dispose();

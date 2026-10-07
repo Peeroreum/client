@@ -1184,9 +1184,9 @@ class _DetailIeduState extends State<DetailIedu> {
             print('북마크 요청이 성공했습니다.');
           }
           fetchData();
-        } else if (response.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
+          PeeroreumToast.show(context, ApiClient.errorMessage(response),
+              isError: true);
           if (kDebugMode) {
             print('북마크 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
           }
@@ -1199,9 +1199,9 @@ class _DetailIeduState extends State<DetailIedu> {
             print('북마크 삭제 요청이 성공했습니다.');
           }
           fetchData();
-        } else if (response.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
+          PeeroreumToast.show(context, ApiClient.errorMessage(response),
+              isError: true);
           if (kDebugMode) {
             print('북마크 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
           }
@@ -1224,9 +1224,9 @@ class _DetailIeduState extends State<DetailIedu> {
             print('질문 좋아요 요청이 성공했습니다.');
           }
           fetchData();
-        } else if (response.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
+          PeeroreumToast.show(context, ApiClient.errorMessage(response),
+              isError: true);
           if (kDebugMode) {
             print('질문 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
           }
@@ -1239,9 +1239,9 @@ class _DetailIeduState extends State<DetailIedu> {
             print('질문 좋아요 삭제 요청이 성공했습니다.');
           }
           fetchData();
-        } else if (response.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
+          PeeroreumToast.show(context, ApiClient.errorMessage(response),
+              isError: true);
           if (kDebugMode) {
             print('질문 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
           }
@@ -1263,10 +1263,9 @@ class _DetailIeduState extends State<DetailIedu> {
         if (kDebugMode) {
           print('질문 삭제 요청이 성공했습니다.');
         }
-      } else if (response.statusCode == 404) {
-        PeeroreumToast.show(context, '존재하지 않는 질문이에요.');
       } else {
-        PeeroreumToast.show(context, '채택 완료 질문은 삭제할 수 없어요.', isError: true);
+        PeeroreumToast.show(context, ApiClient.errorMessage(response),
+            isError: true);
         if (kDebugMode) {
           print('질문 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
@@ -1960,9 +1959,9 @@ class _MakeCommentState extends State<MakeComment> {
             print('답변 좋아요 요청이 성공했습니다.');
           }
           setState(() {});
-        } else if (response.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
+          PeeroreumToast.show(context, ApiClient.errorMessage(response),
+              isError: true);
           if (kDebugMode) {
             print('답변 좋아요 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
           }
@@ -1975,9 +1974,9 @@ class _MakeCommentState extends State<MakeComment> {
             print('답변 좋아요 삭제 요청이 성공했습니다.');
           }
           setState(() {});
-        } else if (response.statusCode == 404) {
-          PeeroreumToast.show(context, '존재하지 않는 질문이에요.', isError: true);
         } else {
+          PeeroreumToast.show(context, ApiClient.errorMessage(response),
+              isError: true);
           if (kDebugMode) {
             print('답변 좋아요 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
           }
@@ -2002,6 +2001,9 @@ class _MakeCommentState extends State<MakeComment> {
         if (kDebugMode) {
           print('답변 삭제 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(response),
+            isError: true);
       }
     } catch (e) {
       if (kDebugMode) {
@@ -2024,6 +2026,9 @@ class _MakeCommentState extends State<MakeComment> {
         if (kDebugMode) {
           print('답변 채택 요청이 실패했습니다. 오류 코드: ${response.statusCode}');
         }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(response),
+            isError: true);
       }
     } catch (e) {
       if (kDebugMode) {

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -35,7 +36,16 @@ class _SignUpNicknameState extends State<SignUpNickname> {
   bool nicknameFocus = false;
 
   checkDuplicateNickname(String value) async {
-    var result = await ApiClient().get('/signup/nickname/$value');
+    final dynamic result;
+    try {
+      result = await ApiClient().get('/signup/nickname/$value');
+    } catch (e) {
+      if (kDebugMode) {
+        print('닉네임 중복 확인 실패 $e');
+      }
+      return;
+    }
+    if (!mounted) return;
     if (result.statusCode == 409) {
       setState(() {
         isDuplicateNickname = true;

@@ -34,6 +34,8 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
   bool myCheck = false;
   bool isSelectAll = false;
 
+  late Future<void> _initFuture;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -42,7 +44,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     title = widget.title;
     id = widget.id;
     receiverList = [];
-    fetchStatus();
+    _initFuture = fetchStatus();
   }
 
   bool controlAllSelect() {
@@ -67,7 +69,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     }
   }
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     sender = await const FlutterSecureStorage().read(key: "nickname");
     myImage = await const FlutterSecureStorage().read(key: "profileImage");
     myGrade = await const FlutterSecureStorage().read(key: "grade");
@@ -110,7 +112,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
           centerTitle: true,
         ),
         body: FutureBuilder<void>(
-            future: fetchStatus(),
+            future: _initFuture,
             builder: (context, snapshot) {
               return Column(
                 children: [

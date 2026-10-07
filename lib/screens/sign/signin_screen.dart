@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:dio/dio.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/sign/signup_nickname_screen.dart';
@@ -197,6 +198,9 @@ class _SignInState extends State<SignIn> {
         if (kDebugMode) {
           print("소셜 로그인 실패");
         }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } catch (e) {
       if (kDebugMode) {

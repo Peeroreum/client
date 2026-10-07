@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:peeroreum_client/designs/peeroreum_button.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/member.dart';
@@ -368,13 +369,24 @@ class _SignUpSchoolState extends State<SignUpSchool> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await ApiClient().post('/signup', data: member);
+    final dynamic result;
+    try {
+      result = await ApiClient().post('/signup', data: member);
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
+      return;
+    }
+    if (!mounted) return;
     if (result.statusCode == 200) {
       Get.to(() => const EmailSignIn(), transition: Transition.noTransition);
     } else {
       if (kDebugMode) {
         print(result.statusCode);
       }
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
     }
   }
 }

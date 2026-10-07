@@ -28,7 +28,7 @@ class NotificationApi {
   static Future<void> postApi(NotificationRequest notificationRequest) async {
     try {
       var result = await ApiClient().post('/member/notification',
-          data: notificationRequest.toJson());
+          data: notificationRequest.toJson(), options: ApiClient.silent);
       if (result.statusCode == 200) {
         if (kDebugMode) {
           print("push 알림 성공");

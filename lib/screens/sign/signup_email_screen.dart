@@ -629,12 +629,14 @@ class _EmailSignUpState extends State<EmailSignUp> {
     });
   }
 
-  isDuplicatedEmail() async {
-    var result = await ApiClient().get('/signup/email/${idController.text}');
-    if (result.statusCode == 409) {
+  // 확인에 실패하면 가입을 막기 위해 중복으로 간주
+  Future<bool> isDuplicatedEmail() async {
+    try {
+      var result =
+          await ApiClient().get('/signup/email/${idController.text}');
+      return result.statusCode == 409;
+    } catch (e) {
       return true;
-    } else {
-      return false;
     }
   }
 

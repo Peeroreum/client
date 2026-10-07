@@ -258,8 +258,18 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 ? () async {
                                     signIn.email = idController.text;
                                     signIn.password = pwController.text;
-                                    var result = await ApiClient()
-                                        .post('/login', data: signIn);
+                                    final dynamic result;
+                                    try {
+                                      result = await ApiClient()
+                                          .post('/login', data: signIn);
+                                    } catch (e) {
+                                      if (!mounted) return;
+                                      PeeroreumToast.show(
+                                          context, // ignore: use_build_context_synchronously
+                                          '잠시 후에 다시 시도해 주세요.',
+                                          isError: true);
+                                      return;
+                                    }
                                     if (!mounted) return;
                                     if (result.statusCode == 200) {
                                       var data = result.data['data'];
@@ -555,6 +565,9 @@ class _EmailSignInState extends State<EmailSignIn> {
         if (kDebugMode) {
           print("소셜 로그인 실패");
         }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } catch (e) {
       if (kDebugMode) {

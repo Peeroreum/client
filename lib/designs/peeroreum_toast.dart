@@ -8,6 +8,7 @@ import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 class PeeroreumToast {
   static OverlayEntry? _currentOverlay;
   static Timer? _timer;
+  static DateTime? _lastErrorAt;
 
   static void show(
     BuildContext context,
@@ -15,6 +16,15 @@ class PeeroreumToast {
     int duration = 2,
     bool isError = false,
   }) {
+    // 공통 네트워크 오류 토스트와 화면별 실패 토스트가 겹치지 않도록 짧은 시간 내 에러 토스트는 한 번만 표시
+    if (isError) {
+      final now = DateTime.now();
+      if (_lastErrorAt != null &&
+          now.difference(_lastErrorAt!) < const Duration(milliseconds: 1500)) {
+        return;
+      }
+      _lastErrorAt = now;
+    }
     final overlay = Overlay.of(context);
 
     // Cancel existing timer and remove existing toast

@@ -35,6 +35,8 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
   String? myNickname;
   bool isSelectAll = false;
 
+  late Future<void> _initFuture;
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +44,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
     title = widget.title;
     id = widget.id;
     selectedUserList = [];
-    fetchStatus();
+    _initFuture = fetchStatus();
   }
 
   bool controlAllSelect() {
@@ -60,7 +62,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
     }
   }
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     myNickname = await const FlutterSecureStorage().read(key: "nickname");
     var response = await ApiClient().get('/wedu/$id/members');
 
@@ -75,6 +77,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
       }
     }
 
+    if (!mounted) return;
     setState(() {
       for (int i = 0; i < memberList.length; i++) {
         if (memberList[i]['nickname'] == myNickname) {
@@ -97,8 +100,15 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
       }
 
       var memberId = member['memberId'];
-      var result = await ApiClient().delete('/wedu/$id/kick/$memberId');
+      final dynamic result;
+      try {
+        result = await ApiClient().delete('/wedu/$id/kick/$memberId');
+      } catch (e) {
+        allSuccess = false;
+        continue;
+      }
 
+      if (!mounted) return;
       if (result.statusCode == 200) {
         setState(() {
           memberList.removeWhere((m) => m['nickname'] == nickname);
@@ -258,7 +268,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
           centerTitle: true,
         ),
         body: FutureBuilder<void>(
-            future: fetchStatus(),
+            future: _initFuture,
             builder: (context, snapshot) {
               return Column(
                 children: [

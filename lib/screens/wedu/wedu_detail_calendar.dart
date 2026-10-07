@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
 import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -196,7 +197,19 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             color: PeeroreumColor.white,
           );
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Scaffold(
+            backgroundColor: PeeroreumColor.white,
+            appBar: AppBar(
+              backgroundColor: PeeroreumColor.white,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: ErrorRetryView(
+              onRetry: () => setState(() {
+                initFuture = fetchData();
+              }),
+            ),
+          );
         } else {
           return Scaffold(
             backgroundColor: PeeroreumColor.white,

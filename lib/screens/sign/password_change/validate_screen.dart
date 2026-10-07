@@ -264,9 +264,19 @@ class _EmailValidateState extends State<EmailValidate> {
     setState(() {
       isLoading = true;
     });
-    var result = await ApiClient().post(
-      '/member/password/verify?email=${Uri.encodeComponent(widget.email)}&code=${Uri.encodeComponent(codeController.text)}',
-    );
+    final dynamic result;
+    try {
+      result = await ApiClient().post(
+        '/member/password/verify?email=${Uri.encodeComponent(widget.email)}&code=${Uri.encodeComponent(codeController.text)}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+      PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
+      return;
+    }
     if (!mounted) return;
     setState(() {
       isLoading = false;
@@ -297,9 +307,19 @@ class _EmailValidateState extends State<EmailValidate> {
     setState(() {
       isResending = true;
     });
-    var result = await ApiClient().post(
-      '/member/password/email?email=${Uri.encodeComponent(widget.email)}',
-    );
+    final dynamic result;
+    try {
+      result = await ApiClient().post(
+        '/member/password/email?email=${Uri.encodeComponent(widget.email)}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        isResending = false;
+      });
+      PeeroreumToast.show(context, "재발송 실패", isError: true);
+      return;
+    }
     if (!mounted) return;
     setState(() {
       isResending = false;

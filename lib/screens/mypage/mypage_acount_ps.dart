@@ -500,8 +500,16 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
   }
 
   Future<void> psChangeAPI() async {
-    var result = await ApiClient()
-        .put('/member/change/pw?password=${pw2Controller.text}', data: member);
+    final dynamic result;
+    try {
+      // 비밀번호가 로그에 남지 않도록 본문으로 전송
+      result = await ApiClient().put('/member/change/pw',
+          data: {'password': pw2Controller.text});
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.");
+      return;
+    }
     if (!mounted) return;
     if (result.statusCode == 200) {
       PeeroreumToast.show(context, "비밀번호가 변경되었어요.");

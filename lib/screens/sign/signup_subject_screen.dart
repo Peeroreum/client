@@ -924,7 +924,16 @@ class _SignUpSubjectState extends State<SignUpSubject> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await ApiClient().post('/signup', data: member);
+    final dynamic result;
+    try {
+      result = await ApiClient().post('/signup', data: member);
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
+      return;
+    }
+    if (!mounted) return;
     if (result.statusCode == 200) {
       var data = result.data['data'];
       FlutterSecureStorage secureStorage = const FlutterSecureStorage();
@@ -934,11 +943,13 @@ class _SignUpSubjectState extends State<SignUpSubject> {
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);
       secureStorage.write(key: "grade", value: data['grade'].toString());
-      Get.offAllNamed('signUp/Complete');
+      Get.offAllNamed('/signUp/Complete');
     } else {
       if (kDebugMode) {
         print(result.statusCode);
       }
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
     }
   }
 }

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/data/visit_count.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_acount_ps.dart';
 
 class MyPageAccount extends StatefulWidget {
@@ -19,12 +20,17 @@ class MyPageAccount extends StatefulWidget {
 class _MyPageAccountState extends State<MyPageAccount> {
   String? email;
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     email = await const FlutterSecureStorage().read(key: "email");
   }
 
   Future<int> deleteAllMember() async {
-    var result = await ApiClient().delete('/member');
+    final dynamic result;
+    try {
+      result = await ApiClient().delete('/member');
+    } catch (e) {
+      return 500;
+    }
 
     if (result.statusCode == 200) {
       if (kDebugMode) {
@@ -39,12 +45,20 @@ class _MyPageAccountState extends State<MyPageAccount> {
     return result.statusCode ?? 500;
   }
 
+  late Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = fetchStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchStatus(),
+          future: _initFuture,
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -219,7 +233,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "정말 탈퇴하시겠습니다?",
+                  "정말 탈퇴하시겠습니까?",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -282,6 +296,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                             return;
                           }
                           await const FlutterSecureStorage().deleteAll();
+                          await VisitCount.clear();
                           Get.offAllNamed('/signIn/email');
                         },
                         style: TextButton.styleFrom(

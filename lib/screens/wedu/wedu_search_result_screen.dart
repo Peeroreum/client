@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
 import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/api/api_client.dart';
@@ -32,12 +33,13 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
   List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
   List<dynamic> inRoomData = [];
+  late Future<void> _searchFuture;
 
   @override
   void initState() {
     super.initState();
     keyword = widget.keyword;
-    fetchData();
+    _searchFuture = fetchData();
     fetchInRoomData();
   }
 
@@ -115,7 +117,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
         '${getInviteLink(roomId)}\n\n'
         '앱이 없다면 설치 후 참여해요 🙌\n'
         '• 안드로이드: https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client\n'
-        '• iOS: https://apps.apple.com/app/id피어오름앱ID';
+        '• iOS: https://apps.apple.com/app/id6476135072';
   }
 
   bool searchClear = false;
@@ -189,7 +191,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                         if ((textEditingController.text.isNotEmpty)) {
                           setState(() {
                             keyword = textEditingController.text;
-                            fetchData();
+                            _searchFuture = fetchData();
                             _saveSearchHistory(keyword);
                           });
                         }
@@ -207,12 +209,16 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               )),
           body: SafeArea(
             child: FutureBuilder<void>(
-              future: fetchData(),
+              future: _searchFuture,
               builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return ErrorRetryView(
+                    onRetry: () => setState(() {
+                      _searchFuture = fetchData();
+                    }),
+                  );
                 } else {
                   return data.isEmpty
                       ? Center(
@@ -483,16 +489,21 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     );
   }
 
-  void enrollWedu(index) async {
+  void enrollWedu(index, {String? password}) async {
     var id = data[index]['id'];
-    var enrollResult = await ApiClient().post('/wedu/$id/enroll');
+    final dynamic enrollResult;
+    try {
+      enrollResult = await ApiClient().post('/wedu/$id/enroll',
+          data: password == null ? null : {'password': password});
+    } catch (e) {
+      return;
+    }
     if (!mounted) return;
     if (enrollResult.statusCode == 200) {
       PeeroreumToast.show(context, "같이방에 참여했어요!");
-    } else if (enrollResult.statusCode == 409) {
-      PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
     } else {
-      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.');
+      PeeroreumToast.show(context, ApiClient.errorMessage(enrollResult),
+          isError: true);
       if (kDebugMode) {
         print('에러${enrollResult.statusCode}');
       }
@@ -571,11 +582,9 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        passwordController.text == data[index]['password']
-                            ? enrollWedu(index)
-                            : PeeroreumToast.show(context, '비밀번호가 일치하지 않아요.',
-                                isError: true);
+                        // 비밀번호는 서버에서 확인
                         Get.back();
+                        enrollWedu(index, password: passwordController.text);
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: PeeroreumColor.primaryPurple[400],

@@ -22,13 +22,21 @@ class _EncouragementListState extends State<EncouragementList> {
     myNickname = await const FlutterSecureStorage().read(key: "nickname");
   }
 
+  late Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = fetchDatas();
+  }
+
   @override
   Widget build(BuildContext context) {
     notSuccessList =
         ModalRoute.of(context)!.settings.arguments as List<dynamic>;
 
     return FutureBuilder<void>(
-        future: fetchDatas(),
+        future: _initFuture,
         builder: (context, snapshot) {
           return Scaffold(
             backgroundColor: PeeroreumColor.white,
