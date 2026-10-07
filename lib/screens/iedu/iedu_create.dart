@@ -412,7 +412,11 @@ class _CreateIeduState extends State<CreateIedu> {
   gradeSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -442,8 +446,9 @@ class _CreateIeduState extends State<CreateIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: grades.length,
                 itemBuilder: (context, index) {
@@ -484,7 +489,11 @@ class _CreateIeduState extends State<CreateIedu> {
   subjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -514,8 +523,9 @@ class _CreateIeduState extends State<CreateIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: subjects.length,
                 itemBuilder: (context, index) {
@@ -558,7 +568,11 @@ class _CreateIeduState extends State<CreateIedu> {
   detailSubjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.4,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -588,8 +602,9 @@ class _CreateIeduState extends State<CreateIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: detailSubjects.length,
                 itemBuilder: (context, index) {

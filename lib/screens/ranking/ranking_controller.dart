@@ -18,14 +18,17 @@ class RankingController extends GetxController {
     selectedIndex(index);
   }
 
-  Future<void> fetchRanking() async {
+  /// [showLoading]이 false면 기존 목록을 보여준 채로 갱신
+  Future<void> fetchRanking({bool showLoading = true}) async {
     try {
-      isLoading(true);
+      if (showLoading) isLoading(true);
       final response = await rankingProvider.getRanking();
       if (response != null && response.isNotEmpty) {
         ranking.assignAll(response);
         errorMessage('');
       } else {
+        // 주가 바뀌어 랭킹이 비면 지난 주 목록이 남지 않도록 비움
+        ranking.clear();
         errorMessage('No ranking found');
       }
     } catch (e) {

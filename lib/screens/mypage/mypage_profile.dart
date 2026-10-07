@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
 import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
@@ -59,7 +60,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   ];
   bool isFriend = false;
   List<dynamic> badges = [];
-  String? grade;
+  int? grade;
   String? profileImage;
   String? backgroundImage;
   int followerNumber = 0;
@@ -69,12 +70,27 @@ class _MyPageProfileState extends State<MyPageProfile> {
   final changeNicknameController = TextEditingController();
   final GlobalKey _shareButtonKey = GlobalKey();
 
+  // 커버가 상단 바 뒤까지 깔리므로, 스크롤로 커버를 지나면 상단 바를 흰색으로 전환
+  final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<bool> _appBarSolid = ValueNotifier<bool>(false);
+  late Future<void> _initFuture;
+
   @override
   void initState() {
     super.initState();
     nickname = widget.nickname;
     amI = widget.amI;
-    fetchData();
+    _scrollController.addListener(() {
+      _appBarSolid.value = _scrollController.offset > _coverHeight - 8;
+    });
+    _initFuture = fetchData();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _appBarSolid.dispose();
+    super.dispose();
   }
 
   Future<void> fetchData() async {
@@ -93,24 +109,38 @@ class _MyPageProfileState extends State<MyPageProfile> {
       }
     }
 
+    // 프로필 정보가 없으면 화면을 그릴 수 없으므로 실패 시 에러로 넘김
+    var profileInfo =
+        await ApiClient().get('/member/profile?nickname=$nickname');
+    if (profileInfo.statusCode != 200) {
+      throw Exception('프로필 조회 실패 ${profileInfo.statusCode}');
+    }
+    var data = profileInfo.data['data'];
+    grade = data["grade"];
+    followerNumber = data["followerNumber"];
+    followingNumber = data["followingNumber"];
+    profileImage = data["profileImage"];
+    backgroundImage = data["backgroundImage"];
+    isFriend = data['following'];
+    withPeerDay = data['activeDaysCount'];
+  }
+
+  void _retry() {
+    setState(() {
+      _initFuture = fetchData();
+    });
+  }
+
+  // 로딩 화면 없이 숫자·목록만 다시 불러옴
+  Future<void> _refreshSilently() async {
     try {
-      var profileInfo =
-          await ApiClient().get('/member/profile?nickname=$nickname');
-      if (profileInfo.statusCode == 200) {
-        var data = profileInfo.data['data'];
-        grade = data["grade"];
-        followerNumber = data["followerNumber"];
-        followingNumber = data["followingNumber"];
-        profileImage = data["profileImage"];
-        backgroundImage = data["backgroundImage"];
-        isFriend = data['following'];
-        withPeerDay = data['activeDaysCount'];
-      }
+      await fetchData();
     } catch (e) {
       if (kDebugMode) {
-        print('Unexpected error: $e');
+        print('프로필 갱신 실패 $e');
       }
     }
+    if (mounted) setState(() {});
   }
 
   profileImageAPI(var image) async {
@@ -246,6 +276,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (friendName.statusCode == 200) {
         setState(() {
           isFriend = true;
+          followerNumber++;
         });
         PeeroreumToast.show(context, "친구 추가를 완료했어요.");
       } else if (friendName.statusCode == 404) {
@@ -266,7 +297,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (!mounted) return;
       PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
     }
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   unfollow() async {
@@ -277,6 +308,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
       if (friendName.statusCode == 200) {
         setState(() {
           isFriend = false;
+          if (followerNumber > 0) followerNumber--;
         });
 
         PeeroreumToast.show(context, "친구 삭제를 완료했어요.");
@@ -299,34 +331,31 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   searchFriend() async {
+    final target = nicknameController.text.trim();
+    if (target.isEmpty) return;
+    if (target == nickname) {
+      PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
+      return;
+    }
     try {
-      var friendName = await ApiClient()
-          .get('/member/profile?nickname=${nicknameController.text}');
+      final result =
+          await ApiClient().get('/member/profile?nickname=$target');
       if (!mounted) return;
-      if (friendName.statusCode == 200) {
-        //check_friend(nickname_controller.text);
-        if (nicknameController.text == nickname) {
-          PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
-        } else {
-          Get.back();
-          Get.to(() => MyPageProfile(nicknameController.text, false),
-                  preventDuplicates: false)
-              ?.then((value) {
-            setState(() {});
-            nicknameController.clear();
-          });
-        }
-      } else if (friendName.statusCode == 404) {
-        PeeroreumToast.show(context, "존재하지 않는 회원이에요.");
+      if (result.statusCode == 200) {
+        Get.back();
+        Get.to(() => MyPageProfile(target, false), preventDuplicates: false)
+            ?.then((value) {
+          _refreshSilently();
+          nicknameController.clear();
+        });
+      } else if (result.statusCode == 404) {
+        PeeroreumToast.show(context, "존재하지 않는 회원이에요.", isError: true);
       } else {
-        if (kDebugMode) {
-          print("친구찾기 에러${friendName.statusCode}");
-        }
+        PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
       }
     } catch (e) {
-      if (kDebugMode) {
-        print("Unexpected error: $e");
-      }
+      if (!mounted) return;
+      PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.", isError: true);
     }
   }
 
@@ -358,14 +387,38 @@ class _MyPageProfileState extends State<MyPageProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbarWidget(),
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _appBarSolid,
+          builder: (context, solid, _) => appbarWidget(solid),
+        ),
+      ),
       body: FutureBuilder<void>(
-          future: fetchData(),
+          future: _initFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(color: PeeroreumColor.white);
+              // 로딩 중에도 흰 아이콘이 보이도록 커버 자리만 미리 채움
+              return Column(
+                children: [
+                  Container(
+                    height: _topInset + _coverHeight,
+                    color: PeeroreumColor.primaryPurple[100],
+                  ),
+                ],
+              );
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              // 상단 아이콘이 흰색이라 커버 자리를 남겨 두고 아래에 재시도 안내
+              return Column(
+                children: [
+                  Container(
+                    height: _topInset + _coverHeight,
+                    color: PeeroreumColor.primaryPurple[100],
+                  ),
+                  Expanded(child: ErrorRetryView(onRetry: _retry)),
+                ],
+              );
             } else {
               return bodyWidget();
             }
@@ -373,29 +426,24 @@ class _MyPageProfileState extends State<MyPageProfile> {
     );
   }
 
-  PreferredSizeWidget appbarWidget() {
+  PreferredSizeWidget appbarWidget(bool solid) {
+    final Color iconColor =
+        solid ? PeeroreumColor.gray[800]! : PeeroreumColor.white;
     return AppBar(
-      backgroundColor: PeeroreumColor.white,
-      surfaceTintColor: PeeroreumColor.white,
-      shadowColor: PeeroreumColor.white,
-      elevation: 0.5,
+      backgroundColor: solid ? PeeroreumColor.white : Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      elevation: solid ? 0.5 : 0,
+      systemOverlayStyle:
+          solid ? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          colorFilter:
-              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
         ),
         onPressed: () {
           Get.back();
         },
-      ),
-      title: const Text(
-        "프로필",
-        style: TextStyle(
-            color: PeeroreumColor.black,
-            fontFamily: 'Pretendard',
-            fontSize: 20,
-            fontWeight: FontWeight.w500),
       ),
       centerTitle: true,
       actions: [
@@ -412,8 +460,8 @@ class _MyPageProfileState extends State<MyPageProfile> {
                   margin: const EdgeInsets.only(right: 4),
                   constraints: const BoxConstraints(),
                   child: SvgPicture.asset('assets/icons/search.svg',
-                      colorFilter: const ColorFilter.mode(
-                          PeeroreumColor.black, BlendMode.srcIn)),
+                      colorFilter:
+                          ColorFilter.mode(iconColor, BlendMode.srcIn)),
                 ),
                 onTap: () {
                   showSearchFriendDialog();
@@ -430,8 +478,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     'assets/icons/icon_dots_mono.svg',
                     height: 24,
                     width: 24,
-                    colorFilter: const ColorFilter.mode(
-                        PeeroreumColor.black, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
                   ),
                 ),
                 onTap: () {
@@ -1152,9 +1199,12 @@ class _MyPageProfileState extends State<MyPageProfile> {
     return Scaffold(
       backgroundColor: PeeroreumColor.white,
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            myProfile(),
+            profileHeader(),
+            Container(height: 8, color: PeeroreumColor.gray[100]),
             myWedu(),
           ],
         ),
@@ -1162,368 +1212,284 @@ class _MyPageProfileState extends State<MyPageProfile> {
     );
   }
 
-  Widget myProfile() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      child: Column(
-        children: [
-          myInfo(),
-          const SizedBox(
-            height: 16,
-          ),
-          friends(),
-        ],
-      ),
-    );
-  }
+  static const double _coverHeight = 140;
 
-  Widget myInfo() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-      decoration: backgroundImage != null
-          ? BoxDecoration(
-              image: DecorationImage(
-                colorFilter: ColorFilter.mode(
-                    PeeroreumColor.black.withValues(alpha: 0.2),
-                    BlendMode.darken),
-                image: NetworkImage(backgroundImage!),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(16)))
-          : BoxDecoration(
-              color: PeeroreumColor.gray[200],
-              borderRadius: const BorderRadius.all(Radius.circular(16))),
-      child: Column(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/color_logo.png',
-                    height: 24,
-                  ),
-                  Container(width: 4),
-                  Text(
-                    '+',
-                    style: TextStyle(
-                        color: backgroundImage != null
-                            ? PeeroreumColor.white
-                            : PeeroreumColor.black,
-                        fontFamily: 'Pretendard',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  Container(width: 2),
-                  Text(
-                    "$withPeerDay",
-                    style: TextStyle(
-                        color: backgroundImage != null
-                            ? PeeroreumColor.white
-                            : PeeroreumColor.black,
-                        fontFamily: 'Pretendard',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: 90,
-                height: 90,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      width: 3,
-                      color: grade != null
-                          ? PeeroreumColor.gradeColor[grade]!
-                          : const Color.fromARGB(255, 186, 188, 189)),
-                ),
-                child: Container(
-                  height: 84,
-                  width: 84,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        width: 2,
-                        color: PeeroreumColor.white.withValues(alpha: 0.0),
-                      )),
-                  child: Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: profileImage != null
-                          ? DecorationImage(
-                              image: NetworkImage(profileImage!),
-                              fit: BoxFit.cover)
-                          : const DecorationImage(
-                              image: AssetImage(
-                              'assets/images/user.jpg',
-                            )),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                nickname,
-                style: TextStyle(
-                  color: backgroundImage != null
-                      ? PeeroreumColor.white
-                      : PeeroreumColor.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Pretendard',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextButton(
-              key: _shareButtonKey,
-              onPressed: () async {
-                if ((isFriend == true) && (amI == false)) {
-                  unfollow();
-                } else if ((isFriend == false) && (amI == false)) {
-                  follow();
-                } else if ((isFriend == false) && (amI == true)) {
-                  final available =
-                      await ShareClient.instance.isKakaoTalkSharingAvailable();
-                  if (available) {
-                    try {
-                      final uri = await ShareClient.instance.shareCustom(
-                        templateId: 102993,
-                        templateArgs: {'UserName': nickname},
-                      );
-                      await ShareClient.instance.launchKakaoTalk(uri);
-                    } catch (error) {
-                      if (kDebugMode) {
-                        print('카카오톡 공유 실패 $error');
-                      }
-                      final box = _shareButtonKey.currentContext
-                          ?.findRenderObject() as RenderBox?;
-                      final rect = box == null
-                          ? null
-                          : box.localToGlobal(Offset.zero) & box.size;
-                      Share.share(
-                        '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
-                        sharePositionOrigin: rect,
-                      );
-                    }
-                  } else {
-                    final box = _shareButtonKey.currentContext
-                        ?.findRenderObject() as RenderBox?;
-                    final rect = box == null
-                        ? null
-                        : box.localToGlobal(Offset.zero) & box.size;
-                    Share.share(
-                      '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
-                      sharePositionOrigin: rect,
-                    );
-                  }
-                } else {
-                  if (kDebugMode) {
-                    print('error');
-                  }
-                }
-                setState(() {});
-              },
-              style: ButtonStyle(
-                  maximumSize: amI
-                      ? WidgetStateProperty.all<Size>(const Size(138, 40))
-                      : WidgetStateProperty.all<Size>(const Size(124, 40)),
-                  backgroundColor: amI
-                      ? WidgetStateProperty.all(
-                          PeeroreumColor.primaryPurple[400])
-                      : (isFriend
-                          ? WidgetStateProperty.all(PeeroreumColor.gray[300])
-                          : WidgetStateProperty.all(
-                              PeeroreumColor.primaryPurple[400])),
-                  padding: WidgetStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
-                  ))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  amI
-                      ? SvgPicture.asset(
-                          'assets/icons/share.svg',
-                          colorFilter: const ColorFilter.mode(
-                              PeeroreumColor.white, BlendMode.srcIn),
-                        )
-                      : SvgPicture.asset(
-                          'assets/icons/plus_user.svg',
-                          colorFilter: ColorFilter.mode(
-                              isFriend
-                                  ? PeeroreumColor.gray[600]!
-                                  : PeeroreumColor.white,
-                              BlendMode.srcIn),
-                        ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    amI ? '프로필 공유' : (isFriend ? '친구 끊기' : '친구 추가'),
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: amI
-                          ? PeeroreumColor.white
-                          : (isFriend
-                              ? PeeroreumColor.gray[600]
-                              : PeeroreumColor.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // 상태바 + 상단 바 높이. 커버를 이 영역까지 깔기 위해 더함
+  // (Scaffold 바깥 context 기준이라 상태바 높이만 들어 있음)
+  double get _topInset =>
+      MediaQuery.of(context).padding.top + kToolbarHeight;
+  static const double _avatarSize = 88;
 
-  Widget friends() {
-    return Row(
+  /// 커버(배경 이미지 또는 기본 그라데이션) + 겹쳐진 프로필 사진 + 이름·통계
+  Widget profileHeader() {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: InkWell(
-            splashColor: Colors.transparent,
-            onTap: () {
-              Get.to(() => MyPageProfileFriend(
-                    nickname,
-                    index: 0,
-                  ));
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              decoration: BoxDecoration(
-                  border:
-                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                  borderRadius: const BorderRadius.all(Radius.circular(8))),
-              child: SizedBox(
-                height: 25,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            cover(),
+            Positioned(
+              left: 20,
+              bottom: -_avatarSize / 2,
+              child: avatar(),
+            ),
+          ],
+        ),
+        // 커버 아래로 내려온 프로필 사진 높이만큼 비움
+        const SizedBox(height: _avatarSize / 2),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    T3(
-                      text: '팔로워',
-                      color: PeeroreumColor.gray[800],
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            nickname,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: PeeroreumColor.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Pretendard',
+                            ),
+                          ),
+                        ),
+                        if (grade != null &&
+                            grade! > 0 &&
+                            grade! < dropdownGradeList.length &&
+                            PeeroreumColor.gradeColor[grade] != null) ...[
+                          const SizedBox(width: 6),
+                          gradeChip(),
+                        ],
+                      ],
                     ),
-                    B3m(
-                      text: '$followerNumber',
-                      color: PeeroreumColor.gray[600],
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Image.asset('assets/images/color_logo.png', height: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          '+$withPeerDay',
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: PeeroreumColor.black,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        friendStat(followerNumber, '팔로워', 0),
+                        const SizedBox(width: 12),
+                        friendStat(followingNumber, '팔로잉', 1),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              // 이름·통계 블록 옆 세로 가운데
+              primaryButton(),
+            ],
           ),
         ),
-        const SizedBox(
-          width: 8,
-        ),
-        Expanded(
-          child: InkWell(
-            splashColor: Colors.transparent,
-            onTap: () {
-              Get.to(() => MyPageProfileFriend(
-                    nickname,
-                    index: 1,
-                  ));
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              decoration: BoxDecoration(
-                  border:
-                      Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                  borderRadius: const BorderRadius.all(Radius.circular(8))),
-              child: SizedBox(
-                height: 25,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    T3(
-                      text: '팔로잉',
-                      color: PeeroreumColor.gray[800],
-                    ),
-                    B3m(
-                      text: '$followingNumber',
-                      color: PeeroreumColor.gray[600],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        // 뱃지
-        // SizedBox(
-        //   width: 8,
-        // ),
-        // GestureDetector(
-        //   onTap: () {
-        //     // PeeroreumToast.show(context, "준비 중입니다.");
-        //   },
-        //   child: Container(
-        //     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        //     decoration: BoxDecoration(
-        //         border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-        //         borderRadius: BorderRadius.all(Radius.circular(8))),
-        //     child: Row(
-        //       children: [
-        //         Column(
-        //           children: [
-        //             Text(
-        //               '배지',
-        //               style: TextStyle(
-        //                 color: PeeroreumColor.gray[800],
-        //                 fontSize: 18,
-        //                 fontWeight: FontWeight.w600,
-        //                 fontFamily: 'Pretendard',
-        //               ),
-        //             ),
-        //             SizedBox(
-        //               height: 4,
-        //             ),
-        //             Text(
-        //               '${badges.length}개',
-        //               style: TextStyle(
-        //                 color: PeeroreumColor.gray[600],
-        //                 fontSize: 14,
-        //                 fontWeight: FontWeight.w500,
-        //                 fontFamily: 'Pretendard',
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 16),
-        //           height: 52,
-        //           child: Badge(),
-        //         )
-        //       ],
-        //     ),
-        //   ),
-        // ),
       ],
     );
+  }
+
+  Widget cover() {
+    final double topInset = _topInset;
+    return SizedBox(
+      width: double.infinity,
+      height: topInset + _coverHeight,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          backgroundImage != null
+              ? Image.network(backgroundImage!, fit: BoxFit.cover)
+              : DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        PeeroreumColor.primaryPurple[200]!,
+                        PeeroreumColor.primaryPurple[400]!,
+                        PeeroreumColor.primaryPurple[600]!,
+                      ],
+                    ),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget avatar() {
+    return Container(
+      width: _avatarSize,
+      height: _avatarSize,
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: PeeroreumColor.white,
+        border: Border.all(
+            width: 3,
+            color: grade != null && PeeroreumColor.gradeColor[grade] != null
+                ? PeeroreumColor.gradeColor[grade]!
+                : PeeroreumColor.gray[400]!),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: profileImage != null
+              ? DecorationImage(
+                  image: NetworkImage(profileImage!), fit: BoxFit.cover)
+              : const DecorationImage(
+                  image: AssetImage('assets/images/user.jpg'),
+                  fit: BoxFit.cover),
+        ),
+      ),
+    );
+  }
+
+  Widget gradeChip() {
+    final color = PeeroreumColor.gradeColor[grade]!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Text(
+        dropdownGradeList[grade!],
+        style: TextStyle(
+          fontFamily: 'Pretendard',
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget friendStat(int count, String label, int tabIndex) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () async {
+        await Get.to(() => MyPageProfileFriend(nickname, index: tabIndex));
+        _refreshSilently();
+      },
+      child: Text.rich(
+        TextSpan(
+          style: const TextStyle(fontFamily: 'Pretendard', fontSize: 14),
+          children: [
+            TextSpan(
+              text: '$count',
+              style: const TextStyle(
+                  fontWeight: FontWeight.w700, color: PeeroreumColor.black),
+            ),
+            TextSpan(
+              text: ' $label',
+              style: TextStyle(
+                  fontWeight: FontWeight.w400, color: PeeroreumColor.gray[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 내 프로필이면 공유, 다른 사람이면 친구 추가/끊기
+  Widget primaryButton() {
+    final bool muted = !amI && isFriend;
+    final Color fg = muted ? PeeroreumColor.gray[600]! : PeeroreumColor.white;
+    return TextButton(
+      key: _shareButtonKey,
+      onPressed: onPrimaryButtonPressed,
+      style: TextButton.styleFrom(
+        backgroundColor:
+            muted ? PeeroreumColor.gray[200] : PeeroreumColor.primaryPurple[400],
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        minimumSize: const Size(0, 34),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            amI ? 'assets/icons/share.svg' : 'assets/icons/plus_user.svg',
+            width: 16,
+            height: 16,
+            colorFilter: ColorFilter.mode(fg, BlendMode.srcIn),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            amI ? '공유' : (isFriend ? '친구 끊기' : '친구 추가'),
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: fg,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onPrimaryButtonPressed() async {
+    if ((isFriend == true) && (amI == false)) {
+      unfollow();
+    } else if ((isFriend == false) && (amI == false)) {
+      follow();
+    } else if ((isFriend == false) && (amI == true)) {
+      final available =
+          await ShareClient.instance.isKakaoTalkSharingAvailable();
+      if (available) {
+        try {
+          final uri = await ShareClient.instance.shareCustom(
+            templateId: 102993,
+            templateArgs: {'UserName': nickname},
+          );
+          await ShareClient.instance.launchKakaoTalk(uri);
+        } catch (error) {
+          if (kDebugMode) {
+            print('카카오톡 공유 실패 $error');
+          }
+          final box = _shareButtonKey.currentContext
+              ?.findRenderObject() as RenderBox?;
+          final rect = box == null
+              ? null
+              : box.localToGlobal(Offset.zero) & box.size;
+          Share.share(
+            '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
+            sharePositionOrigin: rect,
+          );
+        }
+      } else {
+        final box = _shareButtonKey.currentContext
+            ?.findRenderObject() as RenderBox?;
+        final rect = box == null
+            ? null
+            : box.localToGlobal(Offset.zero) & box.size;
+        Share.share(
+          '$nickname 님의 피어오름 프로필\npeeroreum://profile/$nickname',
+          sharePositionOrigin: rect,
+        );
+      }
+    } else {
+      if (kDebugMode) {
+        print('error');
+      }
+    }
+    setState(() {});
   }
 
   Widget badge() {
@@ -1553,12 +1519,159 @@ class _MyPageProfileState extends State<MyPageProfile> {
 
   Widget myWedu() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         roomBody(),
-        (inRoomData.isNotEmpty)
-            ? SizedBox(height: 180, child: inRoomBody())
-            : const SizedBox(height: 0),
+        if (inRoomData.isEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            child: Text(
+              '참여 중인 같이방이 없어요',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 14,
+                color: PeeroreumColor.gray[500],
+              ),
+            ),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            child: Column(
+              children: [
+                for (int i = inRoomData.length - 1; i >= 0; i--)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: roomRow(i),
+                  ),
+              ],
+            ),
+          ),
       ],
+    );
+  }
+
+  /// 같이해냄 목록과 같은 가로형 카드 + 진행률 바
+  Widget roomRow(int roomIndex) {
+    final room = inRoomData[roomIndex];
+    final String subjectName = dropdownSubjectList[room['subject']];
+    final num progress = (room['progress'] ?? 0) as num;
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        if (amI) Get.to(() => DetailWedu(room["id"]));
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              height: 44,
+              width: 44,
+              decoration: BoxDecoration(
+                color: PeeroreumColor.gray[50],
+                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: room['imagePath'] != null
+                    ? Image.network(room['imagePath'], fit: BoxFit.cover)
+                    : SvgPicture.asset('assets/images/default.svg',
+                        fit: BoxFit.cover),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4)),
+                          color: PeeroreumColor.subjectColor[subjectName]?[0],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 6),
+                          child: Text(
+                            subjectName,
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10,
+                              color:
+                                  PeeroreumColor.subjectColor[subjectName]?[1],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          room["title"] ?? '',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Text(
+                        '${dropdownGradeList[room["grade"]]} · ${room["attendingPeopleNum"]}명 · D-${room["dday"]}',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: PeeroreumColor.gray[600],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // 남은 폭을 모두 채워 진행률을 읽기 쉽게
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(2),
+                          child: LinearProgressIndicator(
+                            value: (progress / 100).clamp(0, 1).toDouble(),
+                            minHeight: 4,
+                            backgroundColor: PeeroreumColor.gray[100],
+                            valueColor: AlwaysStoppedAnimation(
+                                PeeroreumColor.primaryPurple[400]!),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '$progress%',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: PeeroreumColor.primaryPurple[400],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1609,166 +1722,6 @@ class _MyPageProfileState extends State<MyPageProfile> {
           )
         ],
       ),
-    );
-  }
-
-  Widget inRoomBody() {
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: inRoomData.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return Container(
-          width: 8,
-        );
-      },
-      itemBuilder: (BuildContext context, int index) {
-        int roomIndex = inRoomData.length - 1 - index;
-        return GestureDetector(
-          child: Container(
-            width: 150,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                borderRadius: const BorderRadius.all(Radius.circular(8.0))),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    color: PeeroreumColor.gray[50],
-                    border:
-                        Border.all(width: 1, color: PeeroreumColor.gray[200]!),
-                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5.0),
-                    child: (inRoomData[roomIndex]['imagePath'] != null)
-                        ? Image.network(
-                            inRoomData[roomIndex]['imagePath'],
-                            fit: BoxFit.cover,
-                          )
-                        : SvgPicture.asset(
-                            'assets/images/default.svg',
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(4)),
-                        color: PeeroreumColor.subjectColor[dropdownSubjectList[
-                            inRoomData[roomIndex]['subject']]]?[0],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 8),
-                        child: Text(
-                          dropdownSubjectList[inRoomData[roomIndex]['subject']],
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10,
-                            color: PeeroreumColor.subjectColor[
-                                dropdownSubjectList[inRoomData[roomIndex]
-                                    ['subject']]]?[1],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    SizedBox(
-                      width: 90,
-                      height: 24,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Text(
-                          inRoomData[roomIndex]["title"]!,
-                          style: const TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(dropdownGradeList[inRoomData[roomIndex]["grade"]],
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: PeeroreumColor.gray[600])),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/dot.svg',
-                        colorFilter: ColorFilter.mode(
-                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
-                      ),
-                    ),
-                    Text('${inRoomData[roomIndex]["attendingPeopleNum"]!}명',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: PeeroreumColor.gray[600])),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/dot.svg',
-                        colorFilter: ColorFilter.mode(
-                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
-                      ),
-                    ),
-                    Text('D-${inRoomData[roomIndex]["dday"]!}',
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: PeeroreumColor.gray[600])),
-                  ],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  '${inRoomData[roomIndex]["progress"]}% 달성',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: PeeroreumColor.primaryPurple[400]),
-                )
-              ],
-            ),
-          ),
-          onTap: () {
-            amI ? Get.to(() => DetailWedu(inRoomData[roomIndex]["id"])) : null;
-          },
-        );
-      },
     );
   }
 }

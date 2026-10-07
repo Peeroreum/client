@@ -9,6 +9,7 @@ import 'package:peeroreum_client/screens/iedu/iedu_home.dart';
 import 'package:peeroreum_client/screens/mypage/mypage.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_home.dart';
 import 'package:peeroreum_client/screens/ranking/ranking.dart';
+import 'package:peeroreum_client/screens/main_tab.dart';
 
 import 'package:get/get.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
@@ -28,17 +29,22 @@ class BottomNaviBar extends StatefulWidget {
 class _BottomNaviBarState extends State<BottomNaviBar> {
   late int _selectedIndex;
 
-  final List _pages = [
-    const HomeWedu(),
-    const HomeIedu(),
-    const Ranking(),
-    const MyPage(),
+  final List<Widget> _pages = const [
+    HomeWedu(),
+    HomeIedu(),
+    Ranking(),
+    MyPage(),
   ];
+
+  // 한 번 연 탭만 생성해 상태(데이터·스크롤)를 유지하고, 앱 시작 시 모든 탭이 API를 호출하지 않도록 함
+  late final List<bool> _visited =
+      List.generate(_pages.length, (index) => index == _selectedIndex);
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedIndex;
+    MainTab.selected.value = _selectedIndex;
     postFirebaseToken();
     visitCount();
     _handlePendingDeepLink();
@@ -78,7 +84,8 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
   postFirebaseToken() async {
     try {
       var result = await ApiClient().post('/member/firebasetoken',
-          data: FirebaseToken(firebaseToken: widget.firebaseToken).toJson());
+          data: FirebaseToken(firebaseToken: widget.firebaseToken).toJson(),
+          options: ApiClient.silent);
       if (result.statusCode == 200) {
         if (kDebugMode) {
           print("firebaseToken post 성공");
@@ -174,7 +181,9 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
             onTap: (int index) {
               setState(() {
                 _selectedIndex = index;
+                _visited[index] = true;
               });
+              MainTab.selected.value = index;
             }),
       ),
     );
@@ -183,7 +192,13 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          for (int i = 0; i < _pages.length; i++)
+            _visited[i] ? _pages[i] : const SizedBox.shrink(),
+        ],
+      ),
       bottomNavigationBar: bottomNavigatorBarWidget(),
     );
   }

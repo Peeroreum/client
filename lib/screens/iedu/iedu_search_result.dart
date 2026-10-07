@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
 import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/data/i_edu_read.dart';
 import 'package:peeroreum_client/data/i_edu_search_history.dart';
@@ -166,6 +167,14 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
     }
   }
 
+  // 현재 학년(중등/고등)과 과목 기준으로 세부과목 목록 구성
+  void _updateDetailSubjects() {
+    detailSubjects = ['전체'];
+    if (_subject == null || _subject == '전체') return;
+    final source = _grade <= 3 ? detailMiddleSubjects : detailHighSubjects;
+    detailSubjects.addAll(source[_subject] ?? []);
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController textEditingController = TextEditingController();
@@ -262,7 +271,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return ErrorRetryView(
+                      onRetry: () => setState(() {
+                        initFuture = fetchData();
+                      }),
+                    );
                   } else {
                     return data.isEmpty
                         ? Center(
@@ -927,6 +940,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             _grade = index;
                             _detailSubject = null;
                           }
+                          // 학년이 바뀌면 중등/고등 세부과목 목록이 달라지므로 다시 구성
+                          _updateDetailSubjects();
                           currentPage = 0;
                           focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
@@ -997,14 +1012,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                         setState(() {
                           _subject = subjectList[index];
                           subject = index;
-                          detailSubjects = ['전체'];
-                          List<String> addDetailSubjects;
-                          addDetailSubjects = ((_grade <= 3)
-                              ? detailMiddleSubjects[_subject]
-                              : detailHighSubjects[_subject])!;
-                          if (index != 0) {
-                            detailSubjects.addAll(addDetailSubjects);
-                          }
+                          _updateDetailSubjects();
                           _detailSubject = null;
                           currentPage = 0;
                           focusColor['subject'] = PeeroreumColor.gray[200]!;

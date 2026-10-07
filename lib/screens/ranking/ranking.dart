@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/screens/main_tab.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
@@ -19,6 +20,24 @@ class _RankingState extends State<Ranking> {
   late String myProfileImage;
   String myRank = '-';
   String myPoints = '-';
+
+  @override
+  void initState() {
+    super.initState();
+    MainTab.selected.addListener(_onTabSelected);
+  }
+
+  @override
+  void dispose() {
+    MainTab.selected.removeListener(_onTabSelected);
+    super.dispose();
+  }
+
+  // 다른 탭에서의 활동으로 점수가 바뀌므로 다시 열 때 기존 목록을 보여준 채로 갱신
+  void _onTabSelected() {
+    if (MainTab.selected.value != MainTab.ranking || !mounted) return;
+    _rankingController.fetchRanking(showLoading: false);
+  }
 
   @override
   Widget build(BuildContext context) {

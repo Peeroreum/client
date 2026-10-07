@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
+import 'package:peeroreum_client/screens/main_tab.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -108,6 +110,7 @@ class _HomeIeduState extends State<HomeIedu> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    MainTab.selected.addListener(_onTabSelected);
     initFuture = fetchStatus();
     subjectList.addAll(subjects);
     detailMiddleSubjects.addAll(middleSubjects);
@@ -135,7 +138,11 @@ class _HomeIeduState extends State<HomeIedu> {
             return const SkeletonIedu();
           } else if (snapshot.hasError) {
             // 에러 발생 시
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return ErrorRetryView(
+              onRetry: () => setState(() {
+                initFuture = fetchStatus();
+              }),
+            );
           } else {
             return RefreshIndicator(
               onRefresh: () => fetchStatus(),
@@ -160,6 +167,12 @@ class _HomeIeduState extends State<HomeIedu> {
 
     await fetchIeduData();
     await getReadListData();
+  }
+
+  // 첫 페이지만 보고 있을 때만 갱신해 더 불러온 목록과 스크롤 위치는 유지
+  void _onTabSelected() {
+    if (MainTab.selected.value != MainTab.iedu || !mounted) return;
+    if (currentPage == 0) fetchIeduData();
   }
 
   fetchIeduData() async {
@@ -325,8 +338,9 @@ class _HomeIeduState extends State<HomeIedu> {
             padding: const EdgeInsets.only(bottom: 10),
             child: FloatingActionButton(
               shape: const CircleBorder(),
-              onPressed: () {
-                Get.to(() => const CreateIedu());
+              onPressed: () async {
+                await Get.to(() => const CreateIedu());
+                fetchIeduData();
               },
               elevation: 5,
               backgroundColor: PeeroreumColor.primaryPurple[400],
@@ -344,6 +358,22 @@ class _HomeIeduState extends State<HomeIedu> {
       ),
     );
   }
+
+  // 현재 학년(중등/고등)과 과목 기준으로 세부과목 목록 구성
+  void _updateDetailSubjects() {
+    detailSubjects = ['전체'];
+    if (_subject == null || _subject == '전체' || _grade == null) return;
+    final source = _grade! <= 3 ? detailMiddleSubjects : detailHighSubjects;
+    detailSubjects.addAll(source[_subject] ?? []);
+  }
+
+  // 세부과목은 학년(대학 제외)과 과목을 고른 뒤에만 선택 가능
+  bool get _canSelectDetailSubject =>
+      _grade != null &&
+      _grade != 0 &&
+      _grade != 7 &&
+      _subject != null &&
+      _subject != '전체';
 
   dropdownBody() {
     return Container(
@@ -461,7 +491,7 @@ class _HomeIeduState extends State<HomeIedu> {
             absorbing: _grade == 7,
             child: GestureDetector(
               onTap: () {
-                if (_subject != null && _grade != 0) {
+                if (_canSelectDetailSubject) {
                   setState(() {
                     focusColor["detailSubject"] = PeeroreumColor.black;
                   });
@@ -488,9 +518,9 @@ class _HomeIeduState extends State<HomeIedu> {
                     color: focusColor["detailSubject"] ??
                         PeeroreumColor.gray[200]!,
                   ),
-                  color: _grade == 7
-                      ? PeeroreumColor.gray[100]
-                      : Colors.transparent,
+                  color: _canSelectDetailSubject
+                      ? Colors.transparent
+                      : PeeroreumColor.gray[100],
                 ),
                 child: Row(
                   children: [
@@ -499,14 +529,22 @@ class _HomeIeduState extends State<HomeIedu> {
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w400,
-                          color: _detailSubject != null
-                              ? PeeroreumColor.black
-                              : PeeroreumColor.gray[600]),
+                          color: !_canSelectDetailSubject
+                              ? PeeroreumColor.gray[400]
+                              : _detailSubject != null
+                                  ? PeeroreumColor.black
+                                  : PeeroreumColor.gray[600]),
                     ),
                     const SizedBox(
                       width: 8,
                     ),
-                    SvgPicture.asset('assets/icons/down.svg'),
+                    SvgPicture.asset(
+                      'assets/icons/down.svg',
+                      colorFilter: _canSelectDetailSubject
+                          ? null
+                          : ColorFilter.mode(
+                              PeeroreumColor.gray[400]!, BlendMode.srcIn),
+                    ),
                   ],
                 ),
               ),
@@ -520,7 +558,11 @@ class _HomeIeduState extends State<HomeIedu> {
   gradeSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -550,8 +592,9 @@ class _HomeIeduState extends State<HomeIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: grades.length,
                 itemBuilder: (context, index) {
@@ -567,6 +610,8 @@ class _HomeIeduState extends State<HomeIedu> {
                             _subject = null;
                             subject = 0;
                           }
+                          // 학년이 바뀌면 중등/고등 세부과목 목록이 달라지므로 다시 구성
+                          _updateDetailSubjects();
                         });
                         fetchIeduData();
                         Get.back();
@@ -600,7 +645,11 @@ class _HomeIeduState extends State<HomeIedu> {
   subjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -630,8 +679,9 @@ class _HomeIeduState extends State<HomeIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: subjectList.length,
                 itemBuilder: (context, index) {
@@ -641,14 +691,7 @@ class _HomeIeduState extends State<HomeIedu> {
                         setState(() {
                           _subject = subjectList[index];
                           subject = index;
-                          detailSubjects = ['전체'];
-                          List<String> addDetailSubjects;
-                          addDetailSubjects = ((_grade! <= 3)
-                              ? detailMiddleSubjects[_subject]
-                              : detailHighSubjects[_subject])!;
-                          if (index != 0) {
-                            detailSubjects.addAll(addDetailSubjects);
-                          }
+                          _updateDetailSubjects();
                           _detailSubject = null;
                           detailSubject = 0;
                           focusColor['subject'] = PeeroreumColor.gray[200]!;
@@ -685,7 +728,11 @@ class _HomeIeduState extends State<HomeIedu> {
   detailSubjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.4,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -715,8 +762,9 @@ class _HomeIeduState extends State<HomeIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: detailSubjects.length,
                 itemBuilder: (context, index) {
@@ -788,9 +836,7 @@ class _HomeIeduState extends State<HomeIedu> {
               width: MediaQuery.of(context).size.width - 40,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
               decoration: BoxDecoration(
-                  color: isReadList.contains(data[index]['id'].toString())
-                      ? PeeroreumColor.gray[100]
-                      : PeeroreumColor.white,
+                  color: PeeroreumColor.white,
                   border:
                       Border.all(width: 1, color: PeeroreumColor.gray[200]!),
                   borderRadius: const BorderRadius.all(Radius.circular(8.0))),
@@ -833,6 +879,10 @@ class _HomeIeduState extends State<HomeIedu> {
                             Flexible(
                                 child: T4(
                               text: data[index]['title'],
+                              color: isReadList
+                                      .contains(data[index]['id'].toString())
+                                  ? PeeroreumColor.gray[500]
+                                  : PeeroreumColor.black,
                               overflow: TextOverflow.ellipsis,
                             )),
                           ],
@@ -863,10 +913,7 @@ class _HomeIeduState extends State<HomeIedu> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               decoration: BoxDecoration(
-                                color: isReadList
-                                        .contains(data[index]['id'].toString())
-                                    ? PeeroreumColor.gray[300]
-                                    : PeeroreumColor.gray[200],
+                                color: PeeroreumColor.gray[200],
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: SizedBox(
@@ -940,28 +987,30 @@ class _HomeIeduState extends State<HomeIedu> {
                           text: '${timeCheck(data[index]["createdTime"])} 전',
                           color: PeeroreumColor.gray[400],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: SvgPicture.asset(
-                            'assets/icons/dot.svg',
-                            colorFilter: ColorFilter.mode(
-                                PeeroreumColor.gray[400]!, BlendMode.srcIn),
-                          ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/icons/thumbs_up.svg',
+                          width: 14,
+                          height: 14,
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[400]!, BlendMode.srcIn),
                         ),
+                        const SizedBox(width: 2),
                         C1m(
-                          text: '좋아요 ${data[index]["likes"]}개',
+                          text: '${data[index]["likes"]}',
                           color: PeeroreumColor.gray[400],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: SvgPicture.asset(
-                            'assets/icons/dot.svg',
-                            colorFilter: ColorFilter.mode(
-                                PeeroreumColor.gray[400]!, BlendMode.srcIn),
-                          ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/icons/chat_drop_dots.svg',
+                          width: 14,
+                          height: 14,
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[400]!, BlendMode.srcIn),
                         ),
+                        const SizedBox(width: 2),
                         C1m(
-                          text: '댓글 ${data[index]["comments"]}개',
+                          text: '${data[index]["comments"]}',
                           color: PeeroreumColor.gray[400],
                         ),
                       ],
@@ -1004,6 +1053,7 @@ class _HomeIeduState extends State<HomeIedu> {
 
   @override
   void dispose() {
+    MainTab.selected.removeListener(_onTabSelected);
     // TODO: implement dispose
     _scrollController.dispose();
     super.dispose();
