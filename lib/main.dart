@@ -30,6 +30,7 @@ import 'package:peeroreum_client/screens/wedu/wedu_join_from_link.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'firebase_options.dart';
 import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/data/app_update.dart';
 
 // 네이티브 딥링크 채널 (Kakao 인텐트 처리용)
 const _deepLinkChannel = MethodChannel('com.peeroreum/deeplink');
@@ -257,6 +258,8 @@ class PeeroreumApp extends StatelessWidget {
                   systemNavigationBarColor: PeeroreumColor.white,
                   systemNavigationBarIconBrightness: Brightness.dark))),
       title: 'Peeroreum',
+      // 첫 화면이 뜬 뒤 최소 지원 버전 확인
+      onReady: AppUpdate.checkAndPrompt,
       home: isNewUser
           ? const OnBoarding()
           : (isLoggedIn

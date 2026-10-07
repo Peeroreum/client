@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:peeroreum_client/data/app_update.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class MyPageVersion extends StatefulWidget {
@@ -13,6 +14,7 @@ class MyPageVersion extends StatefulWidget {
 
 class _MyPageVersionState extends State<MyPageVersion> {
   PackageInfo? packageInfo;
+  AppVersionInfo? versionInfo;
 
   @override
   void initState() {
@@ -21,9 +23,12 @@ class _MyPageVersionState extends State<MyPageVersion> {
   }
 
   Future<void> _initPackageInfo() async {
-    final info = await PackageInfo.fromPlatform();
+    final results =
+        await Future.wait([PackageInfo.fromPlatform(), AppUpdate.fetchInfo()]);
+    if (!mounted) return;
     setState(() {
-      packageInfo = info;
+      packageInfo = results[0] as PackageInfo;
+      versionInfo = results[1] as AppVersionInfo?;
     });
   }
 
@@ -136,28 +141,56 @@ class _MyPageVersionState extends State<MyPageVersion> {
         const SizedBox(
           width: 16,
         ),
-        Container(
+        versionStatus(),
+      ],
+    );
+  }
+
+  // 서버 최신 버전과 비교해 최신이면 뱃지, 아니면 업데이트 버튼 (조회 실패 시 표시 안 함)
+  Widget versionStatus() {
+    final info = versionInfo;
+    if (info == null) return const SizedBox.shrink();
+    if (info.hasNewVersion) {
+      return GestureDetector(
+        onTap: () => AppUpdate.openStore(info.storeUrl),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
           decoration: BoxDecoration(
-            border: Border.all(
-              width: 1,
-              color: PeeroreumColor.primaryPurple[400]!,
-            ),
+            color: PeeroreumColor.primaryPurple[400],
             borderRadius: BorderRadius.circular(100),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
-            child: Text(
-              '최신버전',
-              style: TextStyle(
-                color: PeeroreumColor.primaryPurple[400],
-                fontFamily: 'Pretendard',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+          child: const Text(
+            '업데이트',
+            style: TextStyle(
+              color: PeeroreumColor.white,
+              fontFamily: 'Pretendard',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
-      ],
+      );
+    }
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 1,
+          color: PeeroreumColor.primaryPurple[400]!,
+        ),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
+        child: Text(
+          '최신버전',
+          style: TextStyle(
+            color: PeeroreumColor.primaryPurple[400],
+            fontFamily: 'Pretendard',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 }
