@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
@@ -75,6 +78,9 @@ class _MyPageProfileState extends State<MyPageProfile> {
   final ValueNotifier<bool> _appBarSolid = ValueNotifier<bool>(false);
   late Future<void> _initFuture;
 
+  // 상단 아이콘·상태바를 어둡게 표시할지 (로딩 중·밝은 배경 이미지일 때 true)
+  final ValueNotifier<bool> _darkHeader = ValueNotifier<bool>(true);
+
   @override
   void initState() {
     super.initState();
@@ -90,6 +96,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
   void dispose() {
     _scrollController.dispose();
     _appBarSolid.dispose();
+    _darkHeader.dispose();
     super.dispose();
   }
 
@@ -123,9 +130,65 @@ class _MyPageProfileState extends State<MyPageProfile> {
     backgroundImage = data["backgroundImage"];
     isFriend = data['following'];
     withPeerDay = data['activeDaysCount'];
+    // 첫 화면부터 아이콘 색이 맞도록 배경 이미지를 미리 받아 밝기 계산 (최대 2초)
+    _darkHeader.value = await _isCoverLight(backgroundImage)
+        .timeout(const Duration(seconds: 2), onTimeout: () => false);
+  }
+
+  Future<void> _updateCoverBrightness() async {
+    final url = backgroundImage;
+    final light = await _isCoverLight(url);
+    if (!mounted || backgroundImage != url) return;
+    _darkHeader.value = light;
+  }
+
+  // 커버와 같은 NetworkImage로 받아 캐시를 공유 (화면에서 다시 받지 않음)
+  // 상단 절반을 듬성듬성 샘플링해 평균 밝기 계산
+  Future<bool> _isCoverLight(String? url) async {
+    if (url == null) return false;
+    try {
+      final stream = NetworkImage(url).resolve(ImageConfiguration.empty);
+      final completer = Completer<ui.Image>();
+      late final ImageStreamListener listener;
+      listener = ImageStreamListener((info, _) {
+        if (!completer.isCompleted) completer.complete(info.image.clone());
+        stream.removeListener(listener);
+      }, onError: (error, _) {
+        if (!completer.isCompleted) completer.completeError(error);
+        stream.removeListener(listener);
+      });
+      stream.addListener(listener);
+
+      final image = await completer.future;
+      final bytes = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+      final width = image.width;
+      final rows = (image.height * 0.5).ceil();
+      image.dispose();
+      if (bytes == null) return false;
+
+      final step = max(1, width ~/ 32);
+      double sum = 0;
+      int count = 0;
+      for (int y = 0; y < rows; y += step) {
+        for (int x = 0; x < width; x += step) {
+          final k = (y * width + x) * 4;
+          sum += 0.299 * bytes.getUint8(k) +
+              0.587 * bytes.getUint8(k + 1) +
+              0.114 * bytes.getUint8(k + 2);
+          count++;
+        }
+      }
+      return count > 0 && sum / count / 255 > 0.65;
+    } catch (e) {
+      if (kDebugMode) {
+        print('배경 밝기 계산 실패 $e');
+      }
+      return false;
+    }
   }
 
   void _retry() {
+    _darkHeader.value = true;
     setState(() {
       _initFuture = fetchData();
     });
@@ -201,6 +264,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         setState(() {
           backgroundImage = null;
         });
+        _updateCoverBrightness();
         if (!mounted) return;
         PeeroreumToast.show(context, "배경 이미지가 삭제되었어요.");
       }
@@ -227,6 +291,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
         setState(() {
           backgroundImage = data;
         });
+        _updateCoverBrightness();
         if (!mounted) return;
         PeeroreumToast.show(context, "배경 이미지가 변경되었어요.");
       } else {
@@ -390,34 +455,21 @@ class _MyPageProfileState extends State<MyPageProfile> {
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _appBarSolid,
-          builder: (context, solid, _) => appbarWidget(solid),
+        child: AnimatedBuilder(
+          animation: Listenable.merge([_appBarSolid, _darkHeader]),
+          builder: (context, _) => appbarWidget(_appBarSolid.value),
         ),
       ),
       body: FutureBuilder<void>(
           future: _initFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // 로딩 중에도 흰 아이콘이 보이도록 커버 자리만 미리 채움
-              return Column(
-                children: [
-                  Container(
-                    height: _topInset + _coverHeight,
-                    color: PeeroreumColor.primaryPurple[100],
-                  ),
-                ],
-              );
+              // 로딩 중에는 흰 화면 + 어두운 아이콘 (색 블록이 깜빡이지 않도록)
+              return Container(color: PeeroreumColor.white);
             } else if (snapshot.hasError) {
-              // 상단 아이콘이 흰색이라 커버 자리를 남겨 두고 아래에 재시도 안내
-              return Column(
-                children: [
-                  Container(
-                    height: _topInset + _coverHeight,
-                    color: PeeroreumColor.primaryPurple[100],
-                  ),
-                  Expanded(child: ErrorRetryView(onRetry: _retry)),
-                ],
+              return Padding(
+                padding: EdgeInsets.only(top: _topInset),
+                child: ErrorRetryView(onRetry: _retry),
               );
             } else {
               return bodyWidget();
@@ -427,15 +479,16 @@ class _MyPageProfileState extends State<MyPageProfile> {
   }
 
   PreferredSizeWidget appbarWidget(bool solid) {
+    final bool darkIcons = solid || _darkHeader.value;
     final Color iconColor =
-        solid ? PeeroreumColor.gray[800]! : PeeroreumColor.white;
+        darkIcons ? PeeroreumColor.gray[800]! : PeeroreumColor.white;
     return AppBar(
       backgroundColor: solid ? PeeroreumColor.white : Colors.transparent,
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.transparent,
       elevation: solid ? 0.5 : 0,
       systemOverlayStyle:
-          solid ? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
+          darkIcons ? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
