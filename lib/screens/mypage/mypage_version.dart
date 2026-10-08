@@ -103,10 +103,13 @@ class _MyPageVersionState extends State<MyPageVersion> {
             Container(
               height: 48,
               width: 48,
+              // 실제 앱 아이콘(iOS AppIcon 1024와 동일 이미지), 흰 배경이라 얇은 테두리로 구분
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14.4),
+                  borderRadius: BorderRadius.circular(10.8),
+                  border: Border.all(width: 1, color: PeeroreumColor.gray[200]!),
                   image: const DecorationImage(
-                      image: AssetImage('assets/images/peeroreum_logo.png'))),
+                      image: AssetImage('assets/images/peeroreum_logo_v2.png'),
+                      fit: BoxFit.cover)),
             ),
             const SizedBox(
               width: 16,
