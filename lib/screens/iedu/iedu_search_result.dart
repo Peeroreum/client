@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:peeroreum_client/widgets/error_retry_view.dart';
 import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/data/i_edu_read.dart';
-import 'package:peeroreum_client/data/i_edu_search_history.dart';
 import 'package:peeroreum_client/data/subject.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
@@ -28,7 +27,6 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
 
   _SearchResultIeduState();
 
-  List<Map<String, String>> _searchHistory = [];
   dynamic data;
 
   List<String> isReadList = [];
@@ -108,17 +106,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
     setState(() {});
   }
 
-  _loadSearchHistory() async {
-    _searchHistory = await SearchIeduHistory.getSearchHistory();
-    setState(() {});
-  }
 
-  _saveSearchHistory(String value) async {
-    await SearchIeduHistory.addSearchItem(value);
-    _loadSearchHistory();
-  }
 
-  bool searchClear = false;
 
   getReadListData() async {
     List<String>? data = await Read.getRead();
@@ -177,17 +166,14 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController textEditingController = TextEditingController();
-    textEditingController.text = keyword;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        setState(() {
-          searchClear = false;
-        });
       },
       child: Scaffold(
+          // 입력창이 없는 화면이라 키보드가 올라와도 레이아웃을 줄이지 않음
+          // (검색창을 눌러 돌아갈 때 키보드가 먼저 올라와 빈 결과 화면이 넘치던 문제)
+          resizeToAvoidBottomInset: false,
           backgroundColor: PeeroreumColor.white,
           appBar: AppBar(
               backgroundColor: PeeroreumColor.white,
@@ -201,65 +187,46 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                       PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onPressed: () {
-                  Get.back(result: _searchHistory);
+                  Get.back(result: 'back');
                 },
               ),
               titleSpacing: 0,
               title: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 20, 12),
-                child: SearchBar(
-                  controller: textEditingController,
-                  onTap: () {
-                    Get.back(result: _searchHistory);
-                  },
-                  backgroundColor:
-                      WidgetStateProperty.all(PeeroreumColor.gray[100]),
-                  elevation: WidgetStateProperty.all(0),
-                  constraints: const BoxConstraints(minHeight: 40),
-                  hintText: '모르는 문제를 검색해 보세요!!',
-                  hintStyle: WidgetStateProperty.all(TextStyle(
-                      color: PeeroreumColor.gray[600],
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400)),
-                  trailing: [
-                    searchClear
-                        ? GestureDetector(
-                            onTap: () {
-                              textEditingController.clear();
-                              setState(() {
-                                searchClear = false;
-                              });
-                            },
-                            child: SvgPicture.asset(
-                              'assets/icons/x_circle.svg',
-                              colorFilter: ColorFilter.mode(
-                                  PeeroreumColor.gray[600]!, BlendMode.srcIn),
-                            ))
-                        : Container(),
-                    const SizedBox(
-                      width: 12,
+                child: GestureDetector(
+                  // 검색창을 누르면 현재 검색어를 들고 검색 화면으로 돌아가 바로 수정
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Get.back(result: 'edit'),
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: PeeroreumColor.gray[100],
+                      borderRadius: BorderRadius.circular(100),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        if ((textEditingController.text.isNotEmpty)) {
-                          setState(() {
-                            keyword = textEditingController.text;
-                            fetchData();
-                            _saveSearchHistory(keyword);
-                          });
-                        }
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/search.svg',
-                        colorFilter: ColorFilter.mode(
-                            Colors.grey[600]!, BlendMode.srcIn),
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            keyword,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: PeeroreumColor.gray[800],
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/icons/search.svg',
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[600]!, BlendMode.srcIn),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                  ],
+                  ),
                 ),
               )),
           body: SafeArea(
