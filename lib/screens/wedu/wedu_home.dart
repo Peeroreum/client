@@ -298,7 +298,7 @@ class _HomeWeduState extends State<HomeWedu> {
                 if (inRoomData.length < 10) {
                   _openAndRefresh(() => const CreateWedu());
                 } else {
-                  PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.');
+                  PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.', isError: true);
                 }
               },
             ),
@@ -1056,7 +1056,7 @@ class _HomeWeduState extends State<HomeWedu> {
                         ? insertPassword(index)
                         : enrollWedu(index);
                   } else {
-                    PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.');
+                    PeeroreumToast.show(context, '같이방은 10개까지만 참여 가능해요.', isError: true);
                   }
                 },
               );

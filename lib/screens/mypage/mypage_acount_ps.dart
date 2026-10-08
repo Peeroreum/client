@@ -507,7 +507,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
           data: {'password': pw2Controller.text});
     } catch (e) {
       if (!mounted) return;
-      PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.");
+      PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
       return;
     }
     if (!mounted) return;
@@ -518,7 +518,7 @@ class _MyPageAccountPSState extends State<MyPageAccountPS> {
       if (kDebugMode) {
         print(result.statusCode);
       }
-      PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.");
+      PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
     }
   }
 }

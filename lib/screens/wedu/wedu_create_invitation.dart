@@ -302,7 +302,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 if (value == ' ' * i) {
                                   nextButton = false;
                                   PeeroreumToast.show(
-                                      context, '공백으로 만들 수 없어요.');
+                                      context, '공백으로 만들 수 없어요.', isError: true);
                                 }
                                 if (value != ' ' * i) {
                                   nextButton = true;

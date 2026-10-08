@@ -873,7 +873,7 @@ class _DetailIeduState extends State<DetailIedu> {
                           showImagePickerSheet();
                         } else {
                           PeeroreumToast.show(
-                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.", isError: true);
                         }
                       },
                       child: Row(
@@ -910,7 +910,7 @@ class _DetailIeduState extends State<DetailIedu> {
                           });
                         } else {
                           PeeroreumToast.show(
-                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.");
+                              context, "댓글은 파일 최대 1개까지만 첨부 가능해요.", isError: true);
                         }
                       },
                       child: Row(

@@ -175,7 +175,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
 
     if (data == null) {
       if (context.mounted) {
-        PeeroreumToast.show(context, '같이방 정보를 불러올 수 없어요.');
+        PeeroreumToast.show(context, '같이방 정보를 불러올 수 없어요.', isError: true);
       }
       return;
     }
@@ -278,7 +278,7 @@ class WeduRoomInfoSheet extends StatelessWidget {
     } catch (e) {
       final ctx = Get.context;
       if (ctx != null && ctx.mounted) {
-        PeeroreumToast.show(ctx, '잠시 후에 다시 시도해 주세요.');
+        PeeroreumToast.show(ctx, '잠시 후에 다시 시도해 주세요.', isError: true);
       }
     }
   }

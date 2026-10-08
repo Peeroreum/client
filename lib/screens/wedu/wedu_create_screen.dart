@@ -863,7 +863,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                 .getTags!.length >=
                                             5) {
                                           PeeroreumToast.show(
-                                              context, '해시태그는 3개까지만 가능해요.');
+                                              context, '해시태그는 3개까지만 가능해요.', isError: true);
                                           return '태그 15개 제한';
                                         } else {
                                           _tag.add(tag);
