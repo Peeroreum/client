@@ -44,7 +44,7 @@ android {
 
     defaultConfig {
         applicationId "com.peeroreum.peeroreum_client"
-        minSdkVersion 23
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
