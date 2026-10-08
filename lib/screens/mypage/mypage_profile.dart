@@ -733,49 +733,48 @@ class _MyPageProfileState extends State<MyPageProfile> {
                           });
                         }
                       },
-                      child: Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 2,
-                              color: grade != null
-                                  ? PeeroreumColor.gradeColor[grade]!
-                                  : const Color.fromARGB(255, 186, 188, 189)),
-                        ),
-                        child: Container(
-                          height: 84,
-                          width: 84,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 2,
-                              color: PeeroreumColor.white,
+                      // 프로필 화면 avatar()와 같은 크기·테두리·채우기(cover)로 미리보기
+                      child: SizedBox(
+                        width: _avatarSize,
+                        height: _avatarSize,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: _avatarSize,
+                              height: _avatarSize,
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: PeeroreumColor.white,
+                                border: Border.all(
+                                    width: 3,
+                                    color: grade != null &&
+                                            PeeroreumColor.gradeColor[grade] !=
+                                                null
+                                        ? PeeroreumColor.gradeColor[grade]!
+                                        : PeeroreumColor.gray[400]!),
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: image != null
+                                        ? FileImage(File(image!.path))
+                                        : (profileImage != null
+                                            ? NetworkImage(profileImage!)
+                                            : const AssetImage(
+                                                    'assets/images/user.jpg')
+                                                as ImageProvider),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                             ),
-                            image: profileImage != null
-                                ? (image != null
-                                    ? DecorationImage(
-                                        image: FileImage(File(image!.path)),
-                                        //fit: BoxFit.cover,
-                                      )
-                                    : DecorationImage(
-                                        image: NetworkImage(profileImage!),
-                                        //fit: BoxFit.cover,
-                                      ))
-                                : (image != null
-                                    ? DecorationImage(
-                                        image: FileImage(File(image!.path)),
-                                        //fit: BoxFit.cover,
-                                      )
-                                    : const DecorationImage(
-                                        image: AssetImage(
-                                        'assets/images/user.jpg',
-                                      ))),
-                          ),
-                          child: Align(
-                            alignment: const Alignment(1.2, 1.2),
-                            child: Container(
+                            Positioned(
+                              right: -2,
+                              bottom: -2,
+                              child: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
@@ -785,9 +784,11 @@ class _MyPageProfileState extends State<MyPageProfile> {
                                     width: 1,
                                   ),
                                 ),
-                                child: SvgPicture.asset(
-                                    'assets/icons/camera.svg')),
-                          ),
+                                child:
+                                    SvgPicture.asset('assets/icons/camera.svg'),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
