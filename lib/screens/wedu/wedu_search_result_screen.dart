@@ -1,43 +1,43 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_create_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_room_info_sheet.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../data/WeduSearchHistory.dart';
 
 class SearchResultWedu extends StatefulWidget {
   final String keyword;
 
-  SearchResultWedu(this.keyword, {super.key});
+  const SearchResultWedu(this.keyword, {super.key});
 
   @override
-  State<SearchResultWedu> createState() => _SearchResultWeduState(keyword);
+  State<SearchResultWedu> createState() => _SearchResultWeduState();
 }
 
 class _SearchResultWeduState extends State<SearchResultWedu> {
-  String keyword;
+  late String keyword;
 
-  _SearchResultWeduState(this.keyword);
-
-  List<Map<String, String>> _searchHistory = [];
   List<dynamic> data = [];
   Map<dynamic, dynamic> inviData = {};
   Map<dynamic, List<dynamic>> hashTags = {};
   List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
   List<dynamic> inRoomData = [];
+  late Future<void> _searchFuture;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    keyword = widget.keyword;
+    _searchFuture = fetchData();
     fetchInRoomData();
   }
 
@@ -45,16 +45,20 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     var weduResult = await ApiClient().get('/wedu/search/$keyword');
     if (weduResult.statusCode == 200) {
       data = weduResult.data['data'];
-      print("데이터 fetch 완료 \n $data");
+      if (kDebugMode) {
+        print("데이터 fetch 완료 \n $data");
+      }
     } else {
-      print("에러${weduResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${weduResult.statusCode}");
+      }
     }
 
     await fetchImage(data);
   }
 
   fetchImage(datas) async {
-    var inviData;
+    dynamic inviData;
     for (var data in datas) {
       inviData = await fetchInvitation(data['id']);
       this.inviData.addAll({data['id']: inviData});
@@ -68,19 +72,13 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     if (inviResult.statusCode == 200) {
       return inviResult.data['data'];
     } else {
-      print("에러${inviResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${inviResult.statusCode}");
+      }
     }
   }
 
-  _loadSearchHistory() async {
-    _searchHistory = await SearchHistory.getSearchHistory();
-    setState(() {});
-  }
 
-  _saveSearchHistory(String value) async {
-    await SearchHistory.addSearchItem(value);
-    _loadSearchHistory();
-  }
 
   fetchInRoomData() async {
     String? nickname = await const FlutterSecureStorage().read(key: "nickname");
@@ -109,25 +107,21 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
         '${getInviteLink(roomId)}\n\n'
         '앱이 없다면 설치 후 참여해요 🙌\n'
         '• 안드로이드: https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client\n'
-        '• iOS: https://apps.apple.com/app/id피어오름앱ID';
+        '• iOS: https://apps.apple.com/app/id6476135072';
   }
 
-  bool searchClear = false;
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController textEditingController = TextEditingController();
-    textEditingController.text = keyword;
-    //keyword = textEditingController.text;
 
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        setState(() {
-          searchClear = false;
-        });
       },
       child: Scaffold(
+          // 입력창이 없는 화면이라 키보드가 올라와도 레이아웃을 줄이지 않음
+          // (검색창을 눌러 돌아갈 때 키보드가 먼저 올라와 빈 결과 화면이 넘치던 문제)
+          resizeToAvoidBottomInset: false,
           backgroundColor: PeeroreumColor.white,
           appBar: AppBar(
               backgroundColor: PeeroreumColor.white,
@@ -137,76 +131,63 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
               leading: IconButton(
                 icon: SvgPicture.asset(
                   'assets/icons/arrow-left.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onPressed: () {
-                  Get.back(result: _searchHistory);
+                  Get.back(result: 'back');
                 },
               ),
               titleSpacing: 0,
               title: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 20, 12),
-                child: SearchBar(
-                  controller: textEditingController,
-                  onTap: () {
-                    Get.back(result: _searchHistory);
-                  },
-                  backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.gray[100]),
-                  elevation: MaterialStateProperty.all(0),
-                  constraints: const BoxConstraints(minHeight: 40),
-                  hintText: '같이방에서 함께 공부해요!',
-                  hintStyle: MaterialStateProperty.all(TextStyle(
-                      color: PeeroreumColor.gray[600],
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400)),
-                  trailing: [
-                    searchClear
-                        ? GestureDetector(
-                            onTap: () {
-                              textEditingController.clear();
-                              setState(() {
-                                searchClear = false;
-                              });
-                            },
-                            child: SvgPicture.asset(
-                              'assets/icons/x_circle.svg',
-                              color: PeeroreumColor.gray[600],
-                            ))
-                        : Container(),
-                    const SizedBox(
-                      width: 12,
+                child: GestureDetector(
+                  // 검색창을 누르면 현재 검색어를 들고 검색 화면으로 돌아가 바로 수정
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Get.back(result: 'edit'),
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: PeeroreumColor.gray[100],
+                      borderRadius: BorderRadius.circular(100),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        if ((textEditingController.text.isNotEmpty)) {
-                          setState(() {
-                            keyword = textEditingController.text;
-                            fetchData();
-                            _saveSearchHistory(keyword);
-                          });
-                        }
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/search.svg',
-                        color: Colors.grey[600],
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            keyword,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: PeeroreumColor.gray[800],
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/icons/search.svg',
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[600]!, BlendMode.srcIn),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                  ],
+                  ),
                 ),
               )),
           body: SafeArea(
             child: FutureBuilder<void>(
-              future: fetchData(),
+              future: _searchFuture,
               builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return ErrorRetryView(
+                    onRetry: () => setState(() {
+                      _searchFuture = fetchData();
+                    }),
+                  );
                 } else {
                   return data.isEmpty
                       ? Center(
@@ -241,7 +222,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  Get.to(() => CreateWedu());
+                                  Get.to(() => const CreateWedu());
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
@@ -249,7 +230,7 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                   height: 48,
                                   width: 185,
                                   decoration: BoxDecoration(
-                                    color: PeeroreumColor.primaryPuple[400],
+                                    color: PeeroreumColor.primaryPurple[400],
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
@@ -259,12 +240,12 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                                     children: [
                                       SvgPicture.asset(
                                         'assets/icons/plus_square2.svg',
-                                        color: PeeroreumColor.white,
+                                        colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                                       ),
                                       const SizedBox(
                                         width: 8,
                                       ),
-                                      const T4_16px(
+                                      const T4(
                                         text: '같이방 만들러 가기',
                                         color: PeeroreumColor.white,
                                       )
@@ -394,11 +375,11 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                             ),
                             data[index]['locked'].toString() == "true"
                                 ? SvgPicture.asset('assets/icons/lock.svg',
-                                    color: PeeroreumColor.gray[400], width: 12)
+                                    colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn), width: 12)
                                 : Container(),
                             data[index]['locked'].toString() == "true"
                                 ? const SizedBox(width: 4)
-                                : SizedBox(),
+                                : const SizedBox(),
                             Flexible(
                               child: Text(
                                 data[index]["title"]!,
@@ -477,16 +458,24 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
     );
   }
 
-  void enrollWedu(index) async {
+  void enrollWedu(index, {String? password}) async {
     var id = data[index]['id'];
-    var enrollResult = await ApiClient().post('/wedu/$id/enroll');
+    final dynamic enrollResult;
+    try {
+      enrollResult = await ApiClient().post('/wedu/$id/enroll',
+          data: password == null ? null : {'password': password});
+    } catch (e) {
+      return;
+    }
+    if (!mounted) return;
     if (enrollResult.statusCode == 200) {
       PeeroreumToast.show(context, "같이방에 참여했어요!");
-    } else if (enrollResult.statusCode == 409) {
-      PeeroreumToast.show(context, '이미 참여 중인 같이방이에요.');
     } else {
-      PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.');
-      print('에러${enrollResult.statusCode}');
+      PeeroreumToast.show(context, ApiClient.errorMessage(enrollResult),
+          isError: true);
+      if (kDebugMode) {
+        print('에러${enrollResult.statusCode}');
+      }
     }
   }
 
@@ -562,14 +551,12 @@ class _SearchResultWeduState extends State<SearchResultWedu> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        passwordController.text == data[index]['password']
-                            ? enrollWedu(index)
-                            : PeeroreumToast.show(context, '비밀번호가 일치하지 않아요.',
-                                isError: true);
+                        // 비밀번호는 서버에서 확인
                         Get.back();
+                        enrollWedu(index, password: passwordController.text);
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: PeeroreumColor.primaryPuple[400],
+                        backgroundColor: PeeroreumColor.primaryPurple[400],
                         padding: const EdgeInsets.symmetric(
                             vertical: 12, horizontal: 16),
                         shape: RoundedRectangleBorder(

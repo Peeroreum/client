@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:flutter/material.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 
@@ -41,14 +42,16 @@ class _ScrapState extends State<Scrap> {
 
   Future<void> fetchData() async {
     currentPage = 0;
-    var myScrap = await ApiClient().get('/bookmark/question/my', queryParameters: {'page': currentPage});
+    var myScrap = await ApiClient()
+        .get('/bookmark/question/my', queryParameters: {'page': currentPage});
     if (myScrap.statusCode == 200) {
-      print("성공 myScrap ${myScrap.statusCode}");
       dataQnA = myScrap.data['data'];
       totalQnA = dataQnA['total'];
       questionList = dataQnA["questionListReadDtos"];
     } else {
-      print("에러 myScrap ${myScrap.statusCode}");
+      if (kDebugMode) {
+        print("에러 myScrap ${myScrap.statusCode}");
+      }
     }
   }
 
@@ -59,9 +62,9 @@ class _ScrapState extends State<Scrap> {
 
     List<dynamic> addedData = [];
     currentPage++;
-    var myScrap = await ApiClient().get('/question/my', queryParameters: {'page': currentPage});
+    var myScrap = await ApiClient()
+        .get('/question/my', queryParameters: {'page': currentPage});
     if (myScrap.statusCode == 200) {
-      print("성공 IeduQuestion ${myScrap.statusCode}");
       addedData = myScrap.data["data"];
       setState(() {
         dataQnA.addAll(addedData);
@@ -69,7 +72,9 @@ class _ScrapState extends State<Scrap> {
         _isLoading = false;
       });
     } else {
-      print("에러 IeduQuestion ${myScrap.statusCode}");
+      if (kDebugMode) {
+        print("에러 IeduQuestion ${myScrap.statusCode}");
+      }
     }
   }
 
@@ -95,7 +100,8 @@ class _ScrapState extends State<Scrap> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -118,9 +124,9 @@ class _ScrapState extends State<Scrap> {
         child: Column(
           children: [
             TabBar(
-                indicatorColor: PeeroreumColor.primaryPuple[400],
+                indicatorColor: PeeroreumColor.primaryPurple[400],
                 indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: PeeroreumColor.primaryPuple[400],
+                labelColor: PeeroreumColor.primaryPurple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
                   color: PeeroreumColor.gray[800],
@@ -129,7 +135,7 @@ class _ScrapState extends State<Scrap> {
                   fontWeight: FontWeight.w400,
                 ),
                 labelStyle: TextStyle(
-                  color: PeeroreumColor.primaryPuple[400],
+                  color: PeeroreumColor.primaryPurple[400],
                   fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -164,22 +170,6 @@ class _ScrapState extends State<Scrap> {
                               fontSize: 16,
                               color: PeeroreumColor.gray[600]),
                         )),
-                  /*Content.length
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 20),
-                          child: Content(),
-                        )
-                      : Center(
-                          child: Text(
-                            '작성한 답변이 없습니다.',
-                            style: TextStyle(
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: PeeroreumColor.gray[600]),
-                          ),
-                        ),*/
                 ],
               ),
             ),
@@ -225,14 +215,14 @@ class _ScrapState extends State<Scrap> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            B4_14px_M(
+            B4m(
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
             const SizedBox(
               width: 4,
             ),
-            B4_14px_M(
+            B4m(
               text: '$totalQnA',
               color: PeeroreumColor.gray[500],
             ),
@@ -254,17 +244,19 @@ class _ScrapState extends State<Scrap> {
               if (index < questionList.length) {
                 return GestureDetector(
                   onTap: () async {
-                    await Get.to(() =>
-                        DetailIedu(questionList[index]['id'], questionList[index]['selected']));
+                    await Get.to(() => DetailIedu(questionList[index]['id'],
+                        questionList[index]['selected']));
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 20),
                     decoration: BoxDecoration(
                         color: PeeroreumColor.white,
                         border: Border.all(
                             width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8.0))),
                     child: Column(
                       children: [
                         Row(
@@ -278,7 +270,7 @@ class _ScrapState extends State<Scrap> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
-                                    child: T4_16px(
+                                    child: T4(
                                       text: '${questionList[index]['title']}',
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -294,13 +286,13 @@ class _ScrapState extends State<Scrap> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[200],
+                                      color: PeeroreumColor.primaryPurple[200],
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '채택완료',
                                           color: PeeroreumColor.white,
                                         ),
@@ -317,7 +309,7 @@ class _ScrapState extends State<Scrap> {
                                     child: SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '미채택',
                                           color: PeeroreumColor.gray[600],
                                         ),
@@ -340,12 +332,14 @@ class _ScrapState extends State<Scrap> {
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     width: 1,
-                                    color: questionList[index]["memberProfileDto"]
-                                                ["grade"] !=
+                                    color: questionList[index]
+                                                ["memberProfileDto"]["grade"] !=
                                             null
-                                        ? PeeroreumColor.gradeColor[questionList[index]
-                                            ["memberProfileDto"]["grade"]]!
-                                        : const Color.fromARGB(255, 186, 188, 189),
+                                        ? PeeroreumColor.gradeColor[
+                                            questionList[index]
+                                                ["memberProfileDto"]["grade"]]!
+                                        : const Color.fromARGB(
+                                            255, 186, 188, 189),
                                   ),
                                 ),
                                 child: Container(
@@ -357,13 +351,15 @@ class _ScrapState extends State<Scrap> {
                                       width: 2,
                                       color: PeeroreumColor.white,
                                     ),
-                                    image: questionList[index]["memberProfileDto"]
+                                    image: questionList[index]
+                                                    ["memberProfileDto"]
                                                 ["profileImage"] !=
                                             null
                                         ? DecorationImage(
-                                            image: NetworkImage(questionList[index]
-                                                    ["memberProfileDto"]
-                                                ["profileImage"]),
+                                            image: NetworkImage(
+                                                questionList[index]
+                                                        ["memberProfileDto"]
+                                                    ["profileImage"]),
                                             fit: BoxFit.cover)
                                         : const DecorationImage(
                                             image: AssetImage(
@@ -375,7 +371,7 @@ class _ScrapState extends State<Scrap> {
                                 width: 8,
                               ),
                               Flexible(
-                                child: B4_14px_M(
+                                child: B4m(
                                   text:
                                       '${questionList[index]["memberProfileDto"]["nickname"]}',
                                   overflow: TextOverflow.ellipsis,
@@ -384,7 +380,7 @@ class _ScrapState extends State<Scrap> {
                               const SizedBox(
                                 width: 8,
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text:
                                     '${timeCheck(questionList[index]["createdTime"])} 전',
                                 color: PeeroreumColor.gray[400],
@@ -394,10 +390,12 @@ class _ScrapState extends State<Scrap> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(
+                                      PeeroreumColor.gray[400]!,
+                                      BlendMode.srcIn),
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '좋아요 ${questionList[index]["likes"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
@@ -406,10 +404,12 @@ class _ScrapState extends State<Scrap> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(
+                                      PeeroreumColor.gray[400]!,
+                                      BlendMode.srcIn),
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '댓글 ${questionList[index]["comments"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
@@ -421,6 +421,7 @@ class _ScrapState extends State<Scrap> {
                   ),
                 );
               }
+              return null;
             },
           ),
         ),
@@ -434,14 +435,14 @@ class _ScrapState extends State<Scrap> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            B4_14px_M(
+            B4m(
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
             const SizedBox(
               width: 4,
             ),
-            B4_14px_M(
+            B4m(
               text: 'NN',
               color: PeeroreumColor.gray[500],
             ),
@@ -453,28 +454,24 @@ class _ScrapState extends State<Scrap> {
         Expanded(
           child: ListView.separated(
               shrinkWrap: true,
-              itemCount: 8, //datas.length + (_isLoading ? 1 : 0),
+              itemCount: 8, //data.length + (_isLoading ? 1 : 0),
               separatorBuilder: (BuildContext context, int index) {
                 return Container(
                   height: 8,
                 );
               },
               itemBuilder: (BuildContext context, int index) {
-                //if (index < datas.length) {
                 return GestureDetector(
-                  // onTap: () async {
-                  //   await Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (context) => DetailIedu(
-                  //           datas[index]['id'], datas[index]['selected'])));
-                  // },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 40,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 20),
                     decoration: BoxDecoration(
                         color: PeeroreumColor.white,
                         border: Border.all(
                             width: 1, color: PeeroreumColor.gray[200]!),
-                        borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8.0))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -494,14 +491,14 @@ class _ScrapState extends State<Scrap> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const T4_16px(
-                              // text: datas[index]['title'],
+                            const T4(
+                              // text: data[index]['title'],
                               text: 'Title',
                             ),
                             const SizedBox(
                               height: 4,
                             ),
-                            const B4_14px_R(
+                            const B4r(
                               text: 'content',
                             ),
                             const SizedBox(
@@ -509,8 +506,8 @@ class _ScrapState extends State<Scrap> {
                             ),
                             Row(
                               children: [
-                                C1_12px_M(
-                                  // text: '${timeCheck(datas[index]["createdTime"])} 전',
+                                C1m(
+                                  // text: '${timeCheck(data[index]["createdTime"])} 전',
                                   text: 'NN 전',
                                   color: PeeroreumColor.gray[400],
                                 ),
@@ -519,11 +516,13 @@ class _ScrapState extends State<Scrap> {
                                       horizontal: 2.0),
                                   child: SvgPicture.asset(
                                     'assets/icons/dot.svg',
-                                    color: PeeroreumColor.gray[400],
+                                    colorFilter: ColorFilter.mode(
+                                        PeeroreumColor.gray[400]!,
+                                        BlendMode.srcIn),
                                   ),
                                 ),
-                                C1_12px_M(
-                                  // text: '좋아요 ${datas[index]["likes"]}개',
+                                C1m(
+                                  // text: '좋아요 ${data[index]["likes"]}개',
                                   text: '좋아요 NN개',
                                   color: PeeroreumColor.gray[400],
                                 ),
@@ -532,11 +531,13 @@ class _ScrapState extends State<Scrap> {
                                       horizontal: 2.0),
                                   child: SvgPicture.asset(
                                     'assets/icons/dot.svg',
-                                    color: PeeroreumColor.gray[400],
+                                    colorFilter: ColorFilter.mode(
+                                        PeeroreumColor.gray[400]!,
+                                        BlendMode.srcIn),
                                   ),
                                 ),
-                                C1_12px_M(
-                                  // text: '댓글 ${datas[index]["comments"]}개',
+                                C1m(
+                                  // text: '댓글 ${data[index]["comments"]}개',
                                   text: '댓글 NN개',
                                   color: PeeroreumColor.gray[400],
                                 ),

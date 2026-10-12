@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 
 class PeeroreumToast {
   static OverlayEntry? _currentOverlay;
   static Timer? _timer;
+  static DateTime? _lastErrorAt;
 
   static void show(
     BuildContext context,
@@ -14,6 +16,15 @@ class PeeroreumToast {
     int duration = 2,
     bool isError = false,
   }) {
+    // 공통 네트워크 오류 토스트와 화면별 실패 토스트가 겹치지 않도록 짧은 시간 내 에러 토스트는 한 번만 표시
+    if (isError) {
+      final now = DateTime.now();
+      if (_lastErrorAt != null &&
+          now.difference(_lastErrorAt!) < const Duration(milliseconds: 1500)) {
+        return;
+      }
+      _lastErrorAt = now;
+    }
     final overlay = Overlay.of(context);
 
     // Cancel existing timer and remove existing toast
@@ -51,25 +62,17 @@ class PeeroreumToast {
                             : 'assets/icons/check_circle_fill.svg',
                         colorFilter: ColorFilter.mode(
                           isError
-                              ? Color.fromARGB(255, 251, 232, 232)
-                              : Color.fromARGB(255, 222, 245, 226),
+                              ? const Color.fromARGB(255, 251, 232, 232)
+                              : const Color.fromARGB(255, 222, 245, 226),
                           BlendMode.srcIn,
                         ),
                         width: 20,
                         height: 20,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        message,
-                        style: const TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          height: 1.5,
-                          letterSpacing: -0.35,
-                          color: PeeroreumColor.white,
-                        ),
-                        textAlign: TextAlign.center,
+                      B4m(
+                        text: message,
+                        color: PeeroreumColor.white,
                       ),
                     ],
                   ),

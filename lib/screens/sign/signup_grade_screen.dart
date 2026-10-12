@@ -1,27 +1,33 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumButton.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_button.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/sign/signup_subject_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 
 class SignUpGrade extends StatefulWidget {
-  Member member;
+  final Member member;
 
-  SignUpGrade(this.member, {super.key});
+  const SignUpGrade(this.member, {super.key});
 
   @override
-  State<SignUpGrade> createState() => _SignUpGradeState(member);
+  State<SignUpGrade> createState() => _SignUpGradeState();
 }
 
 class _SignUpGradeState extends State<SignUpGrade> {
-  Member member;
+  late Member member;
 
-  _SignUpGradeState(this.member);
+  @override
+  void initState() {
+    super.initState();
+    member = widget.member;
+  }
 
   final _schools = ['중학교', '고등학교', '대학교'];
   final _grades = ['1학년', '2학년', '3학년'];
@@ -52,7 +58,8 @@ class _SignUpGradeState extends State<SignUpGrade> {
           elevation: 0.0,
           leading: IconButton(
             icon: SvgPicture.asset('assets/icons/arrow-left.svg',
-                color: PeeroreumColor.gray[800]),
+                colorFilter: ColorFilter.mode(
+                    PeeroreumColor.gray[800]!, BlendMode.srcIn)),
             onPressed: () {
               Get.back();
             },
@@ -168,12 +175,12 @@ class _SignUpGradeState extends State<SignUpGrade> {
                 },
                 style: ButtonStyle(
                     backgroundColor: isEnabled
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
+                        ? WidgetStateProperty.all(
+                            PeeroreumColor.primaryPurple[400])
+                        : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ))),
@@ -194,7 +201,16 @@ class _SignUpGradeState extends State<SignUpGrade> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await ApiClient().post('/signup', data: member);
+    final dynamic result;
+    try {
+      result = await ApiClient().post('/signup', data: member);
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
+      return;
+    }
+    if (!mounted) return;
     if (result.statusCode == 200) {
       var data = result.data['data'];
       FlutterSecureStorage secureStorage = const FlutterSecureStorage();
@@ -204,9 +220,13 @@ class _SignUpGradeState extends State<SignUpGrade> {
       secureStorage.write(key: "nickname", value: data['nickname']);
       secureStorage.write(key: "profileImage", value: data['profileImage']);
       secureStorage.write(key: "grade", value: data['grade'].toString());
-      Get.offAllNamed('signUp/Complete');
+      Get.offAllNamed('/signUp/Complete');
     } else {
-      print(result.statusCode);
+      if (kDebugMode) {
+        print(result.statusCode);
+      }
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
     }
   }
 }

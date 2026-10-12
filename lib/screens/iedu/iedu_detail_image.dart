@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ImageDetailIedu extends StatefulWidget {
@@ -17,13 +17,19 @@ class ImageDetailIedu extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ImageDetailIedu> createState() => _ImageDetailIeduState(imageList,initialPage);
+  State<ImageDetailIedu> createState() => _ImageDetailIeduState();
 }
 
 class _ImageDetailIeduState extends State<ImageDetailIedu> {
-  _ImageDetailIeduState(this.imageList, this.initialPage);
-  List<dynamic> imageList;
-  int initialPage;
+  late List<dynamic> imageList;
+  late int initialPage;
+
+  @override
+  void initState() {
+    super.initState();
+    imageList = widget.imageList;
+    initialPage = widget.initialPage;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +40,13 @@ class _ImageDetailIeduState extends State<ImageDetailIedu> {
           CarouselSlider(
             items: imageList.map((i) {
               var imageUrl = i.toString();
-              return Container(
-                child: PhotoView(
-                  backgroundDecoration: BoxDecoration(
-                    color: PeeroreumColor.black
-                  ),
-                  minScale: PhotoViewComputedScale.contained,
-                  filterQuality: FilterQuality.high,
-                  imageProvider: NetworkImage(imageUrl),
-                )
+              return PhotoView(
+                backgroundDecoration:
+                    const BoxDecoration(color: PeeroreumColor.black),
+                minScale: PhotoViewComputedScale.contained,
+                filterQuality: FilterQuality.high,
+                imageProvider: NetworkImage(imageUrl),
               );
-              // 여기에 이미지 위젯 생성 코드 추가
             }).toList(),
             options: CarouselOptions(
               enableInfiniteScroll: false,
@@ -59,8 +61,8 @@ class _ImageDetailIeduState extends State<ImageDetailIedu> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: kToolbarHeight),
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.only(top: kToolbarHeight),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -69,17 +71,19 @@ class _ImageDetailIeduState extends State<ImageDetailIedu> {
                   onTap: () {
                     Get.back();
                   },
-                  child: Container(
+                  child: SizedBox(
                     width: 18,
                     height: 18,
-                    child: SvgPicture.asset("assets/icons/x.svg", color: PeeroreumColor.white,),
+                    child: SvgPicture.asset("assets/icons/x.svg",
+                        colorFilter: const ColorFilter.mode(
+                            PeeroreumColor.white, BlendMode.srcIn)),
                   ),
                 ),
-                Container(
-                  child: T4_16px(text: "${initialPage +1} / ${imageList.length}",
-                  color: PeeroreumColor.white,),
+                T4(
+                  text: "${initialPage + 1} / ${imageList.length}",
+                  color: PeeroreumColor.white,
                 ),
-                Container(
+                const SizedBox(
                   height: 18,
                   width: 18,
                 )

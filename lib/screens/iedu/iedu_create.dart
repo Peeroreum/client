@@ -1,17 +1,19 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
-import 'package:peeroreum_client/data/Subject.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/data/subject.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
+import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 
 class CreateIedu extends StatefulWidget {
@@ -26,14 +28,14 @@ class _CreateIeduState extends State<CreateIedu> {
   final subjects = Subject.subject;
   final middleSubjects = Subject.middleSubject;
   final highSubjects = Subject.highSubject;
-  List<String> DetailSubjects = [];
+  List<String> detailSubjects = [];
   Color _nextColor = PeeroreumColor.gray[500]!;
   String titleCheck = "";
   String contentCheck = "";
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
-  var my_grade;
+  String? myGrade;
   int? _grade;
   String? _subject;
   String? _detailSubject;
@@ -43,10 +45,10 @@ class _CreateIeduState extends State<CreateIedu> {
 
   final List<XFile> _images = [];
 
-  FocusNode ContentFocusNode = FocusNode();
+  FocusNode contentFocusNode = FocusNode();
   Map<String, Color> focusColor = {
     "grade": PeeroreumColor.gray[200]!,
-    "subjet": PeeroreumColor.gray[200]!,
+    "subject": PeeroreumColor.gray[200]!,
     "detailSubject": PeeroreumColor.gray[200]!
   };
 
@@ -58,8 +60,12 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   Future<void> fetchStatus() async {
-    my_grade = await const FlutterSecureStorage().read(key: "grade");
-    _grade ??= int.parse(my_grade!) - 1;
+    myGrade = await const FlutterSecureStorage().read(key: "grade");
+    // 저장된 학년이 없거나 형식이 다르면 기본값 없이 '선택' 상태로 둠
+    final parsed = int.tryParse(myGrade ?? '');
+    if (parsed != null && parsed >= 1 && parsed <= grades.length) {
+      _grade ??= parsed - 1;
+    }
   }
 
   @override
@@ -68,9 +74,12 @@ class _CreateIeduState extends State<CreateIedu> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: WillPopScope(
-        onWillPop: () async {
-          return await onBackKey();
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) return;
+          final shouldPop = await onBackKey();
+          if (shouldPop == true && mounted) Get.back();
         },
         child: Container(
           color: PeeroreumColor.white,
@@ -94,7 +103,7 @@ class _CreateIeduState extends State<CreateIedu> {
   void checkValidation() {
     if (titleCheck != "" && contentCheck != "") {
       setState(() {
-        _nextColor = PeeroreumColor.primaryPuple[400]!;
+        _nextColor = PeeroreumColor.primaryPurple[400]!;
       });
     } else {
       setState(() {
@@ -137,7 +146,7 @@ class _CreateIeduState extends State<CreateIedu> {
           padding: const EdgeInsets.only(right: 20),
           child: GestureDetector(
             onTap: () {
-              if (_nextColor == PeeroreumColor.primaryPuple[400]) {
+              if (_nextColor == PeeroreumColor.primaryPurple[400]) {
                 postIedu();
               } else {
                 return;
@@ -149,7 +158,9 @@ class _CreateIeduState extends State<CreateIedu> {
                 '완료',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w400,
+                  fontWeight: _nextColor == PeeroreumColor.primaryPurple[400]
+                      ? FontWeight.w600
+                      : FontWeight.w400,
                   fontSize: 14,
                   color: _nextColor,
                 ),
@@ -163,7 +174,7 @@ class _CreateIeduState extends State<CreateIedu> {
 
   Widget bodyWidget() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 80),
       child: Column(
         children: [
           dropdownBody(),
@@ -172,14 +183,18 @@ class _CreateIeduState extends State<CreateIedu> {
             child: TextFormField(
               controller: titleController,
               maxLines: null,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: PeeroreumColor.black),
               cursorColor: PeeroreumColor.gray[600],
               decoration: InputDecoration(
                   hintText: '제목을 입력하세요.',
                   hintStyle: TextStyle(
                       fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       color: PeeroreumColor.gray[600]!),
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
@@ -197,7 +212,7 @@ class _CreateIeduState extends State<CreateIedu> {
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              FocusScope.of(context).requestFocus(ContentFocusNode);
+              FocusScope.of(context).requestFocus(contentFocusNode);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -205,7 +220,7 @@ class _CreateIeduState extends State<CreateIedu> {
                 children: [
                   TextFormField(
                     controller: contentController,
-                    focusNode: ContentFocusNode,
+                    focusNode: contentFocusNode,
                     maxLines: null,
                     minLines: 6,
                     style: const TextStyle(color: Colors.black),
@@ -225,11 +240,13 @@ class _CreateIeduState extends State<CreateIedu> {
                       checkValidation();
                     },
                   ),
-                  if (contentController.text == "") guidance(),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(0, 16, 0, 40),
-                    child: photos(),
-                  ),
+                  if (_images.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: photos(),
+                    ),
+                  const SizedBox(height: 16),
+                  guidance(),
                 ],
               ),
             ),
@@ -247,7 +264,9 @@ class _CreateIeduState extends State<CreateIedu> {
           onTap: () {
             setState(() {
               focusColor["grade"] = PeeroreumColor.black;
-              print(focusColor["grade"]);
+              if (kDebugMode) {
+                print(focusColor["grade"]);
+              }
             });
             showModalBottomSheet(
                 context: context,
@@ -274,11 +293,7 @@ class _CreateIeduState extends State<CreateIedu> {
             child: Row(
               children: [
                 Text(
-                  _grade != null
-                      ? grades[_grade!]
-                      : my_grade != null
-                          ? grades[int.parse(my_grade!)]
-                          : "선택",
+                  _grade != null ? grades[_grade!] : "선택",
                   style: const TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
@@ -317,7 +332,7 @@ class _CreateIeduState extends State<CreateIedu> {
             },
             child: Container(
               height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
@@ -329,16 +344,24 @@ class _CreateIeduState extends State<CreateIedu> {
               child: Row(
                 children: [
                   Text(
-                    _subject ?? '선택',
-                    style: const TextStyle(
+                    _subject ?? '과목',
+                    style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
-                        color: PeeroreumColor.black),
+                        color: _subject == null
+                            ? PeeroreumColor.gray[500]
+                            : PeeroreumColor.black),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
-                  SvgPicture.asset('assets/icons/down.svg'),
+                  SvgPicture.asset(
+                    'assets/icons/down.svg',
+                    colorFilter: _subject == null
+                        ? ColorFilter.mode(
+                            PeeroreumColor.gray[500]!, BlendMode.srcIn)
+                        : null,
+                  ),
                 ],
               ),
             ),
@@ -378,22 +401,36 @@ class _CreateIeduState extends State<CreateIedu> {
                   color:
                       focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
                 ),
-                color:
-                    _grade == 6 ? PeeroreumColor.gray[100] : Colors.transparent,
+                color: (_grade == 6 || _subject == null)
+                    ? PeeroreumColor.gray[100]
+                    : Colors.transparent,
               ),
               child: Row(
                 children: [
                   Text(
-                    _detailSubject ?? '선택',
-                    style: const TextStyle(
+                    _detailSubject ?? '세부 과목',
+                    style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
-                        color: PeeroreumColor.black),
+                        color: _subject == null
+                            ? PeeroreumColor.gray[400]
+                            : _detailSubject == null
+                                ? PeeroreumColor.gray[500]
+                                : PeeroreumColor.black),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
-                  SvgPicture.asset('assets/icons/down.svg'),
+                  SvgPicture.asset(
+                    'assets/icons/down.svg',
+                    colorFilter: _detailSubject == null
+                        ? ColorFilter.mode(
+                            _subject == null
+                                ? PeeroreumColor.gray[400]!
+                                : PeeroreumColor.gray[500]!,
+                            BlendMode.srcIn)
+                        : null,
+                  ),
                 ],
               ),
             ),
@@ -406,7 +443,11 @@ class _CreateIeduState extends State<CreateIedu> {
   gradeSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -436,8 +477,9 @@ class _CreateIeduState extends State<CreateIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: grades.length,
                 itemBuilder: (context, index) {
@@ -478,7 +520,11 @@ class _CreateIeduState extends State<CreateIedu> {
   subjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -508,8 +554,9 @@ class _CreateIeduState extends State<CreateIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: subjects.length,
                 itemBuilder: (context, index) {
@@ -519,7 +566,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         setState(() {
                           _subject = subjects[index];
                           subject = index;
-                          DetailSubjects = ((index != 0 && _grade! < 3)
+                          detailSubjects = ((index != 0 && _grade! < 3)
                               ? middleSubjects[_subject]
                               : highSubjects[_subject])!;
                           _detailSubject = null;
@@ -552,7 +599,11 @@ class _CreateIeduState extends State<CreateIedu> {
   detailSubjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.4,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -582,19 +633,22 @@ class _CreateIeduState extends State<CreateIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: DetailSubjects.length,
+                itemCount: detailSubjects.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         setState(() {
-                          _detailSubject = DetailSubjects[index];
+                          _detailSubject = detailSubjects[index];
                           detailSubject = index;
-                          print(
-                              '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          if (kDebugMode) {
+                            print(
+                                '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          }
                         });
                         Get.back();
                       },
@@ -603,7 +657,7 @@ class _CreateIeduState extends State<CreateIedu> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
                         child: Text(
-                          DetailSubjects[index],
+                          detailSubjects[index],
                           style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 18,
@@ -620,92 +674,71 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   Widget guidance() {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+    const items = [
+      '비방, 욕설을 포함하는 글',
+      '무료 행사를 포함한 홍보 목적의 글',
+      '기타 오프라인 모임 조장 목적의 글',
+    ];
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: PeeroreumColor.gray[50],
+        border: Border.all(color: PeeroreumColor.gray[100]!),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          B4_14px_R(
-            text: '게시판 성격과 맞지 않는 글은 작성할 수 없어요.',
-            color: PeeroreumColor.gray[600],
+          Text(
+            '게시판 성격과 맞지 않는 글은 작성할 수 없어요',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: PeeroreumColor.gray[700],
+            ),
           ),
-          Container(
-            height: 12,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                child: SvgPicture.asset(
+          for (final item in items) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                SvgPicture.asset(
                   'assets/icons/x_circle.svg',
-                  color: PeeroreumColor.gray[600],
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.gray[600]!, BlendMode.srcIn),
                 ),
-              ),
-              const SizedBox(
-                width: 4,
-              ),
-              C1_12px_R(
-                text: '비방, 욕설을 포함하는 글',
-                color: PeeroreumColor.gray[600],
-              ),
-            ],
-          ),
-          Container(
-            height: 8,
-          ),
-          Row(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/x_circle.svg',
-                color: PeeroreumColor.gray[600],
-              ),
-              const SizedBox(
-                width: 4,
-              ),
-              C1_12px_R(
-                text: '무료 행사를 포함한 홍보 목적의 글',
-                color: PeeroreumColor.gray[600],
-              ),
-            ],
-          ),
-          Container(
-            height: 8,
-          ),
-          Row(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/x_circle.svg',
-                color: PeeroreumColor.gray[600],
-              ),
-              const SizedBox(
-                width: 4,
-              ),
-              C1_12px_R(
-                text: '기타 오프라인 모임 조장 목적의 글',
-                color: PeeroreumColor.gray[600],
-              ),
-            ],
-          ),
+                const SizedBox(width: 4),
+                C1r(text: item, color: PeeroreumColor.gray[600]),
+              ],
+            ),
+          ],
         ],
       ),
     );
   }
 
   Widget photos() {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 1.94 / 1,
-        mainAxisSpacing: 8,
-      ),
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: _images.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Stack(
-          alignment: Alignment.topRight,
-          children: [
-            Container(
-              decoration: BoxDecoration(
+    return SizedBox(
+      height: 80,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: _images.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (BuildContext context, int index) {
+          return Stack(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Get.to(() => ImageDetail(
+                        imageList: _images,
+                        initialPage: index,
+                      ));
+                },
+                child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
                   border: Border.all(
                     width: 1,
@@ -714,27 +747,35 @@ class _CreateIeduState extends State<CreateIedu> {
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: FileImage(File(_images[index].path)),
-                  )),
-            ),
-            GestureDetector(
-              child: Container(
-                width: 24,
-                height: 24,
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                child: SvgPicture.asset(
-                  'assets/icons/x_circle.svg',
-                  color: PeeroreumColor.black.withOpacity(0.4),
+                  ),
                 ),
               ),
-              onTap: () {
-                setState(() {
-                  _images.remove(_images[index]);
-                });
-              },
-            ),
-          ],
-        );
-      },
+              ),
+              Positioned(
+                top: 6,
+                right: 6,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _images.removeAt(index);
+                    });
+                  },
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: SvgPicture.asset(
+                      'assets/icons/x_circle.svg',
+                      colorFilter: ColorFilter.mode(
+                          PeeroreumColor.black.withValues(alpha: 0.45),
+                          BlendMode.srcIn),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -748,7 +789,7 @@ class _CreateIeduState extends State<CreateIedu> {
             height: 1,
           ),
           Container(
-            color: PeeroreumColor.gray[50],
+            color: PeeroreumColor.white,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             child: Row(
               children: [
@@ -765,14 +806,46 @@ class _CreateIeduState extends State<CreateIedu> {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/camera.svg',
-                        color: PeeroreumColor.gray[500],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[700]!, BlendMode.srcIn),
                       ),
                       const SizedBox(
                         width: 4,
                       ),
-                      T4_16px(
+                      T4(
                         text: '사진 첨부',
-                        color: PeeroreumColor.gray[500],
+                        color: PeeroreumColor.gray[700],
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '${_images.length}',
+                              style: TextStyle(
+                                color: _images.isNotEmpty
+                                    ? PeeroreumColor.primaryPurple[400]
+                                    : PeeroreumColor.gray[500],
+                                fontWeight: _images.isNotEmpty
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '/5',
+                              style: TextStyle(
+                                color: PeeroreumColor.gray[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ],
                   ),
@@ -800,14 +873,15 @@ class _CreateIeduState extends State<CreateIedu> {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/notepad.svg',
-                        color: PeeroreumColor.gray[500],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[700]!, BlendMode.srcIn),
                       ),
                       const SizedBox(
                         width: 4,
                       ),
-                      T4_16px(
-                        text: '화이트 보드',
-                        color: PeeroreumColor.gray[500],
+                      T4(
+                        text: '화이트보드',
+                        color: PeeroreumColor.gray[700],
                       ),
                     ],
                   ),
@@ -837,7 +911,11 @@ class _CreateIeduState extends State<CreateIedu> {
   }
 
   Future<void> postIedu() async {
-    var IeduMap = <String, dynamic>{
+    if (_grade == null) {
+      PeeroreumToast.show(context, '학년을 선택해 주세요.', isError: true);
+      return;
+    }
+    var ieduMap = <String, dynamic>{
       'title': titleController.text,
       'content': contentController.text,
       'subject': subject + 1,
@@ -845,7 +923,7 @@ class _CreateIeduState extends State<CreateIedu> {
       'grade': _grade! + 1,
     };
 
-    var formData = dio.FormData.fromMap(IeduMap);
+    var formData = dio.FormData.fromMap(ieduMap);
 
     for (var image in _images) {
       var file = await dio.MultipartFile.fromFile(image.path);
@@ -855,6 +933,7 @@ class _CreateIeduState extends State<CreateIedu> {
     try {
       var response = await ApiClient().postForm('/question', formData);
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         PeeroreumToast.show(context, '질문 작성이 완료되었어요.');
         Get.offAllNamed('/home/iedu');
@@ -863,17 +942,25 @@ class _CreateIeduState extends State<CreateIedu> {
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
+        if (kDebugMode) {
+          print('Dio error!');
+          print('STATUS: ${e.response?.statusCode}');
+          print('DATA: ${e.response?.data}');
+          print('HEADERS: ${e.response?.headers}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+          print(e.message);
+        }
       }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }
@@ -953,7 +1040,7 @@ class _CreateIeduState extends State<CreateIedu> {
                           Get.back(result: true);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(

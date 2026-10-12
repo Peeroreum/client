@@ -1,50 +1,50 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import './complete_screen.dart';
 
 class NewPassword extends StatefulWidget {
   final String email;
   final String token;
-  NewPassword(this.email, this.token);
+
+  const NewPassword(this.email, this.token, {super.key});
 
   @override
   State<NewPassword> createState() => _NewPasswordState();
 }
 
 class _NewPasswordState extends State<NewPassword> {
-  final pw_controller = TextEditingController();
-  final pw2_controller = TextEditingController();
-  bool is_Enabled = false;
-  bool is_loading = false;
-  bool pw_hide = true;
-  bool pw2_hide = true;
+  final pw1Controller = TextEditingController();
+  final pw2Controller = TextEditingController();
+  bool isEnabled = false;
+  bool isLoading = false;
+  bool pw1Hide = true;
+  bool pw2Hide = true;
 
-  bool pw_check = false;
-  bool pw2_check = false;
+  bool pw1Check = false;
+  bool pw2Check = false;
 
   void _checkInput() {
-    if (pw_check) {
+    if (pw1Check) {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     } else {
       setState(() {
-        is_Enabled = false;
+        isEnabled = false;
       });
     }
   }
 
-  bool pw_showClearbutton = false;
-  bool pw2_showClearbutton = false;
+  bool pw1ShowClearButton = false;
+  bool pw2ShowClearButton = false;
 
-  bool pw_focus = false;
-  bool pw2_focus = false;
+  bool pw1Focus = false;
+  bool pw2Focus = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +52,10 @@ class _NewPasswordState extends State<NewPassword> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
-          pw_showClearbutton = false;
-          pw2_showClearbutton = false;
-          pw_focus = false;
-          pw2_focus = false;
+          pw1ShowClearButton = false;
+          pw2ShowClearButton = false;
+          pw1Focus = false;
+          pw2Focus = false;
         });
       },
       child: Scaffold(
@@ -83,11 +83,11 @@ class _NewPasswordState extends State<NewPassword> {
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom * 0.3),
               child: Container(
-                padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       '비밀번호 재설정',
                       style: TextStyle(
                           fontFamily: 'Pretendard',
@@ -95,10 +95,10 @@ class _NewPasswordState extends State<NewPassword> {
                           fontSize: 20,
                           color: PeeroreumColor.black),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 4,
                     ),
-                    Text(
+                    const Text(
                       '새로운 비밀번호를 입력해 주세요.',
                       style: TextStyle(
                           fontFamily: 'Pretendard',
@@ -106,70 +106,70 @@ class _NewPasswordState extends State<NewPassword> {
                           fontSize: 16,
                           color: PeeroreumColor.black),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 24,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           '새 비밀번호',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w500,
                               fontSize: 14),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 4,
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-                            controller: pw_controller,
+                            controller: pw1Controller,
                             onTap: () {
-                              if (pw_controller.text.length > 0) {
+                              if (pw1Controller.text.isNotEmpty) {
                                 setState(() {
-                                  pw_showClearbutton = true;
+                                  pw1ShowClearButton = true;
                                 });
                               }
                               setState(() {
-                                pw2_showClearbutton = false;
-                                pw_focus = true;
-                                pw2_focus = false;
+                                pw2ShowClearButton = false;
+                                pw1Focus = true;
+                                pw2Focus = false;
                               });
                             },
                             onChanged: (value) {
                               _checkInput();
                               if (value.isNotEmpty) {
-                                pw_showClearbutton = true;
-                                if (pw_controller.text == pw2_controller.text) {
+                                pw1ShowClearButton = true;
+                                if (pw1Controller.text == pw2Controller.text) {
                                   setState(() {
-                                    pw2_check = true;
+                                    pw2Check = true;
                                   });
                                 } else {
                                   setState(() {
-                                    pw2_check = false;
+                                    pw2Check = false;
                                   });
                                 }
                               } else {
-                                pw_showClearbutton = false;
+                                pw1ShowClearButton = false;
                               }
                               if (RegExp(
-                                      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,12}$')
-                                  .hasMatch(pw_controller.text)) {
+                                      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!%*#?~^<>,.&+=@$])[A-Za-z\d!%*#?~^<>,.&+=@$]{8,12}$')
+                                  .hasMatch(pw1Controller.text)) {
                                 setState(() {
-                                  pw_check = true;
+                                  pw1Check = true;
                                 });
                               } else {
                                 setState(() {
-                                  pw_check = false;
+                                  pw1Check = false;
                                 });
                               }
                               _checkInput();
                             },
                             textInputAction: TextInputAction.next,
                             onFieldSubmitted: (value) {
-                              pw_focus = false;
+                              pw1Focus = false;
                             },
                             decoration: InputDecoration(
                               hintText: '비밀번호를 입력하세요',
@@ -179,18 +179,18 @@ class _NewPasswordState extends State<NewPassword> {
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[600]),
                               errorText:
-                                  pw_controller.text.length >= 2 && !pw_check
+                                  pw1Controller.text.length >= 2 && !pw1Check
                                       ? "영문, 숫자, 특수문자 포함 8자~12자"
                                       : null,
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: PeeroreumColor.error,
                                 ),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: PeeroreumColor.error,
                                   )),
                               suffixIcon: Row(
@@ -198,37 +198,39 @@ class _NewPasswordState extends State<NewPassword> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
-                                      padding: EdgeInsets.only(left: 12),
-                                      child: pw_showClearbutton
+                                      padding: const EdgeInsets.only(left: 12),
+                                      child: pw1ShowClearButton
                                           ? GestureDetector(
                                               onTap: () {
-                                                pw_controller.clear();
+                                                pw1Controller.clear();
                                                 setState(() {
-                                                  pw_showClearbutton = false;
-                                                  pw_check = false;
+                                                  pw1ShowClearButton = false;
+                                                  pw1Check = false;
                                                 });
                                                 _checkInput();
                                               },
                                               child: SvgPicture.asset(
                                                 "assets/icons/x_circle.svg",
-                                                color: PeeroreumColor.gray[200],
+                                                colorFilter: ColorFilter.mode(
+                                                    PeeroreumColor.gray[200]!,
+                                                    BlendMode.srcIn),
                                               ))
                                           : null),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 12,
                                   ),
-                                  pw_suffix()
+                                  pw1Suffix()
                                 ],
                               ),
-                              helperText: pw_check
-                                  ? (pw_focus ? "사용 가능한 비밀번호입니다." : null)
+                              helperText: pw1Check
+                                  ? (pw1Focus ? "사용 가능한 비밀번호입니다." : null)
                                   : "영문, 숫자, 특수문자 포함 8자~12자",
-                              helperStyle: pw_check
+                              helperStyle: pw1Check
                                   ? TextStyle(
                                       fontFamily: "Pretendard",
                                       fontWeight: FontWeight.w400,
                                       fontSize: 12,
-                                      color: PeeroreumColor.primaryPuple[400])
+                                      color: PeeroreumColor.primaryPurple[400])
                                   : TextStyle(
                                       fontFamily: "Pretendard",
                                       fontWeight: FontWeight.w400,
@@ -236,104 +238,104 @@ class _NewPasswordState extends State<NewPassword> {
                                       color: PeeroreumColor.gray[600]),
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 12, horizontal: 16),
-                              focusedBorder: pw_check
+                              focusedBorder: pw1Check
                                   ? OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: BorderSide(
                                           color: PeeroreumColor
-                                              .primaryPuple[400]!),
+                                              .primaryPurple[400]!),
                                     )
                                   : OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(
+                                      borderSide: const BorderSide(
                                         color: PeeroreumColor.black,
                                       ),
                                     ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
-                                    color: pw_focus
-                                        ? (pw_check
-                                            ? PeeroreumColor.primaryPuple[400]!
+                                    color: pw1Focus
+                                        ? (pw1Check
+                                            ? PeeroreumColor.primaryPurple[400]!
                                             : PeeroreumColor.gray[200]!)
                                         : PeeroreumColor.gray[200]!),
                               ),
                             ),
                             showCursor: false,
-                            obscureText: pw_hide,
+                            obscureText: pw1Hide,
                             obscuringCharacter: '●',
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           '비밀번호 확인',
                           style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w500,
                               fontSize: 14),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 4.0,
                         ),
                         TextFormField(
-                          controller: pw2_controller,
-                          scrollPadding: EdgeInsets.only(bottom: 140),
+                          controller: pw2Controller,
+                          scrollPadding: const EdgeInsets.only(bottom: 140),
                           onTap: () {
-                            if (pw2_controller.text.length > 0) {
+                            if (pw2Controller.text.isNotEmpty) {
                               setState(() {
-                                pw2_showClearbutton = true;
+                                pw2ShowClearButton = true;
                               });
                             }
                             setState(() {
-                              pw_showClearbutton = false;
-                              pw_focus = false;
-                              pw2_focus = true;
+                              pw1ShowClearButton = false;
+                              pw1Focus = false;
+                              pw2Focus = true;
                             });
                           },
                           onChanged: (value) {
                             _checkInput();
                             if (value.isNotEmpty) {
-                              pw2_showClearbutton = true;
+                              pw2ShowClearButton = true;
                             } else {
-                              pw2_showClearbutton = false;
+                              pw2ShowClearButton = false;
                             }
-                            if (pw_controller.text == pw2_controller.text) {
+                            if (pw1Controller.text == pw2Controller.text) {
                               setState(() {
-                                pw2_check = true;
+                                pw2Check = true;
                               });
                             } else {
                               setState(() {
-                                pw2_check = false;
+                                pw2Check = false;
                               });
                             }
                             _checkInput();
                           },
                           onFieldSubmitted: (value) {
-                            pw2_focus = false;
+                            pw2Focus = false;
                           },
-                          obscureText: pw2_hide,
+                          obscureText: pw2Hide,
                           obscuringCharacter: '●',
                           decoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
-                                    color: pw2_focus
-                                        ? (pw2_check
-                                            ? PeeroreumColor.primaryPuple[400]!
+                                    color: pw2Focus
+                                        ? (pw2Check
+                                            ? PeeroreumColor.primaryPurple[400]!
                                             : PeeroreumColor.gray[200]!)
                                         : PeeroreumColor.gray[200]!)),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
-                                    color: pw2_check
-                                        ? PeeroreumColor.primaryPuple[400]!
+                                    color: pw2Check
+                                        ? PeeroreumColor.primaryPurple[400]!
                                         : PeeroreumColor.black)),
                             hintText: '비밀번호를 재입력하세요',
                             hintStyle: TextStyle(
@@ -341,54 +343,56 @@ class _NewPasswordState extends State<NewPassword> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 color: PeeroreumColor.gray[600]),
-                            helperText: pw2_focus
-                                ? (pw2_check ? "비밀번호가 일치합니다." : "")
+                            helperText: pw2Focus
+                                ? (pw2Check ? "비밀번호가 일치합니다." : "")
                                 : null,
                             helperStyle: TextStyle(
                                 fontFamily: "Pretendard",
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
-                                color: PeeroreumColor.primaryPuple[400]),
+                                color: PeeroreumColor.primaryPurple[400]),
                             errorText:
-                                !pw2_check && pw2_controller.text.length >= 2
+                                !pw2Check && pw2Controller.text.length >= 2
                                     ? "비밀번호가 일치하지 않습니다."
                                     : null,
                             errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                    BorderSide(color: PeeroreumColor.error)),
+                                borderSide: const BorderSide(
+                                    color: PeeroreumColor.error)),
                             focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                    BorderSide(color: PeeroreumColor.error)),
-                            contentPadding: EdgeInsets.symmetric(
+                                borderSide: const BorderSide(
+                                    color: PeeroreumColor.error)),
+                            contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                             suffixIcon: Padding(
-                              padding: EdgeInsets.only(left: 12),
+                              padding: const EdgeInsets.only(left: 12),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  pw2_showClearbutton
+                                  pw2ShowClearButton
                                       ? GestureDetector(
                                           onTap: () {
-                                            pw2_controller.clear();
+                                            pw2Controller.clear();
                                             setState(() {
-                                              pw2_showClearbutton = false;
-                                              pw2_check = false;
+                                              pw2ShowClearButton = false;
+                                              pw2Check = false;
                                             });
                                             _checkInput();
                                           },
                                           child: SvgPicture.asset(
                                             "assets/icons/x_circle.svg",
-                                            color: PeeroreumColor.gray[200],
+                                            colorFilter: ColorFilter.mode(
+                                                PeeroreumColor.gray[200]!,
+                                                BlendMode.srcIn),
                                           ),
                                         )
-                                      : SizedBox(),
-                                  SizedBox(
+                                      : const SizedBox(),
+                                  const SizedBox(
                                     width: 12,
                                   ),
-                                  pw2_suffix()
+                                  pw2Suffix()
                                 ],
                               ),
                             ),
@@ -408,14 +412,14 @@ class _NewPasswordState extends State<NewPassword> {
             padding: MediaQuery.of(context).viewInsets.bottom > 0
                 ? EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom)
-                : EdgeInsets.fromLTRB(20, 8, 20, 28),
+                : const EdgeInsets.fromLTRB(20, 8, 20, 28),
             width: MediaQuery.of(context).size.width,
             child: SizedBox(
               height: 48,
               child: TextButton(
-                onPressed: (is_Enabled && !is_loading)
+                onPressed: (isEnabled && !isLoading)
                     ? () {
-                        if (pw2_check) {
+                        if (pw2Check) {
                           resetPassword();
                         } else {
                           PeeroreumToast.show(context, "비밀번호가 일치하지 않아요",
@@ -423,8 +427,21 @@ class _NewPasswordState extends State<NewPassword> {
                         }
                       }
                     : null,
-                child: is_loading
-                    ? SizedBox(
+                style: ButtonStyle(
+                    backgroundColor: (isEnabled && !isLoading)
+                        ? WidgetStateProperty.all(
+                            PeeroreumColor.primaryPurple[400])
+                        : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
+                          ? BorderRadius.zero
+                          : BorderRadius.circular(8.0),
+                    ))),
+                child: isLoading
+                    ? const SizedBox(
                         height: 24,
                         width: 24,
                         child: CircularProgressIndicator(
@@ -432,7 +449,7 @@ class _NewPasswordState extends State<NewPassword> {
                           strokeWidth: 2,
                         ),
                       )
-                    : Text(
+                    : const Text(
                         '변경하기',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -440,19 +457,6 @@ class _NewPasswordState extends State<NewPassword> {
                             fontSize: 16.0,
                             color: PeeroreumColor.white),
                       ),
-                style: ButtonStyle(
-                    backgroundColor: (is_Enabled && !is_loading)
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
-                          ? BorderRadius.zero
-                          : BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
           ),
@@ -463,95 +467,104 @@ class _NewPasswordState extends State<NewPassword> {
 
   resetPassword() async {
     setState(() {
-      is_loading = true;
+      isLoading = true;
     });
     try {
       final result = await ApiClient().put(
-        '/member/password/reset?newPassword=${Uri.encodeComponent(pw_controller.text)}',
+        '/member/password/reset?newPassword=${Uri.encodeComponent(pw1Controller.text)}',
         options: Options(headers: {'Authorization': 'Bearer ${widget.token}'}),
       );
       setState(() {
-        is_loading = false;
+        isLoading = false;
       });
       if (result.statusCode == 200) {
         final data = result.data;
         if (data['status'] == 'success') {
-          Get.to(() => CompletePassword(), transition: Transition.noTransition);
+          Get.to(() => const CompletePassword(), transition: Transition.noTransition);
         } else {
+          if (!mounted) return;
           PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
         }
       } else {
+        if (!mounted) return;
         PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
       }
     } catch (e) {
       setState(() {
-        is_loading = false;
+        isLoading = false;
       });
+      if (!mounted) return;
       PeeroreumToast.show(context, "비밀번호 변경에 실패했어요.", isError: true);
     }
   }
 
-  pw_suffix() {
-    if (pw_check) {
+  pw1Suffix() {
+    if (pw1Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPuple[400],
+            colorFilter: ColorFilter.mode(
+                PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
           ));
     }
-    if (pw_controller.text.length >= 2 && !pw_check) {
+    if (pw1Controller.text.length >= 2 && !pw1Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
-            color: PeeroreumColor.error,
+            colorFilter:
+                const ColorFilter.mode(PeeroreumColor.error, BlendMode.srcIn),
           ));
     }
     return GestureDetector(
       onTap: () {
         setState(() {
-          pw_hide = !pw_hide;
+          pw1Hide = !pw1Hide;
         });
       },
       child: Container(
-        padding: EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.only(right: 16),
         child: SvgPicture.asset(
-          pw_hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
-          color: PeeroreumColor.gray[600],
+          pw1Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
         ),
       ),
     );
   }
 
-  pw2_suffix() {
-    if (pw2_check) {
+  pw2Suffix() {
+    if (pw2Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/check.svg",
-            color: PeeroreumColor.primaryPuple[400],
+            colorFilter: ColorFilter.mode(
+                PeeroreumColor.primaryPurple[400]!, BlendMode.srcIn),
           ));
     }
-    if (pw2_controller.text.length >= 2 && !pw2_check) {
+    if (pw2Controller.text.length >= 2 && !pw2Check) {
       return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
           child: SvgPicture.asset(
             "assets/icons/warning_circle.svg",
-            color: PeeroreumColor.error,
+            colorFilter:
+                const ColorFilter.mode(PeeroreumColor.error, BlendMode.srcIn),
           ));
     }
     return GestureDetector(
       onTap: () {
         setState(() {
-          pw2_hide = !pw2_hide;
+          pw2Hide = !pw2Hide;
         });
       },
       child: Container(
-        padding: EdgeInsets.fromLTRB(12, 0, 16, 0),
+        padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
         child: SvgPicture.asset(
-          pw2_hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
-          color: PeeroreumColor.gray[600],
+          pw2Hide ? "assets/icons/eye_off.svg" : "assets/icons/eye_on.svg",
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
         ),
       ),
     );

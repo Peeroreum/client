@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 class MyPageInquiry extends StatefulWidget {
   const MyPageInquiry({super.key});
@@ -19,10 +19,10 @@ class MyPageInquiry extends StatefulWidget {
 }
 
 class _MyPageInquiryState extends State<MyPageInquiry> {
-  FlutterSecureStorage storage = FlutterSecureStorage();
-  var email, nickname;
+  FlutterSecureStorage storage = const FlutterSecureStorage();
+  String? email, nickname;
   List<String> inquireType = ["앱 작동에 이상", "데이터에 이상", "수정 혹은 삭제 요청", "기타"];
-  String selectedType = "문의 유형을 선택해주세요.";
+  String selectedType = "문의 유형을 선택해 주세요.";
   String otherType = "";
   String detailInquiry = "";
 
@@ -43,7 +43,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
     final smtpServer = gmail(username, password);
     final message = Message()
       ..from = Address(username, 'Mail Service')
-      ..recipients.add('peeroreum.help@gmail.com')
+      ..recipients.add('peer@teachlog.kr')
       ..subject = selectedType != "기타"
           ? "[문의] $selectedType"
           : "[문의] $selectedType - $otherType"
@@ -77,10 +77,11 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
             },
             icon: SvgPicture.asset(
               'assets/icons/arrow-left.svg',
-              color: PeeroreumColor.gray[800],
+              colorFilter:
+                  ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
             ),
           ),
-          title: Text(
+          title: const Text(
             "문의하기",
             style: TextStyle(
                 color: PeeroreumColor.black,
@@ -102,7 +103,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                     Container(
                         alignment: Alignment.centerLeft,
                         height: 24,
-                        child: Text(
+                        child: const Text(
                           "문의 유형",
                           style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -111,7 +112,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                             color: PeeroreumColor.black,
                           ),
                         )),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     GestureDetector(
@@ -151,7 +152,8 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                               width: 18,
                               child: SvgPicture.asset(
                                 'assets/icons/down.svg',
-                                color: PeeroreumColor.gray[600],
+                                colorFilter: ColorFilter.mode(
+                                    PeeroreumColor.gray[600]!, BlendMode.srcIn),
                               ),
                             )
                           ],
@@ -166,7 +168,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                             height: 8,
                           ),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             width: double.infinity,
                             height: 48,
                             decoration: BoxDecoration(
@@ -177,9 +179,10 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                               child: TextFormField(
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.allow(RegExp(
-                                      r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
+                                      r'[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣ᆞᆢㆍᄀ-ᄒ%₩=&·*\-+<>@#:;^♡_/()"~.,!?≠≒÷×$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
                                 ],
-                                style: TextStyle(color: Colors.black),
+                                style: const TextStyle(
+                                    color: PeeroreumColor.black),
                                 cursorColor: PeeroreumColor.gray[600],
                                 decoration: InputDecoration(
                                     hintText: '기타 유형을 입력해 주세요.',
@@ -205,9 +208,9 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                     const SizedBox(
                       height: 24,
                     ),
-                    Container(
+                    const SizedBox(
                       height: 24,
-                      child: const Text(
+                      child: Text(
                         '상세 내용',
                         style: TextStyle(
                           fontFamily: 'Pretendard',
@@ -218,8 +221,8 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
                       width: double.infinity,
                       height: 300,
                       decoration: BoxDecoration(
@@ -228,7 +231,7 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                       child: TextFormField(
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.allow(RegExp(
-                              r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
+                              r'[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣ᆞᆢㆍᄀ-ᄒ%₩=&·*\-+<>@#:;^♡_/()"~.,!?≠≒÷×$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
                         ],
                         maxLines: null,
                         cursorColor: PeeroreumColor.gray[600],
@@ -253,12 +256,18 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
+                margin: EdgeInsets.fromLTRB(
+                    20,
+                    20,
+                    20,
+                    MediaQuery.of(context).viewPadding.bottom > 20
+                        ? MediaQuery.of(context).viewPadding.bottom
+                        : 20.0),
                 width: MediaQuery.of(context).size.width,
                 child: SizedBox(
                   height: 48,
                   child: TextButton(
-                    onPressed: (selectedType != '문의 유형을 선택해주세요.' &&
+                    onPressed: (selectedType != '문의 유형을 선택해 주세요.' &&
                                 detailInquiry != "" &&
                                 selectedType != '기타' ||
                             selectedType == '기타' &&
@@ -271,24 +280,22 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                           }
                         : null,
                     style: ButtonStyle(
-                        backgroundColor: (selectedType != '문의 유형을 선택해주세요.' &&
+                        backgroundColor: (selectedType != '문의 유형을 선택해 주세요.' &&
                                     detailInquiry != "" &&
                                     selectedType != '기타' ||
                                 selectedType == '기타' &&
                                     otherType != "" &&
                                     detailInquiry != "")
-                            ? MaterialStateProperty.all(
-                                PeeroreumColor.primaryPuple[400])
-                            : MaterialStateProperty.all(
-                                PeeroreumColor.gray[300]),
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 12)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
+                            ? WidgetStateProperty.all(
+                                PeeroreumColor.primaryPurple[400])
+                            : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                        padding: WidgetStateProperty.all(
+                            const EdgeInsets.symmetric(vertical: 12)),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ))),
-                    child: Text(
+                    child: const Text(
                       '문의하기',
                       style: TextStyle(
                           fontFamily: 'Pretendard',
@@ -309,7 +316,11 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
   Widget inquireReasonBottomSheet() {
     return Container(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.4,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -321,16 +332,16 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  "문의 유형을 선택해주세요.",
+                child: const Text(
+                  "문의 유형을 선택해 주세요.",
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 20,
@@ -339,11 +350,11 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                   ),
                 )),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: inquireType.length,
-                shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                       behavior: HitTestBehavior.translucent,
@@ -355,11 +366,11 @@ class _MyPageInquiryState extends State<MyPageInquiry> {
                       },
                       child: Container(
                           width: double.infinity,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 16),
                           child: Text(
                             inquireType[index],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 18,
                               fontWeight: FontWeight.w400,

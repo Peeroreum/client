@@ -1,48 +1,52 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/data/Checklist.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 
-import '../../api/NotificationApi.dart';
-import '../../designs/PeeroreumColor.dart';
+import '../../api/notification_api.dart';
+import '../../designs/peeroreum_color.dart';
 import 'package:get/get.dart';
 
 class EncouragementCheckList extends StatefulWidget {
-  EncouragementCheckList(this.notSuccessList, this.title, this.id);
-  List<dynamic> notSuccessList;
-  String title;
-  int id;
+  const EncouragementCheckList(this.notSuccessList, this.title, this.id, {super.key});
+  final List<dynamic> notSuccessList;
+  final String title;
+  final int id;
 
   @override
   State<EncouragementCheckList> createState() =>
-      _EncouragementCheckListState(notSuccessList, title, id);
+      _EncouragementCheckListState();
 }
 
 class _EncouragementCheckListState extends State<EncouragementCheckList> {
-  _EncouragementCheckListState(this.notSuccessList, this.title, this.id);
-  List<dynamic> notSuccessList;
-  String title;
-  int id;
+  late List<dynamic> notSuccessList;
+  late String title;
+  late int id;
 
   List<String> receiverList = [];
   late List<bool> isCheckedList =
       List.generate(notSuccessList.length, (index) => false);
   late List<bool> isActiveList =
       List.generate(notSuccessList.length, (index) => true);
-  var sender;
-  var mygrade;
-  var myimage;
-  bool mycheck = false;
+  String? sender;
+  String? myGrade;
+  String? myImage;
+  bool myCheck = false;
   bool isSelectAll = false;
+
+  late Future<void> _initFuture;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    notSuccessList = widget.notSuccessList;
+    title = widget.title;
+    id = widget.id;
     receiverList = [];
-    fetchStatus();
+    _initFuture = fetchStatus();
   }
 
   bool controlAllSelect() {
@@ -65,22 +69,24 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
     for (String receiver in receiverList) {
       NotificationApi.sendEncouragement(
           sender!, receiver, title, id.toString());
-      print("$receiver 님에게 알림 전송");
+      if (kDebugMode) {
+        print("$receiver 님에게 알림 전송");
+      }
     }
   }
 
-  fetchStatus() async {
-    sender = await FlutterSecureStorage().read(key: "nickname");
-    myimage = await FlutterSecureStorage().read(key: "profileImage");
-    mygrade = await FlutterSecureStorage().read(key: "grade");
+  Future<void> fetchStatus() async {
+    sender = await const FlutterSecureStorage().read(key: "nickname");
+    myImage = await const FlutterSecureStorage().read(key: "profileImage");
+    myGrade = await const FlutterSecureStorage().read(key: "grade");
     //notSuccessList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
-    var here_am_i =
+    var hereAmI =
         notSuccessList.where((user) => user['nickname'] == sender).toList();
 
-    if (here_am_i.isNotEmpty) {
-      mycheck = true;
+    if (hereAmI.isNotEmpty) {
+      myCheck = true;
     } else {
-      mycheck = false;
+      myCheck = false;
     }
     //notSuccessList = notSuccessList.where((user) => user['nickname'] != sender).toList();
   }
@@ -95,14 +101,14 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
           leading: IconButton(
             icon: SvgPicture.asset(
               'assets/icons/x.svg',
-              color: PeeroreumColor.gray[800],
+              colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
               width: 18,
             ),
             onPressed: () {
               Get.back();
             },
           ),
-          title: Text(
+          title: const Text(
             '미달성',
             style: TextStyle(
                 fontFamily: 'Pretendard',
@@ -113,14 +119,14 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
           centerTitle: true,
         ),
         body: FutureBuilder<void>(
-            future: fetchStatus(),
+            future: _initFuture,
             builder: (context, snapshot) {
               return SafeArea(
                 child: SizedBox(
                   child: Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -134,7 +140,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                                       fontSize: 14,
                                       color: PeeroreumColor.gray[500]),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 4,
                                 ),
                                 Text(
@@ -145,7 +151,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                                       fontSize: 14,
                                       color: PeeroreumColor.gray[500]),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 2,
                                 ),
                                 Text(
@@ -189,12 +195,12 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                                 children: [
                                   SvgPicture.asset(
                                     'assets/icons/check.svg',
-                                    color: PeeroreumColor.gray[500],
+                                    colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 4,
                                   ),
-                                  T5_14px(
+                                  T5(
                                     text: "전체선택",
                                     color: PeeroreumColor.gray[500],
                                   )
@@ -223,7 +229,9 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
               child: TextButton(
                 onPressed: () async {
                   if (isCheckedList.contains(true)) {
-                    print('isCheckedList: $isCheckedList');
+                    if (kDebugMode) {
+                      print('isCheckedList: $isCheckedList');
+                    }
                     receiverList = [];
                     for (int i = 0; i < isCheckedList.length; i++) {
                       if (isActiveList[i] == true) {
@@ -235,6 +243,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
 
                     if (receiverList.isNotEmpty) {
                       await sendNotification();
+                      if (!context.mounted) return;
                       PeeroreumToast.show(context, '재촉하기에 성공했어요.');
                     }
                     setState(() {
@@ -244,7 +253,16 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                     });
                   }
                 },
-                child: Text(
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        PeeroreumColor.primaryPurple[400]),
+                    padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+                child: const Text(
                   '독려하기',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -253,15 +271,6 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                     color: PeeroreumColor.white,
                   ),
                 ),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
         ));
@@ -272,7 +281,7 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
         child: ListView.separated(
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
                     Expanded(
@@ -304,13 +313,13 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                                             notSuccessList[index]
                                                 ["profileImage"]),
                                         fit: BoxFit.cover)
-                                    : DecorationImage(
+                                    : const DecorationImage(
                                         image: AssetImage(
                                             'assets/images/user.jpg')),
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 8,
                           ),
                           Text(
@@ -344,20 +353,20 @@ class _EncouragementCheckListState extends State<EncouragementCheckList> {
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: (isCheckedList[index]
-                                  ? PeeroreumColor.primaryPuple[400]!
+                                  ? PeeroreumColor.primaryPurple[400]!
                                   : PeeroreumColor.gray[200]!),
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(4.0),
                             color: isActiveList[index]
                                 ? (isCheckedList[index]
-                                    ? PeeroreumColor.primaryPuple[400]!
+                                    ? PeeroreumColor.primaryPurple[400]!
                                     : PeeroreumColor.white)
                                 : PeeroreumColor.gray[300]!,
                           ),
                           child: SvgPicture.asset(
                             'assets/icons/check.svg',
-                            color: PeeroreumColor.white,
+                            colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                           ),
                         ),
                       ),

@@ -1,47 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/api/NotificationApi.dart';
-import 'package:peeroreum_client/data/Checklist.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/api/notification_api.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:get/get.dart';
 
 class ComplimentCheckList extends StatefulWidget {
-  ComplimentCheckList(this.successList, this.title, this.id);
-  List<dynamic> successList;
-  String title;
-  int id;
+  const ComplimentCheckList(this.successList, this.title, this.id, {super.key});
+  final List<dynamic> successList;
+  final String title;
+  final int id;
 
   @override
   State<ComplimentCheckList> createState() =>
-      _ComplimentCheckListState(successList, title, id);
+      _ComplimentCheckListState();
 }
 
 class _ComplimentCheckListState extends State<ComplimentCheckList> {
-  _ComplimentCheckListState(this.successList, this.title, this.id);
-  List<dynamic> successList;
-  String title;
-  int id;
+  late List<dynamic> successList;
+  late String title;
+  late int id;
 
   List<String> receiverList = [];
   late List<bool> isCheckedList =
       List.generate(successList.length, (index) => false);
   late List<bool> isActiveList =
       List.generate(successList.length, (index) => true);
-  var sender;
-  var mygrade;
-  var myimage;
-  bool mycheck = false;
+  String? sender;
+  String? myGrade;
+  String? myImage;
+  bool myCheck = false;
   bool isSelectAll = false;
+
+  late Future<void> _initFuture;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    successList = widget.successList;
+    title = widget.title;
+    id = widget.id;
     receiverList = [];
-    fetchStatus();
+    _initFuture = fetchStatus();
   }
 
   bool controlAllSelect() {
@@ -66,17 +69,17 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
     }
   }
 
-  fetchStatus() async {
-    sender = await FlutterSecureStorage().read(key: "nickname");
-    myimage = await FlutterSecureStorage().read(key: "profileImage");
-    mygrade = await FlutterSecureStorage().read(key: "grade");
+  Future<void> fetchStatus() async {
+    sender = await const FlutterSecureStorage().read(key: "nickname");
+    myImage = await const FlutterSecureStorage().read(key: "profileImage");
+    myGrade = await const FlutterSecureStorage().read(key: "grade");
     //successList = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
-    var here_am_i =
+    var hereAmI =
         successList.where((user) => user['nickname'] == sender).toList();
-    if (here_am_i.isNotEmpty) {
-      mycheck = true;
+    if (hereAmI.isNotEmpty) {
+      myCheck = true;
     } else {
-      mycheck = false;
+      myCheck = false;
     }
     //successList = successList.where((user) => user['nickname'] != sender).toList();
   }
@@ -91,14 +94,14 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
           leading: IconButton(
             icon: SvgPicture.asset(
               'assets/icons/x.svg',
-              color: PeeroreumColor.gray[800],
+              colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
               width: 18,
             ),
             onPressed: () {
               Get.back();
             },
           ),
-          title: Text(
+          title: const Text(
             '달성',
             style: TextStyle(
                 fontFamily: 'Pretendard',
@@ -109,12 +112,12 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
           centerTitle: true,
         ),
         body: FutureBuilder<void>(
-            future: fetchStatus(),
+            future: _initFuture,
             builder: (context, snapshot) {
               return Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -128,7 +131,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[500]),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 4,
                             ),
                             Text(
@@ -139,7 +142,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                                   fontSize: 14,
                                   color: PeeroreumColor.gray[500]),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 2,
                             ),
                             Text(
@@ -181,12 +184,12 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                             children: [
                               SvgPicture.asset(
                                 'assets/icons/check.svg',
-                                color: PeeroreumColor.gray[500],
+                                colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 4,
                               ),
-                              T5_14px(
+                              T5(
                                 text: "전체선택",
                                 color: PeeroreumColor.gray[500],
                               ),
@@ -223,6 +226,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
 
                     if (receiverList.isNotEmpty) {
                       await sendNotification();
+                      if (!context.mounted) return;
                       PeeroreumToast.show(context, '칭찬하기에 성공했어요.');
                     }
 
@@ -233,7 +237,16 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                     });
                   }
                 },
-                child: Text(
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                        PeeroreumColor.primaryPurple[400]),
+                    padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ))),
+                child: const Text(
                   '칭찬하기',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -242,15 +255,6 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                     color: PeeroreumColor.white,
                   ),
                 ),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
         ));
@@ -264,7 +268,7 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
             scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
                     Expanded(
@@ -296,13 +300,13 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                                         image: NetworkImage(
                                             successList[index]["profileImage"]),
                                         fit: BoxFit.cover)
-                                    : DecorationImage(
+                                    : const DecorationImage(
                                         image: AssetImage(
                                             'assets/images/user.jpg')),
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 8,
                           ),
                           Text(
@@ -336,20 +340,20 @@ class _ComplimentCheckListState extends State<ComplimentCheckList> {
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: (isCheckedList[index]
-                                  ? PeeroreumColor.primaryPuple[400]!
+                                  ? PeeroreumColor.primaryPurple[400]!
                                   : PeeroreumColor.gray[200]!),
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(4.0),
                             color: isActiveList[index]
                                 ? (isCheckedList[index]
-                                    ? PeeroreumColor.primaryPuple[400]!
+                                    ? PeeroreumColor.primaryPurple[400]!
                                     : PeeroreumColor.white)
                                 : PeeroreumColor.gray[300]!,
                           ),
                           child: SvgPicture.asset(
                             'assets/icons/check.svg',
-                            color: PeeroreumColor.white,
+                            colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                           ),
                         ),
                       ),

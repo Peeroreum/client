@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/screens/alert/alert_model.dart';
 
 class AlertController extends GetxController{
-  var activity_alerts = <AlertModel>[].obs;
-  var service_alert = <AlertModel>[].obs;
+  var activityAlerts = <AlertModel>[].obs;
+  var serviceAlert = <AlertModel>[].obs;
 
   @override
   void onInit(){
@@ -24,7 +24,7 @@ class AlertController extends GetxController{
         final List<dynamic> data = activityResponse.data['data'] ?? [];
         final alertList = data.map((item) => AlertModel.fromJson(item)).toList();
 
-        activity_alerts.assignAll(alertList); // alerts 리스트에 데이터를 할당
+        activityAlerts.assignAll(alertList); // alerts 리스트에 데이터를 할당
       } else {
         if (kDebugMode) {
           print('Failed to fetch alerts: ${activityResponse.statusCode}');
@@ -38,7 +38,7 @@ class AlertController extends GetxController{
       if (serviceResponse.statusCode == 200) {
         final List<dynamic> serviceData = serviceResponse.data['data'] ?? [];
         final serviceAlertList = serviceData.map((item) => AlertModel.fromJson(item)).toList();
-        service_alert.assignAll(serviceAlertList); // Assign service alerts
+        serviceAlert.assignAll(serviceAlertList); // Assign service alerts
       } else {
         if (kDebugMode) {
           print('Failed to fetch service alerts: ${serviceResponse.statusCode}');

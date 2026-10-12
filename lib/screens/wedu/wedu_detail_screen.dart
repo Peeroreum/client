@@ -1,13 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/detail_image.dart';
 import 'package:peeroreum_client/screens/report.dart';
 import 'package:peeroreum_client/screens/wedu/compliment_checklist_screen.dart';
@@ -17,18 +18,18 @@ import 'package:peeroreum_client/screens/wedu/wedu_detail_calendar.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_modify_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:share_plus/share_plus.dart';
 
 class DetailWedu extends StatefulWidget {
-  DetailWedu(this.id, {super.key});
+  const DetailWedu(this.id, {super.key});
 
-  int id;
+  final int id;
 
   @override
-  State<DetailWedu> createState() => _DetailWeduState(id);
+  State<DetailWedu> createState() => _DetailWeduState();
 }
 
 double stackWidth = 0;
@@ -36,13 +37,12 @@ double leftPosition = 0;
 
 class _DetailWeduState extends State<DetailWedu> {
   late Future initFuture;
-  int id;
+  late int id;
 
   bool isExpanded = true;
 
-  _DetailWeduState(this.id);
-
-  var email, nickname;
+  String? email;
+  String? nickname;
 
   final List<XFile> _images = [];
 
@@ -86,7 +86,7 @@ class _DetailWeduState extends State<DetailWedu> {
         '${_getInviteLink(roomId)}\n\n'
         '앱이 없다면 설치 후 참여해요 🙌\n'
         '• 안드로이드: https://play.google.com/store/apps/details?id=com.peeroreum.peeroreum_client\n'
-        '• iOS: https://apps.apple.com/app/id피어오름앱ID';
+        '• iOS: https://apps.apple.com/app/id6476135072';
   }
 
   Future<void> _shareRoom() async {
@@ -126,6 +126,7 @@ class _DetailWeduState extends State<DetailWedu> {
   @override
   void initState() {
     super.initState();
+    id = widget.id;
     initFuture = fetchDatas();
   }
 
@@ -154,7 +155,9 @@ class _DetailWeduState extends State<DetailWedu> {
                 inviResult.data['data']['invitationUrl']?.toString() ?? '';
           }
         } catch (e) {
-          print('초대장 이미지 fetch 실패: $e');
+          if (kDebugMode) {
+            print('초대장 이미지 fetch 실패: $e');
+          }
         }
         weduDday = weduData['dday'];
         weduSubject = weduData['subject'];
@@ -175,20 +178,36 @@ class _DetailWeduState extends State<DetailWedu> {
           leftPosition = stackWidth * percent - 21; // 그 외의 경우의 처리
         }
       } else {
-        print("에러${weduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러${weduResult.statusCode}");
+        }
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
+        if (kDebugMode) {
+          print('Dio error!');
+        }
+        if (kDebugMode) {
+          print('STATUS: ${e.response?.statusCode}');
+        }
+        if (kDebugMode) {
+          print('DATA: ${e.response?.data}');
+        }
+        if (kDebugMode) {
+          print('HEADERS: ${e.response?.headers}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+        }
+        if (kDebugMode) {
+          print(e.message);
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
 
     var now = DateTime.now();
@@ -220,20 +239,36 @@ class _DetailWeduState extends State<DetailWedu> {
           notSuccessList.insert(0, me);
         }
       } else {
-        print("목록${challengeList.statusCode}");
+        if (kDebugMode) {
+          print("목록${challengeList.statusCode}");
+        }
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
+        if (kDebugMode) {
+          print('Dio error!');
+        }
+        if (kDebugMode) {
+          print('STATUS: ${e.response?.statusCode}');
+        }
+        if (kDebugMode) {
+          print('DATA: ${e.response?.data}');
+        }
+        if (kDebugMode) {
+          print('HEADERS: ${e.response?.headers}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+        }
+        if (kDebugMode) {
+          print(e.message);
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
 
     await fetchImages(successList);
@@ -256,19 +291,33 @@ class _DetailWeduState extends State<DetailWedu> {
         if (result.statusCode == 200) {
           resultImageList.add(result.data['data']['imageUrls']);
         } else {
-          print('이미지 에러 ${result.statusCode}');
+          if (kDebugMode) {
+            print('이미지 에러 ${result.statusCode}');
+          }
         }
       } on dio.DioException catch (e) {
         if (e.response != null) {
-          print('Dio error!');
-          print('STATUS: ${e.response?.statusCode}');
-          print('DATA: ${e.response?.data}');
+          if (kDebugMode) {
+            print('Dio error!');
+          }
+          if (kDebugMode) {
+            print('STATUS: ${e.response?.statusCode}');
+          }
+          if (kDebugMode) {
+            print('DATA: ${e.response?.data}');
+          }
         } else {
-          print('Error sending request!');
-          print(e.message);
+          if (kDebugMode) {
+            print('Error sending request!');
+          }
+          if (kDebugMode) {
+            print(e.message);
+          }
         }
       } catch (e) {
-        print('Unexpected error: $e');
+        if (kDebugMode) {
+          print('Unexpected error: $e');
+        }
       }
     }
     challengeImageList = resultImageList;
@@ -317,7 +366,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             },
                             child: SvgPicture.asset(
                               'assets/icons/x.svg',
-                              color: PeeroreumColor.black,
+                              colorFilter: const ColorFilter.mode(PeeroreumColor.black, BlendMode.srcIn),
                             ),
                           )
                         ],
@@ -361,7 +410,7 @@ class _DetailWeduState extends State<DetailWedu> {
                           height: 48,
                           width: double.maxFinite,
                           decoration: BoxDecoration(
-                              color: PeeroreumColor.primaryPuple[400],
+                              color: PeeroreumColor.primaryPurple[400],
                               borderRadius: BorderRadius.circular(8)),
                           child: const Center(
                             child: Text(
@@ -386,7 +435,9 @@ class _DetailWeduState extends State<DetailWedu> {
 
   void openImagePicker() async {
     final selected = await showCustomImagePicker(context);
-    if (selected == null || selected.isEmpty) return;
+    if (selected == null || selected.isEmpty) {
+      return;
+    }
     setState(() {
       _images.addAll(selected);
     });
@@ -404,6 +455,7 @@ class _DetailWeduState extends State<DetailWedu> {
     try {
       var response =
           await ApiClient().postForm('/wedu/$id/challenge', formData);
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         PeeroreumToast.show(context, '오늘의 챌린지 인증 완료!');
@@ -414,17 +466,33 @@ class _DetailWeduState extends State<DetailWedu> {
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
+        if (kDebugMode) {
+          print('Dio error!');
+        }
+        if (kDebugMode) {
+          print('STATUS: ${e.response?.statusCode}');
+        }
+        if (kDebugMode) {
+          print('DATA: ${e.response?.data}');
+        }
+        if (kDebugMode) {
+          print('HEADERS: ${e.response?.headers}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+        }
+        if (kDebugMode) {
+          print(e.message);
+        }
       }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시작해 주세요.', isError: true);
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시작해 주세요.', isError: true);
     }
   }
@@ -437,7 +505,19 @@ class _DetailWeduState extends State<DetailWedu> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(color: PeeroreumColor.white);
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Scaffold(
+            backgroundColor: PeeroreumColor.white,
+            appBar: AppBar(
+              backgroundColor: PeeroreumColor.white,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: ErrorRetryView(
+              onRetry: () => setState(() {
+                initFuture = fetchDatas();
+              }),
+            ),
+          );
         } else {
           return Scaffold(
             backgroundColor: PeeroreumColor.white,
@@ -450,7 +530,7 @@ class _DetailWeduState extends State<DetailWedu> {
               leading: IconButton(
                 icon: SvgPicture.asset(
                   'assets/icons/arrow-left.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onPressed: () {
                   Get.back();
@@ -489,7 +569,7 @@ class _DetailWeduState extends State<DetailWedu> {
                       'assets/icons/icon_dots_mono.svg',
                       width: 24,
                       height: 24,
-                      color: PeeroreumColor.gray[800],
+                      colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                     ))
               ],
               bottom: PreferredSize(
@@ -566,11 +646,11 @@ class _DetailWeduState extends State<DetailWedu> {
                     showDoChallengeBottomSheet();
                   },
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
-                      padding: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
+                          PeeroreumColor.primaryPurple[400]),
+                      padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ))),
@@ -762,8 +842,7 @@ class _DetailWeduState extends State<DetailWedu> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ButtonBar(
-              buttonPadding: const EdgeInsets.all(0),
+            OverflowBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
@@ -811,7 +890,7 @@ class _DetailWeduState extends State<DetailWedu> {
                 GestureDetector(
                   child: SvgPicture.asset(
                     'assets/icons/icon_dots_mono.svg',
-                    color: PeeroreumColor.gray[800],
+                    colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                   ),
                   onTap: () async {
                     await showModalBottomSheet(
@@ -896,10 +975,10 @@ class _DetailWeduState extends State<DetailWedu> {
                 },
                 style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
+                        WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ))),
@@ -1038,7 +1117,7 @@ class _DetailWeduState extends State<DetailWedu> {
                               child: GestureDetector(
                                 child: SvgPicture.asset(
                                   'assets/icons/right.svg',
-                                  color: PeeroreumColor.gray[500],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                                 ),
                                 onTap: () {
                                   Get.to(() => DetailWeduCalendar(
@@ -1062,7 +1141,7 @@ class _DetailWeduState extends State<DetailWedu> {
                             percent: percent,
                             backgroundColor: PeeroreumColor.gray[200],
                             linearGradient: LinearGradient(colors: [
-                              PeeroreumColor.primaryPuple[400]!,
+                              PeeroreumColor.primaryPurple[400]!,
                               const Color(0xffada5fc)
                             ]),
                             barRadius: const Radius.circular(8),
@@ -1084,7 +1163,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color:
-                                            PeeroreumColor.primaryPuple[400]),
+                                            PeeroreumColor.primaryPurple[400]),
                                   ),
                                   const SizedBox(
                                     width: 2,
@@ -1096,7 +1175,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color:
-                                            PeeroreumColor.primaryPuple[400]),
+                                            PeeroreumColor.primaryPurple[400]),
                                   ),
                                   const SizedBox(
                                     width: 2,
@@ -1108,7 +1187,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color:
-                                            PeeroreumColor.primaryPuple[400]),
+                                            PeeroreumColor.primaryPurple[400]),
                                   ),
                                 ],
                               ),
@@ -1128,26 +1207,32 @@ class _DetailWeduState extends State<DetailWedu> {
                   ),
                 ),
                 Card(
+                  // 색을 지정하지 않으면 Material 3 기본 카드색(회색 틴트)이 칠해짐
+                  color: PeeroreumColor.white,
+                  surfaceTintColor: Colors.transparent,
+                  clipBehavior: Clip.antiAlias,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       side: BorderSide(color: PeeroreumColor.gray[200]!)),
                   child: Theme(
-                    data: ThemeData(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent)
-                        .copyWith(dividerColor: Colors.transparent),
+                    data: Theme.of(context).copyWith(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        dividerColor: Colors.transparent),
                     child: ExpansionTile(
+                        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                        shape: const Border(),
+                        collapsedShape: const Border(),
                         backgroundColor: PeeroreumColor.white,
                         collapsedBackgroundColor: PeeroreumColor.white,
                         trailing: SvgPicture.asset(
                           isExpanded
                               ? 'assets/icons/down.svg'
                               : 'assets/icons/up.svg',
-                          color: PeeroreumColor.gray[500],
+                          colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                         ),
-                        title: Container(
-                          color: PeeroreumColor.white,
+                        title: SizedBox(
                           child: Row(
                             children: [
                               Container(
@@ -1155,7 +1240,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                 padding:
                                     const EdgeInsets.fromLTRB(12, 2, 12, 2),
                                 decoration: BoxDecoration(
-                                    color: PeeroreumColor.primaryPuple[50],
+                                    color: PeeroreumColor.primaryPurple[50],
                                     borderRadius: BorderRadius.circular(16)),
                                 child: Center(
                                   child: Text(
@@ -1164,7 +1249,7 @@ class _DetailWeduState extends State<DetailWedu> {
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
-                                      color: PeeroreumColor.primaryPuple[400],
+                                      color: PeeroreumColor.primaryPurple[400],
                                     ),
                                   ),
                                 ),
@@ -1178,8 +1263,8 @@ class _DetailWeduState extends State<DetailWedu> {
                                   style: TextStyle(
                                       overflow: TextOverflow.ellipsis,
                                       fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
                                       color: PeeroreumColor.gray[800]),
                                 ),
                               ),
@@ -1373,7 +1458,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         padding: const EdgeInsets.all(0),
                       ).copyWith(
                         overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                            WidgetStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: const Text(
                         '공유하기',
@@ -1406,7 +1491,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         padding: const EdgeInsets.all(0),
                       ).copyWith(
                         overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                            WidgetStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: const Text(
                         '같이방 수정',
@@ -1433,7 +1518,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         padding: const EdgeInsets.all(0),
                       ).copyWith(
                         overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                            WidgetStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: const Text(
                         '참여자 관리',
@@ -1455,7 +1540,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         padding: const EdgeInsets.all(0),
                       ).copyWith(
                         overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                            WidgetStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: const Text(
                         '같이방 삭제',
@@ -1490,7 +1575,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         padding: const EdgeInsets.all(0),
                       ).copyWith(
                         overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                            WidgetStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: const Text(
                         '공유하기',
@@ -1513,7 +1598,7 @@ class _DetailWeduState extends State<DetailWedu> {
                         padding: const EdgeInsets.all(0),
                       ).copyWith(
                         overlayColor:
-                            MaterialStateProperty.all(PeeroreumColor.gray[100]),
+                            WidgetStateProperty.all(PeeroreumColor.gray[100]),
                       ),
                       child: const Text(
                         '나가기',
@@ -1578,10 +1663,7 @@ class _DetailWeduState extends State<DetailWedu> {
               behavior: HitTestBehavior.translucent,
               onTap: () {
                 Get.to(() => Report(
-                      data: "[같이해냄] 챌린지 이미지 신고\n" +
-                          "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" +
-                          "같이방 아이디 : $id\n" +
-                          "업로드한 사람 : $successOneNickname\n",
+                      data: "[같이해냄] 챌린지 이미지 신고\n" "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" "같이방 아이디 : $id\n" "업로드한 사람 : $successOneNickname\n",
                     ));
               },
               child: Container(
@@ -1947,24 +2029,43 @@ class _DetailWeduState extends State<DetailWedu> {
       var result = await ApiClient().delete('/wedu/$id/challenge');
 
       if (result.statusCode == 200) {
-        print("챌린지 인증 삭제 성공");
+        if (kDebugMode) {
+          print("챌린지 인증 삭제 성공");
+        }
         setState(() {
           fetchDatas();
         });
       } else {
-        print("챌린지 인증 삭제 실패 ${result.statusCode}");
+        if (kDebugMode) {
+          print("챌린지 인증 삭제 실패 ${result.statusCode}");
+        }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
+        if (kDebugMode) {
+          print('Dio error!');
+        }
+        if (kDebugMode) {
+          print('STATUS: ${e.response?.statusCode}');
+        }
+        if (kDebugMode) {
+          print('DATA: ${e.response?.data}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+        }
+        if (kDebugMode) {
+          print(e.message);
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -1972,22 +2073,41 @@ class _DetailWeduState extends State<DetailWedu> {
     try {
       var result = await ApiClient().delete('/wedu/$id/out');
       if (result.statusCode == 200) {
-        print("같이방 나가기 성공");
+        if (kDebugMode) {
+          print("같이방 나가기 성공");
+        }
         Get.offAllNamed('/home');
       } else {
-        print("같이방 나가기 실패 ${result.statusCode}");
+        if (kDebugMode) {
+          print("같이방 나가기 실패 ${result.statusCode}");
+        }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
+        if (kDebugMode) {
+          print('Dio error!');
+        }
+        if (kDebugMode) {
+          print('STATUS: ${e.response?.statusCode}');
+        }
+        if (kDebugMode) {
+          print('DATA: ${e.response?.data}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+        }
+        if (kDebugMode) {
+          print(e.message);
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 
@@ -1995,22 +2115,41 @@ class _DetailWeduState extends State<DetailWedu> {
     try {
       var result = await ApiClient().delete('/wedu/$id');
       if (result.statusCode == 200) {
-        print("같이방 삭제 성공");
+        if (kDebugMode) {
+          print("같이방 삭제 성공");
+        }
         Get.offAllNamed('/home');
       } else {
-        print("같이방 삭제 실패 ${result.statusCode}");
+        if (kDebugMode) {
+          print("같이방 삭제 실패 ${result.statusCode}");
+        }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
+        if (kDebugMode) {
+          print('Dio error!');
+        }
+        if (kDebugMode) {
+          print('STATUS: ${e.response?.statusCode}');
+        }
+        if (kDebugMode) {
+          print('DATA: ${e.response?.data}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+        }
+        if (kDebugMode) {
+          print(e.message);
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 

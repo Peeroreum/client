@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -35,9 +36,9 @@ class _CreateInvitationState extends State<CreateInvitation> {
   ];
   List<bool> isFontColorSelected = [false, false, false];
   List<dynamic> backgroundColorSelect = [
-    PeeroreumColor.primaryPuple[400],
-    PeeroreumColor.primaryPuple[200],
-    PeeroreumColor.primaryPuple[50],
+    PeeroreumColor.primaryPurple[400],
+    PeeroreumColor.primaryPurple[200],
+    PeeroreumColor.primaryPurple[50],
     PeeroreumColor.white,
     PeeroreumColor.black,
     const Color(0xffCACACA),
@@ -50,7 +51,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
   ];
   bool nextButton = false;
 
-  Color _backgroundColor = PeeroreumColor.primaryPuple[400]!;
+  Color _backgroundColor = PeeroreumColor.primaryPurple[400]!;
   Color _fontColor = PeeroreumColor.white;
   Color? _savedBackgroundColor;
   Color? _savedFontColor;
@@ -67,11 +68,11 @@ class _CreateInvitationState extends State<CreateInvitation> {
   };
 
   checkColors() {
-    if (_backgroundColor == PeeroreumColor.primaryPuple[400]) {
+    if (_backgroundColor == PeeroreumColor.primaryPurple[400]) {
       isBackgroundSelected = [true, false, false, false, false, false, false];
-    } else if (_backgroundColor == PeeroreumColor.primaryPuple[200]) {
+    } else if (_backgroundColor == PeeroreumColor.primaryPurple[200]) {
       isBackgroundSelected = [false, true, false, false, false, false, false];
-    } else if (_backgroundColor == PeeroreumColor.primaryPuple[50]) {
+    } else if (_backgroundColor == PeeroreumColor.primaryPurple[50]) {
       isBackgroundSelected = [false, false, true, false, false, false, false];
     } else if (_backgroundColor == PeeroreumColor.white) {
       isBackgroundSelected = [false, false, false, true, false, false, false];
@@ -104,10 +105,13 @@ class _CreateInvitationState extends State<CreateInvitation> {
   XFile? _image;
 
   Future getImage() async {
-    if (isImagePickerActive) return;
+    if (isImagePickerActive) {
+      return;
+    }
     isImagePickerActive = true;
     final selected = await showCustomImagePicker(context, multiple: false);
     if (selected != null && selected.isNotEmpty) {
+      if (!mounted) return;
       final cropped = await cropImage(context, selected.first);
       if (cropped != null) {
         setState(() {
@@ -180,7 +184,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: nextButton
-                          ? PeeroreumColor.primaryPuple[400]
+                          ? PeeroreumColor.primaryPurple[400]
                           : PeeroreumColor.gray[400],
                     ),
                   ),
@@ -205,7 +209,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
                               colorFilter: ColorFilter.mode(
-                                  Colors.black.withOpacity(0.2),
+                                  Colors.black.withValues(alpha: 0.2),
                                   BlendMode.darken),
                               image: FileImage(File(_image!.path)),
                               fit: BoxFit.cover,
@@ -298,7 +302,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                 if (value == ' ' * i) {
                                   nextButton = false;
                                   PeeroreumToast.show(
-                                      context, '공백으로 만들 수 없어요.');
+                                      context, '공백으로 만들 수 없어요.', isError: true);
                                 }
                                 if (value != ' ' * i) {
                                   nextButton = true;
@@ -371,7 +375,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                     pickerAreaBorderRadius:
                                                         BorderRadius.circular(
                                                             10),
-                                                    showLabel: false,
+                                                    labelTypes: const [],
                                                     enableAlpha: false,
                                                     pickerColor:
                                                         _backgroundColor,
@@ -380,9 +384,9 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                       setState(() {
                                                         _savedBackgroundColor =
                                                             color;
-                                                        int red = color.red;
-                                                        int blue = color.blue;
-                                                        int green = color.green;
+                                                        int red = (color.r * 255).round();
+                                                        int blue = (color.b * 255).round();
+                                                        int green = (color.g * 255).round();
                                                         _savedFontColor =
                                                             Color.fromRGBO(
                                                                 255 - red,
@@ -432,7 +436,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                           '확인',
                                                           style: TextStyle(
                                                               color: PeeroreumColor
-                                                                      .primaryPuple[
+                                                                      .primaryPurple[
                                                                   400],
                                                               fontFamily:
                                                                   'Pretendard'),
@@ -469,7 +473,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                       switch (index) {
                                         case 0:
                                           _backgroundColor =
-                                              PeeroreumColor.primaryPuple[400]!;
+                                              PeeroreumColor.primaryPurple[400]!;
                                           _fontColor = PeeroreumColor.white;
                                           _image = null;
                                           isFontColorSelected = [
@@ -480,7 +484,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                           break;
                                         case 1:
                                           _backgroundColor =
-                                              PeeroreumColor.primaryPuple[200]!;
+                                              PeeroreumColor.primaryPurple[200]!;
                                           _fontColor = PeeroreumColor.white;
                                           _image = null;
                                           isFontColorSelected = [
@@ -491,7 +495,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                           break;
                                         case 2:
                                           _backgroundColor =
-                                              PeeroreumColor.primaryPuple[50]!;
+                                              PeeroreumColor.primaryPurple[50]!;
                                           _fontColor = PeeroreumColor.black;
                                           _image = null;
                                           isFontColorSelected = [
@@ -550,21 +554,21 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                               padding: const EdgeInsets.all(0),
                                               child: SvgPicture.asset(
                                                 'assets/icons/camera2.svg',
-                                                color: PeeroreumColor.white,
+                                                colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                                               ))
                                           : Padding(
                                               padding:
                                                   const EdgeInsets.all(4.0),
                                               child: SvgPicture.asset(
                                                 'assets/icons/spoid.svg',
-                                                color: PeeroreumColor.white,
+                                                colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                                               )))
                                       : (isBackgroundSelected[index]
                                           ? SvgPicture.asset(
                                               'assets/icons/check2.svg',
-                                              color: ((index == 2 || index == 3)
+                                              colorFilter: ColorFilter.mode((((index == 2 || index == 3)
                                                   ? PeeroreumColor.gray[600]
-                                                  : PeeroreumColor.white),
+                                                  : PeeroreumColor.white))!, BlendMode.srcIn),
                                             )
                                           : null),
                                 ),
@@ -634,7 +638,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                     pickerAreaBorderRadius:
                                                         BorderRadius.circular(
                                                             10),
-                                                    showLabel: false,
+                                                    labelTypes: const [],
                                                     enableAlpha: false,
                                                     pickerColor: _fontColor,
                                                     onColorChanged:
@@ -686,7 +690,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                                                   FontWeight
                                                                       .w500,
                                                               color: PeeroreumColor
-                                                                      .primaryPuple[
+                                                                      .primaryPurple[
                                                                   400],
                                                               fontFamily:
                                                                   'Pretendard'),
@@ -738,14 +742,14 @@ class _CreateInvitationState extends State<CreateInvitation> {
                                           padding: const EdgeInsets.all(4.0),
                                           child: SvgPicture.asset(
                                             'assets/icons/spoid.svg',
-                                            color: PeeroreumColor.white,
+                                            colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                                           ))
                                       : (isFontColorSelected[index]
                                           ? SvgPicture.asset(
                                               'assets/icons/check2.svg',
-                                              color: ((index == 0)
+                                              colorFilter: ColorFilter.mode((((index == 0)
                                                   ? PeeroreumColor.gray[600]
-                                                  : PeeroreumColor.white),
+                                                  : PeeroreumColor.white))!, BlendMode.srcIn),
                                             )
                                           : null),
                                 ),
@@ -775,6 +779,7 @@ class _CreateInvitationState extends State<CreateInvitation> {
     dio.FormData formData = dio.FormData.fromMap(weduMap);
     try {
       var inviResult = await ApiClient().postForm('/wedu', formData);
+      if (!mounted) return;
       if (inviResult.statusCode == 200) {
         Get.offAllNamed('/home');
       } else {
@@ -782,17 +787,33 @@ class _CreateInvitationState extends State<CreateInvitation> {
       }
     } on dio.DioException catch (e) {
       if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
+        if (kDebugMode) {
+          print('Dio error!');
+        }
+        if (kDebugMode) {
+          print('STATUS: ${e.response?.statusCode}');
+        }
+        if (kDebugMode) {
+          print('DATA: ${e.response?.data}');
+        }
+        if (kDebugMode) {
+          print('HEADERS: ${e.response?.headers}');
+        }
       } else {
-        print('Error sending request!');
-        print(e.message);
+        if (kDebugMode) {
+          print('Error sending request!');
+        }
+        if (kDebugMode) {
+          print(e.message);
+        }
       }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
+      if (!mounted) return;
       PeeroreumToast.show(context, '잠시 후에 다시 시도해 주세요.', isError: true);
     }
   }

@@ -1,30 +1,32 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/data/IeduRead.dart';
-import 'package:peeroreum_client/data/IeduSearchHistory.dart';
-import 'package:peeroreum_client/data/Subject.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/data/i_edu_read.dart';
+import 'package:peeroreum_client/data/subject.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 
 class SearchResultIedu extends StatefulWidget {
   final String keyword;
-  SearchResultIedu(this.keyword, {super.key});
+
+  const SearchResultIedu(this.keyword, {super.key});
 
   @override
-  State<SearchResultIedu> createState() => _SearchResultIeduState(keyword);
+  State<SearchResultIedu> createState() => _SearchResultIeduState();
 }
 
 class _SearchResultIeduState extends State<SearchResultIedu> {
   late Future initFuture;
-  String keyword;
-  _SearchResultIeduState(this.keyword);
+  late String keyword;
 
-  List<Map<String, String>> _searchHistory = [];
+  _SearchResultIeduState();
+
   dynamic data;
 
   List<String> isReadList = [];
@@ -54,13 +56,14 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
   final ScrollController _scrollController = ScrollController();
   Map<String, Color> focusColor = {
     "grade": PeeroreumColor.gray[200]!,
-    "subjet": PeeroreumColor.gray[200]!,
+    "subject": PeeroreumColor.gray[200]!,
     "detailSubject": PeeroreumColor.gray[200]!
   };
 
   @override
   void initState() {
     super.initState();
+    keyword = widget.keyword;
     initFuture = fetchData();
     subjectList.addAll(subjects);
     detailMiddleSubjects.addAll(middleSubjects);
@@ -76,37 +79,35 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
   }
 
   Future<void> fetchData() async {
-    print(
-        'fetch~~/question/search/$keyword?grade=$_grade&subject=$subject&detailsubject=$detailSubject&page=$currentPage');
-    var weduResult = await ApiClient().get('/question/search', queryParameters: {
+    if (kDebugMode) {
+      print(
+          'fetch~~/question/search/$keyword?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage');
+    }
+    var weduResult =
+        await ApiClient().get('/question/search', queryParameters: {
       'keyword': keyword,
       'grade': _grade,
       'subject': subject,
-      'detailsubject': detailSubject,
+      'detailSubject': detailSubject,
       'page': currentPage,
     });
     if (weduResult.statusCode == 200) {
       data = weduResult.data['data'];
-      print(data.length);
-      print(data);
+      if (kDebugMode) {
+        print(data.length);
+        print(data);
+      }
     } else {
-      print("에러${weduResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${weduResult.statusCode}");
+      }
     }
     await getReadListData();
     setState(() {});
   }
 
-  _loadSearchHistory() async {
-    _searchHistory = await SearchIeduHistory.getSearchHistory();
-    setState(() {});
-  }
 
-  _saveSearchHistory(String value) async {
-    await SearchIeduHistory.addSearchItem(value);
-    _loadSearchHistory();
-  }
 
-  bool search_clear = false;
 
   getReadListData() async {
     List<String>? data = await Read.getRead();
@@ -155,19 +156,24 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
     }
   }
 
+  // 현재 학년(중등/고등)과 과목 기준으로 세부과목 목록 구성
+  void _updateDetailSubjects() {
+    detailSubjects = ['전체'];
+    if (_subject == null || _subject == '전체') return;
+    final source = _grade <= 3 ? detailMiddleSubjects : detailHighSubjects;
+    detailSubjects.addAll(source[_subject] ?? []);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController textEditingController = TextEditingController();
-    textEditingController.text = keyword;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        setState(() {
-          search_clear = false;
-        });
       },
       child: Scaffold(
+          // 입력창이 없는 화면이라 키보드가 올라와도 레이아웃을 줄이지 않음
+          // (검색창을 눌러 돌아갈 때 키보드가 먼저 올라와 빈 결과 화면이 넘치던 문제)
+          resizeToAvoidBottomInset: false,
           backgroundColor: PeeroreumColor.white,
           appBar: AppBar(
               backgroundColor: PeeroreumColor.white,
@@ -177,66 +183,50 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
               leading: IconButton(
                 icon: SvgPicture.asset(
                   'assets/icons/arrow-left.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onPressed: () {
-                  Get.back(result: _searchHistory);
+                  Get.back(result: 'back');
                 },
               ),
               titleSpacing: 0,
               title: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 20, 12),
-                child: SearchBar(
-                  controller: textEditingController,
-                  onTap: () {
-                    Get.back(result: _searchHistory);
-                  },
-                  backgroundColor:
-                      MaterialStateProperty.all(PeeroreumColor.gray[100]),
-                  elevation: MaterialStateProperty.all(0),
-                  constraints: const BoxConstraints(minHeight: 40),
-                  hintText: '모르는 문제를 검색해 보세요!!',
-                  hintStyle: MaterialStateProperty.all(TextStyle(
-                      color: PeeroreumColor.gray[600],
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400)),
-                  trailing: [
-                    search_clear
-                        ? GestureDetector(
-                            onTap: () {
-                              textEditingController.clear();
-                              setState(() {
-                                search_clear = false;
-                              });
-                            },
-                            child: SvgPicture.asset(
-                              'assets/icons/x_circle.svg',
-                              color: PeeroreumColor.gray[600],
-                            ))
-                        : Container(),
-                    const SizedBox(
-                      width: 12,
+                child: GestureDetector(
+                  // 검색창을 누르면 현재 검색어를 들고 검색 화면으로 돌아가 바로 수정
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Get.back(result: 'edit'),
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: PeeroreumColor.gray[100],
+                      borderRadius: BorderRadius.circular(100),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        if ((textEditingController.text.isNotEmpty)) {
-                          setState(() {
-                            keyword = textEditingController.text;
-                            fetchData();
-                            _saveSearchHistory(keyword);
-                          });
-                        }
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/search.svg',
-                        color: Colors.grey[600],
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            keyword,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: PeeroreumColor.gray[800],
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/icons/search.svg',
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[600]!, BlendMode.srcIn),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                  ],
+                  ),
                 ),
               )),
           body: SafeArea(
@@ -248,7 +238,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return ErrorRetryView(
+                      onRetry: () => setState(() {
+                        initFuture = fetchData();
+                      }),
+                    );
                   } else {
                     return data.isEmpty
                         ? Center(
@@ -282,7 +276,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
                                   child: dropdownBody(),
                                 ),
                                 Expanded(
@@ -326,7 +321,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                           width: 208,
                                           decoration: BoxDecoration(
                                             color: PeeroreumColor
-                                                .primaryPuple[400],
+                                                .primaryPurple[400],
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
@@ -338,12 +333,15 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                             children: [
                                               SvgPicture.asset(
                                                 'assets/icons/pencil_with_line.svg',
-                                                color: PeeroreumColor.white,
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        PeeroreumColor.white,
+                                                        BlendMode.srcIn),
                                               ),
                                               const SizedBox(
                                                 width: 8,
                                               ),
-                                              const T4_16px(
+                                              const T4(
                                                 text: '내가해냄 질문하러 가기',
                                                 color: PeeroreumColor.white,
                                               )
@@ -365,7 +363,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             child: Column(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   child: Row(
                                     children: [
                                       Text(
@@ -414,7 +413,9 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
           onTap: () {
             setState(() {
               focusColor["grade"] = PeeroreumColor.black;
-              print(focusColor["grade"]);
+              if (kDebugMode) {
+                print(focusColor["grade"]);
+              }
             });
             showModalBottomSheet(
                 context: context,
@@ -445,7 +446,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
-                      color: _grade != null
+                      color: _grade != 0
                           ? PeeroreumColor.black
                           : PeeroreumColor.gray[600]),
                 ),
@@ -529,7 +530,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                 });
               });
             } else {
-              PeeroreumToast.show(context, "학년과 과목을 모두 선택해주세요.",
+              PeeroreumToast.show(context, "학년과 과목을 모두 선택해 주세요.",
                   isError: true);
             }
           },
@@ -539,8 +540,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color:
-                    focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
+                color: focusColor["detailSubject"] ?? PeeroreumColor.gray[200]!,
               ),
               color: Colors.transparent,
             ),
@@ -587,8 +587,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                   Read.saveRead(isReadList);
                 }
               });
-              await Get.to(() =>
-                  DetailIedu(data[index]['id'], data[index]['selected']));
+              await Get.to(
+                  () => DetailIedu(data[index]['id'], data[index]['selected']));
             },
             child: Container(
               width: MediaQuery.of(context).size.width - 40,
@@ -623,7 +623,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: 'UP',
                                           color: Color(0xFFF03A2E),
                                         ),
@@ -637,7 +637,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                                   )
                                 : Container(),
                             Flexible(
-                                child: T4_16px(
+                                child: T4(
                               text: data[index]['title'],
                               overflow: TextOverflow.ellipsis,
                             )),
@@ -652,13 +652,13 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               decoration: BoxDecoration(
-                                color: PeeroreumColor.primaryPuple[200],
+                                color: PeeroreumColor.primaryPurple[200],
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '채택완료',
                                     color: PeeroreumColor.white,
                                   ),
@@ -678,7 +678,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                               child: SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '미채택',
                                     color: PeeroreumColor.gray[600],
                                   ),
@@ -734,7 +734,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           width: 8,
                         ),
                         Flexible(
-                          child: B4_14px_M(
+                          child: B4m(
                             text: data[index]["memberProfileDto"]["nickname"],
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -742,7 +742,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                         const SizedBox(
                           width: 8,
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '${timeCheck(data[index]["createdTime"])} 전',
                           color: PeeroreumColor.gray[400],
                         ),
@@ -750,10 +750,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
                           child: SvgPicture.asset(
                             'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[600],
+                            colorFilter: ColorFilter.mode(
+                                PeeroreumColor.gray[600]!, BlendMode.srcIn),
                           ),
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '좋아요 ${data[index]["likes"]}개',
                           color: PeeroreumColor.gray[400],
                         ),
@@ -761,10 +762,11 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                           padding: const EdgeInsets.symmetric(horizontal: 2.0),
                           child: SvgPicture.asset(
                             'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[600],
+                            colorFilter: ColorFilter.mode(
+                                PeeroreumColor.gray[600]!, BlendMode.srcIn),
                           ),
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '댓글 ${data[index]["comments"]}개',
                           color: PeeroreumColor.gray[400],
                         ),
@@ -776,6 +778,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
             ),
           );
         }
+        return null;
       },
     );
   }
@@ -799,7 +802,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Container(
               alignment: Alignment.centerLeft,
               child: const Text(
@@ -830,8 +833,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           detailSubjects[index],
                           style: const TextStyle(
@@ -904,6 +907,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                             _grade = index;
                             _detailSubject = null;
                           }
+                          // 학년이 바뀌면 중등/고등 세부과목 목록이 달라지므로 다시 구성
+                          _updateDetailSubjects();
                           currentPage = 0;
                           focusColor["grade"] = PeeroreumColor.gray[200]!;
                         });
@@ -912,8 +917,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           grades[index],
                           style: const TextStyle(
@@ -974,14 +979,7 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                         setState(() {
                           _subject = subjectList[index];
                           subject = index;
-                          detailSubjects = ['전체'];
-                          List<String> addDetailSubjects;
-                          addDetailSubjects = ((_grade! <= 3)
-                              ? detailMiddleSubjects[_subject]
-                              : detailHighSubjects[_subject])!;
-                          if (index != 0) {
-                            detailSubjects.addAll(addDetailSubjects);
-                          }
+                          _updateDetailSubjects();
                           _detailSubject = null;
                           currentPage = 0;
                           focusColor['subject'] = PeeroreumColor.gray[200]!;
@@ -991,8 +989,8 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           subjectList[index],
                           style: const TextStyle(
@@ -1016,11 +1014,12 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
     });
     List<dynamic> addedData = [];
     currentPage++;
-    var ieduResult = await ApiClient().get('/question/search', queryParameters: {
+    var ieduResult =
+        await ApiClient().get('/question/search', queryParameters: {
       'keyword': keyword,
       'grade': _grade,
       'subject': subject,
-      'detailsubject': detailSubject,
+      'detailSubject': detailSubject,
       'page': currentPage,
     });
     if (ieduResult.statusCode == 200) {
@@ -1029,9 +1028,13 @@ class _SearchResultIeduState extends State<SearchResultIedu> {
         data.addAll(addedData);
         _isLoading = false;
       });
-      print("성공 loadMoreData ${ieduResult.statusCode}");
+      if (kDebugMode) {
+        print("성공 loadMoreData ${ieduResult.statusCode}");
+      }
     } else {
-      print("에러 loadMoreData ${ieduResult.statusCode}");
+      if (kDebugMode) {
+        print("에러 loadMoreData ${ieduResult.statusCode}");
+      }
     }
   }
 }

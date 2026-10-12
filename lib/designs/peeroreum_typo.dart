@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 //--------------Title Sb--------------
 
-class T1_24px extends StatelessWidget {
+class T1 extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const T1_24px({
+  const T1({
     Key? key,
     required this.text,
     this.color,
@@ -31,13 +31,13 @@ class T1_24px extends StatelessWidget {
   }
 }
 
-class T2_20px extends StatelessWidget {
+class T2 extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const T2_20px({
+  const T2({
     Key? key,
     required this.text,
     this.color,
@@ -59,13 +59,13 @@ class T2_20px extends StatelessWidget {
   }
 }
 
-class T3_18px extends StatelessWidget {
+class T3 extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const T3_18px({
+  const T3({
     Key? key,
     required this.text,
     this.color,
@@ -87,13 +87,13 @@ class T3_18px extends StatelessWidget {
   }
 }
 
-class T4_16px extends StatelessWidget {
+class T4 extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const T4_16px({
+  const T4({
     Key? key,
     required this.text,
     this.color,
@@ -115,13 +115,13 @@ class T4_16px extends StatelessWidget {
   }
 }
 
-class T5_14px extends StatelessWidget {
+class T5 extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const T5_14px({
+  const T5({
     Key? key,
     required this.text,
     this.color,
@@ -145,13 +145,13 @@ class T5_14px extends StatelessWidget {
 
 //--------------Body M--------------
 
-class B1_24px_M extends StatelessWidget {
+class B1m extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B1_24px_M({
+  const B1m({
     Key? key,
     required this.text,
     this.color,
@@ -173,13 +173,13 @@ class B1_24px_M extends StatelessWidget {
   }
 }
 
-class B2_20px_M extends StatelessWidget {
+class B2m extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B2_20px_M({
+  const B2m({
     Key? key,
     required this.text,
     this.color,
@@ -201,13 +201,13 @@ class B2_20px_M extends StatelessWidget {
   }
 }
 
-class B3_18px_M extends StatelessWidget {
+class B3m extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B3_18px_M({
+  const B3m({
     Key? key,
     required this.text,
     this.color,
@@ -229,13 +229,13 @@ class B3_18px_M extends StatelessWidget {
   }
 }
 
-class B4_14px_M extends StatelessWidget {
+class B4m extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B4_14px_M({
+  const B4m({
     Key? key,
     required this.text,
     this.color,
@@ -259,13 +259,13 @@ class B4_14px_M extends StatelessWidget {
 
 //--------------Body R--------------
 
-class B1_24px_R extends StatelessWidget {
+class B1r extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B1_24px_R({
+  const B1r({
     Key? key,
     required this.text,
     this.color,
@@ -287,13 +287,13 @@ class B1_24px_R extends StatelessWidget {
   }
 }
 
-class B2_20px_R extends StatelessWidget {
+class B2r extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B2_20px_R({
+  const B2r({
     Key? key,
     required this.text,
     this.color,
@@ -315,13 +315,13 @@ class B2_20px_R extends StatelessWidget {
   }
 }
 
-class B3_18px_R extends StatelessWidget {
+class B3r extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B3_18px_R({
+  const B3r({
     Key? key,
     required this.text,
     this.color,
@@ -343,13 +343,13 @@ class B3_18px_R extends StatelessWidget {
   }
 }
 
-class B4_14px_R extends StatelessWidget {
+class B4r extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const B4_14px_R({
+  const B4r({
     Key? key,
     required this.text,
     this.color,
@@ -374,13 +374,13 @@ class B4_14px_R extends StatelessWidget {
 
 //--------------Caption R--------------
 
-class C1_12px_Sb extends StatelessWidget {
+class C1sb extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const C1_12px_Sb({
+  const C1sb({
     Key? key,
     required this.text,
     this.color,
@@ -402,13 +402,13 @@ class C1_12px_Sb extends StatelessWidget {
   }
 }
 
-class C1_12px_M extends StatelessWidget {
+class C1m extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const C1_12px_M({
+  const C1m({
     Key? key,
     required this.text,
     this.color,
@@ -430,13 +430,13 @@ class C1_12px_M extends StatelessWidget {
   }
 }
 
-class C1_12px_R extends StatelessWidget {
+class C1r extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const C1_12px_R({
+  const C1r({
     Key? key,
     required this.text,
     this.color,
@@ -458,13 +458,13 @@ class C1_12px_R extends StatelessWidget {
   }
 }
 
-class C2_10px_Sb extends StatelessWidget {
+class C2sb extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const C2_10px_Sb({
+  const C2sb({
     Key? key,
     required this.text,
     this.color,
@@ -486,13 +486,13 @@ class C2_10px_Sb extends StatelessWidget {
   }
 }
 
-class C2_10px_M extends StatelessWidget {
+class C2m extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const C2_10px_M({
+  const C2m({
     Key? key,
     required this.text,
     this.color,
@@ -514,13 +514,13 @@ class C2_10px_M extends StatelessWidget {
   }
 }
 
-class C2_10px_R extends StatelessWidget {
+class C2r extends StatelessWidget {
   final String text;
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
 
-  const C2_10px_R({
+  const C2r({
     Key? key,
     required this.text,
     this.color,

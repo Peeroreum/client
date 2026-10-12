@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SkeletonWedu extends StatefulWidget {
@@ -28,7 +27,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
       titleSpacing: 0,
       automaticallyImplyLeading: false,
       title: Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 0, 12),
+        padding: const EdgeInsets.fromLTRB(20, 20, 0, 12),
         child: Row(
           children: [
             Flexible(
@@ -39,14 +38,14 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                   decoration: BoxDecoration(
                       color: PeeroreumColor.gray[100],
                       borderRadius: BorderRadius.circular(37.0)),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
                   child: Row(
                     children: [
                       SvgPicture.asset(
                         'assets/icons/search.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
-                      SizedBox(width: 8.0),
+                      const SizedBox(width: 8.0),
                       SizedBox(
                         child: Text(
                           '같이방에서 함께 공부해요!',
@@ -62,7 +61,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 12,
             ),
           ],
@@ -71,15 +70,15 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
       actions: [
         Container(
           margin: const EdgeInsets.only(right: 20),
-          padding: EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.only(top: 8),
           child: Row(
             children: [
               GestureDetector(
                 child: Container(
-                  padding: EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.only(right: 8),
                   child: SvgPicture.asset(
                     'assets/icons/plus_square.svg',
-                    color: PeeroreumColor.gray[800],
+                    colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                     width: 24,
                   ),
                 ),
@@ -87,7 +86,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
               ),
               SvgPicture.asset(
                 'assets/icons/bell_none.svg',
-                color: PeeroreumColor.gray[800],
+                colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
               )
             ],
           ),
@@ -103,9 +102,8 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
         baseColor: PeeroreumColor.gray[200]!,
         highlightColor: PeeroreumColor.white,
         child: Column(children: [
-          Container(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
               child: Row(
                 //첫번째 열
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,16 +126,15 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                 ],
               ),
             ),
-          ),
           SizedBox(
             height: 180,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   width: 150,
-                  padding: EdgeInsets.fromLTRB(8, 20, 8, 16),
+                  padding: const EdgeInsets.fromLTRB(8, 20, 8, 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: PeeroreumColor.gray[200]!),
@@ -154,7 +151,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[200]),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 16,
                       ),
                       Row(
@@ -168,7 +165,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                                 borderRadius: BorderRadius.circular(8),
                                 color: PeeroreumColor.gray[200]),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 4,
                           ),
                           Container(
@@ -181,7 +178,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Container(
@@ -192,7 +189,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[200]),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       Container(
@@ -215,7 +212,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
               itemCount: 3,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Container(
@@ -223,7 +220,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
             color: PeeroreumColor.gray[50],
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -238,7 +235,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
             child: Row(
               //드롭다운
               children: [
@@ -249,7 +246,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                       borderRadius: BorderRadius.circular(8),
                       color: PeeroreumColor.gray[200]),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 Container(
@@ -259,7 +256,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                       borderRadius: BorderRadius.circular(8),
                       color: PeeroreumColor.gray[200]),
                 ),
-                Spacer(),
+                const Spacer(),
                 Container(
                   width: 75,
                   height: 40,
@@ -273,10 +270,10 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
           Expanded(
             child: ListView.separated(
               shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               itemBuilder: (BuildContext context, int index) {
                 return Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: PeeroreumColor.gray[200]!)),
@@ -291,7 +288,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                             borderRadius: BorderRadius.circular(8),
                             color: PeeroreumColor.gray[200]),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 16,
                       ),
                       Column(
@@ -305,7 +302,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                                     borderRadius: BorderRadius.circular(8),
                                     color: PeeroreumColor.gray[200]),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 4,
                               ),
                               Container(
@@ -317,7 +314,7 @@ class _SkeletonWeduState extends State<SkeletonWedu> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 4,
                           ),
                           Container(

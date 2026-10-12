@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
 import 'package:flutter/material.dart';
 
@@ -46,22 +47,30 @@ class _InIeduState extends State<InIedu> {
 
     var ieduQuestion = await ApiClient().get('/question/my', queryParameters: {'page': currentPage});
     if (ieduQuestion.statusCode == 200) {
-      print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      if (kDebugMode) {
+        print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      }
       dataQ = ieduQuestion.data["data"];
       totalQ = dataQ['total'];
       question = dataQ["questionListReadDtos"];
     } else {
-      print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      if (kDebugMode) {
+        print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      }
     }
 
     var ieduAnswer = await ApiClient().get('/answer/my');
     if (ieduAnswer.statusCode == 200) {
-      print("성공 ieduAnswer ${ieduAnswer.statusCode}");
+      if (kDebugMode) {
+        print("성공 ieduAnswer ${ieduAnswer.statusCode}");
+      }
       dataA = ieduAnswer.data['data'];
       totalA = dataA['total'];
       answer = dataA["questionListReadDtos"];
     } else {
-      print("에러 ieduAnswer ${ieduAnswer.statusCode}");
+      if (kDebugMode) {
+        print("에러 ieduAnswer ${ieduAnswer.statusCode}");
+      }
     }
   }
 
@@ -70,19 +79,23 @@ class _InIeduState extends State<InIedu> {
       _isLoading = true;
     });
 
-    List<dynamic> addedDatas = [];
+    List<dynamic> addedData = [];
     currentPage++;
     var ieduQuestion = await ApiClient().get('/question/my', queryParameters: {'page': currentPage});
     if (ieduQuestion.statusCode == 200) {
-      print("성공 ieduQuestion ${ieduQuestion.statusCode}");
-      addedDatas = ieduQuestion.data["data"];
+      if (kDebugMode) {
+        print("성공 ieduQuestion ${ieduQuestion.statusCode}");
+      }
+      addedData = ieduQuestion.data["data"];
       setState(() {
-        dataQ.addAll(addedDatas);
+        dataQ.addAll(addedData);
         question = dataQ["questionListReadDtos"];
         _isLoading = false;
       });
     } else {
-      print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      if (kDebugMode) {
+        print("에러 ieduQuestion ${ieduQuestion.statusCode}");
+      }
     }
   }
 
@@ -108,7 +121,7 @@ class _InIeduState extends State<InIedu> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -131,9 +144,9 @@ class _InIeduState extends State<InIedu> {
         child: Column(
           children: [
             TabBar(
-                indicatorColor: PeeroreumColor.primaryPuple[400],
+                indicatorColor: PeeroreumColor.primaryPurple[400],
                 indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: PeeroreumColor.primaryPuple[400],
+                labelColor: PeeroreumColor.primaryPurple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
                   color: PeeroreumColor.gray[800],
@@ -142,7 +155,7 @@ class _InIeduState extends State<InIedu> {
                   fontWeight: FontWeight.w400,
                 ),
                 labelStyle: TextStyle(
-                  color: PeeroreumColor.primaryPuple[400],
+                  color: PeeroreumColor.primaryPurple[400],
                   fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -238,14 +251,14 @@ class _InIeduState extends State<InIedu> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            B4_14px_M(
+            B4m(
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
             const SizedBox(
               width: 4,
             ),
-            B4_14px_M(
+            B4m(
               text: '$totalQ',
               color: PeeroreumColor.gray[500],
             ),
@@ -291,7 +304,7 @@ class _InIeduState extends State<InIedu> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
-                                    child: T4_16px(
+                                    child: T4(
                                       text: '${question[index]['title']}',
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -307,13 +320,13 @@ class _InIeduState extends State<InIedu> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[200],
+                                      color: PeeroreumColor.primaryPurple[200],
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '채택완료',
                                           color: PeeroreumColor.white,
                                         ),
@@ -330,7 +343,7 @@ class _InIeduState extends State<InIedu> {
                                     child: SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '미채택',
                                           color: PeeroreumColor.gray[600],
                                         ),
@@ -346,7 +359,7 @@ class _InIeduState extends State<InIedu> {
                           width: MediaQuery.of(context).size.width - 42,
                           child: Row(
                             children: [
-                              C1_12px_M(
+                              C1m(
                                 text:
                                     '${timeCheck(question[index]["createdTime"])} 전',
                                 color: PeeroreumColor.gray[400],
@@ -356,10 +369,10 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '좋아요 ${question[index]["likes"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
@@ -368,10 +381,10 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '댓글 ${question[index]["comments"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
@@ -383,6 +396,7 @@ class _InIeduState extends State<InIedu> {
                   ),
                 );
               }
+              return null;
             },
           ),
         ),
@@ -396,14 +410,14 @@ class _InIeduState extends State<InIedu> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            B4_14px_M(
+            B4m(
               text: '전체',
               color: PeeroreumColor.gray[500],
             ),
             const SizedBox(
               width: 4,
             ),
-            B4_14px_M(
+            B4m(
               text: '$totalA',
               color: PeeroreumColor.gray[500],
             ),
@@ -448,7 +462,7 @@ class _InIeduState extends State<InIedu> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
-                                    child: T4_16px(
+                                    child: T4(
                                       text: '${answer[index]['title']}',
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -464,13 +478,13 @@ class _InIeduState extends State<InIedu> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 2, horizontal: 8),
                                     decoration: BoxDecoration(
-                                      color: PeeroreumColor.primaryPuple[200],
+                                      color: PeeroreumColor.primaryPurple[200],
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '채택완료',
                                           color: PeeroreumColor.white,
                                         ),
@@ -487,7 +501,7 @@ class _InIeduState extends State<InIedu> {
                                     child: SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: '미채택',
                                           color: PeeroreumColor.gray[600],
                                         ),
@@ -503,7 +517,7 @@ class _InIeduState extends State<InIedu> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Flexible(
-                              child: B4_14px_R(
+                              child: B4r(
                                 text: '${answer[index]["content"]}',
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -517,7 +531,7 @@ class _InIeduState extends State<InIedu> {
                           width: MediaQuery.of(context).size.width - 42,
                           child: Row(
                             children: [
-                              C1_12px_M(
+                              C1m(
                                 text:
                                     '${timeCheck(answer[index]["createdTime"])} 전',
                                 color: PeeroreumColor.gray[400],
@@ -527,10 +541,10 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '좋아요 ${answer[index]["likes"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),
@@ -539,10 +553,10 @@ class _InIeduState extends State<InIedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[400],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[400]!, BlendMode.srcIn),
                                 ),
                               ),
-                              C1_12px_M(
+                              C1m(
                                 text: '댓글 ${answer[index]["comments"]}개',
                                 color: PeeroreumColor.gray[400],
                               ),

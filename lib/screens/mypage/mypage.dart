@@ -1,11 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:peeroreum_client/screens/main_tab.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/data/VisitCount.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/data/visit_count.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_inquiry.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_scrap.dart';
@@ -23,18 +26,54 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  var token;
-  var nickname;
-  var profileImage;
-  var grade;
+  String? token;
+  String? nickname;
+  String? profileImage;
+  String? grade;
   var withPeerDay = 0;
   List<dynamic> data = [];
   List<dynamic> inroomData = [];
   List<dynamic> inviData = [];
   List<dynamic> hashTags = [];
   List<dynamic> notSuccessList = [];
+  String appVersion = '';
+  late Future<void> _initFuture;
 
-  fetchStatus() async {
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = fetchStatus();
+    _loadAppVersion();
+    MainTab.selected.addListener(_onTabSelected);
+  }
+
+  @override
+  void dispose() {
+    MainTab.selected.removeListener(_onTabSelected);
+    super.dispose();
+  }
+
+  // 프로필 이미지·닉네임·접속일이 다른 화면에서 바뀔 수 있어 다시 열 때 갱신
+  void _onTabSelected() {
+    if (MainTab.selected.value == MainTab.mypage) _reload();
+  }
+
+  void _reload() {
+    if (!mounted) return;
+    setState(() {
+      _initFuture = fetchStatus();
+    });
+  }
+
+  Future<void> _loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (!mounted) return;
+    setState(() {
+      appVersion = info.version;
+    });
+  }
+
+  Future<void> fetchStatus() async {
     token = await const FlutterSecureStorage().read(key: "accessToken");
     nickname = await const FlutterSecureStorage().read(key: "nickname");
     profileImage = await const FlutterSecureStorage().read(key: "profileImage");
@@ -50,7 +89,7 @@ class _MyPageState extends State<MyPage> {
         child: Container(
           color: PeeroreumColor.white,
           child: FutureBuilder<void>(
-              future: fetchStatus(),
+              future: _initFuture,
               builder: (context, snapshot) {
                 return bodyWidget();
               }),
@@ -120,6 +159,23 @@ class _MyPageState extends State<MyPage> {
                         Border.all(width: 1, color: PeeroreumColor.gray[100]!),
                     borderRadius: const BorderRadius.all(Radius.circular(8.0))),
                 child: fourthCol()),
+            TextButton(
+              onPressed: logoutModal,
+              style: TextButton.styleFrom(
+                foregroundColor: PeeroreumColor.gray[500],
+              ),
+              child: Text(
+                '로그아웃',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: PeeroreumColor.gray[500],
+                  decoration: TextDecoration.underline,
+                  decorationColor: PeeroreumColor.gray[500],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -132,8 +188,9 @@ class _MyPageState extends State<MyPage> {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: PeeroreumColor.gray[100],
-          onTap: () {
-            Get.to(() => MyPageProfile(nickname, true));
+          onTap: () async {
+            await Get.to(() => MyPageProfile(nickname!, true));
+            _reload();
           },
           child: Container(
             padding: const EdgeInsets.all(16),
@@ -149,7 +206,7 @@ class _MyPageState extends State<MyPage> {
                       border: Border.all(
                           width: 2,
                           color: grade != null
-                              ? PeeroreumColor.gradeColor[int.parse(grade)]!
+                              ? PeeroreumColor.gradeColor[int.parse(grade!)]!
                               : const Color.fromARGB(255, 186, 188, 189)),
                     ),
                     child: Container(
@@ -163,7 +220,7 @@ class _MyPageState extends State<MyPage> {
                         ),
                         image: profileImage != null
                             ? DecorationImage(
-                                image: NetworkImage(profileImage),
+                                image: NetworkImage(profileImage!),
                                 fit: BoxFit.cover)
                             : const DecorationImage(
                                 image: AssetImage(
@@ -172,7 +229,7 @@ class _MyPageState extends State<MyPage> {
                       ),
                     ),
                   ),
-                  Container(width: 11),
+                  Container(width: 12),
                   Text(
                     '$nickname',
                     style: const TextStyle(
@@ -186,7 +243,8 @@ class _MyPageState extends State<MyPage> {
                 SvgPicture.asset(
                   'assets/icons/right.svg',
                   height: 24,
-                  color: PeeroreumColor.gray[600],
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.gray[600]!, BlendMode.srcIn),
                 ),
               ],
             ),
@@ -247,7 +305,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '내 같이방',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -265,11 +323,11 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/icons/ChatsTeardrop.svg'),
+                SvgPicture.asset('assets/icons/chats_tear_drop2.svg'),
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '내 질의응답',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -287,11 +345,11 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/icons/BookmarkSimple.svg'),
+                SvgPicture.asset('assets/icons/bookmark_simple.svg'),
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '스크랩',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -321,7 +379,7 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '알림 설정',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -340,12 +398,12 @@ class _MyPageState extends State<MyPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset(
-                  'assets/icons/User2.svg',
+                  'assets/icons/user2.svg',
                 ),
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '계정 관리',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -353,28 +411,6 @@ class _MyPageState extends State<MyPage> {
             ),
           ),
         ),
-        // TextButton(
-        //   onPressed: () => {PeeroreumToast.show(context, "준비 중입니다.")},
-        //   style: TextButton.styleFrom(
-        //       minimumSize: Size.fromHeight(56),
-        //       padding: EdgeInsets.symmetric(horizontal: 20)
-        //
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.start,
-        //     children: [
-        //       Text(
-        //         '멤버십/구독 관리',
-        //         style: TextStyle(
-        //           color: PeeroreumColor.gray[800],
-        //           fontSize: 16,
-        //           fontWeight: FontWeight.w600,
-        //           fontFamily: 'Pretendard',
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
@@ -393,11 +429,11 @@ class _MyPageState extends State<MyPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/icons/Headset.svg'),
+                SvgPicture.asset('assets/icons/headset.svg'),
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '문의하기',
                   color: PeeroreumColor.gray[800],
                 ),
@@ -419,33 +455,14 @@ class _MyPageState extends State<MyPage> {
                 const SizedBox(
                   width: 12,
                 ),
-                T4_16px(
+                T4(
                   text: '버전 정보',
                   color: PeeroreumColor.gray[800],
                 ),
-              ],
-            ),
-          ),
-        ),
-        InkWell(
-          splashColor: Colors.transparent,
-          highlightColor: PeeroreumColor.gray[100],
-          onTap: () {
-            logoutModal();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            height: 56,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SvgPicture.asset('assets/icons/SignOut.svg'),
-                const SizedBox(
-                  width: 12,
-                ),
-                T4_16px(
-                  text: '로그아웃',
-                  color: PeeroreumColor.gray[800],
+                const Spacer(),
+                B4m(
+                  text: appVersion,
+                  color: PeeroreumColor.gray[500],
                 ),
               ],
             ),
@@ -532,7 +549,7 @@ class _MyPageState extends State<MyPage> {
                           await logout();
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
@@ -561,12 +578,17 @@ class _MyPageState extends State<MyPage> {
 
   Future<void> logout() async {
     try {
-      await ApiClient().post('/logout');
-      print("logout 성공");
+      await ApiClient().post('/logout', options: ApiClient.silent);
+      if (kDebugMode) {
+        print("logout 성공");
+      }
     } catch (e) {
-      print("logout 예외 발생: $e");
+      if (kDebugMode) {
+        print("logout 예외 발생: $e");
+      }
     } finally {
-      const FlutterSecureStorage().deleteAll();
+      await const FlutterSecureStorage().deleteAll();
+      await VisitCount.clear();
       Get.offAllNamed('/signIn/email');
     }
   }

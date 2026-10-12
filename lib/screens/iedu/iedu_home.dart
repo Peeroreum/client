@@ -1,12 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
+import 'package:peeroreum_client/screens/main_tab.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/data/IeduRead.dart';
-import 'package:peeroreum_client/data/Subject.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/data/i_edu_read.dart';
+import 'package:peeroreum_client/data/subject.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:peeroreum_client/screens/alert/alert_view.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_create.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_detail.dart';
@@ -38,8 +41,8 @@ class _HomeIeduState extends State<HomeIedu> {
   List<String> isReadList = [];
   bool whyrano = false;
 
-  var nickname;
-  var profileImage;
+  String? nickname;
+  String? profileImage;
   int? _grade;
   String? _subject;
   String? _detailSubject;
@@ -107,6 +110,7 @@ class _HomeIeduState extends State<HomeIedu> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    MainTab.selected.addListener(_onTabSelected);
     initFuture = fetchStatus();
     subjectList.addAll(subjects);
     detailMiddleSubjects.addAll(middleSubjects);
@@ -134,11 +138,15 @@ class _HomeIeduState extends State<HomeIedu> {
             return const SkeletonIedu();
           } else if (snapshot.hasError) {
             // 에러 발생 시
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return ErrorRetryView(
+              onRetry: () => setState(() {
+                initFuture = fetchStatus();
+              }),
+            );
           } else {
             return RefreshIndicator(
               onRefresh: () => fetchStatus(),
-              color: PeeroreumColor.primaryPuple[400],
+              color: PeeroreumColor.primaryPurple[400],
               child: SafeArea(
                 child: Container(
                   color: PeeroreumColor.white,
@@ -161,19 +169,31 @@ class _HomeIeduState extends State<HomeIedu> {
     await getReadListData();
   }
 
+  // 첫 페이지만 보고 있을 때만 갱신해 더 불러온 목록과 스크롤 위치는 유지
+  void _onTabSelected() {
+    if (MainTab.selected.value != MainTab.iedu || !mounted) return;
+    if (currentPage == 0) fetchIeduData();
+  }
+
   fetchIeduData() async {
     currentPage = 0;
     try {
       var ieduResult = await ApiClient().get(
           '/question?grade=$_grade&subject=$subject&detailSubject=$detailSubject&page=$currentPage');
       if (ieduResult.statusCode == 200) {
-        print("성공 fetchIeduData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("성공 fetchIeduData ${ieduResult.statusCode}");
+        }
         data = ieduResult.data['data'];
       } else {
-        print("에러 fetchIeduData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러 fetchIeduData ${ieduResult.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
     if (mounted) {
       setState(() {});
@@ -196,15 +216,21 @@ class _HomeIeduState extends State<HomeIedu> {
           data.addAll(addedData);
           _isLoading = false;
         });
-        print("성공 loadMoreData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("성공 loadMoreData ${ieduResult.statusCode}");
+        }
       } else {
-        print("에러 loadMoreData ${ieduResult.statusCode}");
+        if (kDebugMode) {
+          print("에러 loadMoreData ${ieduResult.statusCode}");
+        }
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
       setState(() {
         _isLoading = false;
       });
@@ -233,12 +259,14 @@ class _HomeIeduState extends State<HomeIedu> {
                   decoration: BoxDecoration(
                       color: PeeroreumColor.gray[100],
                       borderRadius: BorderRadius.circular(37.0)),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12.0),
                   child: Row(
                     children: [
                       SvgPicture.asset(
                         'assets/icons/search.svg',
-                        color: PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            PeeroreumColor.gray[600]!, BlendMode.srcIn),
                       ),
                       const SizedBox(width: 8.0),
                       SizedBox(
@@ -270,7 +298,8 @@ class _HomeIeduState extends State<HomeIedu> {
               child: GestureDetector(
                 child: SvgPicture.asset(
                   'assets/icons/bell_none.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(
+                      PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onTap: () {
                   Get.to(() => Alert());
@@ -309,16 +338,18 @@ class _HomeIeduState extends State<HomeIedu> {
             padding: const EdgeInsets.only(bottom: 10),
             child: FloatingActionButton(
               shape: const CircleBorder(),
-              onPressed: () {
-                Get.to(() => const CreateIedu());
+              onPressed: () async {
+                await Get.to(() => const CreateIedu());
+                fetchIeduData();
               },
               elevation: 5,
-              backgroundColor: PeeroreumColor.primaryPuple[400],
+              backgroundColor: PeeroreumColor.primaryPurple[400],
               child: SizedBox(
                 width: 24,
                 child: SvgPicture.asset(
                   'assets/icons/pencil_with_line.svg',
-                  color: PeeroreumColor.white,
+                  colorFilter: const ColorFilter.mode(
+                      PeeroreumColor.white, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -327,6 +358,22 @@ class _HomeIeduState extends State<HomeIedu> {
       ),
     );
   }
+
+  // 현재 학년(중등/고등)과 과목 기준으로 세부과목 목록 구성
+  void _updateDetailSubjects() {
+    detailSubjects = ['전체'];
+    if (_subject == null || _subject == '전체' || _grade == null) return;
+    final source = _grade! <= 3 ? detailMiddleSubjects : detailHighSubjects;
+    detailSubjects.addAll(source[_subject] ?? []);
+  }
+
+  // 세부과목은 학년(대학 제외)과 과목을 고른 뒤에만 선택 가능
+  bool get _canSelectDetailSubject =>
+      _grade != null &&
+      _grade != 0 &&
+      _grade != 7 &&
+      _subject != null &&
+      _subject != '전체';
 
   dropdownBody() {
     return Container(
@@ -405,7 +452,8 @@ class _HomeIeduState extends State<HomeIedu> {
               },
               child: Container(
                 height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -443,7 +491,7 @@ class _HomeIeduState extends State<HomeIedu> {
             absorbing: _grade == 7,
             child: GestureDetector(
               onTap: () {
-                if (_subject != null && _grade != 0) {
+                if (_canSelectDetailSubject) {
                   setState(() {
                     focusColor["detailSubject"] = PeeroreumColor.black;
                   });
@@ -462,16 +510,17 @@ class _HomeIeduState extends State<HomeIedu> {
               },
               child: Container(
                 height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: focusColor["detailSubject"] ??
                         PeeroreumColor.gray[200]!,
                   ),
-                  color: _grade == 7
-                      ? PeeroreumColor.gray[100]
-                      : Colors.transparent,
+                  color: _canSelectDetailSubject
+                      ? Colors.transparent
+                      : PeeroreumColor.gray[100],
                 ),
                 child: Row(
                   children: [
@@ -480,14 +529,22 @@ class _HomeIeduState extends State<HomeIedu> {
                       style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w400,
-                          color: _detailSubject != null
-                              ? PeeroreumColor.black
-                              : PeeroreumColor.gray[600]),
+                          color: !_canSelectDetailSubject
+                              ? PeeroreumColor.gray[400]
+                              : _detailSubject != null
+                                  ? PeeroreumColor.black
+                                  : PeeroreumColor.gray[600]),
                     ),
                     const SizedBox(
                       width: 8,
                     ),
-                    SvgPicture.asset('assets/icons/down.svg'),
+                    SvgPicture.asset(
+                      'assets/icons/down.svg',
+                      colorFilter: _canSelectDetailSubject
+                          ? null
+                          : ColorFilter.mode(
+                              PeeroreumColor.gray[400]!, BlendMode.srcIn),
+                    ),
                   ],
                 ),
               ),
@@ -501,7 +558,11 @@ class _HomeIeduState extends State<HomeIedu> {
   gradeSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -531,8 +592,9 @@ class _HomeIeduState extends State<HomeIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: grades.length,
                 itemBuilder: (context, index) {
@@ -548,6 +610,8 @@ class _HomeIeduState extends State<HomeIedu> {
                             _subject = null;
                             subject = 0;
                           }
+                          // 학년이 바뀌면 중등/고등 세부과목 목록이 달라지므로 다시 구성
+                          _updateDetailSubjects();
                         });
                         fetchIeduData();
                         Get.back();
@@ -559,8 +623,8 @@ class _HomeIeduState extends State<HomeIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           grades[index],
                           style: const TextStyle(
@@ -581,7 +645,11 @@ class _HomeIeduState extends State<HomeIedu> {
   subjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.63,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -611,8 +679,9 @@ class _HomeIeduState extends State<HomeIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: subjectList.length,
                 itemBuilder: (context, index) {
@@ -622,14 +691,7 @@ class _HomeIeduState extends State<HomeIedu> {
                         setState(() {
                           _subject = subjectList[index];
                           subject = index;
-                          detailSubjects = ['전체'];
-                          List<String> addDetailSubjects;
-                          addDetailSubjects = ((_grade! <= 3)
-                              ? detailMiddleSubjects[_subject]
-                              : detailHighSubjects[_subject])!;
-                          if (index != 0) {
-                            detailSubjects.addAll(addDetailSubjects);
-                          }
+                          _updateDetailSubjects();
                           _detailSubject = null;
                           detailSubject = 0;
                           focusColor['subject'] = PeeroreumColor.gray[200]!;
@@ -644,8 +706,8 @@ class _HomeIeduState extends State<HomeIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           subjectList[index],
                           style: const TextStyle(
@@ -666,7 +728,11 @@ class _HomeIeduState extends State<HomeIedu> {
   detailSubjectSelect() {
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.4,
+      // 항목 수만큼만 높이를 차지하고, 많으면 최대 높이 안에서 스크롤
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.63,
+      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
         color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
@@ -696,8 +762,9 @@ class _HomeIeduState extends State<HomeIedu> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: detailSubjects.length,
                 itemBuilder: (context, index) {
@@ -707,8 +774,10 @@ class _HomeIeduState extends State<HomeIedu> {
                         setState(() {
                           _detailSubject = detailSubjects[index];
                           detailSubject = index;
-                          print(
-                              '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          if (kDebugMode) {
+                            print(
+                                '_detailSubject = $_detailSubject, detailSubject = $detailSubject');
+                          }
                           fetchIeduData();
                         });
                         Get.back();
@@ -720,8 +789,8 @@ class _HomeIeduState extends State<HomeIedu> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Text(
                           detailSubjects[index],
                           style: const TextStyle(
@@ -759,17 +828,15 @@ class _HomeIeduState extends State<HomeIedu> {
                   Read.saveRead(isReadList);
                 }
               });
-              await Get.to(() =>
-                  DetailIedu(data[index]['id'], data[index]['selected']));
+              await Get.to(
+                  () => DetailIedu(data[index]['id'], data[index]['selected']));
               fetchIeduData();
             },
             child: Container(
               width: MediaQuery.of(context).size.width - 40,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
               decoration: BoxDecoration(
-                  color: isReadList.contains(data[index]['id'].toString())
-                      ? PeeroreumColor.gray[100]
-                      : PeeroreumColor.white,
+                  color: PeeroreumColor.white,
                   border:
                       Border.all(width: 1, color: PeeroreumColor.gray[200]!),
                   borderRadius: const BorderRadius.all(Radius.circular(8.0))),
@@ -796,7 +863,7 @@ class _HomeIeduState extends State<HomeIedu> {
                                     child: const SizedBox(
                                       height: 16,
                                       child: Center(
-                                        child: C2_10px_Sb(
+                                        child: C2sb(
                                           text: 'UP',
                                           color: Color(0xFFF03A2E),
                                         ),
@@ -810,8 +877,12 @@ class _HomeIeduState extends State<HomeIedu> {
                                   )
                                 : Container(),
                             Flexible(
-                                child: T4_16px(
+                                child: T4(
                               text: data[index]['title'],
+                              color: isReadList
+                                      .contains(data[index]['id'].toString())
+                                  ? PeeroreumColor.gray[500]
+                                  : PeeroreumColor.black,
                               overflow: TextOverflow.ellipsis,
                             )),
                           ],
@@ -825,13 +896,13 @@ class _HomeIeduState extends State<HomeIedu> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               decoration: BoxDecoration(
-                                color: PeeroreumColor.primaryPuple[200],
+                                color: PeeroreumColor.primaryPurple[200],
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '채택완료',
                                     color: PeeroreumColor.white,
                                   ),
@@ -842,16 +913,13 @@ class _HomeIeduState extends State<HomeIedu> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2, horizontal: 8),
                               decoration: BoxDecoration(
-                                color: isReadList
-                                        .contains(data[index]['id'].toString())
-                                    ? PeeroreumColor.gray[300]
-                                    : PeeroreumColor.gray[200],
+                                color: PeeroreumColor.gray[200],
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: SizedBox(
                                 height: 16,
                                 child: Center(
-                                  child: C2_10px_Sb(
+                                  child: C2sb(
                                     text: '미채택',
                                     color: PeeroreumColor.gray[600],
                                   ),
@@ -907,7 +975,7 @@ class _HomeIeduState extends State<HomeIedu> {
                           width: 8,
                         ),
                         Flexible(
-                          child: B4_14px_M(
+                          child: B4m(
                             text: data[index]["memberProfileDto"]["nickname"],
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -915,30 +983,34 @@ class _HomeIeduState extends State<HomeIedu> {
                         const SizedBox(
                           width: 8,
                         ),
-                        C1_12px_M(
+                        C1m(
                           text: '${timeCheck(data[index]["createdTime"])} 전',
                           color: PeeroreumColor.gray[400],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: SvgPicture.asset(
-                            'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[400],
-                          ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/icons/thumbs_up.svg',
+                          width: 14,
+                          height: 14,
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[400]!, BlendMode.srcIn),
                         ),
-                        C1_12px_M(
-                          text: '좋아요 ${data[index]["likes"]}개',
+                        const SizedBox(width: 2),
+                        C1m(
+                          text: '${data[index]["likes"]}',
                           color: PeeroreumColor.gray[400],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: SvgPicture.asset(
-                            'assets/icons/dot.svg',
-                            color: PeeroreumColor.gray[400],
-                          ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/icons/chat_drop_dots.svg',
+                          width: 14,
+                          height: 14,
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.gray[400]!, BlendMode.srcIn),
                         ),
-                        C1_12px_M(
-                          text: '댓글 ${data[index]["comments"]}개',
+                        const SizedBox(width: 2),
+                        C1m(
+                          text: '${data[index]["comments"]}',
                           color: PeeroreumColor.gray[400],
                         ),
                       ],
@@ -949,6 +1021,7 @@ class _HomeIeduState extends State<HomeIedu> {
             ),
           );
         }
+        return null;
       },
     );
   }
@@ -980,6 +1053,7 @@ class _HomeIeduState extends State<HomeIedu> {
 
   @override
   void dispose() {
+    MainTab.selected.removeListener(_onTabSelected);
     // TODO: implement dispose
     _scrollController.dispose();
     super.dispose();
