@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:photo_view/photo_view.dart';
@@ -30,6 +33,12 @@ class _ImageDetailState extends State<ImageDetail> {
     initialPage = widget.initialPage;
   }
 
+  // 작성 중 첨부한 로컬 이미지(XFile)와 서버 이미지 URL을 모두 지원
+  ImageProvider _imageProvider(dynamic image) {
+    if (image is XFile) return FileImage(File(image.path));
+    return NetworkImage(image.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +48,6 @@ class _ImageDetailState extends State<ImageDetail> {
         children: [
           CarouselSlider(
             items: imageList.map((i) {
-              var imageUrl = i.toString();
               return Container(
                   color: PeeroreumColor.black,
                   child: PhotoView(
@@ -48,7 +56,7 @@ class _ImageDetailState extends State<ImageDetail> {
                     ),
                     minScale: PhotoViewComputedScale.contained,
                     filterQuality: FilterQuality.high,
-                    imageProvider: NetworkImage(imageUrl),
+                    imageProvider: _imageProvider(i),
                     loadingBuilder: (context, event) => const Center(
                       child: CircularProgressIndicator(
                         color: PeeroreumColor.white,
