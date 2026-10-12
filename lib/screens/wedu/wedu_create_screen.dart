@@ -254,7 +254,7 @@ class _CreateWeduState extends State<CreateWedu> {
                   ),
                   Container(
                     alignment: const Alignment(0.0, 0.0),
-                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 40),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -291,25 +291,13 @@ class _CreateWeduState extends State<CreateWedu> {
                                           color: PeeroreumColor.gray[200]!,
                                         )),
                                     hintText: '같이방 이름을 입력하세요',
-                                    helperText: '같이방 이름은 만든 후에 변경할 수 없어요.',
-                                    helperStyle: const TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                    ),
                                     hintStyle: TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w400,
                                       color: PeeroreumColor.gray[600]!,
                                     ),
-                                    counterText:
-                                        '${nameValue.length} / $maxName',
-                                    counterStyle: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        color: PeeroreumColor.gray[600]!)),
+                                    counterText: ''),
                                 maxLength: maxName,
                                 onChanged: (value) {
                                   setState(() {
@@ -318,6 +306,30 @@ class _CreateWeduState extends State<CreateWedu> {
                                   });
                                 },
                               ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '같이방 이름은 만든 후에 변경할 수 없어요.',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: PeeroreumColor.gray[600],
+                                  ),
+                                ),
+                                Text(
+                                  '${nameValue.length} / $maxName',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: PeeroreumColor.gray[600],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -849,7 +861,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                     height: 8,
                                   ),
                                   SizedBox(
-                                    height: 70,
                                     width: double.infinity,
                                     child: TextFieldTags<String>(
                                       textfieldTagsController: _controller,
@@ -858,13 +869,14 @@ class _CreateWeduState extends State<CreateWedu> {
                                       validator: (String tag) {
                                         if (_controller.getTags!
                                             .contains(tag)) {
-                                          return 'you already entered that';
+                                          PeeroreumToast.show(context, '이미 입력한 해시태그예요.', isError: true);
+                                          return '중복 해시태그';
                                         } else if (_controller
                                                 .getTags!.length >=
                                             5) {
                                           PeeroreumToast.show(
-                                              context, '해시태그는 3개까지만 가능해요.', isError: true);
-                                          return '태그 15개 제한';
+                                              context, '해시태그는 최대 5개까지 적을 수 있어요.', isError: true);
+                                          return '태그 5개 제한';
                                         } else {
                                           _tag.add(tag);
                                           return null;
@@ -903,12 +915,6 @@ class _CreateWeduState extends State<CreateWedu> {
                                                 color: PeeroreumColor.error,
                                               ),
                                             ),
-                                            helperText: '띄어쓰기로 각 키워드를 구분해 주세요.',
-                                            helperStyle: const TextStyle(
-                                              fontFamily: 'Pretendard',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                            ),
                                             hintText: (inputFieldValues
                                                     .tags.isNotEmpty)
                                                 ? "#피어오름"
@@ -925,8 +931,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                                     .tags.isNotEmpty
                                                 ? SingleChildScrollView(
                                                     padding:
-                                                        const EdgeInsets.symmetric(
-                                                            horizontal: 16),
+                                                        const EdgeInsets.only(left: 16, right: 3),
                                                     controller: inputFieldValues
                                                         .tagScrollController,
                                                     scrollDirection:
@@ -1040,6 +1045,16 @@ class _CreateWeduState extends State<CreateWedu> {
                                       },
                                     ),
                                   ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '띄어쓰기로 각 키워드를 구분해 주세요.',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: PeeroreumColor.gray[600],
+                                    ),
+                                  ),
                                 ],
                               ),
                             const SizedBox(
@@ -1101,7 +1116,7 @@ class _CreateWeduState extends State<CreateWedu> {
                                         height: 8,
                                       ),
                                       SizedBox(
-                                        width: 350,
+                                        width: double.infinity,
                                         child: TextFormField(
                                             inputFormatters: [
                                               FilteringTextInputFormatter(
@@ -1115,9 +1130,9 @@ class _CreateWeduState extends State<CreateWedu> {
                                                     const EdgeInsets.symmetric(
                                                         vertical: 12,
                                                         horizontal: 16),
-                                                focusedBorder:
-                                                    const OutlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderSide: const BorderSide(
                                                     color: PeeroreumColor.black,
                                                   ),
                                                 ),
@@ -1131,23 +1146,10 @@ class _CreateWeduState extends State<CreateWedu> {
                                                               .gray[200]!,
                                                         )),
                                                 hintText: '비밀번호를 입력하세요',
-                                                helperText:
-                                                    '비밀번호는 영문 또는 숫자만 설정 가능해요.',
-                                                counterText:
-                                                    "${passwordValue.length} / $maxPassword",
+                                                counterText: '',
                                                 hintStyle: const TextStyle(
                                                   fontFamily: 'Pretendard',
                                                   fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                                helperStyle: const TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                                counterStyle: const TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontSize: 12,
                                                   fontWeight: FontWeight.w400,
                                                 )),
                                             maxLength: maxPassword,
@@ -1157,6 +1159,30 @@ class _CreateWeduState extends State<CreateWedu> {
                                                 checkValidation();
                                               });
                                             }),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '비밀번호는 영문 또는 숫자만 설정 가능해요.',
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: PeeroreumColor.gray[600],
+                                            ),
+                                          ),
+                                          Text(
+                                            '${passwordValue.length} / $maxPassword',
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: PeeroreumColor.gray[600],
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     ],
                                   )),
