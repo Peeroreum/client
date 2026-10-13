@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/pie_chart.dart';
 import 'package:peeroreum_client/screens/report.dart';
+import 'package:peeroreum_client/widgets/block_user.dart';
 
 class DetailWeduCalendar extends StatefulWidget {
   const DetailWeduCalendar(this.id, this.weduTitle, {super.key});
@@ -829,40 +830,41 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     ),
                   )),
             )
-          : GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () async {
-                await Get.to(() => Report(
-                      data: "[같이해냄] 챌린지 이미지 신고\n" "날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0, 10)}\n" "같이방 아이디 : $id\n" "같이방 이름 : $weduTitle\n" "업로드한 사람 : $successOneNickname\n",
-                    ));
-                int count = 0;
-                Get.until((route) {
-                  bool shouldPop = count == 2;
-                  count++;
-                  return shouldPop;
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    0,
-                    16,
-                    0,
-                    MediaQuery.of(context).viewPadding.bottom > 20
-                        ? MediaQuery.of(context).viewPadding.bottom
-                        : 20.0),
-                height: 56,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 20,
-                ),
-                child: const Text('신고하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.error,
-                    )),
+          : Padding(
+              padding:
+                  EdgeInsets.only(top: 16, bottom: sheetBottomInset(context)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ModerationSheetItem(
+                    text: '신고하기',
+                    onTap: () async {
+                      await Get.to(() => Report(
+                            data: "[같이해냄] 챌린지 이미지 신고\n" "날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0, 10)}\n" "같이방 아이디 : $id\n" "같이방 이름 : $weduTitle\n" "업로드한 사람 : $successOneNickname\n",
+                            targetType: 'CHALLENGE_IMAGE',
+                            targetId: id,
+                            reportedNickname: successOneNickname,
+                          ));
+                      int count = 0;
+                      Get.until((route) {
+                        bool shouldPop = count == 2;
+                        count++;
+                        return shouldPop;
+                      });
+                    },
+                  ),
+                  ModerationSheetItem(
+                    text: '$successOneNickname 님 차단하기',
+                    onTap: () async {
+                      final navigator = Navigator.of(context);
+                      if (await confirmAndBlockUser(context, successOneNickname)) {
+                        navigator.pop();
+                        navigator.pop();
+                        fetchData();
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
     );
@@ -960,6 +962,26 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               ],
             ),
             const SizedBox(height: 20),
+            if (challengeImage.isEmpty)
+              // 차단한 회원의 인증 사진은 서버에서 빈 목록으로 내려옴
+              Container(
+                width: double.maxFinite,
+                height: (MediaQuery.of(context).size.width - 40) * 4 / 3,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: PeeroreumColor.gray[100],
+                ),
+                child: Text(
+                  '차단한 회원의 인증 사진이에요.',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: PeeroreumColor.gray[500]),
+                ),
+              )
+            else
             CarouselSlider(
               items: challengeImage.map((i) {
                 var imageUrl = i.toString();

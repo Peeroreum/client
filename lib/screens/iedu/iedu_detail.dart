@@ -16,6 +16,7 @@ import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/screens/iedu/iedu_whiteboard.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/report.dart';
+import 'package:peeroreum_client/widgets/block_user.dart';
 
 class DetailIedu extends StatefulWidget {
   final int id;
@@ -988,28 +989,35 @@ class _DetailIeduState extends State<DetailIedu> {
                     ),
                   )),
             )
-          : GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Get.to(() => Report(
-                      data: "[내가해냄] 내가 해냄 질문 신고\n" "날짜 : $date\n" "질문 아이디 : $id\n" "업로드한 사람 : $name\n",
-                    ));
-              },
-              child: Container(
-                margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
-                height: 56,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 20,
-                ),
-                child: const Text('신고하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.error,
-                    )),
+          : Padding(
+              padding:
+                  EdgeInsets.only(top: 16, bottom: sheetBottomInset(context)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ModerationSheetItem(
+                    text: '신고하기',
+                    onTap: () async {
+                      final blocked = await Get.to(() => Report(
+                            data: "[내가해냄] 내가 해냄 질문 신고\n" "날짜 : $date\n" "질문 아이디 : $id\n" "업로드한 사람 : $name\n",
+                            targetType: 'QUESTION',
+                            targetId: id,
+                            reportedNickname: writerName,
+                          ));
+                      if (blocked == true) {
+                        Get.offAllNamed('/home/iedu');
+                      }
+                    },
+                  ),
+                  ModerationSheetItem(
+                    text: '$writerName 님 차단하기',
+                    onTap: () async {
+                      if (await confirmAndBlockUser(context, writerName)) {
+                        Get.offAllNamed('/home/iedu');
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
     );
@@ -1814,28 +1822,39 @@ class _MakeCommentState extends State<MakeComment> {
                     ),
                   )),
             )
-          : GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Get.to(() => Report(
-                      data: "[내가해냄] 내가 해냄 답변 신고\n" "날짜 : ${widget.createdTime}\n" "답변 아이디 : ${widget.id}\n" "업로드한 사람 : ${widget.name}\n",
-                    ));
-              },
-              child: Container(
-                margin: EdgeInsets.fromLTRB(0, 16, 0, MediaQuery.of(context).viewPadding.bottom > 20 ? MediaQuery.of(context).viewPadding.bottom : 20.0),
-                height: 56,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 20,
-                ),
-                child: const Text('신고하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.error,
-                    )),
+          : Padding(
+              padding:
+                  EdgeInsets.only(top: 16, bottom: sheetBottomInset(context)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ModerationSheetItem(
+                    text: '신고하기',
+                    onTap: () async {
+                      final updateData = widget.updateData;
+                      final blocked = await Get.to(() => Report(
+                            data: "[내가해냄] 내가 해냄 답변 신고\n" "날짜 : ${widget.createdTime}\n" "답변 아이디 : ${widget.id}\n" "업로드한 사람 : ${widget.name}\n",
+                            targetType: 'ANSWER',
+                            targetId: widget.id,
+                            reportedNickname: writerName,
+                          ));
+                      if (blocked == true) {
+                        updateData();
+                      }
+                    },
+                  ),
+                  ModerationSheetItem(
+                    text: '$writerName 님 차단하기',
+                    onTap: () async {
+                      final updateData = widget.updateData;
+                      final navigator = Navigator.of(context);
+                      if (await confirmAndBlockUser(context, writerName)) {
+                        navigator.pop();
+                        updateData();
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
     );

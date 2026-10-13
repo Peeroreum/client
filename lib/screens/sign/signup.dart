@@ -187,6 +187,26 @@ class _ServiceTermsState extends State<ServiceTerms> {
                 ),
               ),
               Container(
+                //커뮤니티 운영 원칙 (App Store 1.2 대응)
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: PeeroreumColor.gray[50],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '피어오름은 욕설·혐오·음란물 등 불쾌감을 주는 콘텐츠와 다른 회원을 괴롭히는 행위를 일절 허용하지 않아요. '
+                  '신고된 콘텐츠는 24시간 이내에 검토해 삭제하고, 위반한 회원은 이용이 제한돼요.',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 13,
+                    height: 1.5,
+                    fontWeight: FontWeight.w400,
+                    color: PeeroreumColor.gray[700],
+                  ),
+                ),
+              ),
+              Container(
                 //약관 전체 동의
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Row(

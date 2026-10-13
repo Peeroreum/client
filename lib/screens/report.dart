@@ -4,13 +4,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/widgets/block_user.dart';
 
 class Report extends StatefulWidget {
   final dynamic data;
 
-  const Report({Key? key, required this.data}) : super(key: key);
+  /// 신고 대상 종류: QUESTION, ANSWER, CHALLENGE_IMAGE, MEMBER
+  final String targetType;
+  final dynamic targetId;
+
+  /// 신고 대상 회원 닉네임 (있으면 '함께 차단하기' 노출)
+  final String? reportedNickname;
+
+  const Report(
+      {Key? key,
+      required this.data,
+      this.targetType = 'MEMBER',
+      this.targetId,
+      this.reportedNickname})
+      : super(key: key);
 
   @override
   State<Report> createState() => _ReportState();
@@ -29,6 +42,8 @@ class _ReportState extends State<Report> {
   String otherReason = "";
   List<bool> reason = [false, false, false, false];
   String detailReason = "";
+  bool alsoBlock = false;
+  bool isSubmitting = false;
 
   void updateReason(List<bool> newReason, String newSelectedReason) {
     setState(() {
@@ -37,25 +52,31 @@ class _ReportState extends State<Report> {
     });
   }
 
-  void sendMail() async {
-    String username = 'peeroreum.help@gmail.com';
-    String password = 'djsgvbwgyvqesydk';
-    final smtpServer = gmail(username, password);
-    final message = Message()
-      ..from = Address(username, 'Mail Service')
-      ..recipients.add('peer@teachlog.kr')
-      ..subject = reason[3] == false
-          ? selectedReason
-          : '$selectedReason-$otherReason' //신고 사유에 따른 이메일 제목 설정
-      ..text = '$data\n$detailReason';
-
+  Future<bool> submitReport() async {
+    final targetId = widget.targetId == null
+        ? null
+        : int.tryParse(widget.targetId.toString());
     try {
-      await send(message, smtpServer);
+      final response = await ApiClient().post('/report', data: {
+        'targetType': widget.targetType,
+        'targetId': targetId,
+        'reportedNickname': widget.reportedNickname,
+        'reason': reason[3] ? '$selectedReason-$otherReason' : selectedReason,
+        'detail': detailReason,
+        'context': data,
+        'block': alsoBlock,
+      });
+      if (response.statusCode == 200) return true;
+      if (mounted) {
+        PeeroreumToast.show(context, ApiClient.errorMessage(response),
+            isError: true);
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }
     }
+    return false;
   }
 
   @override
@@ -243,7 +264,8 @@ class _ReportState extends State<Report> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   width: double.infinity,
-                  height: MediaQuery.of(context).size.height - 397,
+                  height: MediaQuery.of(context).size.height -
+                      (widget.reportedNickname != null ? 443 : 397),
                   decoration: BoxDecoration(
                       border: Border.all(color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.circular(8)),
@@ -267,6 +289,39 @@ class _ReportState extends State<Report> {
               ],
             ),
           ),
+          //함께 차단하기
+          if (widget.reportedNickname != null)
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => setState(() => alsoBlock = !alsoBlock),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                child: Row(
+                  children: [
+                    Icon(
+                      alsoBlock
+                          ? Icons.check_box_rounded
+                          : Icons.check_box_outline_blank_rounded,
+                      size: 22,
+                      color: alsoBlock
+                          ? PeeroreumColor.primaryPurple[400]
+                          : PeeroreumColor.gray[400],
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${widget.reportedNickname} 님을 함께 차단할게요',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.gray[800]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           //신고하기 버튼
           Container(
             color: PeeroreumColor.white,
@@ -281,11 +336,26 @@ class _ReportState extends State<Report> {
                         selectedReason == '기타' &&
                             otherReason != "" &&
                             detailReason != "")
-                    ? () {
-                        sendMail();
+                    ? () async {
+                        if (isSubmitting) return;
+                        final confirmed = await showModerationConfirm(
+                          context,
+                          title: widget.reportedNickname != null
+                              ? '${widget.reportedNickname} 님을 신고할까요?'
+                              : '신고할까요?',
+                          description:
+                              '신고 내용은 운영팀에 전달되며,\n검토 후 운영 정책에 따라 조치될 수 있어요.',
+                          confirmText: '신고',
+                        );
+                        if (!confirmed || !mounted) return;
+                        setState(() => isSubmitting = true);
+                        final success = await submitReport();
+                        if (!mounted) return;
+                        setState(() => isSubmitting = false);
+                        if (!success) return;
                         PeeroreumToast.show(context, "신고가 접수되었어요.");
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pop(context, alsoBlock);
+                        Navigator.pop(context, alsoBlock);
                       }
                     : null,
                 style: ButtonStyle(

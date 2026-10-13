@@ -23,6 +23,7 @@ import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_in.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/mypage_profile_friend.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:peeroreum_client/widgets/block_user.dart';
 
 class MyPageProfile extends StatefulWidget {
   final String nickname;
@@ -62,6 +63,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     '대학'
   ];
   bool isFriend = false;
+  bool isBlocked = false;
   List<dynamic> badges = [];
   int? grade;
   String? profileImage;
@@ -129,6 +131,7 @@ class _MyPageProfileState extends State<MyPageProfile> {
     profileImage = data["profileImage"];
     backgroundImage = data["backgroundImage"];
     isFriend = data['following'];
+    isBlocked = data['blocked'] ?? false;
     withPeerDay = data['activeDaysCount'];
     // 첫 화면부터 아이콘 색이 맞도록 배경 이미지를 미리 받아 밝기 계산 (최대 2초)
     _darkHeader.value = await _isCoverLight(backgroundImage)
@@ -350,6 +353,10 @@ class _MyPageProfileState extends State<MyPageProfile> {
         PeeroreumToast.show(context, "자신은 영원한 친구예요.", isError: true);
       } else if (friendName.statusCode == 409) {
         PeeroreumToast.show(context, "이미 팔로우 중인 회원이에요.", isError: true);
+      } else if (friendName.statusCode == 403) {
+        // 차단 관계인 회원
+        PeeroreumToast.show(context, ApiClient.errorMessage(friendName),
+            isError: true);
       } else {
         setState(() {
           isFriend = false;
@@ -1107,9 +1114,15 @@ class _MyPageProfileState extends State<MyPageProfile> {
             InkWell(
               splashColor: Colors.transparent,
               highlightColor: PeeroreumColor.gray[100],
-              onTap: () {
-                Get.to(
-                    () => Report(data: "[프로필] 유저 신고\n" "유저 아이디 : $nickname\n"));
+              onTap: () async {
+                final blocked = await Get.to(() => Report(
+                      data: "[프로필] 유저 신고\n" "유저 아이디 : $nickname\n",
+                      targetType: 'MEMBER',
+                      reportedNickname: nickname,
+                    ));
+                if (blocked == true) {
+                  Get.back();
+                }
               },
               child: SizedBox(
                 height: 56,
@@ -1119,6 +1132,37 @@ class _MyPageProfileState extends State<MyPageProfile> {
                     B3r(
                       text: '$nickname 신고하기',
                       color: PeeroreumColor.error,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: PeeroreumColor.gray[100],
+              onTap: () async {
+                final navigator = Navigator.of(context);
+                if (isBlocked) {
+                  if (await unblockUser(context, nickname)) {
+                    navigator.pop();
+                    if (mounted) setState(() => isBlocked = false);
+                  }
+                } else if (await confirmAndBlockUser(context, nickname)) {
+                  // 차단한 회원의 프로필에서 나가기 (바텀시트 + 프로필)
+                  navigator.pop();
+                  navigator.pop();
+                }
+              },
+              child: SizedBox(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    B3r(
+                      text: isBlocked ? '$nickname 차단 해제하기' : '$nickname 차단하기',
+                      color: isBlocked
+                          ? PeeroreumColor.gray[800]
+                          : PeeroreumColor.error,
                     ),
                   ],
                 ),
