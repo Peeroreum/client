@@ -52,7 +52,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
       case 'apple':
         return 'Apple';
       default:
-        return '소셜 로그인';
+        return '소셜';
     }
   }
 
@@ -138,6 +138,36 @@ class _MyPageAccountState extends State<MyPageAccount> {
     );
   }
 
+  /// 이메일 오른쪽 가입 방식 표시 (로고 + 이름)
+  Widget providerBadge() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (providerLogo != null) ...[
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                  image: AssetImage(providerLogo!), fit: BoxFit.cover),
+            ),
+          ),
+          const SizedBox(width: 6),
+        ],
+        Text(
+          providerLabel,
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+            color: PeeroreumColor.gray[500],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget bodyWidget() {
     return Container(
       color: PeeroreumColor.white,
@@ -154,60 +184,13 @@ class _MyPageAccountState extends State<MyPageAccount> {
             ),
             child: Column(
               children: [
-                if (provider != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '로그인 방식',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.gray[800],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            if (providerLogo != null) ...[
-                              Container(
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      color: PeeroreumColor.gray[200]!),
-                                  image: DecorationImage(
-                                      image: AssetImage(providerLogo!),
-                                      fit: BoxFit.cover),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                            ],
-                            Text(
-                              providerLabel,
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: PeeroreumColor.gray[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
+                      Expanded(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -222,25 +205,35 @@ class _MyPageAccountState extends State<MyPageAccount> {
                           const SizedBox(
                             height: 4,
                           ),
-                          SizedBox(
-                            width: 250,
-                            child: Text(
-                              email ?? 'error@mail.com',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: PeeroreumColor.gray[600],
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  email ?? 'error@mail.com',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: PeeroreumColor.gray[600],
+                                  ),
+                                  // 긴 이메일은 두 줄까지 표시
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              // 소셜 가입자만 가입 방식 표시
+                              if (provider != null && !isEmailAccount) ...[
+                                const SizedBox(width: 8),
+                                providerBadge(),
+                              ],
+                            ],
                           ),
                         ],
                       ),
-                      Container(),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
                 // 비밀번호 변경은 이메일 가입자만
                 if (isEmailAccount)
                 Padding(
