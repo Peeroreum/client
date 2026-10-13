@@ -395,7 +395,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                'SNS 계정으로 로그인',
+                                '소셜 계정으로 로그인',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w500,
