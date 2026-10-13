@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_api.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_model.dart';
@@ -20,9 +21,11 @@ class FollowingController extends GetxController {
   Future<void> fetchMyNickname() async {
     try {
       myNickname.value =
-          await FlutterSecureStorage().read(key: "nickname") ?? "";
+          await const FlutterSecureStorage().read(key: "nickname") ?? "";
     } catch (e) {
-      print("Error fetching my nickname: $e");
+      if (kDebugMode) {
+        print("Error fetching my nickname: $e");
+      }
     }
   }
 
@@ -32,13 +35,21 @@ class FollowingController extends GetxController {
       final result = await provider.getFriends(nickname);
       if (result != null) {
         followings.assignAll(result);
-        print(result);
-        print("팔로잉 성공");
+        if (kDebugMode) {
+          print(result);
+        }
+        if (kDebugMode) {
+          print("팔로잉 성공");
+        }
       } else {
-        print("팔로잉 $nickname 에러");
+        if (kDebugMode) {
+          print("팔로잉 $nickname 에러");
+        }
       }
     } catch (e) {
-      print("Error 팔로잉: $e");
+      if (kDebugMode) {
+        print("Error 팔로잉: $e");
+      }
     } finally {
       isLoading(false);
     }

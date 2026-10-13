@@ -1,8 +1,9 @@
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/model/NotificationRequest.dart';
+import 'package:flutter/foundation.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/model/notification_request.dart';
 
 class NotificationApi {
-  static sendCompliment(
+  static void sendCompliment(
       String sender, String receiver, String title, String data) {
     NotificationRequest notificationRequest = NotificationRequest(
         nickname: receiver,
@@ -13,7 +14,7 @@ class NotificationApi {
     postApi(notificationRequest);
   }
 
-  static sendEncouragement(
+  static void sendEncouragement(
       String sender, String receiver, String title, String data) {
     NotificationRequest notificationRequest = NotificationRequest(
         nickname: receiver,
@@ -24,17 +25,23 @@ class NotificationApi {
     postApi(notificationRequest);
   }
 
-  static postApi(NotificationRequest notificationRequest) async {
+  static Future<void> postApi(NotificationRequest notificationRequest) async {
     try {
       var result = await ApiClient().post('/member/notification',
-          data: notificationRequest.toJson());
+          data: notificationRequest.toJson(), options: ApiClient.silent);
       if (result.statusCode == 200) {
-        print("push 알림 성공");
+        if (kDebugMode) {
+          print("push 알림 성공");
+        }
       } else {
-        print("push 알림 실패 ${result.statusCode}");
+        if (kDebugMode) {
+          print("push 알림 실패 ${result.statusCode}");
+        }
       }
     } catch (e) {
-      print('Unexpected error: $e');
+      if (kDebugMode) {
+        print('Unexpected error: $e');
+      }
     }
   }
 }

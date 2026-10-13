@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
-import '../signin_screen.dart';
 
 class CompletePassword extends StatelessWidget {
+  const CompletePassword({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +61,17 @@ class CompletePassword extends StatelessWidget {
               Get.offAll(() => EmailSignIn(),
                   transition: Transition.noTransition);
             },
+            style: ButtonStyle(
+              backgroundColor:
+                  WidgetStateProperty.all(PeeroreumColor.primaryPurple[400]),
+              padding:
+                  WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
             child: Text(
               '로그인하기',
               style: TextStyle(
@@ -67,17 +79,6 @@ class CompletePassword extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: PeeroreumColor.white,
-              ),
-            ),
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(PeeroreumColor.primaryPuple[400]),
-              padding:
-                  MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 12)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
               ),
             ),
           ),

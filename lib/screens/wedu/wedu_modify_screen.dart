@@ -1,22 +1,23 @@
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:peeroreum_client/widgets/custom_image_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:textfield_tags/textfield_tags.dart';
-import 'package:peeroreum_client/model/Wedu.dart';
+import 'package:peeroreum_client/model/wedu.dart';
 
 class ModifyWedu extends StatefulWidget {
-  ModifyWedu(
+  const ModifyWedu(
       this.id,
       this.weduTitle,
       this.weduImage,
@@ -30,31 +31,20 @@ class ModifyWedu extends StatefulWidget {
       this.weduPassword,
       {super.key});
 
-  int id;
-  dynamic weduTitle = '';
-  dynamic weduImage;
-  dynamic weduDday = '';
-  dynamic weduSubject = '';
-  dynamic weduGrade = '';
-  dynamic weduAttendingPeopleNum = '';
-  dynamic weduMaxPeopleNum = '';
-  List<dynamic> weduHashTags = [];
-  dynamic weduLocked = false;
-  dynamic weduPassword = '';
+  final int id;
+  final dynamic weduTitle;
+  final dynamic weduImage;
+  final dynamic weduDday;
+  final dynamic weduSubject;
+  final dynamic weduGrade;
+  final dynamic weduAttendingPeopleNum;
+  final dynamic weduMaxPeopleNum;
+  final List<dynamic> weduHashTags;
+  final dynamic weduLocked;
+  final dynamic weduPassword;
 
   @override
-  State<ModifyWedu> createState() => _ModifyWeduState(
-      id,
-      weduTitle,
-      weduImage,
-      weduDday,
-      weduSubject,
-      weduGrade,
-      weduAttendingPeopleNum,
-      weduMaxPeopleNum,
-      weduHashTags,
-      weduLocked,
-      weduPassword);
+  State<ModifyWedu> createState() => _ModifyWeduState();
 }
 
 List<int> headcount = <int>[10, 30, 50, 70, 100];
@@ -80,30 +70,20 @@ const List<String> grade = <String>[
 ];
 
 class _ModifyWeduState extends State<ModifyWedu> {
-  _ModifyWeduState(
-      this.id,
-      this.weduTitle,
-      this.weduImage,
-      this.weduDday,
-      this.weduSubject,
-      this.weduGrade,
-      this.weduAttendingPeopleNum,
-      this.weduMaxPeopleNum,
-      this.weduHashTags,
-      this.weduLocked,
-      this.weduPassword);
-
-  int id;
-  dynamic weduTitle;
-  dynamic weduImage;
-  dynamic weduDday;
-  dynamic weduSubject;
-  dynamic weduGrade;
-  dynamic weduAttendingPeopleNum;
-  dynamic weduMaxPeopleNum;
-  List<dynamic> weduHashTags;
-  dynamic weduLocked;
-  dynamic weduPassword;
+  late int id;
+  late dynamic weduTitle;
+  late dynamic weduImage;
+  late dynamic weduDday;
+  late dynamic weduSubject;
+  late dynamic weduGrade;
+  late dynamic weduAttendingPeopleNum;
+  late dynamic weduMaxPeopleNum;
+  late List<dynamic> weduHashTags;
+  late final List<dynamic> _initialHashTags;
+  late final bool _initialLocked;
+  late final String _initialPassword;
+  late dynamic weduLocked;
+  late dynamic weduPassword;
 
   late DateTime date = DateTime.now().add(Duration(days: weduDday));
 
@@ -128,10 +108,24 @@ class _ModifyWeduState extends State<ModifyWedu> {
   @override
   void initState() {
     super.initState();
+    id = widget.id;
+    weduTitle = widget.weduTitle;
+    weduImage = widget.weduImage;
+    weduDday = widget.weduDday;
+    weduSubject = widget.weduSubject;
+    weduGrade = widget.weduGrade;
+    weduAttendingPeopleNum = widget.weduAttendingPeopleNum;
+    weduMaxPeopleNum = widget.weduMaxPeopleNum;
+    weduHashTags = List.of(widget.weduHashTags);
+    _initialHashTags = List.of(widget.weduHashTags);
+    weduLocked = widget.weduLocked;
+    weduPassword = widget.weduPassword;
     _controller = TextfieldTagsController<String>();
     pwController = TextEditingController(text: weduPassword);
     weduPassword ??= '';
     checkLocked();
+    _initialLocked = weduLocked;
+    _initialPassword = weduPassword;
     for (int i = 0; i < headcount.length; i++) {
       if (weduMaxPeopleNum == headcount[i]) {
         dropdownHeadcount = headcount[i];
@@ -149,12 +143,15 @@ class _ModifyWeduState extends State<ModifyWedu> {
   }
 
   void checkValidation() {
-    if ((weduImage != _image ||
-            weduMaxPeopleNum != dropdownHeadcount ||
-            weduHashTags != "") &&
+    final isChanged = _image != null ||
+        weduMaxPeopleNum != dropdownHeadcount ||
+        !listEquals(weduHashTags, _initialHashTags) ||
+        weduLocked != _initialLocked ||
+        weduPassword != _initialPassword;
+    if (isChanged &&
         (weduLocked == false || (weduLocked == true && weduPassword != ""))) {
       setState(() {
-        _nextColor = PeeroreumColor.primaryPuple[400]!;
+        _nextColor = PeeroreumColor.primaryPurple[400]!;
       });
     } else {
       setState(() {
@@ -167,12 +164,16 @@ class _ModifyWeduState extends State<ModifyWedu> {
 
   Future getImage() async {
     final selected = await showCustomImagePicker(context, multiple: false);
-    if (selected == null || selected.isEmpty) return;
+    if (selected == null || selected.isEmpty) {
+      return;
+    }
+    if (!mounted) return;
     final cropped = await cropImage(context, selected.first);
     if (cropped != null) {
       setState(() {
         _image = cropped;
       });
+      checkValidation();
     }
   }
 
@@ -225,7 +226,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
       actions: [
         TextButton(
           onPressed: () {
-            if (_nextColor == PeeroreumColor.primaryPuple[400]) {
+            if (_nextColor == PeeroreumColor.primaryPurple[400]) {
               fetchWedu();
             } else {
               return;
@@ -260,7 +261,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
             ),
             Container(
               alignment: const Alignment(0.0, 0.0),
-              margin: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -407,25 +408,38 @@ class _ModifyWeduState extends State<ModifyWedu> {
                       color: PeeroreumColor.gray[200]!,
                     )),
                 hintText: weduTitle,
-                helperText: '같이방 이름은 만든 후에 변경할 수 없어요.',
-                helperStyle: const TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                ),
                 hintStyle: const TextStyle(
                   fontSize: 14,
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w400,
                   color: PeeroreumColor.black,
                 ),
-                counterText: '${weduTitle.length} / $maxName',
-                counterStyle: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: PeeroreumColor.gray[600]!)),
+              ),
           ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '같이방 이름은 만든 후에 변경할 수 없어요.',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: PeeroreumColor.gray[600],
+              ),
+            ),
+            Text(
+              '${weduTitle.length} / $maxName',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: PeeroreumColor.gray[600],
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -658,7 +672,6 @@ class _ModifyWeduState extends State<ModifyWedu> {
           height: 8,
         ),
         SizedBox(
-          height: 70,
           width: double.infinity,
           child: TextFieldTags(
             textfieldTagsController: _controller,
@@ -666,13 +679,15 @@ class _ModifyWeduState extends State<ModifyWedu> {
             textSeparators: const [' '],
             validator: (String tag) {
               if (_controller.getTags!.contains(tag)) {
-                return 'you already entered that';
+                PeeroreumToast.show(context, '이미 입력한 해시태그예요.', isError: true);
+                return '중복 해시태그';
               } else if (_controller.getTags!.length >= 5) {
                 PeeroreumToast.show(context, '해시태그는 최대 5개까지 적을 수 있어요.',
                     isError: true);
                 return '태그 5개 제한';
               } else {
                 weduHashTags.add(tag);
+                checkValidation();
                 return null;
               }
             },
@@ -702,12 +717,6 @@ class _ModifyWeduState extends State<ModifyWedu> {
                       color: PeeroreumColor.error,
                     ),
                   ),
-                  helperText: '띄어쓰기로 각 키워드를 구분해 주세요.',
-                  helperStyle: const TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
                   hintText: (inputFieldValues.tags.isNotEmpty)
                       ? "#피어오름"
                       : "#피어오름 #오르미",
@@ -719,7 +728,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                       const BoxConstraints(maxWidth: 350 * 0.8),
                   prefixIcon: inputFieldValues.tags.isNotEmpty
                       ? SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.only(left: 16, right: 3),
                           controller: inputFieldValues.tagScrollController,
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -727,7 +736,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                             return Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: PeeroreumColor.primaryPuple[400]!),
+                                    color: PeeroreumColor.primaryPurple[400]!),
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(20.0),
                                 ),
@@ -751,7 +760,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               color: PeeroreumColor
-                                                  .primaryPuple[200],
+                                                  .primaryPurple[200],
                                             ),
                                           ),
                                           TextSpan(
@@ -761,7 +770,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               color: PeeroreumColor
-                                                  .primaryPuple[400],
+                                                  .primaryPurple[400],
                                             ),
                                           ),
                                         ],
@@ -779,6 +788,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                                     onTap: () {
                                       inputFieldValues.onTagDelete(tag);
                                       weduHashTags.remove(tag);
+                                      checkValidation();
                                     },
                                   )
                                 ],
@@ -792,6 +802,16 @@ class _ModifyWeduState extends State<ModifyWedu> {
                 onSubmitted: inputFieldValues.onSubmitted,
               );
             },
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '띄어쓰기로 각 키워드를 구분해 주세요.',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: PeeroreumColor.gray[600],
           ),
         ),
       ],
@@ -829,7 +849,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
               ],
             ),
             CupertinoSwitch(
-                activeColor: const Color(0xff7260f8),
+                activeTrackColor: const Color(0xff7260f8),
                 value: weduLocked,
                 onChanged: (bool value) {
                   setState(() {
@@ -854,7 +874,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
                   height: 8,
                 ),
                 SizedBox(
-                  width: 350,
+                  width: double.infinity,
                   child: TextFormField(
                       controller: pwController,
                       inputFormatters: [
@@ -867,8 +887,9 @@ class _ModifyWeduState extends State<ModifyWedu> {
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(
                               color: PeeroreumColor.black,
                             ),
                           ),
@@ -878,23 +899,12 @@ class _ModifyWeduState extends State<ModifyWedu> {
                                 color: PeeroreumColor.gray[200]!,
                               )),
                           hintText: '비밀번호를 입력하세요',
-                          helperText: '비밀번호는 영문 또는 숫자만 설정 가능해요.',
-                          counterText: "${weduPassword.length} / $maxPassword",
+                          counterText: '',
                           hintStyle: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: PeeroreumColor.gray[600]),
-                          helperStyle: const TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          counterStyle: const TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          )),
+                              color: PeeroreumColor.gray[600])),
                       maxLength: maxPassword,
                       onChanged: (value) {
                         setState(() {
@@ -902,6 +912,30 @@ class _ModifyWeduState extends State<ModifyWedu> {
                           checkValidation();
                         });
                       }),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '비밀번호는 영문 또는 숫자만 설정 가능해요.',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.gray[600],
+                      ),
+                    ),
+                    Text(
+                      '${weduPassword.length} / $maxPassword',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: PeeroreumColor.gray[600],
+                      ),
+                    ),
+                  ],
                 )
               ],
             )),
@@ -910,7 +944,7 @@ class _ModifyWeduState extends State<ModifyWedu> {
   }
 
   void fetchWedu() async {
-    var file;
+    dio.MultipartFile file;
     var weduMap = <String, dynamic>{
       'maximumPeople': dropdownHeadcount,
       'hashTags': weduHashTags,
@@ -926,7 +960,15 @@ class _ModifyWeduState extends State<ModifyWedu> {
 
   modifyAPI(weduMap) async {
     dio.FormData formData = dio.FormData.fromMap(weduMap);
-    var weduModify = await ApiClient().putForm('/wedu/$id', formData);
+    final dynamic weduModify;
+    try {
+      weduModify = await ApiClient().putForm('/wedu/$id', formData);
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, '같이방 수정을 실패했어요.', isError: true);
+      return;
+    }
+    if (!mounted) return;
     if (weduModify.statusCode == 200) {
       PeeroreumToast.show(context, '같이방 수정을 완료했어요.');
       Get.back();
@@ -934,7 +976,9 @@ class _ModifyWeduState extends State<ModifyWedu> {
       Get.back();
       Get.to(() => DetailWedu(id));
     } else {
-      print("에러${weduModify.statusCode}");
+      if (kDebugMode) {
+        print("에러${weduModify.statusCode}");
+      }
       PeeroreumToast.show(context, '같이방 수정을 실패했어요.', isError: true);
     }
   }

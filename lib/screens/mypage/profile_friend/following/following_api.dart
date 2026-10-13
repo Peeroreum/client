@@ -1,4 +1,5 @@
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:flutter/foundation.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_model.dart';
 
 class FollowingProvider {
@@ -8,11 +9,15 @@ class FollowingProvider {
       if (result.statusCode == 200) {
         return friendFromJson(result.data);
       } else {
-        print("에러${result.statusCode}");
+        if (kDebugMode) {
+          print("에러${result.statusCode}");
+        }
         return null;
       }
     } catch (e) {
-      print("에러: $e");
+      if (kDebugMode) {
+        print("에러: $e");
+      }
       return null;
     }
   }

@@ -1,12 +1,31 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 
-/// 이미지를 크롭합니다. 취소 시 null 반환.
+/// 이미지 압축. 최대 1080px, 품질 85%.
+Future<XFile> compressImage(XFile image) async {
+  final dir = await getTemporaryDirectory();
+  final targetPath =
+      '${dir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+  final result = await FlutterImageCompress.compressAndGetFile(
+    image.path,
+    targetPath,
+    minWidth: 1080,
+    minHeight: 1080,
+    quality: 85,
+  );
+  return result != null ? XFile(result.path) : image;
+}
+
+/// 이미지 크롭. 취소 시 null 반환.
 Future<XFile?> cropImage(BuildContext context, XFile image) async {
   final cropped = await ImageCropper().cropImage(
     sourcePath: image.path,
@@ -15,7 +34,7 @@ Future<XFile?> cropImage(BuildContext context, XFile image) async {
         toolbarTitle: '이미지 편집',
         toolbarColor: Colors.black,
         toolbarWidgetColor: Colors.white,
-        activeControlsWidgetColor: PeeroreumColor.primaryPuple[400]!,
+        activeControlsWidgetColor: PeeroreumColor.primaryPurple[400]!,
         lockAspectRatio: false,
         hideBottomControls: false,
       ),
@@ -27,7 +46,8 @@ Future<XFile?> cropImage(BuildContext context, XFile image) async {
       ),
     ],
   );
-  return cropped != null ? XFile(cropped.path) : null;
+  if (cropped == null) return null;
+  return await compressImage(XFile(cropped.path));
 }
 
 /// 커스텀 갤러리 피커를 바텀시트로 표시합니다.
@@ -39,6 +59,11 @@ Future<List<XFile>?> showCustomImagePicker(
   bool multiple = true,
   int maxCount = 10,
 }) {
+  // Android는 Play 사진 권한 정책상 갤러리 전체 접근 대신 시스템 사진 선택 도구 사용
+  if (Platform.isAndroid) {
+    return _showSystemImagePicker(context,
+        multiple: multiple, maxCount: maxCount);
+  }
   return showModalBottomSheet<List<XFile>>(
     context: context,
     isScrollControlled: true,
@@ -47,6 +72,69 @@ Future<List<XFile>?> showCustomImagePicker(
       multiple: multiple,
       maxCount: maxCount,
     ),
+  );
+}
+
+/// 카메라 촬영 또는 시스템 사진 선택 도구(권한 불필요)로 이미지 선택
+Future<List<XFile>?> _showSystemImagePicker(
+  BuildContext context, {
+  required bool multiple,
+  required int maxCount,
+}) async {
+  final source = await showModalBottomSheet<ImageSource>(
+    context: context,
+    backgroundColor: PeeroreumColor.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _sourceTile(context, Icons.camera_alt_outlined, '카메라로 촬영',
+                ImageSource.camera),
+            _sourceTile(context, Icons.photo_library_outlined, '앨범에서 선택',
+                ImageSource.gallery),
+          ],
+        ),
+      ),
+    ),
+  );
+  if (source == null) return null;
+
+  final picker = ImagePicker();
+  final List<XFile> picked;
+  if (source == ImageSource.camera || !multiple || maxCount <= 1) {
+    final image = await picker.pickImage(source: source);
+    picked = image == null ? [] : [image];
+  } else {
+    picked = await picker.pickMultiImage(limit: maxCount);
+  }
+  if (picked.isEmpty) return null;
+
+  final files = <XFile>[];
+  for (final image in picked.take(maxCount)) {
+    files.add(await compressImage(image));
+  }
+  return files;
+}
+
+Widget _sourceTile(
+    BuildContext context, IconData icon, String label, ImageSource source) {
+  return ListTile(
+    leading: Icon(icon, color: PeeroreumColor.gray[800]),
+    title: Text(
+      label,
+      style: TextStyle(
+        fontFamily: 'Pretendard',
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: PeeroreumColor.gray[800],
+      ),
+    ),
+    onTap: () => Navigator.pop(context, source),
   );
 }
 
@@ -71,6 +159,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
   final List<AssetEntity> _selectedPhotos = [];
   final Map<String, Future<Uint8List?>> _thumbnailCache = {};
   bool _loading = true;
+  bool _attaching = false;
   bool _permissionDenied = false;
 
   @override
@@ -140,17 +229,60 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null && mounted) {
-      Navigator.pop(context, [image]);
+      final compressed = await compressImage(image);
+      if (!mounted) return;
+      Navigator.pop(context, [compressed]);
     }
   }
 
   Future<void> _onAttach() async {
+    if (_attaching) return;
+    setState(() => _attaching = true);
     final files = <XFile>[];
+    int failed = 0;
     for (final asset in _selectedPhotos) {
-      final file = await asset.file;
-      if (file != null) files.add(XFile(file.path));
+      final file = await _assetToFile(asset);
+      if (file == null) {
+        failed++;
+        continue;
+      }
+      files.add(await compressImage(XFile(file.path)));
     }
-    if (mounted) Navigator.pop(context, files);
+    if (!mounted) return;
+    setState(() => _attaching = false);
+    if (failed > 0) {
+      PeeroreumToast.show(
+        context,
+        files.isEmpty
+            ? '사진을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
+            : '일부 사진을 불러오지 못했어요.',
+        isError: true,
+      );
+      if (files.isEmpty) return;
+    }
+    Navigator.pop(context, files);
+  }
+
+  // iCloud에만 있는 사진은 기기에 원본이 없어 asset.file이 실패(CloudPhotoLibraryErrorDomain)하므로
+  // 네트워크 다운로드를 허용해 받고, 그래도 실패하면 1080px 썸네일로 대체
+  Future<File?> _assetToFile(AssetEntity asset) async {
+    try {
+      final file = await asset.loadFile(isOrigin: false);
+      if (file != null) return file;
+    } catch (_) {}
+    try {
+      final data = await asset.thumbnailDataWithSize(
+        const ThumbnailSize(1080, 1080),
+        quality: 90,
+      );
+      if (data == null) return null;
+      final dir = await getTemporaryDirectory();
+      final file = File(
+          '${dir.path}/${DateTime.now().millisecondsSinceEpoch}_${asset.id.hashCode}.jpg');
+      return await file.writeAsBytes(data);
+    } catch (_) {
+      return null;
+    }
   }
 
   void _showAlbumSelector() {
@@ -175,12 +307,12 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
                     isSelected ? FontWeight.w600 : FontWeight.w400,
                 fontSize: 16,
                 color: isSelected
-                    ? PeeroreumColor.primaryPuple[400]
+                    ? PeeroreumColor.primaryPurple[400]
                     : PeeroreumColor.black,
               ),
             ),
             trailing: isSelected
-                ? Icon(Icons.check, color: PeeroreumColor.primaryPuple[400])
+                ? Icon(Icons.check, color: PeeroreumColor.primaryPurple[400])
                 : null,
             onTap: () async {
               Navigator.pop(ctx);
@@ -256,9 +388,19 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
                       ),
                     ),
                     TextButton(
-                      onPressed:
-                          _selectedPhotos.isNotEmpty ? _onAttach : null,
-                      child: Text(
+                      onPressed: _selectedPhotos.isNotEmpty && !_attaching
+                          ? _onAttach
+                          : null,
+                      child: _attaching
+                          ? SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: PeeroreumColor.primaryPurple[400],
+                              ),
+                            )
+                          : Text(
                         '첨부',
                         style: TextStyle(
                           fontFamily: 'Pretendard',
@@ -335,7 +477,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
             },
           ),
           if (isSelected)
-            Container(color: Colors.black.withOpacity(0.25)),
+            Container(color: Colors.black.withValues(alpha: 0.25)),
           Positioned(
             top: 6,
             right: 6,
@@ -345,7 +487,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected
-                    ? Colors.black.withOpacity(0.55)
+                    ? Colors.black.withValues(alpha: 0.55)
                     : Colors.transparent,
                 border: Border.all(color: Colors.white, width: 1),
               ),
@@ -392,7 +534,7 @@ class _CustomImagePickerSheetState extends State<_CustomImagePickerSheet> {
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 14,
-                color: PeeroreumColor.primaryPuple[400],
+                color: PeeroreumColor.primaryPurple[400],
               ),
             ),
           ),

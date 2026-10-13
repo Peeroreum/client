@@ -1,25 +1,29 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, prefer_is_empty
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/model/MemberInfo.dart';
-import 'package:peeroreum_client/model/SignIn.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/model/member_info.dart';
+import 'package:peeroreum_client/model/sign_in.dart';
 import 'package:peeroreum_client/screens/sign/password_change/email_screen.dart';
 import 'package:peeroreum_client/screens/sign/signup.dart';
 import 'package:peeroreum_client/screens/sign/signup_email_screen.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../../model/Member.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import '../../model/member.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 
 class EmailSignIn extends StatefulWidget {
   const EmailSignIn({super.key});
@@ -68,7 +72,6 @@ class _EmailSignInState extends State<EmailSignIn> {
         });
       },
       child: Scaffold(
-        // resizeToAvoidBottomInset: false,
         backgroundColor: PeeroreumColor.white,
         appBar: AppBar(
           backgroundColor: PeeroreumColor.white,
@@ -148,7 +151,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       },
                                       icon: SvgPicture.asset(
                                         "assets/icons/x_circle.svg",
-                                        color: PeeroreumColor.gray[200],
+                                        colorFilter: ColorFilter.mode(
+                                            PeeroreumColor.gray[200]!,
+                                            BlendMode.srcIn),
                                       ))
                                   : null),
                         ),
@@ -214,7 +219,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                                           },
                                           child: SvgPicture.asset(
                                             "assets/icons/x_circle.svg",
-                                            color: PeeroreumColor.gray[200],
+                                            colorFilter: ColorFilter.mode(
+                                                PeeroreumColor.gray[200]!,
+                                                BlendMode.srcIn),
                                           ),
                                         )
                                       : SizedBox(
@@ -233,7 +240,9 @@ class _EmailSignInState extends State<EmailSignIn> {
                                       !pwVisible
                                           ? "assets/icons/eye_on.svg"
                                           : "assets/icons/eye_off.svg",
-                                      color: PeeroreumColor.gray[600],
+                                      colorFilter: ColorFilter.mode(
+                                          PeeroreumColor.gray[600]!,
+                                          BlendMode.srcIn),
                                     ),
                                   ),
                                 ],
@@ -253,9 +262,19 @@ class _EmailSignInState extends State<EmailSignIn> {
                                 ? () async {
                                     signIn.email = idController.text;
                                     signIn.password = pwController.text;
-                                    var result = await ApiClient().post(
-                                        '/login',
-                                        data: signIn);
+                                    final dynamic result;
+                                    try {
+                                      result = await ApiClient()
+                                          .post('/login', data: signIn);
+                                    } catch (e) {
+                                      if (!mounted) return;
+                                      PeeroreumToast.show(
+                                          context, // ignore: use_build_context_synchronously
+                                          '잠시 후에 다시 시도해 주세요.',
+                                          isError: true);
+                                      return;
+                                    }
+                                    if (!mounted) return;
                                     if (result.statusCode == 200) {
                                       var data = result.data['data'];
                                       secureStorage.write(
@@ -280,11 +299,13 @@ class _EmailSignInState extends State<EmailSignIn> {
                                     } else if (result.statusCode == 404 ||
                                         result.statusCode == 401) {
                                       PeeroreumToast.show(
-                                          context, "이메일 혹은 비밀번호가 일치하지 않아요.",
+                                          context, // ignore: use_build_context_synchronously
+                                          "이메일 혹은 비밀번호가 일치하지 않아요.",
                                           isError: true);
                                     } else {
                                       PeeroreumToast.show(
-                                          context, '잠시 후에 다시 시도해 주세요.',
+                                          context, // ignore: use_build_context_synchronously
+                                          '잠시 후에 다시 시도해 주세요.',
                                           isError: true);
                                     }
                                   }
@@ -298,15 +319,15 @@ class _EmailSignInState extends State<EmailSignIn> {
                                   color: PeeroreumColor.white),
                             ),
                             style: ButtonStyle(
-                                padding: MaterialStatePropertyAll(
+                                padding: WidgetStatePropertyAll(
                                     EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 12)),
                                 backgroundColor: isEnabled
-                                    ? MaterialStateProperty.all(
-                                        PeeroreumColor.primaryPuple[400])
-                                    : MaterialStateProperty.all(
+                                    ? WidgetStateProperty.all(
+                                        PeeroreumColor.primaryPurple[400])
+                                    : WidgetStateProperty.all(
                                         PeeroreumColor.gray[300]),
-                                shape: MaterialStateProperty.all<
+                                shape: WidgetStateProperty.all<
                                         RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
@@ -374,7 +395,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                'SNS 계정으로 로그인',
+                                '소셜 계정으로 로그인',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w500,
@@ -432,26 +453,28 @@ class _EmailSignInState extends State<EmailSignIn> {
                               googleSignIn();
                             },
                           ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          GestureDetector(
-                            child: Container(
-                                height: 48,
-                                width: 48,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: PeeroreumColor.gray[200]!),
-                                    shape: BoxShape.circle,
-                                    color: PeeroreumColor.white,
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/apple_logo.png'),
-                                    ))),
-                            onTap: () {
-                              appleSignIn();
-                            },
-                          )
+                          if (Platform.isIOS) ...[
+                            SizedBox(
+                              width: 16,
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                  height: 48,
+                                  width: 48,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: PeeroreumColor.gray[200]!),
+                                      shape: BoxShape.circle,
+                                      color: PeeroreumColor.white,
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/apple_logo.png'),
+                                      ))),
+                              onTap: () {
+                                appleSignIn();
+                              },
+                            )
+                          ]
                         ],
                       ),
                     )
@@ -470,58 +493,65 @@ class _EmailSignInState extends State<EmailSignIn> {
     if (await isKakaoTalkInstalled()) {
       try {
         kakaoToken = await UserApi.instance.loginWithKakaoTalk();
-        print('카카오톡으로 로그인 성공');
       } catch (error) {
-        print('카카오톡으로 로그인 실패 $error');
+        if (kDebugMode) {
+          print('카카오톡으로 로그인 실패 $error');
+        }
         if (error is PlatformException && error.code == 'CANCELED') {
           return;
         }
         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
         try {
           kakaoToken = await UserApi.instance.loginWithKakaoAccount();
-          print('카카오계정으로 로그인 성공');
         } catch (error) {
-          print('카카오계정으로 로그인 실패 $error');
+          if (kDebugMode) {
+            print('카카오계정으로 로그인 실패 $error');
+          }
           return;
         }
       }
     } else {
       try {
         kakaoToken = await UserApi.instance.loginWithKakaoAccount();
-        print('카카오계정으로 로그인 성공');
       } catch (error) {
-        print('카카오계정으로 로그인 실패 $error');
+        if (kDebugMode) {
+          print('카카오계정으로 로그인 실패 $error');
+        }
         return;
       }
     }
-
-    if (kakaoToken == null) return;
     final User user = await UserApi.instance.me();
-    fetchSocialLogin('kakao', kakaoToken.accessToken, user.kakaoAccount!.email!);
+    fetchSocialLogin(
+        'kakao', kakaoToken.accessToken, user.kakaoAccount!.email!);
   }
 
   void googleSignIn() async {
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
     if (googleSignInAccount == null) {
-      print("구글계정으로 로그인 실패");
+      if (kDebugMode) {
+        print("구글계정으로 로그인 실패");
+      }
       return;
     }
     final auth = await googleSignInAccount.authentication;
     final accessToken = auth.accessToken;
     if (accessToken == null) {
-      print("구글 액세스 토큰 없음");
+      if (kDebugMode) {
+        print("구글 액세스 토큰 없음");
+      }
       return;
     }
     fetchSocialLogin('google', accessToken, googleSignInAccount.email);
   }
 
-  Future<void> fetchSocialLogin(String provider, String token, String emailForSignup) async {
+  Future<void> fetchSocialLogin(
+      String provider, String token, String emailForSignup) async {
     try {
-      var result = await ApiClient().post(
-          '/socialLogin',
+      var result = await ApiClient().post('/socialLogin',
           data: {'provider': provider, 'token': token},
-          options: Options(validateStatus: (status) => status != null && status < 500));
+          options: Options(
+              validateStatus: (status) => status != null && status < 500));
 
       if (result.statusCode == 200) {
         var data = result.data['data'];
@@ -535,18 +565,72 @@ class _EmailSignInState extends State<EmailSignIn> {
         Get.offAllNamed('/home');
       } else if (result.statusCode == 404) {
         Member member = Member();
-        member.username = emailForSignup;
+        // 서버가 검증한 이메일과 가입 토큰 사용
+        final signupData = result.data['data'];
+        member.username = signupData is Map
+            ? (signupData['email'] ?? emailForSignup)
+            : emailForSignup;
+        member.signupToken =
+            signupData is Map ? signupData['signupToken'] : null;
+        member.provider = provider;
         Get.to(() => SignUp(member), transition: Transition.noTransition);
       } else {
-        print("소셜 로그인 실패");
+        if (kDebugMode) {
+          print("소셜 로그인 실패");
+        }
+        if (!mounted) return;
+        PeeroreumToast.show(context, ApiClient.errorMessage(result),
+            isError: true);
       }
     } catch (e) {
-      print("소셜 로그인 에러: $e");
+      if (kDebugMode) {
+        print("소셜 로그인 에러: $e");
+      }
+      if (!mounted) return;
+      PeeroreumToast.show(context, '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
     }
   }
 
   void appleSignIn() async {
-    // Apple Sign-In은 별도 서버 검증 필요 (현재 미지원)
-    print("애플 로그인: 미지원");
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [AppleIDAuthorizationScopes.email],
+      );
+      final identityToken = credential.identityToken;
+      if (identityToken == null) {
+        throw Exception('애플 identityToken 없음');
+      }
+      // 이메일은 최초 로그인 때만 credential에 담기므로 토큰에서 보완
+      final email =
+          credential.email ?? _emailFromIdentityToken(identityToken) ?? '';
+      await fetchSocialLogin('apple', identityToken, email);
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) return;
+      if (kDebugMode) {
+        print('애플 로그인 실패 $e');
+      }
+      if (!mounted) return;
+      PeeroreumToast.show(context, '애플 로그인에 실패했어요. 다시 시도해 주세요.',
+          isError: true);
+    } catch (e) {
+      if (kDebugMode) {
+        print('애플 로그인 에러 $e');
+      }
+      if (!mounted) return;
+      PeeroreumToast.show(context, '애플 로그인에 실패했어요. 다시 시도해 주세요.',
+          isError: true);
+    }
+  }
+
+  String? _emailFromIdentityToken(String identityToken) {
+    try {
+      final payload = identityToken.split('.')[1];
+      final decoded =
+          utf8.decode(base64Url.decode(base64Url.normalize(payload)));
+      return jsonDecode(decoded)['email'] as String?;
+    } catch (_) {
+      return null;
+    }
   }
 }

@@ -1,25 +1,31 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumButton.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/model/Member.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_button.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/model/member.dart';
 import 'package:peeroreum_client/screens/sign/signin_email_screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 
 class SignUpSchool extends StatefulWidget {
-  Member member;
+  final Member member;
 
-  SignUpSchool(this.member, {super.key});
+  const SignUpSchool(this.member, {super.key});
 
   @override
-  State<SignUpSchool> createState() => _SignUpSchoolState(member);
+  State<SignUpSchool> createState() => _SignUpSchoolState();
 }
 
 class _SignUpSchoolState extends State<SignUpSchool> {
-  Member member;
+  late Member member;
 
-  _SignUpSchoolState(this.member);
+  @override
+  void initState() {
+    super.initState();
+    member = widget.member;
+  }
 
   final schoolController = TextEditingController();
   final _siDos = ['서울특별시', '경기도', '강원도', '광주광역시', '울산광역시'];
@@ -78,8 +84,8 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -108,9 +114,9 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                       signUpAPI();
                     },
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          PeeroreumColor.primaryPuple[400]),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      backgroundColor: WidgetStateProperty.all(
+                          PeeroreumColor.primaryPurple[400]),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -337,12 +343,12 @@ class _SignUpSchoolState extends State<SignUpSchool> {
                 },
                 style: ButtonStyle(
                     backgroundColor: isEnabled
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
+                        ? WidgetStateProperty.all(
+                            PeeroreumColor.primaryPurple[400])
+                        : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ))),
@@ -363,11 +369,24 @@ class _SignUpSchoolState extends State<SignUpSchool> {
   }
 
   Future<void> signUpAPI() async {
-    var result = await ApiClient().post('/signup', data: member);
+    final dynamic result;
+    try {
+      result = await ApiClient().post('/signup', data: member);
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
+      return;
+    }
+    if (!mounted) return;
     if (result.statusCode == 200) {
       Get.to(() => const EmailSignIn(), transition: Transition.noTransition);
     } else {
-      print(result.statusCode);
+      if (kDebugMode) {
+        print(result.statusCode);
+      }
+      PeeroreumToast.show(context, '회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
     }
   }
 }

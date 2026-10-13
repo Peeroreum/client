@@ -1,9 +1,10 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class InWedu extends StatefulWidget {
@@ -21,10 +22,12 @@ class _InWeduState extends State<InWedu> {
   List<String> gradeList = ['전체', '중1', '중2', '중3', '고1', '고2', '고3', '대학'];
   List<String> subjectList = ['전체', '국어', '영어', '수학', '사회', '과학', '기타', '대학'];
 
+  late Future<void> _initFuture;
+
   @override
   void initState() {
     super.initState();
-    fetchData();
+    _initFuture = fetchData();
   }
 
   Future<void> fetchData() async {
@@ -34,7 +37,9 @@ class _InWeduState extends State<InWedu> {
       ingGroup = data["ingWedus"];
       completeGroup = data['endWedus'];
     } else {
-      print("에러${result.statusCode}");
+      if (kDebugMode) {
+        print("에러${result.statusCode}");
+      }
     }
   }
 
@@ -43,7 +48,7 @@ class _InWeduState extends State<InWedu> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchData(),
+          future: _initFuture,
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -60,7 +65,7 @@ class _InWeduState extends State<InWedu> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -83,9 +88,9 @@ class _InWeduState extends State<InWedu> {
         child: Column(
           children: [
             TabBar(
-                indicatorColor: PeeroreumColor.primaryPuple[400],
+                indicatorColor: PeeroreumColor.primaryPurple[400],
                 indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: PeeroreumColor.primaryPuple[400],
+                labelColor: PeeroreumColor.primaryPurple[400],
                 unselectedLabelColor: PeeroreumColor.gray[800],
                 unselectedLabelStyle: TextStyle(
                   color: PeeroreumColor.gray[800],
@@ -94,7 +99,7 @@ class _InWeduState extends State<InWedu> {
                   fontWeight: FontWeight.w400,
                 ),
                 labelStyle: TextStyle(
-                  color: PeeroreumColor.primaryPuple[400],
+                  color: PeeroreumColor.primaryPurple[400],
                   fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -256,7 +261,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(
@@ -272,7 +277,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(
@@ -310,8 +315,12 @@ class _InWeduState extends State<InWedu> {
       },
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () {
-            Get.to(() => DetailWedu(ingGroup[index]["id"]));
+          onTap: () async {
+            await Get.to(() => DetailWedu(ingGroup[index]["id"]));
+            if (!mounted) return;
+            setState(() {
+              _initFuture = fetchData();
+            });
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -412,7 +421,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(
@@ -428,7 +437,7 @@ class _InWeduState extends State<InWedu> {
                                     const EdgeInsets.symmetric(horizontal: 2.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/dot.svg',
-                                  color: PeeroreumColor.gray[600],
+                                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[600]!, BlendMode.srcIn),
                                 ),
                               ),
                               Text(
@@ -447,7 +456,7 @@ class _InWeduState extends State<InWedu> {
                           Text(
                             "${ingGroup[index]["progress"]}% 달성",
                             style: TextStyle(
-                                color: PeeroreumColor.primaryPuple[400],
+                                color: PeeroreumColor.primaryPurple[400],
                                 fontFamily: 'Pretendard',
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600),
@@ -465,8 +474,8 @@ class _InWeduState extends State<InWedu> {
                             100,
                         backgroundColor: PeeroreumColor.gray[200],
                         linearGradient: LinearGradient(colors: [
-                          PeeroreumColor.primaryPuple[400]!,
-                          PeeroreumColor.primaryPuple[200]!
+                          PeeroreumColor.primaryPurple[400]!,
+                          PeeroreumColor.primaryPurple[200]!
                         ]),
                         barRadius: const Radius.circular(8),
                       )

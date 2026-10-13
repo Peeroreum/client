@@ -2,29 +2,48 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/widgets/block_user.dart';
 
 class Report extends StatefulWidget {
-  //const Report({super.key});
   final dynamic data;
 
-  const Report({Key? key, required this.data}) : super(key: key);
+  /// 신고 대상 종류: QUESTION, ANSWER, CHALLENGE_IMAGE, MEMBER
+  final String targetType;
+  final dynamic targetId;
+
+  /// 신고 대상 회원 닉네임 (있으면 '함께 차단하기' 노출)
+  final String? reportedNickname;
+
+  const Report(
+      {Key? key,
+      required this.data,
+      this.targetType = 'MEMBER',
+      this.targetId,
+      this.reportedNickname})
+      : super(key: key);
 
   @override
-  State<Report> createState() => _ReportState(data);
+  State<Report> createState() => _ReportState();
 }
 
 class _ReportState extends State<Report> {
-  _ReportState(this.data);
-  String data;
+  late String data;
 
-  String selectedReason = "신고사유를 선택해주세요";
+  @override
+  void initState() {
+    super.initState();
+    data = widget.data.toString();
+  }
+
+  String selectedReason = "신고사유를 선택해 주세요";
   String otherReason = "";
   List<bool> reason = [false, false, false, false];
   String detailReason = "";
+  bool alsoBlock = false;
+  bool isSubmitting = false;
 
   void updateReason(List<bool> newReason, String newSelectedReason) {
     setState(() {
@@ -33,25 +52,31 @@ class _ReportState extends State<Report> {
     });
   }
 
-  void sendMail() async {
-    String username = 'peeroreum.help@gmail.com';
-    String password = 'djsgvbwgyvqesydk';
-    final smtpServer = gmail(username, password);
-    final message = Message()
-      ..from = Address(username, 'Mail Service')
-      ..recipients.add('peeroreum.help@gmail.com')
-      ..subject = reason[3] == false
-          ? '$selectedReason'
-          : '$selectedReason-$otherReason' //신고 사유에 따른 이메일 제목 설정
-      ..text = '$data\n$detailReason';
-
+  Future<bool> submitReport() async {
+    final targetId = widget.targetId == null
+        ? null
+        : int.tryParse(widget.targetId.toString());
     try {
-      await send(message, smtpServer);
+      final response = await ApiClient().post('/report', data: {
+        'targetType': widget.targetType,
+        'targetId': targetId,
+        'reportedNickname': widget.reportedNickname,
+        'reason': reason[3] ? '$selectedReason-$otherReason' : selectedReason,
+        'detail': detailReason,
+        'context': data,
+        'block': alsoBlock,
+      });
+      if (response.statusCode == 200) return true;
+      if (mounted) {
+        PeeroreumToast.show(context, ApiClient.errorMessage(response),
+            isError: true);
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }
     }
+    return false;
   }
 
   @override
@@ -75,7 +100,8 @@ class _ReportState extends State<Report> {
             },
             icon: SvgPicture.asset(
               'assets/icons/arrow-left.svg',
-              color: PeeroreumColor.gray[800],
+              colorFilter:
+                  ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
             ),
           ),
           title: Text(
@@ -123,7 +149,7 @@ class _ReportState extends State<Report> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 GestureDetector(
@@ -134,7 +160,7 @@ class _ReportState extends State<Report> {
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
                       builder: (context) {
-                        return reportReasonBottomSheet(
+                        return ReportReasonBottomSheet(
                           updateReason: updateReason,
                           selectedReason: selectedReason,
                           reason: reason,
@@ -161,12 +187,13 @@ class _ReportState extends State<Report> {
                               fontWeight: FontWeight.w400,
                               color: PeeroreumColor.gray[600]),
                         ),
-                        Container(
+                        SizedBox(
                           height: 18,
                           width: 18,
                           child: SvgPicture.asset(
                             'assets/icons/down.svg',
-                            color: PeeroreumColor.gray[600],
+                            colorFilter: ColorFilter.mode(
+                                PeeroreumColor.gray[600]!, BlendMode.srcIn),
                           ),
                         )
                       ],
@@ -182,8 +209,8 @@ class _ReportState extends State<Report> {
                         height: 8,
                       ),
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
                         width: double.infinity,
                         height: 48,
                         decoration: BoxDecoration(
@@ -194,9 +221,9 @@ class _ReportState extends State<Report> {
                           child: TextFormField(
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.allow(RegExp(
-                                  r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
+                                  r'[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣ᆞᆢㆍᄀ-ᄒ%₩=&·*\-+<>@#:;^♡_/()"~.,!?≠≒÷×$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
                             ],
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             cursorColor: PeeroreumColor.gray[600],
                             decoration: InputDecoration(
                                 hintText: '기타 사유를 입력해 주세요.',
@@ -234,16 +261,18 @@ class _ReportState extends State<Report> {
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   width: double.infinity,
-                  height: MediaQuery.of(context).size.height - 397,
+                  height: MediaQuery.of(context).size.height -
+                      (widget.reportedNickname != null ? 443 : 397),
                   decoration: BoxDecoration(
                       border: Border.all(color: PeeroreumColor.gray[200]!),
                       borderRadius: BorderRadius.circular(8)),
                   child: TextFormField(
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(RegExp(
-                          r'[a-z|A-Z|0-9|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|ᆞ|ᆢ|ㆍ|ᆢ|ᄀᆞ|ᄂᆞ|ᄃᆞ|ᄅᆞ|ᄆᆞ|ᄇᆞ|ᄉᆞ|ᄋᆞ|ᄌᆞ|ᄎᆞ|ᄏᆞ|ᄐᆞ|ᄑᆞ|ᄒᆞ|%₩=&·*-+<>@#:;^♡_/()\"~.,!?≠≒÷×\$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
+                          r'[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣ᆞᆢㆍᄀ-ᄒ%₩=&·*\-+<>@#:;^♡_/()"~.,!?≠≒÷×$￥|\\{}○●□■※♥☆★\[\]←↑↓→↔«»\s]'))
                     ],
                     maxLines: null,
                     cursorColor: PeeroreumColor.gray[600],
@@ -260,46 +289,94 @@ class _ReportState extends State<Report> {
               ],
             ),
           ),
+          //함께 차단하기
+          if (widget.reportedNickname != null)
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => setState(() => alsoBlock = !alsoBlock),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                child: Row(
+                  children: [
+                    Icon(
+                      alsoBlock
+                          ? Icons.check_box_rounded
+                          : Icons.check_box_outline_blank_rounded,
+                      size: 22,
+                      color: alsoBlock
+                          ? PeeroreumColor.primaryPurple[400]
+                          : PeeroreumColor.gray[400],
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${widget.reportedNickname} 님을 함께 차단할게요',
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: PeeroreumColor.gray[800]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           //신고하기 버튼
           Container(
             color: PeeroreumColor.white,
-            margin: EdgeInsets.fromLTRB(20, 36, 20, 8),
+            margin: const EdgeInsets.fromLTRB(20, 36, 20, 8),
             width: MediaQuery.of(context).size.width,
             child: SizedBox(
               height: 48,
               child: TextButton(
-                onPressed: (selectedReason != '신고사유를 선택해주세요' &&
+                onPressed: (selectedReason != '신고사유를 선택해 주세요' &&
                             detailReason != "" &&
                             selectedReason != '기타' ||
                         selectedReason == '기타' &&
                             otherReason != "" &&
                             detailReason != "")
-                    ? () {
-                        sendMail();
+                    ? () async {
+                        if (isSubmitting) return;
+                        final confirmed = await showModerationConfirm(
+                          context,
+                          title: widget.reportedNickname != null
+                              ? '${widget.reportedNickname} 님을 신고할까요?'
+                              : '신고할까요?',
+                          description:
+                              '신고 내용은 운영팀에 전달되며,\n검토 후 운영 정책에 따라 조치될 수 있어요.',
+                          confirmText: '신고',
+                        );
+                        if (!confirmed || !mounted) return;
+                        setState(() => isSubmitting = true);
+                        final success = await submitReport();
+                        if (!mounted) return;
+                        setState(() => isSubmitting = false);
+                        if (!success) return;
                         PeeroreumToast.show(context, "신고가 접수되었어요.");
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pop(context, alsoBlock);
+                        Navigator.pop(context, alsoBlock);
                       }
                     : null,
                 style: ButtonStyle(
-                    backgroundColor: (selectedReason != '신고사유를 선택해주세요' &&
+                    backgroundColor: (selectedReason != '신고사유를 선택해 주세요' &&
                                 detailReason != "" &&
                                 selectedReason != '기타' ||
                             selectedReason == '기타' &&
                                 otherReason != "" &&
                                 detailReason != "")
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        ? WidgetStateProperty.all(
+                            PeeroreumColor.primaryPurple[400])
+                        : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
                           ? BorderRadius.zero
                           : BorderRadius.circular(8.0),
                     ))),
-                child: Text(
+                child: const Text(
                   '신고하기',
                   style: TextStyle(
                       fontFamily: 'Pretendard',
@@ -316,27 +393,26 @@ class _ReportState extends State<Report> {
   }
 }
 
-class reportReasonBottomSheet extends StatefulWidget {
-  //const reportReasonBottomSheet({super.key});
-
+class ReportReasonBottomSheet extends StatefulWidget {
   final Function(List<bool>, String) updateReason;
   final String selectedReason;
   final List<bool> reason;
 
-  reportReasonBottomSheet({
+  const ReportReasonBottomSheet({
+    super.key,
     required this.updateReason,
     required this.selectedReason,
     required this.reason,
   });
 
   @override
-  State<reportReasonBottomSheet> createState() =>
-      _reportReasonBottomSheetState();
+  State<ReportReasonBottomSheet> createState() =>
+      _ReportReasonBottomSheetState();
 }
 
-class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
+class _ReportReasonBottomSheetState extends State<ReportReasonBottomSheet> {
   List<bool> reason = [false, false, false, false];
-  String selectedReason = "신고사유를 선택해주세요";
+  String selectedReason = "신고사유를 선택해 주세요";
 
   void updateReason(List<bool> newReason, String newSelectedReason) {
     setState(() {
@@ -354,7 +430,7 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: PeeroreumColor.white, // 여기에 색상 지정
+        color: PeeroreumColor.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0),
           topRight: Radius.circular(16.0),
@@ -370,7 +446,7 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
             ),
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Container(
                   height: 24,
                   alignment: Alignment.centerLeft,
@@ -394,8 +470,9 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
               },
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: SizedBox(
                   height: 24,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -407,14 +484,16 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: reason[0]
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[0])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.primaryPurple[400]!,
+                              BlendMode.srcIn),
                         )
                     ],
                   ),
@@ -432,8 +511,9 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
               },
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: SizedBox(
                   height: 24,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -445,14 +525,16 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: reason[1]
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[1])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.primaryPurple[400]!,
+                              BlendMode.srcIn),
                         )
                     ],
                   ),
@@ -472,7 +554,7 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                 width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Container(
+                child: SizedBox(
                   height: 24,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -484,14 +566,16 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: (reason[2])
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[2])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.primaryPurple[400]!,
+                              BlendMode.srcIn),
                         )
                     ],
                   ),
@@ -511,7 +595,7 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                 width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Container(
+                child: SizedBox(
                   height: 24,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -523,14 +607,16 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: reason[3]
-                              ? PeeroreumColor.primaryPuple[400]
+                              ? PeeroreumColor.primaryPurple[400]
                               : PeeroreumColor.black,
                         ),
                       ),
                       if (reason[3])
                         SvgPicture.asset(
                           'assets/icons/check2.svg',
-                          color: PeeroreumColor.primaryPuple[400],
+                          colorFilter: ColorFilter.mode(
+                              PeeroreumColor.primaryPurple[400]!,
+                              BlendMode.srcIn),
                         )
                     ],
                   ),
@@ -550,15 +636,15 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        PeeroreumColor.primaryPuple[400]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    backgroundColor: WidgetStateProperty.all(
+                        PeeroreumColor.primaryPurple[400]),
+                    padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ))),
-                child: Text(
+                child: const Text(
                   '선택완료',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -569,7 +655,7 @@ class _reportReasonBottomSheetState extends State<reportReasonBottomSheet> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 21,
             ),
           ],

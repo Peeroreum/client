@@ -1,11 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
 
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/data/visit_count.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_acount_ps.dart';
 
 class MyPageAccount extends StatefulWidget {
@@ -16,22 +18,84 @@ class MyPageAccount extends StatefulWidget {
 }
 
 class _MyPageAccountState extends State<MyPageAccount> {
-  var email;
+  String? email;
 
-  fetchStatus() async {
+  /// 가입 방식: email, kakao, google, apple, social(알 수 없는 기존 소셜 가입자)
+  String? provider;
+
+  Future<void> fetchStatus() async {
     email = await const FlutterSecureStorage().read(key: "email");
+    try {
+      final result = await ApiClient().get('/member/account');
+      if (result.statusCode == 200) {
+        final data = result.data['data'];
+        email = data['email'] ?? email;
+        provider = data['provider'];
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("계정 정보 조회 실패 $e");
+      }
+    }
+  }
+
+  bool get isEmailAccount => provider == 'email';
+
+  String get providerLabel {
+    switch (provider) {
+      case 'email':
+        return '이메일';
+      case 'kakao':
+        return '카카오';
+      case 'google':
+        return 'Google';
+      case 'apple':
+        return 'Apple';
+      default:
+        return '소셜';
+    }
+  }
+
+  String? get providerLogo {
+    switch (provider) {
+      case 'kakao':
+        return 'assets/images/kakao_logo.png';
+      case 'google':
+        return 'assets/images/google_logo.png';
+      case 'apple':
+        return 'assets/images/apple_logo.png';
+      default:
+        return null;
+    }
   }
 
   Future<int> deleteAllMember() async {
-    var result = await ApiClient().delete('/member');
+    final dynamic result;
+    try {
+      result = await ApiClient().delete('/member');
+    } catch (e) {
+      return 500;
+    }
 
     if (result.statusCode == 200) {
-      print("회원 탈퇴 성공");
+      if (kDebugMode) {
+        print("회원 탈퇴 성공");
+      }
     } else {
-      print("회원 탈퇴 실패 ${result.statusCode}");
+      if (kDebugMode) {
+        print("회원 탈퇴 실패 ${result.statusCode}");
+      }
     }
 
     return result.statusCode ?? 500;
+  }
+
+  late Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = fetchStatus();
   }
 
   @override
@@ -39,7 +103,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
     return Scaffold(
       appBar: appbarWidget(),
       body: FutureBuilder<void>(
-          future: fetchStatus(),
+          future: _initFuture,
           builder: (context, snapshot) {
             return bodyWidget();
           }),
@@ -58,7 +122,8 @@ class _MyPageAccountState extends State<MyPageAccount> {
         },
         icon: SvgPicture.asset(
           'assets/icons/arrow-left.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
       ),
       title: const Text(
@@ -70,6 +135,36 @@ class _MyPageAccountState extends State<MyPageAccount> {
             fontWeight: FontWeight.w500),
       ),
       centerTitle: true,
+    );
+  }
+
+  /// 이메일 오른쪽 가입 방식 표시 (로고 + 이름)
+  Widget providerBadge() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (providerLogo != null) ...[
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                  image: AssetImage(providerLogo!), fit: BoxFit.cover),
+            ),
+          ),
+          const SizedBox(width: 6),
+        ],
+        Text(
+          providerLabel,
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+            color: PeeroreumColor.gray[500],
+          ),
+        ),
+      ],
     );
   }
 
@@ -93,9 +188,9 @@ class _MyPageAccountState extends State<MyPageAccount> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
+                      Expanded(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -110,25 +205,37 @@ class _MyPageAccountState extends State<MyPageAccount> {
                           const SizedBox(
                             height: 4,
                           ),
-                          SizedBox(
-                            width: 250,
-                            child: Text(
-                              email ?? 'error@mail.com',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: PeeroreumColor.gray[600],
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  email ?? 'error@mail.com',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: PeeroreumColor.gray[600],
+                                  ),
+                                  // 긴 이메일은 두 줄까지 표시
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              // 소셜 가입자만 가입 방식 표시
+                              if (provider != null && !isEmailAccount) ...[
+                                const SizedBox(width: 8),
+                                providerBadge(),
+                              ],
+                            ],
                           ),
                         ],
                       ),
-                      Container(),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
+                // 비밀번호 변경은 이메일 가입자만
+                if (isEmailAccount)
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -155,7 +262,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: PeeroreumColor.primaryPuple[400],
+                            color: PeeroreumColor.primaryPurple[400],
                           ),
                         ),
                       ),
@@ -189,7 +296,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           insetPadding: const EdgeInsets.symmetric(horizontal: 20),
           contentPadding: const EdgeInsets.all(20),
@@ -197,7 +304,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
           content: SizedBox(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(dialogContext).size.width,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -213,7 +320,7 @@ class _MyPageAccountState extends State<MyPageAccount> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "정말 탈퇴하시겠습니다?",
+                  "정말 탈퇴하시겠습니까?",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Pretendard',
@@ -269,13 +376,15 @@ class _MyPageAccountState extends State<MyPageAccount> {
                       child: TextButton(
                         onPressed: () async {
                           int statusCode = await deleteAllMember();
-                          if (statusCode == 200) {
-                            await const FlutterSecureStorage().deleteAll();
-                            Get.offAllNamed('/signIn/email');
-                          } else {
+                          if (!mounted) return;
+                          if (statusCode != 200) {
                             PeeroreumToast.show(context, "잠시 후에 다시 시도해 주세요.",
                                 isError: true);
+                            return;
                           }
+                          await const FlutterSecureStorage().deleteAll();
+                          await VisitCount.clear();
+                          Get.offAllNamed('/signIn/email');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: PeeroreumColor.error,

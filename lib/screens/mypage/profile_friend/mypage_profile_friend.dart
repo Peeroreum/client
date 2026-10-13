@@ -3,35 +3,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/blocked_list_screen.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_api.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_controller.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_api.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_controller.dart';
 
 class MyPageProfileFriend extends StatelessWidget {
-  var nickname;
-  int index;
-  MyPageProfileFriend(this.nickname, {this.index = 0});
+  final String nickname;
+  final int index;
 
-  var mynickname;
+  MyPageProfileFriend(this.nickname, {super.key, this.index = 0});
 
-  bool am_i = false;
-
-  final FollowerController follower_controller =
+  final FollowerController followerController =
       Get.put(FollowerController(FollowerProvider()));
 
-  final FollowingController following_controller =
+  final FollowingController followingController =
       Get.put(FollowingController(FollowingProvider()));
 
   @override
   Widget build(BuildContext context) {
     // 상태 변경을 빌드 후에 수행
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      follower_controller.fetchFriends(nickname);
-      following_controller.fetchFriends(nickname);
-      follower_controller.fetchMyNickname();
+      followerController.fetchFriends(nickname);
+      followingController.fetchFriends(nickname);
+      followerController.fetchMyNickname();
     });
 
     return Scaffold(
@@ -50,7 +48,8 @@ class MyPageProfileFriend extends StatelessWidget {
       leading: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/x.svg',
-          color: PeeroreumColor.gray[800],
+          colorFilter:
+              ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
         ),
         onPressed: () {
           Get.back();
@@ -65,6 +64,23 @@ class MyPageProfileFriend extends StatelessWidget {
             fontWeight: FontWeight.w500),
       ),
       centerTitle: true,
+      actions: [
+        // 내 친구 목록일 때만 차단 목록 진입 노출
+        Obx(() => followerController.myNickname.value == nickname
+            ? TextButton(
+                onPressed: () => Get.to(() => const BlockedListScreen()),
+                child: Text(
+                  '차단 목록',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: PeeroreumColor.gray[600]),
+                ),
+              )
+            : SizedBox.shrink()),
+        SizedBox(width: 8),
+      ],
     );
   }
 
@@ -75,9 +91,9 @@ class MyPageProfileFriend extends StatelessWidget {
       child: Column(
         children: [
           TabBar(
-              indicatorColor: PeeroreumColor.primaryPuple[400],
+              indicatorColor: PeeroreumColor.primaryPurple[400],
               indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: PeeroreumColor.primaryPuple[400],
+              labelColor: PeeroreumColor.primaryPurple[400],
               unselectedLabelColor: PeeroreumColor.gray[800],
               unselectedLabelStyle: TextStyle(
                 color: PeeroreumColor.gray[800],
@@ -86,12 +102,12 @@ class MyPageProfileFriend extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
               labelStyle: TextStyle(
-                color: PeeroreumColor.primaryPuple[400],
+                color: PeeroreumColor.primaryPurple[400],
                 fontFamily: 'Pretendard',
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
-              tabs: [
+              tabs: const [
                 Tab(
                   text: '팔로워',
                 ),
@@ -110,12 +126,12 @@ class MyPageProfileFriend extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Obx(() {
-                    if (follower_controller.isLoading.value) {
+                    if (followerController.isLoading.value) {
                       return Center(child: CircularProgressIndicator());
                     }
 
-                    if (follower_controller.followers.isEmpty) {
-                      return Center(child: Text("팔로워 목록이 없습니다."));
+                    if (followerController.followers.isEmpty) {
+                      return Center(child: Text("팔로워 목록이 없어요."));
                     }
 
                     return follower();
@@ -125,12 +141,12 @@ class MyPageProfileFriend extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Obx(() {
-                    if (following_controller.isLoading.value) {
+                    if (followingController.isLoading.value) {
                       return Center(child: CircularProgressIndicator());
                     }
 
-                    if (following_controller.followings.isEmpty) {
-                      return Center(child: Text("팔로잉 목록이 없습니다."));
+                    if (followingController.followings.isEmpty) {
+                      return Center(child: Text("팔로잉 목록이 없어요."));
                     }
 
                     return following();
@@ -161,7 +177,7 @@ class MyPageProfileFriend extends StatelessWidget {
               width: 4,
             ),
             Text(
-              '${follower_controller.followers.length}',
+              '${followerController.followers.length}',
               style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w500,
@@ -208,7 +224,7 @@ class MyPageProfileFriend extends StatelessWidget {
               width: 4,
             ),
             Text(
-              '${following_controller.followings.length}',
+              '${followingController.followings.length}',
               style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w500,
@@ -243,14 +259,13 @@ class MyPageProfileFriend extends StatelessWidget {
       child: ListView.separated(
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
-            final follower = follower_controller.followers[index];
+            final follower = followerController.followers[index];
             return GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                if (mynickname == follower.nickname) {
-                  am_i = true;
-                }
-                Get.to(() => MyPageProfile(follower.nickname!, am_i));
+                final amI =
+                    followerController.myNickname.value == follower.nickname;
+                Get.to(() => MyPageProfile(follower.nickname!, amI));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -304,7 +319,7 @@ class MyPageProfileFriend extends StatelessWidget {
                 thickness: 1,
                 height: 8,
               ),
-          itemCount: follower_controller.followers.length),
+          itemCount: followerController.followers.length),
     );
   }
 
@@ -313,14 +328,13 @@ class MyPageProfileFriend extends StatelessWidget {
       child: ListView.separated(
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
-            final following = following_controller.followings[index];
+            final following = followingController.followings[index];
             return GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                if (mynickname == following.nickname) {
-                  am_i = true;
-                }
-                Get.to(() => MyPageProfile(following.nickname!, am_i));
+                final amI =
+                    followingController.myNickname.value == following.nickname;
+                Get.to(() => MyPageProfile(following.nickname!, amI));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -374,7 +388,7 @@ class MyPageProfileFriend extends StatelessWidget {
                 thickness: 1,
                 height: 8,
               ),
-          itemCount: following_controller.followings.length),
+          itemCount: followingController.followings.length),
     );
   }
 }

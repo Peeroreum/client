@@ -1,31 +1,30 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/screens/wedu/wedu_detail_screen.dart';
 
 class ManagementCheckList extends StatefulWidget {
-  ManagementCheckList(this.memberList, this.title, this.id, {super.key});
+  const ManagementCheckList(this.memberList, this.title, this.id, {super.key});
 
-  List<dynamic> memberList;
-  String title;
-  int id;
+  final List<dynamic> memberList;
+  final String title;
+  final int id;
 
   @override
   State<ManagementCheckList> createState() =>
-      _ManagementCheckListState(memberList, title, id);
+      _ManagementCheckListState();
 }
 
 class _ManagementCheckListState extends State<ManagementCheckList> {
-  _ManagementCheckListState(this.memberList, this.title, this.id);
-
-  List<dynamic> memberList;
-  String title;
-  int id;
+  late List<dynamic> memberList;
+  late String title;
+  late int id;
 
   List<String> selectedUserList = [];
   late List<bool> isCheckedList =
@@ -33,14 +32,19 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
   late List<bool> isActiveList =
       List.generate(memberList.length, (index) => true);
 
-  var myNickname;
+  String? myNickname;
   bool isSelectAll = false;
+
+  late Future<void> _initFuture;
 
   @override
   void initState() {
     super.initState();
+    memberList = widget.memberList;
+    title = widget.title;
+    id = widget.id;
     selectedUserList = [];
-    fetchStatus();
+    _initFuture = fetchStatus();
   }
 
   bool controlAllSelect() {
@@ -58,7 +62,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
     }
   }
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     myNickname = await const FlutterSecureStorage().read(key: "nickname");
     var response = await ApiClient().get('/wedu/$id/members');
 
@@ -73,6 +77,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
       }
     }
 
+    if (!mounted) return;
     setState(() {
       for (int i = 0; i < memberList.length; i++) {
         if (memberList[i]['nickname'] == myNickname) {
@@ -90,11 +95,20 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
     for (var nickname in nicknameList) {
       var member = memberList.firstWhere((m) => m['nickname'] == nickname,
           orElse: () => null);
-      if (member == null) continue;
+      if (member == null) {
+        continue;
+      }
 
       var memberId = member['memberId'];
-      var result = await ApiClient().delete('/wedu/$id/kick/$memberId');
+      final dynamic result;
+      try {
+        result = await ApiClient().delete('/wedu/$id/kick/$memberId');
+      } catch (e) {
+        allSuccess = false;
+        continue;
+      }
 
+      if (!mounted) return;
       if (result.statusCode == 200) {
         setState(() {
           memberList.removeWhere((m) => m['nickname'] == nickname);
@@ -104,6 +118,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
       }
     }
 
+    if (!mounted) return;
     if (allSuccess) {
       PeeroreumToast.show(context, "참여를 종료했어요.");
     } else {
@@ -189,7 +204,9 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                     Expanded(
                       child: TextButton(
                         onPressed: () async {
-                          print("강퇴할 유저 목록: $selectedUserList");
+                          if (kDebugMode) {
+                            print("강퇴할 유저 목록: $selectedUserList");
+                          }
                           Get.back();
                           kickMember(selectedUserList);
                         },
@@ -231,7 +248,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
           leading: IconButton(
             icon: SvgPicture.asset(
               'assets/icons/x.svg',
-              color: PeeroreumColor.gray[800],
+              colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
               width: 18,
             ),
             onPressed: () {
@@ -251,7 +268,7 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
           centerTitle: true,
         ),
         body: FutureBuilder<void>(
-            future: fetchStatus(),
+            future: _initFuture,
             builder: (context, snapshot) {
               return Column(
                 children: [
@@ -323,12 +340,12 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                             children: [
                               SvgPicture.asset(
                                 'assets/icons/check.svg',
-                                color: PeeroreumColor.gray[500],
+                                colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
                               ),
                               const SizedBox(
                                 width: 4,
                               ),
-                              T5_14px(
+                              T5(
                                 text: "전체선택",
                                 color: PeeroreumColor.gray[500],
                               ),
@@ -371,11 +388,11 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                 }
               },
               style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      PeeroreumColor.primaryPuple[400]),
-                  padding: MaterialStateProperty.all(
+                  backgroundColor: WidgetStateProperty.all(
+                      PeeroreumColor.primaryPurple[400]),
+                  padding: WidgetStateProperty.all(
                       const EdgeInsets.symmetric(vertical: 12)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ))),
@@ -469,20 +486,20 @@ class _ManagementCheckListState extends State<ManagementCheckList> {
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: (isCheckedList[index]
-                                ? PeeroreumColor.primaryPuple[400]!
+                                ? PeeroreumColor.primaryPurple[400]!
                                 : PeeroreumColor.gray[200]!),
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(4.0),
                           color: isActiveList[index]
                               ? (isCheckedList[index]
-                                  ? PeeroreumColor.primaryPuple[400]!
+                                  ? PeeroreumColor.primaryPurple[400]!
                                   : PeeroreumColor.white)
                               : PeeroreumColor.gray[300]!,
                         ),
                         child: SvgPicture.asset(
                           'assets/icons/check.svg',
-                          color: PeeroreumColor.white,
+                          colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                         ),
                       ),
                     ),

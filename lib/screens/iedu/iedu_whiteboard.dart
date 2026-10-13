@@ -1,7 +1,6 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
-
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -10,10 +9,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
-import 'package:peeroreum_client/designs/PeeroreumTypo.dart';
+import 'package:peeroreum_client/designs/peeroreum_typo.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
 class WhiteboardIedu extends StatefulWidget {
@@ -38,10 +37,12 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
     super.initState();
   }
 
-  longpressCheck() {
+  longPressCheck() {
     if (isLongPressed[0]) {
       straightDetailTool();
-      print(isLongPressed);
+      if (kDebugMode) {
+        print(isLongPressed);
+      }
     } else if (isLongPressed[1]) {
       highlighterDetailTool();
     } else if (isLongPressed[2]) {
@@ -59,7 +60,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
   late Color _straightColor = straightColorSelect[0];
   List<bool> straightColorSelected = [true, false, false];
   List<Color> straightColorSelect = [
-    PeeroreumColor.primaryPuple[400]!,
+    PeeroreumColor.primaryPurple[400]!,
     PeeroreumColor.black,
     PeeroreumColor.white,
   ];
@@ -67,7 +68,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
   late Color _highlighterColor = highlighterColorSelect[0];
   List<bool> highlighterColorSelected = [true, false, false];
   List<Color> highlighterColorSelect = [
-    PeeroreumColor.primaryPuple[400]!,
+    PeeroreumColor.primaryPurple[400]!,
     PeeroreumColor.black,
     PeeroreumColor.white,
   ];
@@ -95,10 +96,8 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
+      child: PopScope(
+        canPop: false,
         child: Scaffold(
           backgroundColor: PeeroreumColor.white,
           appBar: appbarWidget(),
@@ -138,7 +137,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
             if (undo > 0) postWhiteboard();
           },
           child: Container(
-            margin: EdgeInsets.all(20),
+            margin: const EdgeInsets.all(20),
             child: Text(
               '완료',
               style: TextStyle(
@@ -146,7 +145,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
                 color: undo > 0
-                    ? PeeroreumColor.primaryPuple[400]
+                    ? PeeroreumColor.primaryPurple[400]
                     : PeeroreumColor.gray[500],
               ),
             ),
@@ -169,7 +168,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                   setState(() {
                     undo++;
                   });
-                  print(undo);
+                  if (kDebugMode) {
+                    print(undo);
+                  }
                 },
                 controller: _drawingController,
                 background: Container(
@@ -189,21 +190,21 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
           Positioned(
             bottom: 56,
             child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 180, 0),
+                margin: const EdgeInsets.fromLTRB(0, 0, 180, 0),
                 child: straightDetailTool()),
           ),
         if (isLongPressed[1])
           Positioned(
             bottom: 56,
             child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 180, 0),
+                margin: const EdgeInsets.fromLTRB(0, 0, 180, 0),
                 child: highlighterDetailTool()),
           ),
         if (isLongPressed[2])
           Positioned(
             bottom: 56,
             child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 180, 0),
+                margin: const EdgeInsets.fromLTRB(0, 0, 180, 0),
                 child: eraserDetailTool()),
           ),
       ],
@@ -217,9 +218,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
       children: [
         Container(
           color: Colors.transparent,
-          padding: EdgeInsets.only(bottom: 24),
+          padding: const EdgeInsets.only(bottom: 24),
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             decoration: BoxDecoration(
               color: PeeroreumColor.gray[50],
               border: Border.all(
@@ -232,7 +233,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 penTool(),
-                SizedBox(
+                const SizedBox(
                   width: 16,
                 ),
                 Row(
@@ -246,7 +247,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                             undo--;
                             redo++;
                           });
-                          print('redo: $redo');
+                          if (kDebugMode) {
+                            print('redo: $redo');
+                          }
                         }
                       },
                       child: Container(
@@ -255,13 +258,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                         height: 24,
                         child: SvgPicture.asset(
                           'assets/icons/arrow_bend_up_left.svg',
-                          color: undo > 0
-                              ? PeeroreumColor.gray[500]
-                              : PeeroreumColor.gray[200],
+                          colorFilter: ColorFilter.mode(
+                              undo > 0
+                                  ? PeeroreumColor.gray[500]!
+                                  : PeeroreumColor.gray[200]!,
+                              BlendMode.srcIn),
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 8,
                     ),
                     GestureDetector(
@@ -273,7 +278,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                             redo--;
                             undo++;
                           });
-                          print('undo: $undo');
+                          if (kDebugMode) {
+                            print('undo: $undo');
+                          }
                         }
                       },
                       child: Container(
@@ -282,16 +289,18 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                         height: 24,
                         child: SvgPicture.asset(
                           'assets/icons/arrow_bend_up_right.svg',
-                          color: redo > 0
-                              ? PeeroreumColor.gray[500]
-                              : PeeroreumColor.gray[200],
+                          colorFilter: ColorFilter.mode(
+                              redo > 0
+                                  ? PeeroreumColor.gray[500]!
+                                  : PeeroreumColor.gray[200]!,
+                              BlendMode.srcIn),
                         ),
                       ),
                     ),
                   ],
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   width: 1,
                   height: 32,
                   color: PeeroreumColor.gray[100],
@@ -301,7 +310,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                   onTap: () {
                     _drawingController.clear();
                   },
-                  child: T5_14px(
+                  child: T5(
                     text: '모두 지우기',
                     color: PeeroreumColor.gray[500],
                   ),
@@ -334,7 +343,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
               _drawingController.setStyle(
                   strokeWidth: _penStrokeWidth,
                   blendMode: BlendMode.srcOver,
-                  color: _straightColor.withOpacity(_opacity));
+                  color: _straightColor.withValues(alpha: _opacity));
             },
             onLongPress: () {
               setState(() {
@@ -346,9 +355,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 _drawingController.setStyle(
                     strokeWidth: _penStrokeWidth,
                     blendMode: BlendMode.srcOver,
-                    color: _straightColor.withOpacity(_opacity));
+                    color: _straightColor.withValues(alpha: _opacity));
                 isLongPressed = [true, false, false];
-                longpressCheck();
+                longPressCheck();
               });
             },
             child: Container(
@@ -362,14 +371,16 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 width: 24,
                 child: SvgPicture.asset(
                   'assets/icons/pen_nib_straight.svg',
-                  color: isPenSelected[0]
-                      ? PeeroreumColor.black
-                      : PeeroreumColor.gray[600],
+                  colorFilter: ColorFilter.mode(
+                      isPenSelected[0]
+                          ? PeeroreumColor.black
+                          : PeeroreumColor.gray[600]!,
+                      BlendMode.srcIn),
                 ),
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 8,
           ),
           GestureDetector(
@@ -386,7 +397,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
               _drawingController.setStyle(
                   strokeWidth: _highlighterStrokeWidth,
                   blendMode: BlendMode.srcOver,
-                  color: _highlighterColor.withOpacity(_opacity));
+                  color: _highlighterColor.withValues(alpha: _opacity));
             },
             onLongPress: () {
               setState(() {
@@ -398,9 +409,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 _drawingController.setStyle(
                     strokeWidth: _highlighterStrokeWidth,
                     blendMode: BlendMode.srcOver,
-                    color: _highlighterColor.withOpacity(_opacity));
+                    color: _highlighterColor.withValues(alpha: _opacity));
                 isLongPressed = [false, true, false];
-                longpressCheck();
+                longPressCheck();
               });
             },
             child: Container(
@@ -414,14 +425,16 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 width: 24,
                 child: SvgPicture.asset(
                   'assets/icons/highlighter.svg',
-                  color: isPenSelected[1]
-                      ? PeeroreumColor.black
-                      : PeeroreumColor.gray[600],
+                  colorFilter: ColorFilter.mode(
+                      isPenSelected[1]
+                          ? PeeroreumColor.black
+                          : PeeroreumColor.gray[600]!,
+                      BlendMode.srcIn),
                 ),
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 8,
           ),
           GestureDetector(
@@ -437,7 +450,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
               _drawingController.setStyle(
                   strokeWidth: 20,
                   blendMode: BlendMode.srcOver,
-                  color: Colors.white.withOpacity(1));
+                  color: Colors.white.withValues(alpha: 1));
             },
             onLongPress: () {
               setState(() {
@@ -449,9 +462,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 _drawingController.setStyle(
                     strokeWidth: _eraserStrokeWidth,
                     blendMode: BlendMode.srcOver,
-                    color: Colors.white.withOpacity(1));
+                    color: Colors.white.withValues(alpha: 1));
                 isLongPressed = [false, false, true];
-                longpressCheck();
+                longPressCheck();
               });
             },
             child: Container(
@@ -465,9 +478,11 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                 width: 24,
                 child: SvgPicture.asset(
                   'assets/icons/eraser.svg',
-                  color: isPenSelected[2]
-                      ? PeeroreumColor.black
-                      : PeeroreumColor.gray[600],
+                  colorFilter: ColorFilter.mode(
+                      isPenSelected[2]
+                          ? PeeroreumColor.black
+                          : PeeroreumColor.gray[600]!,
+                      BlendMode.srcIn),
                 ),
               ),
             ),
@@ -500,10 +515,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       _drawingController.setStyle(
                           strokeWidth: _penStrokeWidth,
                           blendMode: BlendMode.srcOver,
-                          color: _straightColor.withOpacity(_opacity));
+                          color: _straightColor.withValues(alpha: _opacity));
                     },
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: straightStroke[0]
@@ -511,13 +526,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                               : PeeroreumColor.gray[50]),
                       child: SvgPicture.asset(
                         'assets/images/straight_1.svg',
-                        color: straightStroke[0]
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            straightStroke[0]
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]!,
+                            BlendMode.srcIn),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   GestureDetector(
@@ -530,10 +547,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       _drawingController.setStyle(
                           strokeWidth: _penStrokeWidth,
                           blendMode: BlendMode.srcOver,
-                          color: _straightColor.withOpacity(_opacity));
+                          color: _straightColor.withValues(alpha: _opacity));
                     },
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: straightStroke[1]
@@ -541,13 +558,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                               : PeeroreumColor.gray[50]),
                       child: SvgPicture.asset(
                         'assets/images/straight_2.svg',
-                        color: straightStroke[1]
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            straightStroke[1]
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]!,
+                            BlendMode.srcIn),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   GestureDetector(
@@ -560,10 +579,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       _drawingController.setStyle(
                           strokeWidth: _penStrokeWidth,
                           blendMode: BlendMode.srcOver,
-                          color: _straightColor.withOpacity(_opacity));
+                          color: _straightColor.withValues(alpha: _opacity));
                     },
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: straightStroke[2]
@@ -571,15 +590,17 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                               : PeeroreumColor.gray[50]),
                       child: SvgPicture.asset(
                         'assets/images/straight_3.svg',
-                        color: straightStroke[2]
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            straightStroke[2]
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]!,
+                            BlendMode.srcIn),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               straightColorTool(),
@@ -613,10 +634,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       _drawingController.setStyle(
                           strokeWidth: _highlighterStrokeWidth,
                           blendMode: BlendMode.srcOver,
-                          color: _highlighterColor.withOpacity(_opacity));
+                          color: _highlighterColor.withValues(alpha: _opacity));
                     },
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: highlighterStroke[0]
@@ -624,13 +645,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                               : PeeroreumColor.gray[50]),
                       child: SvgPicture.asset(
                         'assets/images/straight_1.svg',
-                        color: highlighterStroke[0]
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            highlighterStroke[0]
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]!,
+                            BlendMode.srcIn),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   GestureDetector(
@@ -643,10 +666,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       _drawingController.setStyle(
                           strokeWidth: _highlighterStrokeWidth,
                           blendMode: BlendMode.srcOver,
-                          color: _highlighterColor.withOpacity(_opacity));
+                          color: _highlighterColor.withValues(alpha: _opacity));
                     },
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: highlighterStroke[1]
@@ -654,13 +677,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                               : PeeroreumColor.gray[50]),
                       child: SvgPicture.asset(
                         'assets/images/straight_2.svg',
-                        color: highlighterStroke[1]
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            highlighterStroke[1]
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]!,
+                            BlendMode.srcIn),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   GestureDetector(
@@ -673,10 +698,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       _drawingController.setStyle(
                           strokeWidth: _highlighterStrokeWidth,
                           blendMode: BlendMode.srcOver,
-                          color: _highlighterColor.withOpacity(_opacity));
+                          color: _highlighterColor.withValues(alpha: _opacity));
                     },
                     child: Container(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: highlighterStroke[2]
@@ -684,15 +709,17 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                               : PeeroreumColor.gray[50]),
                       child: SvgPicture.asset(
                         'assets/images/straight_3.svg',
-                        color: highlighterStroke[2]
-                            ? PeeroreumColor.black
-                            : PeeroreumColor.gray[600],
+                        colorFilter: ColorFilter.mode(
+                            highlighterStroke[2]
+                                ? PeeroreumColor.black
+                                : PeeroreumColor.gray[600]!,
+                            BlendMode.srcIn),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               highlighterColorTool(),
@@ -722,10 +749,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                   _drawingController.setStyle(
                       strokeWidth: _eraserStrokeWidth,
                       blendMode: BlendMode.srcOver,
-                      color: _straightColor.withOpacity(_opacity));
+                      color: _straightColor.withValues(alpha: _opacity));
                 },
                 child: Container(
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
                       color: eraserStroke[0]
@@ -733,13 +760,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           : PeeroreumColor.gray[50]),
                   child: SvgPicture.asset(
                     'assets/images/straight_1.svg',
-                    color: eraserStroke[0]
-                        ? PeeroreumColor.black
-                        : PeeroreumColor.gray[600],
+                    colorFilter: ColorFilter.mode(
+                        eraserStroke[0]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600]!,
+                        BlendMode.srcIn),
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 8,
               ),
               GestureDetector(
@@ -752,10 +781,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                   _drawingController.setStyle(
                       strokeWidth: _eraserStrokeWidth,
                       blendMode: BlendMode.srcOver,
-                      color: _straightColor.withOpacity(_opacity));
+                      color: _straightColor.withValues(alpha: _opacity));
                 },
                 child: Container(
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
                       color: eraserStroke[1]
@@ -763,13 +792,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           : PeeroreumColor.gray[50]),
                   child: SvgPicture.asset(
                     'assets/images/straight_2.svg',
-                    color: eraserStroke[1]
-                        ? PeeroreumColor.black
-                        : PeeroreumColor.gray[600],
+                    colorFilter: ColorFilter.mode(
+                        eraserStroke[1]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600]!,
+                        BlendMode.srcIn),
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 8,
               ),
               GestureDetector(
@@ -782,10 +813,10 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                   _drawingController.setStyle(
                       strokeWidth: _eraserStrokeWidth,
                       blendMode: BlendMode.srcOver,
-                      color: _straightColor.withOpacity(_opacity));
+                      color: _straightColor.withValues(alpha: _opacity));
                 },
                 child: Container(
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
                       color: eraserStroke[2]
@@ -793,9 +824,11 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           : PeeroreumColor.gray[50]),
                   child: SvgPicture.asset(
                     'assets/images/straight_3.svg',
-                    color: eraserStroke[2]
-                        ? PeeroreumColor.black
-                        : PeeroreumColor.gray[600],
+                    colorFilter: ColorFilter.mode(
+                        eraserStroke[2]
+                            ? PeeroreumColor.black
+                            : PeeroreumColor.gray[600]!,
+                        BlendMode.srcIn),
                   ),
                 ),
               ),
@@ -815,7 +848,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
           Flexible(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: 3,
               itemBuilder: (context, index) {
                 return GestureDetector(
@@ -828,15 +861,15 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                         case 0:
                           _straightColor = straightColorSelect[0];
                           _drawingController.setStyle(
-                              color:
-                                  straightColorSelect[0].withOpacity(_opacity));
+                              color: straightColorSelect[0]
+                                  .withValues(alpha: _opacity));
                           _straightSavedColor = null;
                           break;
                         case 1:
                           _straightColor = straightColorSelect[1];
                           _drawingController.setStyle(
-                              color:
-                                  straightColorSelect[1].withOpacity(_opacity));
+                              color: straightColorSelect[1]
+                                  .withValues(alpha: _opacity));
                           _straightSavedColor = null;
                           break;
                       }
@@ -863,7 +896,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                         pickerAreaHeightPercent: 0.7,
                                         pickerAreaBorderRadius:
                                             BorderRadius.circular(10),
-                                        showLabel: false,
+                                        labelTypes: const [],
                                         enableAlpha: false,
                                         pickerColor: _straightColor,
                                         onColorChanged: (Color color) {
@@ -888,7 +921,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                                   fontFamily: 'Pretendard'),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 20,
                                           ),
                                           GestureDetector(
@@ -898,7 +931,8 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                                     _straightSavedColor!;
                                                 _drawingController.setStyle(
                                                     color: _straightColor
-                                                        .withOpacity(_opacity));
+                                                        .withValues(
+                                                            alpha: _opacity));
                                               });
                                               Get.back();
                                             },
@@ -906,11 +940,11 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                               '확인',
                                               style: TextStyle(
                                                   color: PeeroreumColor
-                                                      .primaryPuple[400],
+                                                      .primaryPurple[400],
                                                   fontFamily: 'Pretendard'),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 4,
                                           )
                                         ],
@@ -924,7 +958,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                     });
                   },
                   child: Container(
-                    margin: EdgeInsets.only(right: 8),
+                    margin: const EdgeInsets.only(right: 8),
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
@@ -938,7 +972,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       ),
                       image: index == 2
                           ? _straightSavedColor != _straightColor
-                              ? DecorationImage(
+                              ? const DecorationImage(
                                   image: AssetImage(
                                       'assets/images/colorpicker_background.png'),
                                 )
@@ -950,14 +984,16 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                             padding: const EdgeInsets.all(4.0),
                             child: SvgPicture.asset(
                               'assets/icons/spoid.svg',
-                              color: PeeroreumColor.white,
+                              colorFilter: const ColorFilter.mode(
+                                  PeeroreumColor.white, BlendMode.srcIn),
                             ))
                         : straightColorSelected[index]
                             ? Padding(
-                                padding: EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(4.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/check2.svg',
-                                  color: PeeroreumColor.white,
+                                  colorFilter: const ColorFilter.mode(
+                                      PeeroreumColor.white, BlendMode.srcIn),
                                 ),
                               )
                             : null,
@@ -980,7 +1016,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
           Flexible(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: 3,
               itemBuilder: (context, index) {
                 return GestureDetector(
@@ -996,14 +1032,14 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           _highlighterColor = highlighterColorSelect[0];
                           _drawingController.setStyle(
                               color: highlighterColorSelect[0]
-                                  .withOpacity(_opacity));
+                                  .withValues(alpha: _opacity));
                           _highlighterSavedColor = null;
                           break;
                         case 1:
                           _highlighterColor = highlighterColorSelect[1];
                           _drawingController.setStyle(
                               color: highlighterColorSelect[1]
-                                  .withOpacity(_opacity));
+                                  .withValues(alpha: _opacity));
                           _highlighterSavedColor = null;
                           break;
                       }
@@ -1030,7 +1066,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                         pickerAreaHeightPercent: 0.7,
                                         pickerAreaBorderRadius:
                                             BorderRadius.circular(10),
-                                        showLabel: false,
+                                        labelTypes: const [],
                                         enableAlpha: false,
                                         pickerColor: _highlighterColor,
                                         onColorChanged: (Color color) {
@@ -1055,7 +1091,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                                   fontFamily: 'Pretendard'),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 20,
                                           ),
                                           GestureDetector(
@@ -1065,7 +1101,8 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                                     _highlighterSavedColor!;
                                                 _drawingController.setStyle(
                                                     color: _highlighterColor
-                                                        .withOpacity(_opacity));
+                                                        .withValues(
+                                                            alpha: _opacity));
                                               });
                                               Get.back();
                                             },
@@ -1073,11 +1110,11 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                                               '확인',
                                               style: TextStyle(
                                                   color: PeeroreumColor
-                                                      .primaryPuple[400],
+                                                      .primaryPurple[400],
                                                   fontFamily: 'Pretendard'),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 4,
                                           )
                                         ],
@@ -1091,7 +1128,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                     });
                   },
                   child: Container(
-                    margin: EdgeInsets.only(right: 8),
+                    margin: const EdgeInsets.only(right: 8),
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
@@ -1105,7 +1142,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                       ),
                       image: index == 2
                           ? _highlighterSavedColor != _highlighterColor
-                              ? DecorationImage(
+                              ? const DecorationImage(
                                   image: AssetImage(
                                       'assets/images/colorpicker_background.png'),
                                 )
@@ -1117,14 +1154,16 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                             padding: const EdgeInsets.all(4.0),
                             child: SvgPicture.asset(
                               'assets/icons/spoid.svg',
-                              color: PeeroreumColor.white,
+                              colorFilter: const ColorFilter.mode(
+                                  PeeroreumColor.white, BlendMode.srcIn),
                             ))
                         : highlighterColorSelected[index]
                             ? Padding(
-                                padding: EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(4.0),
                                 child: SvgPicture.asset(
                                   'assets/icons/check2.svg',
-                                  color: PeeroreumColor.white,
+                                  colorFilter: const ColorFilter.mode(
+                                      PeeroreumColor.white, BlendMode.srcIn),
                                 ),
                               )
                             : null,
@@ -1158,8 +1197,8 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 20),
-          contentPadding: EdgeInsets.all(20),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: PeeroreumColor.white,
           surfaceTintColor: Colors.transparent,
@@ -1178,7 +1217,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Text(
@@ -1191,7 +1230,7 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                     color: PeeroreumColor.gray[600],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -1203,9 +1242,9 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                           Get.back(result: false);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.gray[300], // 배경 색상
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16), // 패딩
+                          backgroundColor: PeeroreumColor.gray[300],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             // 모양
                             borderRadius: BorderRadius.circular(8),
@@ -1221,21 +1260,21 @@ class _WhiteboardIeduState extends State<WhiteboardIedu> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context, true);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: PeeroreumColor.primaryPuple[400],
-                          padding: EdgeInsets.symmetric(
+                          backgroundColor: PeeroreumColor.primaryPurple[400],
+                          padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '나가기',
                           style: TextStyle(
                               fontFamily: 'Pretendard',

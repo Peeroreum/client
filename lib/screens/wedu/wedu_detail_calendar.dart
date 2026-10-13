@@ -3,23 +3,26 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
+import 'package:peeroreum_client/widgets/error_retry_view.dart';
+import 'package:peeroreum_client/api/api_client.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
 import 'package:peeroreum_client/screens/pie_chart.dart';
 import 'package:peeroreum_client/screens/report.dart';
+import 'package:peeroreum_client/widgets/block_user.dart';
 
 class DetailWeduCalendar extends StatefulWidget {
-  DetailWeduCalendar(this.id, this.weduTitle, {super.key});
+  const DetailWeduCalendar(this.id, this.weduTitle, {super.key});
 
-  int id;
-  String weduTitle;
+  final int id;
+  final String weduTitle;
 
   @override
   State<DetailWeduCalendar> createState() =>
-      _DetailWeduCalendarState(id, weduTitle);
+      _DetailWeduCalendarState();
 }
 
 final days = ['월', '화', '수', '목', '금', '토', '일'];
@@ -43,10 +46,8 @@ bool _isRightButtonWork = finalDate.isAfter(lastDayOfCurrentMonth);
 
 class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   late Future initFuture;
-  int id;
-  String weduTitle;
-
-  _DetailWeduCalendarState(this.id, this.weduTitle);
+  late int id;
+  late String weduTitle;
 
   dynamic weduData = '';
   dynamic weduMonthlyData = '';
@@ -59,11 +60,13 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
   List<dynamic> progress = [];
   bool amI = false;
   bool isMyImage = true;
-  var myNickname;
+  String? myNickname;
 
   @override
   void initState() {
     super.initState();
+    id = widget.id;
+    weduTitle = widget.weduTitle;
     currentDate = DateTime.now();
     calendarDays = generateCalendarDays();
     focusedDay = DateTime.now().day;
@@ -108,7 +111,9 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       weduData = weduResult.data['data'];
       weduFire = weduData['continuousDate'];
     } else {
-      print("에러${weduResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${weduResult.statusCode}");
+      }
     }
 
     String requestFormatDate2 = DateFormat('yyyyMMdd').format(currentDate);
@@ -121,7 +126,9 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       startDate = DateTime.parse(weduMonthlyData['createdDate']);
       finalDate = DateTime.parse(weduMonthlyData['targetDate']);
     } else {
-      print("에러${weduProgressResult.statusCode}");
+      if (kDebugMode) {
+        print("에러${weduProgressResult.statusCode}");
+      }
     }
 
     DateTime requestDate =
@@ -149,7 +156,9 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         notSuccessList.insert(0, me);
       }
     } else {
-      print("목록${challengeList.statusCode}");
+      if (kDebugMode) {
+        print("목록${challengeList.statusCode}");
+      }
     }
 
     if (successList.isNotEmpty) {
@@ -171,7 +180,9 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
       if (result.statusCode == 200) {
         resultImageList.add(result.data['data']['imageUrls']);
       } else {
-        print('이미지 에러 ${result.statusCode}');
+        if (kDebugMode) {
+          print('이미지 에러 ${result.statusCode}');
+        }
       }
     }
     challengeImageList = resultImageList;
@@ -187,7 +198,19 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             color: PeeroreumColor.white,
           );
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Scaffold(
+            backgroundColor: PeeroreumColor.white,
+            appBar: AppBar(
+              backgroundColor: PeeroreumColor.white,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: ErrorRetryView(
+              onRetry: () => setState(() {
+                initFuture = fetchData();
+              }),
+            ),
+          );
         } else {
           return Scaffold(
             backgroundColor: PeeroreumColor.white,
@@ -200,7 +223,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               leading: IconButton(
                 icon: SvgPicture.asset(
                   'assets/icons/arrow-left.svg',
-                  color: PeeroreumColor.gray[800],
+                  colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                 ),
                 onPressed: () {
                   Get.back();
@@ -231,7 +254,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     onPressed: () {},
                     icon: SvgPicture.asset(
                       'assets/icons/icon_dots_mono.svg',
-                      color: PeeroreumColor.white,
+                      colorFilter: const ColorFilter.mode(PeeroreumColor.white, BlendMode.srcIn),
                     ))
               ],
               bottom: PreferredSize(
@@ -335,7 +358,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
             },
             icon: SvgPicture.asset(
               'assets/icons/left.svg',
-              color: PeeroreumColor.gray[500],
+              colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn),
             ),
           ),
           Text(
@@ -347,7 +370,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 2,
           ),
           const Text(
@@ -372,7 +395,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               }
             },
             icon: SvgPicture.asset('assets/icons/right.svg',
-                width: 24, color: PeeroreumColor.gray[500]),
+                width: 24, colorFilter: ColorFilter.mode(PeeroreumColor.gray[500]!, BlendMode.srcIn)),
           )
         ],
       ),
@@ -464,7 +487,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                                       height: 36,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: PeeroreumColor.primaryPuple[400],
+                                        color: PeeroreumColor.primaryPurple[400],
                                       ),
                                       child: Text(
                                         '${progress[day - 1]}',
@@ -807,44 +830,41 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                     ),
                   )),
             )
-          : GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () async {
-                await Get.to(() => Report(
-                      data: "[같이해냄] 챌린지 이미지 신고\n" +
-                          "날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0, 10)}\n" +
-                          "같이방 아이디 : $id\n" +
-                          "같이방 이름 : $weduTitle\n" +
-                          "업로드한 사람 : ${successOneNickname}\n",
-                    ));
-                int count = 0;
-                Get.until((route) {
-                  bool shouldPop = count == 2;
-                  count++;
-                  return shouldPop;
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    0,
-                    16,
-                    0,
-                    MediaQuery.of(context).viewPadding.bottom > 20
-                        ? MediaQuery.of(context).viewPadding.bottom
-                        : 20.0),
-                height: 56,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 20,
-                ),
-                child: const Text('신고하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.error,
-                    )),
+          : Padding(
+              padding:
+                  EdgeInsets.only(top: 16, bottom: sheetBottomInset(context)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ModerationSheetItem(
+                    text: '신고하기',
+                    onTap: () async {
+                      await Get.to(() => Report(
+                            data: "[같이해냄] 챌린지 이미지 신고\n" "날짜 : ${DateTime(currentDate.year, focusedMonth!, savedFocusedDay!).toString().substring(0, 10)}\n" "같이방 아이디 : $id\n" "같이방 이름 : $weduTitle\n" "업로드한 사람 : $successOneNickname\n",
+                            targetType: 'CHALLENGE_IMAGE',
+                            targetId: id,
+                            reportedNickname: successOneNickname,
+                          ));
+                      int count = 0;
+                      Get.until((route) {
+                        bool shouldPop = count == 2;
+                        count++;
+                        return shouldPop;
+                      });
+                    },
+                  ),
+                  ModerationSheetItem(
+                    text: '$successOneNickname 님 차단하기',
+                    onTap: () async {
+                      final navigator = Navigator.of(context);
+                      if (await confirmAndBlockUser(context, successOneNickname)) {
+                        navigator.pop();
+                        navigator.pop();
+                        fetchData();
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
     );
@@ -867,7 +887,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ButtonBar(
+            OverflowBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
@@ -926,7 +946,7 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 GestureDetector(
                   child: SvgPicture.asset(
                     'assets/icons/icon_dots_mono.svg',
-                    color: PeeroreumColor.gray[800],
+                    colorFilter: ColorFilter.mode(PeeroreumColor.gray[800]!, BlendMode.srcIn),
                   ),
                   onTap: () {
                     showModalBottomSheet(
@@ -942,6 +962,26 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
               ],
             ),
             const SizedBox(height: 20),
+            if (challengeImage.isEmpty)
+              // 차단한 회원의 인증 사진은 서버에서 빈 목록으로 내려옴
+              Container(
+                width: double.maxFinite,
+                height: (MediaQuery.of(context).size.width - 40) * 4 / 3,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: PeeroreumColor.gray[100],
+                ),
+                child: Text(
+                  '차단한 회원의 인증 사진이에요.',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: PeeroreumColor.gray[500]),
+                ),
+              )
+            else
             CarouselSlider(
               items: challengeImage.map((i) {
                 var imageUrl = i.toString();
@@ -1002,10 +1042,10 @@ class _DetailWeduCalendarState extends State<DetailWeduCalendar> {
                 },
                 style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
+                        WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ))),

@@ -1,33 +1,35 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:peeroreum_client/designs/PeeroreumToast.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:get/get.dart';
-import 'package:peeroreum_client/designs/PeeroreumColor.dart';
-import 'package:peeroreum_client/api/ApiClient.dart';
+import 'package:peeroreum_client/designs/peeroreum_color.dart';
+import 'package:peeroreum_client/api/api_client.dart';
 import './validate_screen.dart';
 
 class EmailSearch extends StatefulWidget {
+  const EmailSearch({super.key});
+
   @override
   State<EmailSearch> createState() => _EmailSearchState();
 }
 
 class _EmailSearchState extends State<EmailSearch> {
-  final email_controller = TextEditingController();
-  bool is_Enabled = false;
-  bool email_showClearbutton = false;
-  bool email_focus = false;
-  bool is_loading = false;
+  final emailController = TextEditingController();
+  bool isEnabled = false;
+  bool emailShowClearButton = false;
+  bool emailFocus = false;
+  bool isLoading = false;
 
   void _checkInput() {
     if (RegExp(
-            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-        .hasMatch(email_controller.text)) {
+            r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(emailController.text)) {
       setState(() {
-        is_Enabled = true;
+        isEnabled = true;
       });
     } else {
       setState(() {
-        is_Enabled = false;
+        isEnabled = false;
       });
     }
   }
@@ -38,8 +40,8 @@ class _EmailSearchState extends State<EmailSearch> {
       onTap: () {
         FocusScope.of(context).unfocus();
         setState(() {
-          email_showClearbutton = false;
-          email_focus = false;
+          emailShowClearButton = false;
+          emailFocus = false;
         });
       },
       child: Scaffold(
@@ -67,11 +69,11 @@ class _EmailSearchState extends State<EmailSearch> {
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom * 0.3),
               child: Container(
-                padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       '비밀번호 재설정',
                       style: TextStyle(
                           fontFamily: 'Pretendard',
@@ -79,10 +81,10 @@ class _EmailSearchState extends State<EmailSearch> {
                           fontSize: 20,
                           color: PeeroreumColor.black),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 4,
                     ),
-                    Text(
+                    const Text(
                       '이메일을 입력해 주세요.',
                       style: TextStyle(
                           fontFamily: 'Pretendard',
@@ -90,36 +92,36 @@ class _EmailSearchState extends State<EmailSearch> {
                           fontSize: 16,
                           color: PeeroreumColor.black),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 24,
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: TextFormField(
-                          controller: email_controller,
+                          controller: emailController,
                           onTap: () {
-                            if (email_controller.text.length > 0) {
+                            if (emailController.text.isNotEmpty) {
                               setState(() {
-                                email_showClearbutton = true;
+                                emailShowClearButton = true;
                               });
                             }
                             setState(() {
-                              email_focus = true;
+                              emailFocus = true;
                             });
                           },
                           onChanged: (value) {
                             _checkInput();
                             setState(() {
                               if (value.isNotEmpty) {
-                                email_showClearbutton = true;
+                                emailShowClearButton = true;
                               } else {
-                                email_showClearbutton = false;
+                                emailShowClearButton = false;
                               }
                             });
                           },
                           textInputAction: TextInputAction.done,
                           onFieldSubmitted: (value) {
-                            email_focus = false;
+                            emailFocus = false;
                           },
                           decoration: InputDecoration(
                             hintText: 'peer@mail.com',
@@ -130,11 +132,11 @@ class _EmailSearchState extends State<EmailSearch> {
                                 color: PeeroreumColor.gray[600]),
                             errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                    BorderSide(color: PeeroreumColor.error)),
+                                borderSide: const BorderSide(
+                                    color: PeeroreumColor.error)),
                             focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: PeeroreumColor.error,
                                 )),
                             contentPadding: const EdgeInsets.symmetric(
@@ -144,29 +146,31 @@ class _EmailSearchState extends State<EmailSearch> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
-                                    padding: EdgeInsets.only(left: 12),
-                                    child: email_showClearbutton
+                                    padding: const EdgeInsets.only(left: 12),
+                                    child: emailShowClearButton
                                         ? GestureDetector(
                                             onTap: () {
-                                              email_controller.clear();
+                                              emailController.clear();
                                               setState(() {
-                                                email_showClearbutton = false;
+                                                emailShowClearButton = false;
                                                 _checkInput();
                                               });
                                             },
                                             child: SvgPicture.asset(
                                               "assets/icons/x_circle.svg",
-                                              color: PeeroreumColor.gray[200],
+                                              colorFilter: ColorFilter.mode(
+                                                  PeeroreumColor.gray[200]!,
+                                                  BlendMode.srcIn),
                                             ))
                                         : null),
-                                SizedBox(
+                                const SizedBox(
                                   width: 12,
                                 )
                               ],
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: PeeroreumColor.black,
                               ),
                             ),
@@ -191,23 +195,47 @@ class _EmailSearchState extends State<EmailSearch> {
             padding: MediaQuery.of(context).viewInsets.bottom > 0
                 ? EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom)
-                : EdgeInsets.fromLTRB(20, 8, 20, 28),
+                : const EdgeInsets.fromLTRB(20, 8, 20, 28),
             width: MediaQuery.of(context).size.width,
             child: SizedBox(
               height: 48,
               child: TextButton(
-                onPressed: (is_Enabled && !is_loading)
+                onPressed: (isEnabled && !isLoading)
                     ? () async {
-                        if (await isExistingEmail()) {
-                          sendEmail();
-                        } else {
-                          PeeroreumToast.show(context, "해당 이메일로 가입된 계정이 없어요",
+                        final exists = await isExistingEmail();
+                        if (!mounted) return;
+                        if (exists == null) {
+                          PeeroreumToast.show(
+                              context, // ignore: use_build_context_synchronously
+                              "잠시 후에 다시 시도해 주세요.",
                               isError: true);
+                          return;
                         }
+                        if (!exists) {
+                          PeeroreumToast.show(
+                              context, // ignore: use_build_context_synchronously
+                              "해당 이메일로 가입된 계정이 없어요",
+                              isError: true);
+                          return;
+                        }
+                        sendEmail();
                       }
                     : null,
-                child: is_loading
-                    ? SizedBox(
+                style: ButtonStyle(
+                    backgroundColor: (isEnabled && !isLoading)
+                        ? WidgetStateProperty.all(
+                            PeeroreumColor.primaryPurple[400])
+                        : WidgetStateProperty.all(PeeroreumColor.gray[300]),
+                    padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12)),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
+                          ? BorderRadius.zero
+                          : BorderRadius.circular(8.0),
+                    ))),
+                child: isLoading
+                    ? const SizedBox(
                         height: 24,
                         width: 24,
                         child: CircularProgressIndicator(
@@ -215,7 +243,7 @@ class _EmailSearchState extends State<EmailSearch> {
                           strokeWidth: 2,
                         ),
                       )
-                    : Text(
+                    : const Text(
                         '다음',
                         style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -223,19 +251,6 @@ class _EmailSearchState extends State<EmailSearch> {
                             fontSize: 16.0,
                             color: PeeroreumColor.white),
                       ),
-                style: ButtonStyle(
-                    backgroundColor: (is_Enabled && !is_loading)
-                        ? MaterialStateProperty.all(
-                            PeeroreumColor.primaryPuple[400])
-                        : MaterialStateProperty.all(PeeroreumColor.gray[300]),
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
-                          ? BorderRadius.zero
-                          : BorderRadius.circular(8.0),
-                    ))),
               ),
             ),
           ),
@@ -244,35 +259,55 @@ class _EmailSearchState extends State<EmailSearch> {
     );
   }
 
-  isExistingEmail() async {
-    var result = await ApiClient().get('/signup/email/${email_controller.text}');
-    if (result.statusCode == 409) {
-      return true;
-    } else {
-      return false;
+  Future<bool?> isExistingEmail() async {
+    try {
+      var result =
+          await ApiClient().get('/signup/email/${emailController.text}');
+      return result.statusCode == 409;
+    } catch (e) {
+      return null;
     }
   }
 
   sendEmail() async {
     setState(() {
-      is_loading = true;
+      isLoading = true;
     });
-    var result = await ApiClient().post(
-      '/member/password/email?email=${Uri.encodeComponent(email_controller.text)}',
-    );
+    final dynamic result;
+    try {
+      result = await ApiClient().post(
+        '/member/password/email?email=${Uri.encodeComponent(emailController.text)}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.", isError: true);
+      return;
+    }
+    if (!mounted) return;
     setState(() {
-      is_loading = false;
+      isLoading = false;
     });
     if (result.statusCode == 200) {
       var data = result.data;
       if (data['status'] == 'success') {
-        Get.to(() => EmailValidate(email_controller.text),
+        Get.to(() => EmailValidate(emailController.text),
             transition: Transition.noTransition);
       } else {
+        if (!mounted) return;
         PeeroreumToast.show(context, "메일 전송에 실패했어요.", isError: true);
       }
+    } else if (result.statusCode == 400) {
+      // 비밀번호가 없는 소셜 가입 계정
+      if (!mounted) return;
+      PeeroreumToast.show(context, "소셜 로그인으로 가입한 계정이에요.",
+          isError: true);
     } else {
-      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.", isError: true);
+      if (!mounted) return;
+      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.",
+          isError: true);
     }
   }
 }
