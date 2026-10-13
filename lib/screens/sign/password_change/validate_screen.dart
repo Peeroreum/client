@@ -5,24 +5,17 @@ import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/api/api_client.dart';
 import './new_password_screen.dart';
-import 'package:peeroreum_client/model/member.dart';
-import 'package:peeroreum_client/screens/sign/signup.dart';
 
 class EmailValidate extends StatefulWidget {
   final String email;
 
-  /// 회원가입 이메일 인증일 때 가입 정보 (없으면 비밀번호 재설정)
-  final Member? signupMember;
-
-  const EmailValidate(this.email, {super.key, this.signupMember});
+  const EmailValidate(this.email, {super.key});
 
   @override
   State<EmailValidate> createState() => _EmailValidateState();
 }
 
 class _EmailValidateState extends State<EmailValidate> {
-  bool get isSignup => widget.signupMember != null;
-
   final codeController = TextEditingController();
   bool isEnabled = false;
   bool isLoading = false;
@@ -274,7 +267,7 @@ class _EmailValidateState extends State<EmailValidate> {
     final dynamic result;
     try {
       result = await ApiClient().post(
-        '${isSignup ? '/signup/email/verify' : '/member/password/verify'}?email=${Uri.encodeComponent(widget.email)}&code=${Uri.encodeComponent(codeController.text)}',
+        '/member/password/verify?email=${Uri.encodeComponent(widget.email)}&code=${Uri.encodeComponent(codeController.text)}',
       );
     } catch (e) {
       if (!mounted) return;
@@ -292,14 +285,8 @@ class _EmailValidateState extends State<EmailValidate> {
       var data = result.data;
       if (data['status'] == 'success') {
         String token = data['data'];
-        if (isSignup) {
-          final member = widget.signupMember!;
-          member.signupToken = token;
-          Get.to(() => SignUp(member), transition: Transition.noTransition);
-        } else {
-          Get.to(() => NewPassword(widget.email, token),
-              transition: Transition.noTransition);
-        }
+        Get.to(() => NewPassword(widget.email, token),
+            transition: Transition.noTransition);
       } else {
         PeeroreumToast.show(
           context,
@@ -323,7 +310,7 @@ class _EmailValidateState extends State<EmailValidate> {
     final dynamic result;
     try {
       result = await ApiClient().post(
-        '${isSignup ? '/signup/email/code' : '/member/password/email'}?email=${Uri.encodeComponent(widget.email)}',
+        '/member/password/email?email=${Uri.encodeComponent(widget.email)}',
       );
     } catch (e) {
       if (!mounted) return;
@@ -353,7 +340,7 @@ class _EmailValidateState extends State<EmailValidate> {
     } else {
       PeeroreumToast.show(
         context,
-        ApiClient.errorMessage(result, fallback: "오류가 발생했습니다."),
+        "오류가 발생했습니다.",
         isError: true,
       );
     }
