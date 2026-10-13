@@ -20,8 +20,53 @@ class MyPageAccount extends StatefulWidget {
 class _MyPageAccountState extends State<MyPageAccount> {
   String? email;
 
+  /// 가입 방식: email, kakao, google, apple, social(알 수 없는 기존 소셜 가입자)
+  String? provider;
+
   Future<void> fetchStatus() async {
     email = await const FlutterSecureStorage().read(key: "email");
+    try {
+      final result = await ApiClient().get('/member/account');
+      if (result.statusCode == 200) {
+        final data = result.data['data'];
+        email = data['email'] ?? email;
+        provider = data['provider'];
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("계정 정보 조회 실패 $e");
+      }
+    }
+  }
+
+  bool get isEmailAccount => provider == 'email';
+
+  String get providerLabel {
+    switch (provider) {
+      case 'email':
+        return '이메일';
+      case 'kakao':
+        return '카카오';
+      case 'google':
+        return 'Google';
+      case 'apple':
+        return 'Apple';
+      default:
+        return '소셜 로그인';
+    }
+  }
+
+  String? get providerLogo {
+    switch (provider) {
+      case 'kakao':
+        return 'assets/images/kakao_logo.png';
+      case 'google':
+        return 'assets/images/google_logo.png';
+      case 'apple':
+        return 'assets/images/apple_logo.png';
+      default:
+        return null;
+    }
   }
 
   Future<int> deleteAllMember() async {
@@ -109,6 +154,53 @@ class _MyPageAccountState extends State<MyPageAccount> {
             ),
             child: Column(
               children: [
+                if (provider != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '로그인 방식',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: PeeroreumColor.gray[800],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            if (providerLogo != null) ...[
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: PeeroreumColor.gray[200]!),
+                                  image: DecorationImage(
+                                      image: AssetImage(providerLogo!),
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                            ],
+                            Text(
+                              providerLabel,
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: PeeroreumColor.gray[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -149,6 +241,8 @@ class _MyPageAccountState extends State<MyPageAccount> {
                     ],
                   ),
                 ),
+                // 비밀번호 변경은 이메일 가입자만
+                if (isEmailAccount)
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

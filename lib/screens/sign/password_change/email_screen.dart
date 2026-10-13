@@ -301,7 +301,12 @@ class _EmailSearchState extends State<EmailSearch> {
       }
     } else {
       if (!mounted) return;
-      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.", isError: true);
+      // 소셜 로그인 계정 등 서버 안내 문구가 있으면 그대로 노출
+      PeeroreumToast.show(
+          context,
+          ApiClient.errorMessage(result,
+              fallback: "메일을 전송할 수 없어요. 다시 시도해 주세요."),
+          isError: true);
     }
   }
 }

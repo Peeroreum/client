@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/member.dart';
-import 'package:peeroreum_client/screens/sign/signup.dart';
+import 'package:peeroreum_client/designs/peeroreum_toast.dart';
+import 'package:peeroreum_client/screens/sign/password_change/validate_screen.dart';
 import 'package:peeroreum_client/api/api_client.dart';
 
 class EmailSignUp extends StatefulWidget {
@@ -579,12 +580,11 @@ class _EmailSignUpState extends State<EmailSignUp> {
             child: SizedBox(
               height: 48,
               child: TextButton(
-                onPressed: (idCheck && pw1Check && pw2Check)
+                onPressed: (idCheck && pw1Check && pw2Check && !isSending)
                     ? () {
                         member.username = idController.text;
                         member.password = pw1Controller.text;
-                        Get.to(() => SignUp(member),
-                            transition: Transition.noTransition);
+                        sendSignupCode();
                       }
                     : null,
                 style: ButtonStyle(
@@ -614,6 +614,34 @@ class _EmailSignUpState extends State<EmailSignUp> {
         ),
       ),
     );
+  }
+
+  bool isSending = false;
+
+  // 가입 이메일로 인증번호 발송 후 인증 화면 이동
+  Future<void> sendSignupCode() async {
+    setState(() => isSending = true);
+    try {
+      final result = await ApiClient().post(
+          '/signup/email/code?email=${Uri.encodeComponent(idController.text)}');
+      if (!mounted) return;
+      if (result.statusCode == 200) {
+        Get.to(() => EmailValidate(idController.text, signupMember: member),
+            transition: Transition.noTransition);
+      } else {
+        PeeroreumToast.show(
+            context,
+            ApiClient.errorMessage(result,
+                fallback: "메일을 전송할 수 없어요. 다시 시도해 주세요."),
+            isError: true);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.",
+          isError: true);
+    } finally {
+      if (mounted) setState(() => isSending = false);
+    }
   }
 
   validateEmail() async {

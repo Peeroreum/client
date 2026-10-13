@@ -10,6 +10,10 @@ class Member {
   int? badDetailSubject;
   int? badLevel;
   String? school;
+  // 소셜 가입 시 kakao, google, apple
+  String? provider;
+  // 이메일 인증·소셜 토큰 검증 후 서버가 발급한 가입 토큰
+  String? signupToken;
 
   Member({
     this.username,
@@ -22,7 +26,9 @@ class Member {
     this.badSubject,
     this.badDetailSubject,
     this.badLevel,
-    this.school
+    this.school,
+    this.provider,
+    this.signupToken
   });
 
   Map<String, dynamic> toJson() => {
@@ -36,6 +42,8 @@ class Member {
     'badSubject': badSubject,
     'badDetailSubject': badDetailSubject,
     'badLevel': badLevel,
-    'school': school
+    'school': school,
+    'provider': provider,
+    'signupToken': signupToken
   };
 }
