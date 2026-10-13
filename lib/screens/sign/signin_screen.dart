@@ -191,7 +191,14 @@ class _SignInState extends State<SignIn> {
         Get.offAllNamed('/wedu');
       } else if (result.statusCode == 404) {
         Member member = Member();
-        member.username = emailForSignup;
+        // 서버가 검증한 이메일과 가입 토큰 사용
+        final signupData = result.data['data'];
+        member.username = signupData is Map
+            ? (signupData['email'] ?? emailForSignup)
+            : emailForSignup;
+        member.signupToken =
+            signupData is Map ? signupData['signupToken'] : null;
+        member.provider = provider;
         Get.to(() => SignUpNickname(member),
             transition: Transition.noTransition);
       } else {

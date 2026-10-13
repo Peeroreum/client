@@ -22,6 +22,7 @@ import 'package:peeroreum_client/api/api_client.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:peeroreum_client/widgets/block_user.dart';
 
 class DetailWedu extends StatefulWidget {
   const DetailWedu(this.id, {super.key});
@@ -906,6 +907,26 @@ class _DetailWeduState extends State<DetailWedu> {
               ],
             ),
             const SizedBox(height: 20),
+            if (challengeImage.isEmpty)
+              // 차단한 회원의 인증 사진은 서버에서 빈 목록으로 내려옴
+              Container(
+                width: double.maxFinite,
+                height: (MediaQuery.of(context).size.width - 40) * 4 / 3,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: PeeroreumColor.gray[100],
+                ),
+                child: Text(
+                  '차단한 회원의 인증 사진이에요.',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: PeeroreumColor.gray[500]),
+                ),
+              )
+            else
             CarouselSlider(
               items: challengeImage.map((i) {
                 var imageUrl = i.toString();
@@ -1659,34 +1680,39 @@ class _DetailWeduState extends State<DetailWedu> {
                     ),
                   )),
             )
-          : GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Get.to(() => Report(
-                      data: "[같이해냄] 챌린지 이미지 신고\n" "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" "같이방 아이디 : $id\n" "업로드한 사람 : $successOneNickname\n",
-                    ));
-              },
-              child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    0,
-                    16,
-                    0,
-                    MediaQuery.of(context).viewPadding.bottom > 20
-                        ? MediaQuery.of(context).viewPadding.bottom
-                        : 20.0),
-                height: 56,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 20,
-                ),
-                child: const Text('신고하기',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: PeeroreumColor.error,
-                    )),
+          : Padding(
+              padding:
+                  EdgeInsets.only(top: 16, bottom: sheetBottomInset(context)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ModerationSheetItem(
+                    text: '신고하기',
+                    onTap: () async {
+                      final blocked = await Get.to(() => Report(
+                            data: "[같이해냄] 챌린지 이미지 신고\n" "날짜 : ${DateTime.now().toString().substring(0, 10)}\n" "같이방 아이디 : $id\n" "업로드한 사람 : $successOneNickname\n",
+                            targetType: 'CHALLENGE_IMAGE',
+                            targetId: id,
+                            reportedNickname: successOneNickname,
+                          ));
+                      if (blocked == true && mounted) {
+                        Navigator.of(context).pop();
+                        fetchDatas();
+                      }
+                    },
+                  ),
+                  ModerationSheetItem(
+                    text: '$successOneNickname 님 차단하기',
+                    onTap: () async {
+                      final navigator = Navigator.of(context);
+                      if (await confirmAndBlockUser(context, successOneNickname)) {
+                        navigator.pop();
+                        navigator.pop();
+                        fetchDatas();
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
     );

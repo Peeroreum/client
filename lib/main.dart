@@ -251,6 +251,14 @@ class PeeroreumApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       theme: ThemeData(
+          // Material3 기본 배경(연보라 톤) 대신 흰색으로 통일
+          scaffoldBackgroundColor: PeeroreumColor.white,
+          canvasColor: PeeroreumColor.white,
+          bottomSheetTheme: const BottomSheetThemeData(
+            backgroundColor: PeeroreumColor.white,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+          ),
           appBarTheme: const AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
                   statusBarColor: PeeroreumColor.white,

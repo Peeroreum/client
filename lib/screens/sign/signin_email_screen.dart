@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, prefer_is_empty
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:peeroreum_client/designs/peeroreum_toast.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:peeroreum_client/data/pending_deep_link.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/model/member_info.dart';
@@ -391,7 +395,7 @@ class _EmailSignInState extends State<EmailSignIn> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                'SNS 계정으로 로그인',
+                                '소셜 계정으로 로그인',
                                 style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontWeight: FontWeight.w500,
@@ -449,26 +453,28 @@ class _EmailSignInState extends State<EmailSignIn> {
                               googleSignIn();
                             },
                           ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          GestureDetector(
-                            child: Container(
-                                height: 48,
-                                width: 48,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: PeeroreumColor.gray[200]!),
-                                    shape: BoxShape.circle,
-                                    color: PeeroreumColor.white,
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/apple_logo.png'),
-                                    ))),
-                            onTap: () {
-                              appleSignIn();
-                            },
-                          )
+                          if (Platform.isIOS) ...[
+                            SizedBox(
+                              width: 16,
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                  height: 48,
+                                  width: 48,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: PeeroreumColor.gray[200]!),
+                                      shape: BoxShape.circle,
+                                      color: PeeroreumColor.white,
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/apple_logo.png'),
+                                      ))),
+                              onTap: () {
+                                appleSignIn();
+                              },
+                            )
+                          ]
                         ],
                       ),
                     )
@@ -559,7 +565,14 @@ class _EmailSignInState extends State<EmailSignIn> {
         Get.offAllNamed('/home');
       } else if (result.statusCode == 404) {
         Member member = Member();
-        member.username = emailForSignup;
+        // 서버가 검증한 이메일과 가입 토큰 사용
+        final signupData = result.data['data'];
+        member.username = signupData is Map
+            ? (signupData['email'] ?? emailForSignup)
+            : emailForSignup;
+        member.signupToken =
+            signupData is Map ? signupData['signupToken'] : null;
+        member.provider = provider;
         Get.to(() => SignUp(member), transition: Transition.noTransition);
       } else {
         if (kDebugMode) {
@@ -573,13 +586,51 @@ class _EmailSignInState extends State<EmailSignIn> {
       if (kDebugMode) {
         print("소셜 로그인 에러: $e");
       }
+      if (!mounted) return;
+      PeeroreumToast.show(context, '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.',
+          isError: true);
     }
   }
 
   void appleSignIn() async {
-    // Apple Sign-In은 별도 서버 검증 필요 (현재 미지원)
-    if (kDebugMode) {
-      print("애플 로그인: 미지원");
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [AppleIDAuthorizationScopes.email],
+      );
+      final identityToken = credential.identityToken;
+      if (identityToken == null) {
+        throw Exception('애플 identityToken 없음');
+      }
+      // 이메일은 최초 로그인 때만 credential에 담기므로 토큰에서 보완
+      final email =
+          credential.email ?? _emailFromIdentityToken(identityToken) ?? '';
+      await fetchSocialLogin('apple', identityToken, email);
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) return;
+      if (kDebugMode) {
+        print('애플 로그인 실패 $e');
+      }
+      if (!mounted) return;
+      PeeroreumToast.show(context, '애플 로그인에 실패했어요. 다시 시도해 주세요.',
+          isError: true);
+    } catch (e) {
+      if (kDebugMode) {
+        print('애플 로그인 에러 $e');
+      }
+      if (!mounted) return;
+      PeeroreumToast.show(context, '애플 로그인에 실패했어요. 다시 시도해 주세요.',
+          isError: true);
+    }
+  }
+
+  String? _emailFromIdentityToken(String identityToken) {
+    try {
+      final payload = identityToken.split('.')[1];
+      final decoded =
+          utf8.decode(base64Url.decode(base64Url.normalize(payload)));
+      return jsonDecode(decoded)['email'] as String?;
+    } catch (_) {
+      return null;
     }
   }
 }

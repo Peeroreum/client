@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:peeroreum_client/designs/peeroreum_color.dart';
 import 'package:peeroreum_client/screens/mypage/mypage_profile.dart';
+import 'package:peeroreum_client/screens/mypage/profile_friend/blocked_list_screen.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_api.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/follower/follower_controller.dart';
 import 'package:peeroreum_client/screens/mypage/profile_friend/following/following_api.dart';
@@ -63,6 +64,23 @@ class MyPageProfileFriend extends StatelessWidget {
             fontWeight: FontWeight.w500),
       ),
       centerTitle: true,
+      actions: [
+        // 내 친구 목록일 때만 차단 목록 진입 노출
+        Obx(() => followerController.myNickname.value == nickname
+            ? TextButton(
+                onPressed: () => Get.to(() => const BlockedListScreen()),
+                child: Text(
+                  '차단 목록',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: PeeroreumColor.gray[600]),
+                ),
+              )
+            : SizedBox.shrink()),
+        SizedBox(width: 8),
+      ],
     );
   }
 
@@ -113,7 +131,7 @@ class MyPageProfileFriend extends StatelessWidget {
                     }
 
                     if (followerController.followers.isEmpty) {
-                      return Center(child: Text("팔로워 목록이 없습니다."));
+                      return Center(child: Text("팔로워 목록이 없어요."));
                     }
 
                     return follower();
@@ -128,7 +146,7 @@ class MyPageProfileFriend extends StatelessWidget {
                     }
 
                     if (followingController.followings.isEmpty) {
-                      return Center(child: Text("팔로잉 목록이 없습니다."));
+                      return Center(child: Text("팔로잉 목록이 없어요."));
                     }
 
                     return following();
