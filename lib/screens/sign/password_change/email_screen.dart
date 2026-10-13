@@ -299,13 +299,14 @@ class _EmailSearchState extends State<EmailSearch> {
         if (!mounted) return;
         PeeroreumToast.show(context, "메일 전송에 실패했어요.", isError: true);
       }
+    } else if (result.statusCode == 400) {
+      // 비밀번호가 없는 소셜 가입 계정
+      if (!mounted) return;
+      PeeroreumToast.show(context, "소셜 로그인으로 가입한 계정이에요.",
+          isError: true);
     } else {
       if (!mounted) return;
-      // 소셜 로그인 계정 등 서버 안내 문구가 있으면 그대로 노출
-      PeeroreumToast.show(
-          context,
-          ApiClient.errorMessage(result,
-              fallback: "메일을 전송할 수 없어요. 다시 시도해 주세요."),
+      PeeroreumToast.show(context, "메일을 전송할 수 없어요. 다시 시도해 주세요.",
           isError: true);
     }
   }

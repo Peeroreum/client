@@ -40,17 +40,22 @@ class PeeroreumToast {
         right: 0,
         child: Material(
           color: Colors.transparent,
+          // 긴 문구도 화면 밖으로 넘치지 않도록 좌우 여백 확보
+          child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Center(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(1000),
+              // 한 줄일 때는 알약 모양, 두 줄이면 둥근 사각형
+              borderRadius: BorderRadius.circular(20),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  constraints: const BoxConstraints(minHeight: 40),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.black.withAlpha(191),
-                    borderRadius: BorderRadius.circular(1000),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -70,15 +75,18 @@ class PeeroreumToast {
                         height: 20,
                       ),
                       const SizedBox(width: 4),
-                      B4m(
-                        text: message,
-                        color: PeeroreumColor.white,
+                      Flexible(
+                        child: B4m(
+                          text: message,
+                          color: PeeroreumColor.white,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
+          ),
           ),
         ),
       ),
